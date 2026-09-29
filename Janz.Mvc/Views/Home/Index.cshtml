@@ -1,3 +1,45 @@
 ﻿@{
     ViewData["Title"] = "Home";
 }
+
+<section class="hero">
+    <h1>Every day we roast coffee and<br>deliver for free all over Azerbaijan</h1>
+    <div class="hero-row">
+        <a class="shot" href="#">
+            <video muted loop playsinline preload="metadata" src="@Url.Content("~/videos/espresso.mp4")"></video>
+            <span>Coffee for espresso</span>
+            <small>45</small>
+        </a>
+        <a class="shot" href="#">
+            <video muted loop playsinline preload="metadata" src="@Url.Content("~/videos/filter.mp4")"></video>
+            <span>Coffee for filter</span>
+            <small>45</small>
+        </a>
+        <a class="shot" href="#">
+            <video muted loop playsinline preload="metadata" src="@Url.Content("~/videos/merch.mp4")"></video>
+            <span>Accessories and merch</span>
+            <small>77</small>
+        </a>
+        <aside class="account-card">
+            <p class="account-title">Sign in, and it gets cheaper</p>
+            <p class="account-note">More discounts in your account</p>
+            <a class="account-signin" href="#">Sign in</a>
+            <a class="account-register" href="#">Register</a>
+        </aside>
+    </div>
+</section>
+
+@section Scripts {
+    <script>
+        document.querySelectorAll(".shot").forEach(function (card) {
+            var video = card.querySelector("video");
+            card.addEventListener("mouseenter", function () {
+                video.play();
+            });
+            card.addEventListener("mouseleave", function () {
+                video.pause();
+                video.currentTime = 0;
+            });
+        });
+    </script>
+}
