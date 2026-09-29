@@ -470,6 +470,24 @@ a { color: inherit; text-decoration: none; }
     text-transform: uppercase;
 }
 
+.product-link {
+    color: inherit;
+    text-decoration: none;
+}
+
+.product-link::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+}
+
+.product .buy-row,
+.product .price-row {
+    position: relative;
+    z-index: 2;
+}
+
 .kind { color: #b5b5b5; font-size: .82rem; }
 
 .badges {
@@ -518,6 +536,19 @@ a { color: inherit; text-decoration: none; }
 .product:hover .note-orange { background: #f5a623; color: #1a1006; }
 .product:hover .note-fruit { background: #9a4e2c; color: #fff; }
 .product:hover .note-chocolate { background: #6e4431; color: #fff; }
+.product:hover .note-strawberry { background: #e0475b; color: #fff; }
+.product:hover .note-cherry { background: #9b1b30; color: #fff; }
+.product:hover .note-caramel { background: #c98a3c; color: #1a1006; }
+.product:hover .note-tangerine { background: #f28c28; color: #1a1006; }
+.product:hover .note-mango { background: #f4b400; color: #1a1406; }
+.product:hover .note-apricot { background: #f0a35e; color: #1a1006; }
+.product:hover .note-lemon { background: #f2e05a; color: #1a1806; }
+.product:hover .note-passion { background: #7b4b94; color: #fff; }
+.product:hover .note-peach { background: #f6b08a; color: #1a1006; }
+.product:hover .note-raspberry { background: #c2185b; color: #fff; }
+.product:hover .note-dark-chocolate { background: #3e2519; color: #fff; }
+.product:hover .note-pineapple { background: #e8c547; color: #1a1406; }
+.product:hover .note-vermouth { background: #7a1f3d; color: #fff; }
 
 .meters {
     gap: 1.4rem;
@@ -724,6 +755,106 @@ a { color: inherit; text-decoration: none; }
 
 .price s { color: #8d8d8d; font-size: .78rem; }
 .price strong { font-size: .95rem; }
+.price svg { width: 16px; height: 16px; }
+
+.section-link {
+    display: inline-flex;
+    align-items: center;
+    gap: .55rem;
+    color: #fff;
+    text-decoration: none;
+}
+
+.section-link::after {
+    content: "";
+    width: 8px;
+    height: 8px;
+    border-right: 2.5px solid currentColor;
+    border-bottom: 2.5px solid currentColor;
+    transform: rotate(-45deg);
+}
+
+.svg-defs {
+    position: absolute;
+    width: 0;
+    height: 0;
+    overflow: hidden;
+}
+
+.new-row {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: .85rem;
+}
+
+.new-row .product h3 {
+    max-width: calc(100% - 125px);
+    font-size: 1.05rem;
+}
+
+.product-head { min-height: 5.1rem; }
+
+.photo-wrap { position: relative; }
+
+.q-grade {
+    position: absolute;
+    top: 2px;
+    left: calc(50% + 22px);
+    width: 56px;
+    height: 56px;
+}
+
+.q-grade circle {
+    fill: #0b0b0b;
+    stroke: #fff;
+    stroke-width: 2;
+}
+
+.q-ring-text {
+    fill: #fff;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .4px;
+}
+
+.q-score {
+    fill: #fff;
+    font-size: 27px;
+    font-weight: 800;
+}
+
+.new-row .buy-row { gap: .35rem; }
+
+.new-row .weight {
+    position: relative;
+    padding: 0 .6rem;
+}
+
+.new-row .weight small {
+    position: absolute;
+    top: -.5rem;
+    right: .2rem;
+    padding: 0 .15rem;
+    background: #121212;
+    font-size: .58rem;
+}
+
+.weight-info {
+    flex: 0 0 auto;
+    width: 20px;
+    height: 20px;
+    padding: 0;
+    border: 1px solid #555;
+    border-radius: 50%;
+    background: transparent;
+    color: #aaa;
+    font: inherit;
+    font-size: .68rem;
+    font-weight: 700;
+    cursor: help;
+}
+
+.new-row .grind > summary { max-width: 112px; }
 
 .roast-card {
     position: relative;
@@ -846,12 +977,14 @@ a { color: inherit; text-decoration: none; }
     .week { padding-left: 1.2rem; padding-right: 1.2rem; }
     .hero { padding-top: 2rem; padding-bottom: 2rem; }
     .hero-row,
-    .week-row { grid-template-columns: 1fr 1fr; }
+    .week-row,
+    .new-row { grid-template-columns: 1fr 1fr; }
     .roast-card { grid-column: 1 / -1; min-height: 320px; }
 }
 
 @media (max-width: 700px) {
     .hero-row,
-    .week-row { grid-template-columns: 1fr; }
+    .week-row,
+    .new-row { grid-template-columns: 1fr; }
     .roast-card { grid-column: auto; }
 }
