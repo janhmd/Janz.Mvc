@@ -7,26 +7,36 @@ public enum CoffeeSticker
     Milk
 }
 
-public record TasteNote(string Name, string CssClass);
+public class TasteNote
+{
+    public TasteNote(string name, string cssClass)
+    {
+        Name = name;
+        CssClass = cssClass;
+    }
+
+    public string Name { get; set; }
+    public string CssClass { get; set; }
+}
 
 public class CoffeeCard
 {
-    public string Use { get; init; } = "";
-    public string Rating { get; init; } = "";
-    public string Reviews { get; init; } = "";
-    public string Name { get; init; } = "";
-    public string Kind { get; init; } = "";
-    public string Image { get; init; } = "";
-    public bool CoffeeOfTheWeek { get; init; }
-    public string? Tag { get; init; }
-    public CoffeeSticker Sticker { get; init; }
-    public string TasteLead { get; init; } = "";
-    public TasteNote[] Notes { get; init; } = [];
-    public string? TasteTail { get; init; }
-    public int Density { get; init; }
-    public int Acidity { get; init; }
-    public string? SmallDiscount { get; init; }
-    public string? LargeDiscount { get; init; }
-    public string? OldPrice { get; init; }
-    public string Price { get; init; } = "";
+    public string? Use { get; set; }
+    public string? Rating { get; set; }
+    public string? Reviews { get; set; }
+    public string? Name { get; set; }
+    public string? Kind { get; set; }
+    public string? Image { get; set; }
+    public bool CoffeeOfTheWeek { get; set; }
+    public string? Tag { get; set; }
+    public CoffeeSticker Sticker { get; set; }
+    public string? TasteLead { get; set; }
+    public TasteNote[] Notes { get; set; } = [];
+    public string? TasteTail { get; set; }
+    public int Density { get; set; }
+    public int Acidity { get; set; }
+    public string? SmallDiscount { get; set; }
+    public string? LargeDiscount { get; set; }
+    public string? OldPrice { get; set; }
+    public string? Price { get; set; }
 }

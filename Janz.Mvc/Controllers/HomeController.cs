@@ -18,7 +18,12 @@ public class HomeController : Controller
         return View(new HomeIndexViewModel
         {
             NewCoffees = NewCoffees,
-            PopularCoffees = PopularCoffees
+            PopularCoffees = PopularCoffees,
+            Sets = Sets,
+            ReviewCount = "44,828",
+            ShopRating = "4.9",
+            DeliveryRating = "4.7",
+            Reviews = Reviews
         });
     }
 
@@ -114,6 +119,52 @@ public class HomeController : Controller
             Image = "guatemala.png", Tag = "Popular",
             TasteLead = "A sweet", Notes = [new("fruity", "note-fruity")], TasteTail = "coffee made for batch brew",
             Density = 60, Acidity = 62, LargeDiscount = "-15%", Price = "₼33.90"
+        }
+    ];
+
+    private static readonly SetCard[] Sets =
+    [
+        new()
+        {
+            Category = "Sets", Rating = "4.9", Reviews = "266", Name = "Set with coffee for espresso",
+            Image = "set-box.png", Price = "₼143.90",
+            Description = "A set of 5 coffee packs for an espresso machine, Turkish coffee and a moka pot"
+        },
+        new()
+        {
+            Category = "Sets", Rating = "4.9", Reviews = "92", Name = "Set with coffee for filter",
+            Image = "set-box.png", Price = "₼151.90",
+            Description = "A set of 5 coffee packs for a drip coffee maker, Turkish coffee, French press, pour-over, AeroPress or a cup"
+        },
+        new()
+        {
+            Category = "Sets", Rating = "5", Reviews = "22", Name = "Set with drip bags and a Stojo cup",
+            Image = "set-drip.png", Price = "₼139.90",
+            Description = "Three packs of drip bags and a foldable Stojo Ink cup in a gift box"
+        },
+        new()
+        {
+            Category = "Sets", Rating = "5", Reviews = "1", Name = "Set with coffee and a French press",
+            Image = "set-french.png", Price = "₼235.90",
+            Description = "A Timemore French press and four packs of bright coffee in a gift box"
+        }
+    ];
+
+    private static readonly ReviewCard[] Reviews =
+    [
+        new()
+        {
+            Name = "Stas", Level = "Newcomer", Initial = "S", Date = "14.08.2026",
+            ShopStars = 5, ShopText = "I'm happy with it",
+            DeliveryStars = 5, DeliveryText = "Fast",
+            Comment = "Everything is as good as always, especially the coffee"
+        },
+        new()
+        {
+            Name = "Sergey", Level = "Newcomer", Initial = "S", Date = "13.07.2026",
+            ShopStars = 5, ShopText = "This was my first time at Janz. I liked everything. The welcome discount is nice too.",
+            DeliveryStars = 5, DeliveryText = "Delivery was fast. I'm happy.",
+            Comment = "I liked the coffee. So far I'm happy with everything."
         }
     ];
 

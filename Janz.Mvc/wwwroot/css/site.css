@@ -56,7 +56,7 @@ a { color: inherit; text-decoration: none; }
     line-height: 1;
 }
 
-.main-nav {
+.site-header nav {
     display: flex;
     align-items: center;
     flex: 1 1 auto;
@@ -65,7 +65,7 @@ a { color: inherit; text-decoration: none; }
     min-width: 0;
 }
 
-.main-nav > a,
+.site-header nav > a,
 .nav-drop > a,
 .nav-click > summary {
     display: inline-flex;
@@ -253,11 +253,11 @@ a { color: inherit; text-decoration: none; }
     color: #cfcfcf;
 }
 
-.hero {
+#hero {
     padding: 3.2rem 2.4rem 2.6rem;
 }
 
-.hero h1 {
+#hero h1 {
     max-width: 100%;
     margin: 0 0 1.8rem;
     color: #fff;
@@ -366,11 +366,19 @@ a { color: inherit; text-decoration: none; }
 .account-signin { background: #fff; color: #111; }
 .account-register { background: #1c1c1c; color: #fff; border: 1px solid #333; }
 
-.week {
+#week,
+#new,
+#popular,
+#sets,
+#reviews {
     padding: 0 2.4rem 3rem;
 }
 
-.week h2 {
+#week h2,
+#new h2,
+#popular h2,
+#sets h2,
+#reviews h2 {
     margin: 0 0 .85rem;
     font-size: 1.35rem;
     font-weight: 800;
@@ -378,7 +386,10 @@ a { color: inherit; text-decoration: none; }
     text-transform: uppercase;
 }
 
-.week h2 span { color: #9a9a9a; }
+#week h2 span,
+#new h2 span,
+#popular h2 span,
+#sets h2 span { color: #9a9a9a; }
 
 .week-row {
     display: grid;
@@ -394,7 +405,22 @@ a { color: inherit; text-decoration: none; }
     border: 1px solid #2a2a2a;
 }
 
+.hero-row > aside,
+.week-row > article,
+.week-row > aside,
+.card-grid > article,
+.card-grid > aside {
+    display: flex;
+}
+
+.account-card,
+.roast-card,
+.guarantee-card {
+    width: 100%;
+}
+
 .product {
+    width: 100%;
     position: relative;
     display: flex;
     flex-direction: column;
@@ -839,7 +865,7 @@ a { color: inherit; text-decoration: none; }
     stroke-linejoin: round;
 }
 
-.popular-coffees .card-grid { row-gap: 1.1rem; }
+#popular .card-grid { row-gap: 1.1rem; }
 
 .guarantee-card {
     display: flex;
@@ -871,6 +897,22 @@ a { color: inherit; text-decoration: none; }
     font-size: .88rem;
     line-height: 1.45;
 }
+
+.card-grid .set-card h3 {
+    max-width: 100%;
+    min-height: 3.6em;
+}
+
+.set-text {
+    min-height: 4.8rem;
+    margin: 0;
+    color: #d0d0d0;
+    font-size: .8rem;
+    line-height: 1.55;
+    text-align: center;
+}
+
+.set-card .buy-row { margin-top: auto; }
 
 .card-grid .buy-row { gap: .35rem; }
 
@@ -954,7 +996,8 @@ a { color: inherit; text-decoration: none; }
     right: 1.15rem;
 }
 
-.roast-copy p {
+.roast-copy .line-light,
+.roast-copy .line-bold {
     margin: 0;
     letter-spacing: -0.03em;
     line-height: 1.02;
@@ -1019,12 +1062,115 @@ a { color: inherit; text-decoration: none; }
     cursor: pointer;
 }
 
+.review-stats {
+    display: flex;
+    align-items: flex-end;
+    gap: 3.2rem;
+    margin: .4rem 0 1.4rem;
+}
+
+.stat {
+    display: flex;
+    align-items: flex-end;
+    gap: .4rem;
+}
+
+.stat-value {
+    font-size: clamp(3rem, 6vw, 5rem);
+    font-weight: 800;
+    letter-spacing: -0.05em;
+    line-height: .8;
+}
+
+.stat-star {
+    color: #f5b400;
+    font-size: 2.3rem;
+    line-height: 1;
+    padding-bottom: .25rem;
+}
+
+.stat-label {
+    padding-bottom: .3rem;
+    color: #cfcfcf;
+    font-size: .78rem;
+    line-height: 1.15;
+}
+
+.review-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: .85rem;
+}
+
+.review {
+    padding: 1.1rem 1.15rem 1.15rem;
+    border-radius: 18px;
+    background: #121212;
+    border: 1px solid #2a2a2a;
+}
+
+.review-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: .35rem;
+}
+
+.reviewer {
+    display: flex;
+    align-items: center;
+    gap: .7rem;
+}
+
+.avatar {
+    display: grid;
+    place-items: center;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: #2c2c2c;
+    font-weight: 700;
+}
+
+.reviewer-name { font-weight: 700; }
+
+.reviewer-level,
+.review-date {
+    color: #8d8d8d;
+    font-size: .82rem;
+}
+
+.review-label {
+    display: flex;
+    align-items: center;
+    gap: .45rem;
+    margin-top: .75rem;
+    font-weight: 700;
+}
+
+.stars {
+    color: #f5b400;
+    letter-spacing: .06em;
+    font-weight: 500;
+}
+
+.review p {
+    margin: .15rem 0 0;
+    color: #d5d5d5;
+    font-size: .92rem;
+    line-height: 1.45;
+}
+
 @media (max-width: 1100px) {
     .site-header { gap: 1rem; padding: 0 1.2rem; }
-    .main-nav { gap: .9rem; }
-    .hero,
-    .week { padding-left: 1.2rem; padding-right: 1.2rem; }
-    .hero { padding-top: 2rem; padding-bottom: 2rem; }
+    .site-header nav { gap: .9rem; }
+    #hero,
+    #week,
+    #new,
+    #popular,
+    #sets,
+    #reviews { padding-left: 1.2rem; padding-right: 1.2rem; }
+    #hero { padding-top: 2rem; padding-bottom: 2rem; }
     .hero-row,
     .week-row,
     .card-grid { grid-template-columns: 1fr 1fr; }
@@ -1034,6 +1180,7 @@ a { color: inherit; text-decoration: none; }
 @media (max-width: 700px) {
     .hero-row,
     .week-row,
-    .card-grid { grid-template-columns: 1fr; }
+    .card-grid,
+    .review-grid { grid-template-columns: 1fr; }
     .roast-card { grid-column: auto; }
 }

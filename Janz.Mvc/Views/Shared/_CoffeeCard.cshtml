@@ -8,14 +8,15 @@
     };
 }
 
-<article class="product">
+<article>
+    <div class="product">
     <div class="product-top">
         <p>@Model.Use</p>
         <div class="product-meta">
-            <p class="rating">
+            <div class="rating">
                 <span class="rating-item"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.9l-5.2 2.7 1-5.8-4.3-4.1 5.9-.9z" /></svg>@Model.Rating</span>
                 <span class="rating-item"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11.5a8 8 0 0 1-11.6 7.1L4 20l1.4-4.2A8 8 0 1 1 20 11.5z" /></svg>@Model.Reviews</span>
-            </p>
+            </div>
             @if (Model.CoffeeOfTheWeek)
             {
                 <div class="badges">
@@ -24,13 +25,13 @@
             }
             @if (Model.Tag != null)
             {
-                <p class="tag-note">@Model.Tag</p>
+                <div class="tag-note">@Model.Tag</div>
             }
         </div>
     </div>
     <div class="product-head">
         <h3><a class="product-link" href="#">@Model.Name</a></h3>
-        <p class="kind">@Model.Kind</p>
+        <div class="kind">@Model.Kind</div>
     </div>
     <div class="photo-wrap">
         <img class="product-photo" src="@Url.Content("~/images/" + Model.Image)" alt="@Model.Name coffee" />
@@ -51,14 +52,14 @@
             </svg>
         }
     </div>
-    <p class="taste">
+    <div class="taste">
         @Model.TasteLead
         @for (var i = 0; i < Model.Notes.Length; i++)
         {
             <text><span class="note @Model.Notes[i].CssClass">@Model.Notes[i].Name</span>@(i < Model.Notes.Length - 2 ? ", " : i == Model.Notes.Length - 2 ? " and " : "")</text>
         }
         @Model.TasteTail
-    </p>
+    </div>
     <div class="meters">
         <div>
             <span>Density</span>
@@ -98,5 +99,6 @@
             <button type="button" aria-label="Compare"><svg viewBox="0 0 24 24"><path d="M12 3v15M8 20h8M4.5 7h15" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M4.5 7l-2.2 4.2a2.6 2.6 0 0 0 4.4 0zM19.5 7l-2.2 4.2a2.6 2.6 0 0 0 4.4 0z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg></button>
             <button type="button" aria-label="Product details"><svg viewBox="0 0 24 24"><path d="M7 3h7l4 4v14H7z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M14 3v4h4M9.5 12h5M9.5 15.5h5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></button>
         </span>
+    </div>
     </div>
 </article>

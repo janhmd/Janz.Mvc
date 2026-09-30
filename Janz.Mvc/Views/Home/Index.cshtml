@@ -3,7 +3,7 @@
     ViewData["Title"] = "Home";
 }
 
-<section class="hero">
+<section id="hero">
     <h1>Every day we roast coffee and<br>deliver for free all over Azerbaijan</h1>
     <div class="hero-row">
         <a class="shot" href="#">
@@ -21,36 +21,39 @@
             <span>Accessories and merch</span>
             <small>77</small>
         </a>
-        <aside class="account-card">
-            <p class="account-title">Sign in, and it gets cheaper</p>
-            <p class="account-note">More discounts in your account</p>
-            <a class="account-signin" href="#">Sign in</a>
-            <a class="account-register" href="#">Register</a>
+        <aside>
+            <div class="account-card">
+                <div class="account-title">Sign in, and it gets cheaper</div>
+                <div class="account-note">More discounts in your account</div>
+                <a class="account-signin" href="#">Sign in</a>
+                <a class="account-register" href="#">Register</a>
+            </div>
         </aside>
     </div>
 </section>
 
-<section class="week">
+<section id="week">
     <h2>Coffees of the week <span>on sale</span></h2>
     <div class="week-row">
-        <article class="product">
+        <article>
+            <div class="product">
             <div class="product-top">
                 <p>For espresso</p>
                 <div class="product-meta">
-                    <p class="rating">
+                    <div class="rating">
                         <span class="rating-item"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.9l-5.2 2.7 1-5.8-4.3-4.1 5.9-.9z" /></svg>4.6</span>
                         <span class="rating-item"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11.5a8 8 0 0 1-11.6 7.1L4 20l1.4-4.2A8 8 0 1 1 20 11.5z" /></svg>687</span>
-                    </p>
+                    </div>
                     <div class="badges">
                         <span>Coffee of the week</span>
                     </div>
-                    <p class="tag-note">Popular</p>
+                    <div class="tag-note">Popular</div>
                 </div>
             </div>
             <h3><a class="product-link" href="#">Floral</a></h3>
-            <p class="kind">Blend</p>
+            <div class="kind">Blend</div>
             <img class="product-photo" src="@Url.Content("~/images/floral.png")" alt="Floral espresso coffee" />
-            <p class="taste">A light coffee with notes of <span class="note note-flowers">flowers</span>, <span class="note note-berries">dark berries</span> and <span class="note note-citrus">citrus</span></p>
+            <div class="taste">A light coffee with notes of <span class="note note-flowers">flowers</span>, <span class="note note-berries">dark berries</span> and <span class="note note-citrus">citrus</span></div>
             <div class="meters">
                 <div>
                     <span>Density</span>
@@ -95,25 +98,27 @@
                 </span>
             </div>
 
+            </div>
         </article>
 
-        <article class="product">
+        <article>
+            <div class="product">
             <div class="product-top">
                 <p>For filter</p>
                 <div class="product-meta">
-                    <p class="rating">
+                    <div class="rating">
                         <span class="rating-item"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.9l-5.2 2.7 1-5.8-4.3-4.1 5.9-.9z" /></svg>4.6</span>
                         <span class="rating-item"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11.5a8 8 0 0 1-11.6 7.1L4 20l1.4-4.2A8 8 0 1 1 20 11.5z" /></svg>1041</span>
-                    </p>
+                    </div>
                     <div class="badges">
                         <span>Coffee of the week</span>
                     </div>
                 </div>
             </div>
             <h3><a class="product-link" href="#">Guatemala Santiago</a></h3>
-            <p class="kind">Washed</p>
+            <div class="kind">Washed</div>
             <img class="product-photo" src="@Url.Content("~/images/guatemala.png")" alt="Guatemala Santiago filter coffee" />
-            <p class="taste">A sweet coffee with notes of <span class="note note-orange">orange</span>, <span class="note note-fruit">dried fruit</span> and <span class="note note-chocolate">milk chocolate</span></p>
+            <div class="taste">A sweet coffee with notes of <span class="note note-orange">orange</span>, <span class="note note-fruit">dried fruit</span> and <span class="note note-chocolate">milk chocolate</span></div>
             <div class="meters">
                 <div>
                     <span>Density</span>
@@ -158,34 +163,36 @@
                 </span>
             </div>
 
+            </div>
         </article>
 
-        <aside class="roast-card">
+        <aside>
+            <div class="roast-card">
             <div class="roast-track">
             <div class="roast-slide">
                 <img src="@Url.Content("~/images/roast.png")" alt="Coffee beans in the roaster" />
                 <div class="roast-copy">
-                    <p class="line-light">Until the next roast</p>
-                    <p class="line-bold">1 day 15 hours</p>
-                    <p class="line-bold">We deliver</p>
-                    <p class="line-light">for free</p>
-                    <p class="line-bold">We'll refund the money,</p>
-                    <p class="line-light">if you don't like the coffee</p>
+                    <div class="line-light">Until the next roast</div>
+                    <div class="line-bold">1 day 15 hours</div>
+                    <div class="line-bold">We deliver</div>
+                    <div class="line-light">for free</div>
+                    <div class="line-bold">We'll refund the money,</div>
+                    <div class="line-light">if you don't like the coffee</div>
                 </div>
             </div>
             <div class="roast-slide">
                 <img src="@Url.Content("~/images/journal.png")" alt="Barista pouring coffee" />
                 <div class="roast-copy">
-                    <p class="line-light">Coffee journal</p>
-                    <p class="line-bold">What's in plant milk: what can be a red flag for a barista and guests</p>
+                    <div class="line-light">Coffee journal</div>
+                    <div class="line-bold">What's in plant milk: what can be a red flag for a barista and guests</div>
                     <a class="read-article" href="#">Read the article</a>
                 </div>
             </div>
             <div class="roast-slide">
                 <img src="@Url.Content("~/images/aroma-kit.png")" alt="Coffee aroma kit" />
                 <div class="roast-copy">
-                    <p class="line-light">Aroma kit</p>
-                    <p class="line-bold">Coffee aroma<br>molecules</p>
+                    <div class="line-light">Aroma kit</div>
+                    <div class="line-bold">Coffee aroma<br>molecules</div>
                     <a class="read-article" href="#">Read the article</a>
                 </div>
             </div>
@@ -194,11 +201,12 @@
                 <span class="dots"><i class="is-on"></i><i></i><i></i></span>
                 <span class="arrows"><button type="button" aria-label="Previous">←</button><button type="button" aria-label="Next">→</button></span>
             </div>
+            </div>
         </aside>
     </div>
 </section>
 
-<section class="week new-coffees">
+<section id="new">
     <h2><a class="section-link" href="#">New</a></h2>
     <svg class="svg-defs" aria-hidden="true"><defs><path id="sticker-ring" d="M50 50m-37 0a37 37 0 1 1 74 0a37 37 0 1 1-74 0" /></defs></svg>
     <div class="card-grid">
@@ -209,19 +217,57 @@
     </div>
 </section>
 
-<section class="week popular-coffees">
+<section id="popular">
     <h2><a class="section-link" href="#">Popular</a></h2>
     <div class="card-grid">
         @foreach (var coffee in Model.PopularCoffees)
         {
             <partial name="_CoffeeCard" model="coffee" />
         }
-        <aside class="guarantee-card">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.35-5.65M20 4v5h-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>
-            <h3>We'll refund the money or replace it</h3>
-            <p>If you don't like the coffee, we'll replace it for free or refund your payment.</p>
-            <p>Just write to us, and we'll resolve the issue in your favor.</p>
+        <aside>
+            <div class="guarantee-card">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.35-5.65M20 4v5h-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                <h3>We'll refund the money or replace it</h3>
+                <p>If you don't like the coffee, we'll replace it for free or refund your payment.</p>
+                <p>Just write to us, and we'll resolve the issue in your favor.</p>
+            </div>
         </aside>
+    </div>
+</section>
+
+<section id="sets">
+    <h2><a class="section-link" href="#">Sets</a></h2>
+    <div class="card-grid">
+        @foreach (var set in Model.Sets)
+        {
+            <partial name="_SetCard" model="set" />
+        }
+    </div>
+</section>
+
+<section id="reviews">
+    <h2><a class="section-link" href="#">Reviews</a></h2>
+    <div class="review-stats">
+        <div class="stat">
+            <div class="stat-value">@Model.ReviewCount</div>
+            <div class="stat-label">reviews</div>
+        </div>
+        <div class="stat">
+            <div class="stat-value">@Model.ShopRating</div>
+            <div class="stat-star">★</div>
+            <div class="stat-label">Average<br>shop rating</div>
+        </div>
+        <div class="stat">
+            <div class="stat-value">@Model.DeliveryRating</div>
+            <div class="stat-star">★</div>
+            <div class="stat-label">Average<br>delivery rating</div>
+        </div>
+    </div>
+    <div class="review-grid">
+        @foreach (var review in Model.Reviews)
+        {
+            <partial name="_ReviewCard" model="review" />
+        }
     </div>
 </section>
 
