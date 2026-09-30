@@ -154,14 +154,14 @@ public class HomeController : Controller
     [
         new()
         {
-            Name = "Stas", Level = "Newcomer", Initial = "S", Date = "14.08.2026",
+            Name = "Bagdagul", Level = "Newcomer", Initial = "B", Date = "14.08.2026",
             ShopStars = 5, ShopText = "I'm happy with it",
             DeliveryStars = 5, DeliveryText = "Fast",
             Comment = "Everything is as good as always, especially the coffee"
         },
         new()
         {
-            Name = "Sergey", Level = "Newcomer", Initial = "S", Date = "13.07.2026",
+            Name = "Cavanshir", Level = "Newcomer", Initial = "C", Date = "13.07.2026",
             ShopStars = 5, ShopText = "This was my first time at Janz. I liked everything. The welcome discount is nice too.",
             DeliveryStars = 5, DeliveryText = "Delivery was fast. I'm happy.",
             Comment = "I liked the coffee. So far I'm happy with everything."
