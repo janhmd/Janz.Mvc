@@ -192,7 +192,14 @@ public class HomeController : Controller
         Acidity = 72,
         OldPrice = "₼32.50",
         Price = "₼29.90",
-        DeliveryWhen = "3 – 6 October"
+        DeliveryWhen = "3 – 6 October",
+        Roast = "Espresso",
+        Region = "Ethiopia",
+        Process = "Blend",
+        Roaster = "Loring S70 Peregrine",
+        Caffeine = "1.24%",
+        Summary = "An espresso blend of 100% arabica from two Ethiopian coffees, one natural and one washed, mixed in equal parts.",
+        Taste = "A light coffee with notes of flowers, dark berries and citrus."
     };
 
     public IActionResult Privacy()

@@ -111,6 +111,48 @@
             </div>
         </div>
     </div>
+
+    <div class="coffee-tabs">
+        <button type="button" class="is-on">Description</button>
+        <button type="button">Comments 688</button>
+        <button type="button">Recipes 46</button>
+        <button type="button">Where to try</button>
+    </div>
+
+    <h2>Details</h2>
+    <div class="facts">
+        <div><span>Roast level</span><strong>@Model.Roast</strong></div>
+        <div><span>Region</span><strong>@Model.Region</strong></div>
+        <div><span>Processing</span><strong>@Model.Process</strong></div>
+        <div><span>Roaster</span><strong>@Model.Roaster</strong></div>
+        <div><span>Caffeine</span><strong>@Model.Caffeine</strong></div>
+    </div>
+
+    <h2>Description</h2>
+    <div class="coffee-copy">
+        <p>@Model.Summary</p>
+        <p>@Model.Taste</p>
+        <p>You can read more about coffee from Ethiopia <a href="#">in the article</a>.</p>
+    </div>
+
+    <h2>Brewing</h2>
+    <div class="brew-grid">
+        <a href="#">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 8h10v8H5zM15 10h3a2 2 0 0 1 0 4h-3" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
+            <span>Espresso machine</span>
+            <small>Open the guide</small>
+        </a>
+        <a href="#">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 9h6l-1 8H9zM9 6h4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+            <span>Turkish coffee</span>
+            <small>Open the guide</small>
+        </a>
+        <a href="#">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 10h10v6a3 3 0 0 1-3 3H10a3 3 0 0 1-3-3zM9 7h6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+            <span>Moka pot</span>
+            <small>Open the guide</small>
+        </a>
+    </div>
 </section>
 
 @section Scripts {

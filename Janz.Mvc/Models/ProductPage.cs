@@ -16,4 +16,11 @@ public class ProductPage
     public string? OldPrice { get; set; }
     public string? Price { get; set; }
     public string? DeliveryWhen { get; set; }
+    public string? Roast { get; set; }
+    public string? Region { get; set; }
+    public string? Process { get; set; }
+    public string? Roaster { get; set; }
+    public string? Caffeine { get; set; }
+    public string? Summary { get; set; }
+    public string? Taste { get; set; }
 }
