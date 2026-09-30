@@ -1,6 +1,13 @@
 @model ProductPage
 @{
     ViewData["Title"] = Model.Name;
+    var grinds = new[]
+    {
+        "Whole beans", "For French press (coarse)", "For drip coffee maker (coarse)", "For Chemex (coarse)",
+        "For pour-over (medium)", "For AeroPress (medium)", "For moka pot (medium)", "For espresso, coarse (medium)",
+        "For espresso, fine (fine)", "For Turkish coffee (fine)", "For a cup (medium)"
+    };
+    var photos = new[] { "floral.png", "floral-bag.png", "floral-beans.jpg" };
 }
 
 <section id="coffee">
@@ -11,5 +18,147 @@
         <span>·</span>
         <span>@Model.Name</span>
     </div>
-    <h1>@Model.Name</h1>
+
+    <div class="coffee-layout">
+        <div class="gallery">
+            <div class="thumbs">
+                @for (var i = 0; i < photos.Length; i++)
+                {
+                    <button type="button" class="@(i == 0 ? "is-on" : null)">
+                        <img src="@Url.Content("~/images/" + photos[i])" alt="" />
+                    </button>
+                }
+            </div>
+            <img class="gallery-photo" src="@Url.Content("~/images/floral.png")" alt="@Model.Name coffee" />
+        </div>
+
+        <div class="coffee-buy">
+            <div class="coffee-meta">
+                <div class="rating">
+                    <span class="rating-item"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.9l-5.2 2.7 1-5.8-4.3-4.1 5.9-.9z" /></svg>@Model.Rating</span>
+                    <span class="rating-item"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11.5a8 8 0 0 1-11.6 7.1L4 20l1.4-4.2A8 8 0 1 1 20 11.5z" /></svg>@Model.Reviews</span>
+                </div>
+                @if (Model.CoffeeOfTheWeek)
+                {
+                    <div class="badges"><span>Coffee of the week</span></div>
+                }
+                @if (Model.Tag != null)
+                {
+                    <div class="tag-note">@Model.Tag</div>
+                }
+            </div>
+            <div class="coffee-use">@Model.Use</div>
+            <h1>@Model.Name</h1>
+            <div class="kind">@Model.Kind</div>
+            <div class="taste">
+                @Model.TasteLead
+                @for (var i = 0; i < Model.Notes.Length; i++)
+                {
+                    <text><span class="note @Model.Notes[i].CssClass">@Model.Notes[i].Name</span>@(i < Model.Notes.Length - 2 ? ", " : i == Model.Notes.Length - 2 ? " and " : "")</text>
+                }
+            </div>
+            <div class="meters">
+                <div>
+                    <span>Density</span>
+                    <i><b style="width:@(Model.Density)%"></b></i>
+                </div>
+                <div>
+                    <span>Acidity</span>
+                    <i><b style="width:@(Model.Acidity)%"></b></i>
+                </div>
+            </div>
+            <div class="formats">
+                <button type="button" class="is-on">Pack</button>
+                <button type="button">Nespresso capsules, 10 pcs</button>
+                <button type="button">Nespresso capsules, 40 pcs</button>
+            </div>
+            <div class="cheaper">
+                <div>
+                    <div class="cheaper-title">Sign in, and it gets cheaper</div>
+                    <div class="cheaper-note">More discounts in your account</div>
+                </div>
+                <a href="#" aria-label="Sign in">→</a>
+            </div>
+            <div class="buy-row">
+                <button type="button" class="weight is-on">250 g <small>-15%</small></button>
+                <button type="button" class="weight">1000 g <small>-20%</small></button>
+                <details class="grind click-menu">
+                    <summary><span>@grinds[0]</span></summary>
+                    <div class="grind-list">
+                        <p>Grind</p>
+                        @foreach (var grind in grinds)
+                        {
+                            <button type="button" class="@(grind == grinds[0] ? "is-on" : null)">@grind</button>
+                        }
+                    </div>
+                </details>
+            </div>
+            <div class="price-row">
+                <button type="button" class="price">
+                    <s>@Model.OldPrice</s>
+                    <strong>@Model.Price</strong>
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 8h15v11.5a1.5 1.5 0 0 1-1.5 1.5H6a1.5 1.5 0 0 1-1.5-1.5z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" /><path d="M9 8V6.5a3 3 0 0 1 6 0V8M9.3 14.2l1.9 1.9 3.6-3.8" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                </button>
+                <span class="product-actions">
+                    <button type="button" aria-label="Add to wishlist"><svg viewBox="0 0 24 24"><path d="M12 19s-7-4.4-7-9a4 4 0 0 1 7-2 4 4 0 0 1 7 2c0 4.6-7 9-7 9z" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></button>
+                    <button type="button" aria-label="Compare"><svg viewBox="0 0 24 24"><path d="M12 3v15M8 20h8M4.5 7h15" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M4.5 7l-2.2 4.2a2.6 2.6 0 0 0 4.4 0zM19.5 7l-2.2 4.2a2.6 2.6 0 0 0 4.4 0z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg></button>
+                    <button type="button" aria-label="Product details"><svg viewBox="0 0 24 24"><path d="M7 3h7l4 4v14H7z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M14 3v4h4M9.5 12h5M9.5 15.5h5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></button>
+                </span>
+            </div>
+            <div class="arrives">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7h11v8H3zM14 10h4l3 3v2h-7z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><circle cx="7" cy="17.5" r="1.4" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="17" cy="17.5" r="1.4" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
+                We'll deliver @Model.DeliveryWhen
+            </div>
+        </div>
+    </div>
 </section>
+
+@section Scripts {
+    <script>
+        var photo = document.querySelector(".gallery-photo");
+        var weightThumbs = document.querySelectorAll(".thumbs button");
+        weightThumbs.forEach(function (thumb) {
+            thumb.addEventListener("click", function () {
+                weightThumbs.forEach(function (item) {
+                    item.classList.toggle("is-on", item === thumb);
+                });
+                photo.src = thumb.querySelector("img").src;
+            });
+        });
+
+        document.querySelectorAll(".formats, .coffee-buy .buy-row").forEach(function (group) {
+            var buttons = group.querySelectorAll(":scope > button:not(.weight-info)");
+            buttons.forEach(function (button) {
+                button.addEventListener("click", function () {
+                    buttons.forEach(function (item) {
+                        item.classList.toggle("is-on", item === button);
+                    });
+                });
+            });
+        });
+
+        document.querySelectorAll(".coffee-buy .weight").forEach(function (button, index) {
+            button.addEventListener("click", function () {
+                var thumb = weightThumbs[index];
+                if (!thumb) return;
+                weightThumbs.forEach(function (item) {
+                    item.classList.toggle("is-on", item === thumb);
+                });
+                photo.src = thumb.querySelector("img").src;
+            });
+        });
+
+        document.querySelectorAll("#coffee .grind").forEach(function (menu) {
+            var label = menu.querySelector("summary span");
+            menu.querySelectorAll(".grind-list button").forEach(function (option) {
+                option.addEventListener("click", function () {
+                    menu.querySelectorAll(".grind-list button").forEach(function (item) {
+                        item.classList.toggle("is-on", item === option);
+                    });
+                    label.textContent = option.textContent;
+                    menu.removeAttribute("open");
+                });
+            });
+        });
+    </script>
+}

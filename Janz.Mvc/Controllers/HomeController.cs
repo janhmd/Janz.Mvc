@@ -32,7 +32,7 @@ public class HomeController : Controller
         if (!string.Equals(id, "floral", StringComparison.OrdinalIgnoreCase))
             return NotFound();
 
-        return View(new ProductPage { Name = "Floral" });
+        return View(FloralPage);
     }
 
     private static readonly CoffeeCard[] NewCoffees =
@@ -176,6 +176,24 @@ public class HomeController : Controller
             Comment = "I liked the coffee. So far I'm happy with everything."
         }
     ];
+
+    private static readonly ProductPage FloralPage = new()
+    {
+        Name = "Floral",
+        Kind = "Blend",
+        Use = "For espresso",
+        Rating = "4.6",
+        Reviews = "687",
+        CoffeeOfTheWeek = true,
+        Tag = "Popular",
+        TasteLead = "A light coffee with notes of",
+        Notes = [new("flowers", "note-flowers"), new("dark berries", "note-berries"), new("citrus", "note-citrus")],
+        Density = 38,
+        Acidity = 72,
+        OldPrice = "₼32.50",
+        Price = "₼29.90",
+        DeliveryWhen = "3 – 6 October"
+    };
 
     public IActionResult Privacy()
     {

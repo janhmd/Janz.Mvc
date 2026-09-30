@@ -1252,6 +1252,128 @@ a { color: inherit; text-decoration: none; }
     text-transform: uppercase;
 }
 
+.coffee-layout {
+    display: grid;
+    grid-template-columns: 1.05fr .95fr;
+    gap: 2.2rem;
+    align-items: start;
+}
+
+.gallery {
+    display: grid;
+    grid-template-columns: 86px 1fr;
+    gap: 1rem;
+}
+
+.thumbs {
+    display: flex;
+    flex-direction: column;
+    gap: .55rem;
+}
+
+.thumbs button {
+    padding: .3rem;
+    border: 1px solid #2a2a2a;
+    border-radius: 14px;
+    background: #141414;
+    cursor: pointer;
+}
+
+.thumbs button.is-on { border-color: #fff; }
+
+.thumbs img {
+    display: block;
+    width: 100%;
+    height: 72px;
+    object-fit: contain;
+}
+
+.gallery-photo {
+    width: 100%;
+    height: 460px;
+    object-fit: contain;
+}
+
+.coffee-meta,
+.coffee-use { color: #cfcfcf; font-size: .82rem; }
+
+.coffee-meta {
+    display: flex;
+    align-items: center;
+    gap: .7rem;
+}
+
+#coffee .taste {
+    margin: .8rem 0 0;
+    text-align: left;
+    font-size: .95rem;
+}
+
+#coffee .coffee-buy .note-flowers { background: #d9a3c7; color: #1a1014; }
+#coffee .coffee-buy .note-berries { background: #6b2f55; color: #fff; }
+#coffee .coffee-buy .note-citrus { background: #f2c230; color: #1a1406; }
+
+#coffee .meters { margin: 1rem 0 1.1rem; }
+
+.formats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .45rem;
+    margin-bottom: .9rem;
+}
+
+.formats button {
+    height: 36px;
+    padding: 0 .8rem;
+    border: 1px solid #333;
+    border-radius: 999px;
+    background: #161616;
+    color: #fff;
+    font: inherit;
+    font-size: .8rem;
+    cursor: pointer;
+}
+
+.formats button.is-on { border-color: #fff; background: #fff; color: #111; }
+
+.cheaper {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: .9rem;
+    padding: .75rem .9rem;
+    border: 1px solid #2a2a2a;
+    border-radius: 16px;
+}
+
+.cheaper-title { font-weight: 700; }
+.cheaper-note { color: #9a9a9a; font-size: .82rem; }
+
+.cheaper a {
+    display: grid;
+    place-items: center;
+    width: 42px;
+    height: 42px;
+    border: 1px solid #333;
+    border-radius: 12px;
+    font-size: 1.2rem;
+}
+
+#coffee .buy-row { margin-bottom: .15rem; }
+#coffee .coffee-buy .product-actions { opacity: 1; visibility: visible; }
+
+.arrives {
+    display: flex;
+    align-items: center;
+    gap: .45rem;
+    margin-top: .85rem;
+    color: #d0d0d0;
+    font-size: .9rem;
+}
+
+.arrives svg { width: 22px; height: 22px; }
+
 @media (max-width: 1100px) {
     .site-header { gap: 1rem; padding: 0 1.2rem; }
     .site-header nav { gap: .9rem; }
@@ -1274,6 +1396,10 @@ a { color: inherit; text-decoration: none; }
     .week-row,
     .card-grid,
     .review-grid,
-    .site-footer { grid-template-columns: 1fr; }
+    .site-footer,
+    .coffee-layout { grid-template-columns: 1fr; }
+    .gallery { grid-template-columns: 1fr; }
+    .thumbs { flex-direction: row; }
+    .gallery-photo { height: 280px; }
     .roast-card { grid-column: auto; }
 }
