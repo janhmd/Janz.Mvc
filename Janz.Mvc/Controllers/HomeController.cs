@@ -27,6 +27,14 @@ public class HomeController : Controller
         });
     }
 
+    public IActionResult Product(string id)
+    {
+        if (!string.Equals(id, "floral", StringComparison.OrdinalIgnoreCase))
+            return NotFound();
+
+        return View(new ProductPage { Name = "Floral" });
+    }
+
     private static readonly CoffeeCard[] NewCoffees =
     [
         new()
@@ -95,7 +103,8 @@ public class HomeController : Controller
             Image = "floral.png", CoffeeOfTheWeek = true, Tag = "Popular",
             TasteLead = "A light coffee with notes of",
             Notes = [new("flowers", "note-flowers"), new("dark berries", "note-berries"), new("citrus", "note-citrus")],
-            Density = 38, Acidity = 72, SmallDiscount = "-15%", LargeDiscount = "-20%", OldPrice = "₼32.50", Price = "₼29.90"
+            Density = 38, Acidity = 72, SmallDiscount = "-15%", LargeDiscount = "-20%",
+            OldPrice = "₼32.50", Price = "₼29.90", Link = "/Home/Product/floral"
         },
         new()
         {

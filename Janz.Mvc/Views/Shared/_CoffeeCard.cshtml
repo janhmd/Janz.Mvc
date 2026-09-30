@@ -30,7 +30,7 @@
         </div>
     </div>
     <div class="product-head">
-        <h3><a class="product-link" href="#">@Model.Name</a></h3>
+        <h3><a class="product-link" href="@(string.IsNullOrEmpty(Model.Link) ? "#" : Model.Link)">@Model.Name</a></h3>
         <div class="kind">@Model.Kind</div>
     </div>
     <div class="photo-wrap">

@@ -1,0 +1,15 @@
+@model ProductPage
+@{
+    ViewData["Title"] = Model.Name;
+}
+
+<section id="coffee">
+    <div class="crumb">
+        <a asp-action="Index">Home</a>
+        <span>·</span>
+        <a href="#">Coffee</a>
+        <span>·</span>
+        <span>@Model.Name</span>
+    </div>
+    <h1>@Model.Name</h1>
+</section>

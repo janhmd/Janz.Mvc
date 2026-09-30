@@ -39,4 +39,5 @@ public class CoffeeCard
     public string? LargeDiscount { get; set; }
     public string? OldPrice { get; set; }
     public string? Price { get; set; }
+    public string? Link { get; set; }
 }
