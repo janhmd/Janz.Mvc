@@ -32,6 +32,11 @@ public class HomeController : Controller
         return View();
     }
 
+    public IActionResult Tea()
+    {
+        return View();
+    }
+
     public IActionResult Product(string id)
     {
         if (!string.Equals(id, "floral", StringComparison.OrdinalIgnoreCase))

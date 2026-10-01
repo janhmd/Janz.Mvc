@@ -16,10 +16,10 @@
 
         <nav aria-label="Main">
             <div class="nav-drop">
-                <a asp-controller="Home" asp-action="Catalog">Buy</a>
+                <a class="menu-toggle" href="#">Buy</a>
                 <div class="menu-panel">
-                    <a href="#">Coffee</a>
-                    <a href="#">Accessories and merch</a>
+                    <a asp-controller="Home" asp-action="Catalog">Coffee</a>
+                    <a asp-controller="Home" asp-action="Tea">Tea</a>
                     <a href="#">Chocolate and syrups</a>
                     <a href="#">Sets</a>
                 </div>
@@ -81,8 +81,8 @@
             </div>
             <div class="footer-col">
                 <div class="footer-title">Catalog</div>
-                <a href="#">Coffee</a>
-                <a href="#">Accessories and merch</a>
+                <a asp-controller="Home" asp-action="Catalog">Coffee</a>
+                <a asp-controller="Home" asp-action="Tea">Tea</a>
                 <a href="#">Chocolate and syrups</a>
                 <a href="#">Sets</a>
             </div>
@@ -117,6 +117,7 @@
     @await RenderSectionAsync("Scripts", required: false)
     <script>
         document.addEventListener("click", function (event) {
+            if (event.target.closest(".menu-toggle")) event.preventDefault();
             document.querySelectorAll(".click-menu[open]").forEach(function (menu) {
                 if (!menu.contains(event.target)) menu.removeAttribute("open");
             });
