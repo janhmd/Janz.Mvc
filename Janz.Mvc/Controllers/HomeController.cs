@@ -27,6 +27,11 @@ public class HomeController : Controller
         });
     }
 
+    public IActionResult Catalog()
+    {
+        return View();
+    }
+
     public IActionResult Product(string id)
     {
         if (!string.Equals(id, "floral", StringComparison.OrdinalIgnoreCase))

@@ -1501,6 +1501,154 @@ a { color: inherit; text-decoration: none; }
 #coffee .related .product { height: 100%; }
 #coffee .related .buy-row { margin-top: auto; }
 
+#catalog {
+    padding: 2rem 2.4rem 3rem;
+}
+
+#catalog h1 {
+    margin: 0 0 1.1rem;
+    font-size: 1.7rem;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    text-transform: uppercase;
+}
+
+.catalog-row {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: .7rem;
+}
+
+.catalog-tile {
+    position: relative;
+    display: grid;
+    place-items: center;
+    min-height: 150px;
+    padding: 1rem .55rem;
+    border-radius: 18px;
+    overflow: hidden;
+    color: #fff;
+    text-align: center;
+    transition: transform .25s ease;
+}
+
+.catalog-tile:hover { transform: translateY(-4px); }
+.catalog-tile:active { transform: translateY(-1px); }
+
+.catalog-tile video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.catalog-tile::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, rgba(0,0,0,.35), rgba(0,0,0,.2) 40%, rgba(0,0,0,.55));
+}
+
+.catalog-tile span {
+    position: relative;
+    z-index: 1;
+    font-size: .92rem;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1.05;
+    text-transform: uppercase;
+}
+
+.catalog-tags {
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: .5rem;
+    max-height: 36px;
+    margin-top: 1rem;
+    overflow: hidden;
+    transition: max-height .3s ease;
+}
+
+.catalog-tags.has-more { padding-right: calc(36px + .5rem); }
+
+.catalog-tags.is-open {
+    max-height: 22rem;
+    padding-right: 0;
+}
+
+.catalog-tags a,
+.catalog-tags button {
+    display: inline-flex;
+    align-items: center;
+    gap: .35rem;
+    height: 36px;
+    padding: 0 .8rem;
+    border: 1px solid #2c2c2c;
+    border-radius: 999px;
+    background: #141414;
+    color: #eee;
+    font: inherit;
+    font-size: .82rem;
+    cursor: pointer;
+    transition: background-color .2s ease, border-color .2s ease, color .2s ease, transform .2s ease;
+}
+
+.catalog-tags a:hover,
+.catalog-tags button:hover {
+    background: #242424;
+    border-color: var(--gold);
+    color: #fff;
+}
+
+.catalog-tags a:active,
+.catalog-tags button:active { transform: scale(.97); }
+
+.catalog-tags .tag-minute {
+    border-color: transparent;
+    background:
+        linear-gradient(#121212, #121212) padding-box,
+        linear-gradient(90deg, #7dffb3, #e7c56a, #f28cff, #7dffb3) border-box;
+    background-size: 100% 100%, 220% 100%;
+    animation: tag-flow 3.5s linear infinite;
+}
+
+.catalog-tags .tag-minute:hover {
+    border-color: transparent;
+    background:
+        linear-gradient(#1e1e1e, #1e1e1e) padding-box,
+        linear-gradient(90deg, #7dffb3, #e7c56a, #f28cff, #7dffb3) border-box;
+    background-size: 100% 100%, 220% 100%;
+}
+
+.catalog-tags .tag-minute svg { transition: transform .25s ease; }
+.catalog-tags .tag-minute:hover svg { transform: rotate(18deg) scale(1.1); }
+
+@keyframes tag-flow {
+    to { background-position: 0 0, 100% 0; }
+}
+
+.catalog-tags svg { width: 16px; height: 16px; fill: currentColor; }
+.catalog-tags button { display: none; width: 36px; padding: 0; justify-content: center; }
+.catalog-tags button svg { fill: none; transition: transform .25s ease; }
+.catalog-tags.has-more button,
+.catalog-tags.is-open button { display: inline-flex; }
+.catalog-tags.has-more button { position: absolute; top: 0; right: 0; }
+.catalog-tags.is-open button { position: static; }
+.catalog-tags.is-open button svg { transform: rotate(180deg); }
+
+@media (prefers-reduced-motion: reduce) {
+    .catalog-tile,
+    .catalog-tags,
+    .catalog-tags a,
+    .catalog-tags button,
+    .catalog-tags button svg,
+    .catalog-tags .tag-minute svg { transition: none; }
+    .catalog-tags .tag-minute { animation: none; }
+}
+
 @media (max-width: 1100px) {
     .site-header { gap: 1rem; padding: 0 1.2rem; }
     .site-header nav { gap: .9rem; }
@@ -1510,12 +1658,14 @@ a { color: inherit; text-decoration: none; }
     #popular,
     #sets,
     #reviews,
-    #coffee { padding-left: 1.2rem; padding-right: 1.2rem; }
+    #coffee,
+    #catalog { padding-left: 1.2rem; padding-right: 1.2rem; }
     #hero { padding-top: 2rem; padding-bottom: 2rem; }
     .hero-row,
     .week-row,
     .card-grid,
-    #coffee .cols-3 { grid-template-columns: 1fr 1fr; }
+    #coffee .cols-3,
+    .catalog-row { grid-template-columns: 1fr 1fr; }
     .roast-card { grid-column: 1 / -1; min-height: 320px; }
 }
 
@@ -1524,6 +1674,7 @@ a { color: inherit; text-decoration: none; }
     .week-row,
     .card-grid,
     #coffee .cols-3,
+    .catalog-row,
     .review-grid,
     .site-footer,
     .coffee-layout,

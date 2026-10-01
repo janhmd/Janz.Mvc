@@ -1,0 +1,82 @@
+@{
+    ViewData["Title"] = "Coffee catalog";
+    var kinds = new[]
+    {
+        new { Name = "Coffee for espresso", Video = "espresso.mp4" },
+        new { Name = "Coffee for filter", Video = "filter.mp4" },
+        new { Name = "Capsules", Video = "capsules.mp4" },
+        new { Name = "Drip bags", Video = "drip.mp4" },
+        new { Name = "Drinks in cans", Video = "cans.mp4" },
+        new { Name = "Coffee concentrate", Video = "concentrate.mp4" },
+        new { Name = "Instant specialty", Video = "instant.mp4" }
+    };
+}
+
+<section id="catalog">
+    <h1>Coffee catalog</h1>
+    <div class="catalog-row">
+        @foreach (var kind in kinds)
+        {
+            <a class="catalog-tile" href="#">
+                <video muted loop playsinline preload="metadata" src="@Url.Content("~/videos/" + kind.Video)"></video>
+                <span>@kind.Name</span>
+            </a>
+        }
+    </div>
+    <div class="catalog-tags">
+        <a class="tag-minute" href="#">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l1.2 4.2L17.5 8.5 13.2 9.8 12 14l-1.2-4.2L6.5 8.5l4.3-1.3zM18 13l.6 2 2 .6-2 .6-.6 2-.6-2-2-.6 2-.6z" /></svg>
+            Choose coffee in a minute
+        </a>
+        <a href="#">For an espresso machine</a>
+        <a href="#">For Turkish coffee</a>
+        <a href="#">For milk drinks</a>
+        <a href="#">For a portafilter</a>
+        <a href="#">Ground coffee</a>
+        <a href="#">Coffee with low acidity</a>
+        <a href="#">For a cup</a>
+        <a href="#">Fermented coffee</a>
+        <a href="#">Limited edition</a>
+        <a href="#">Whole bean</a>
+        <a href="#">Whole bean 1 kg</a>
+        <button type="button" aria-expanded="false" aria-label="More filters">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+    </div>
+</section>
+
+@section Scripts {
+    <script>
+        document.querySelectorAll(".catalog-tile").forEach(function (card) {
+            var video = card.querySelector("video");
+            card.addEventListener("mouseenter", function () {
+                video.play();
+            });
+            card.addEventListener("mouseleave", function () {
+                video.pause();
+                video.currentTime = 0;
+            });
+        });
+
+        var tags = document.querySelector(".catalog-tags");
+        var more = tags.querySelector("button");
+
+        function fitTags() {
+            if (tags.classList.contains("is-open")) return;
+            tags.classList.remove("has-more");
+            tags.classList.toggle("has-more", tags.scrollHeight > tags.clientHeight + 1);
+        }
+
+        more.addEventListener("click", function () {
+            var open = tags.classList.toggle("is-open");
+            more.setAttribute("aria-expanded", open ? "true" : "false");
+        });
+
+        tags.addEventListener("transitionend", function (e) {
+            if (e.propertyName === "max-height" && !tags.classList.contains("is-open")) fitTags();
+        });
+
+        fitTags();
+        window.addEventListener("resize", fitTags);
+    </script>
+}
