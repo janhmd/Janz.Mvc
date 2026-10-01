@@ -177,6 +177,83 @@ public class HomeController : Controller
         }
     ];
 
+    private static readonly CoffeeCard[] AlsoBuy =
+    [
+        new()
+        {
+            Use = "For espresso", Rating = "4.7", Reviews = "3455", Name = "Candy", Kind = "Blend",
+            Image = "candy.png", Tag = "Popular", Sticker = CoffeeSticker.Milk,
+            TasteLead = "A dense coffee with notes of",
+            Notes = [new("dark caramel", "note-dark-caramel"), new("candied fruit", "note-candied"), new("spices", "note-spices")],
+            Density = 88, Acidity = 26, LargeDiscount = "-15%", Price = "₼33.20"
+        },
+        new()
+        {
+            Use = "For espresso", Rating = "4.7", Reviews = "5512", Name = "Nutty", Kind = "Blend",
+            Image = "candy.png", Tag = "Popular", Sticker = CoffeeSticker.Milk,
+            TasteLead = "A dense coffee with notes of",
+            Notes = [new("roasted nuts", "note-nuts"), new("cookies", "note-caramel"), new("nougat", "note-chocolate")],
+            Density = 82, Acidity = 30, LargeDiscount = "-15%", Price = "₼28.80"
+        },
+        new()
+        {
+            Use = "For espresso", Rating = "4.7", Reviews = "1175", Name = "Brownie", Kind = "Blend",
+            Image = "candy.png", Tag = "Recommended", Sticker = CoffeeSticker.Milk,
+            TasteLead = "A dense coffee with notes of",
+            Notes = [new("dark chocolate", "note-dark-chocolate"), new("raisins", "note-fruit"), new("nut paste", "note-nuts")],
+            Density = 90, Acidity = 16, LargeDiscount = "-13%", Price = "₼32.00"
+        }
+    ];
+
+    private static readonly CoffeeCard Rwanda = new()
+    {
+        Use = "For espresso", Rating = "4.5", Reviews = "157", Name = "Rwanda Kagano", Kind = "Microlot",
+        Image = "floral.png", Sticker = CoffeeSticker.QGrade,
+        TasteLead = "A sweet coffee with notes of",
+        Notes = [new("nectarine", "note-peach"), new("bird cherry", "note-cherry"), new("yellow apple", "note-lemon"), new("prune", "note-berries")],
+        Density = 52, Acidity = 60, LargeDiscount = "-10%", Price = "₼36.00"
+    };
+
+    private static readonly CoffeeCard[] Similar =
+    [
+        new()
+        {
+            Use = "For espresso", Rating = "4.6", Reviews = "511", Name = "Fruity", Kind = "Blend",
+            Image = "floral.png",
+            TasteLead = "A juicy coffee with notes of",
+            Notes = [new("orange", "note-orange"), new("milk chocolate", "note-chocolate"), new("dried fruit", "note-fruit")],
+            Density = 58, Acidity = 46, LargeDiscount = "-15%", Price = "₼33.20"
+        },
+        Rwanda,
+        new()
+        {
+            Use = "Omni", Rating = "4.1", Reviews = "137", Name = "Batch Brew Lowcaf", Kind = "50% caffeine, ethyl acetate + funky",
+            Image = "floral.png",
+            TasteLead = "A bright coffee with notes of",
+            Notes = [new("peach", "note-peach"), new("plum", "note-fruit"), new("dark berries", "note-berries"), new("caramel", "note-caramel")],
+            Density = 44, Acidity = 70, Price = "₼42.80"
+        }
+    ];
+
+    private static readonly CoffeeCard[] Viewed =
+    [
+        Rwanda,
+        new()
+        {
+            Use = "Chocolate and syrups", Rating = "4.7", Reviews = "270", Name = "Marmalade bears with coffee",
+            Image = "aroma-kit.png",
+            TasteLead = "A pack of coffee marmalade bears",
+            Price = "₼6.00"
+        },
+        new()
+        {
+            Use = "For filter", Rating = "4.5", Reviews = "2466", Name = "Batch Brew", Kind = "Blend",
+            Image = "guatemala.png", Tag = "Popular",
+            TasteLead = "A sweet", Notes = [new("fruity", "note-fruity")], TasteTail = "coffee made for batch brew",
+            Density = 60, Acidity = 62, LargeDiscount = "-15%", Price = "₼33.90"
+        }
+    ];
+
     private static readonly ProductPage FloralPage = new()
     {
         Name = "Floral",
@@ -199,7 +276,11 @@ public class HomeController : Controller
         Roaster = "Loring S70 Peregrine",
         Caffeine = "1.24%",
         Summary = "An espresso blend of 100% arabica from two Ethiopian coffees, one natural and one washed, mixed in equal parts.",
-        Taste = "A light coffee with notes of flowers, dark berries and citrus."
+        Taste = "A light coffee with notes of flowers, dark berries and citrus.",
+        AlsoBuy = AlsoBuy,
+        Similar = Similar,
+        Viewed = Viewed,
+        ViewedSet = Sets[0]
     };
 
     public IActionResult Privacy()

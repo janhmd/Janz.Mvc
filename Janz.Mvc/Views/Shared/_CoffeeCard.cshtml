@@ -60,16 +60,19 @@
         }
         @Model.TasteTail
     </div>
-    <div class="meters">
-        <div>
-            <span>Density</span>
-            <i><b style="width:@(Model.Density)%"></b></i>
+    @if (Model.Density > 0 || Model.Acidity > 0)
+    {
+        <div class="meters">
+            <div>
+                <span>Density</span>
+                <i><b style="width:@(Model.Density)%"></b></i>
+            </div>
+            <div>
+                <span>Acidity</span>
+                <i><b style="width:@(Model.Acidity)%"></b></i>
+            </div>
         </div>
-        <div>
-            <span>Acidity</span>
-            <i><b style="width:@(Model.Acidity)%"></b></i>
-        </div>
-    </div>
+    }
     <div class="buy-row">
         <button type="button" class="weight is-on">250 g @if (Model.SmallDiscount != null) { <small>@Model.SmallDiscount</small> }</button>
         <button type="button" class="weight">1000 g @if (Model.LargeDiscount != null) { <small>@Model.LargeDiscount</small> }</button>

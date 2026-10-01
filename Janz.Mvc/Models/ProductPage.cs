@@ -23,4 +23,8 @@ public class ProductPage
     public string? Caffeine { get; set; }
     public string? Summary { get; set; }
     public string? Taste { get; set; }
+    public CoffeeCard[] AlsoBuy { get; set; } = [];
+    public CoffeeCard[] Similar { get; set; } = [];
+    public CoffeeCard[] Viewed { get; set; } = [];
+    public SetCard? ViewedSet { get; set; }
 }

@@ -1488,6 +1488,19 @@ a { color: inherit; text-decoration: none; }
 .promise-grid { grid-template-columns: 1fr 1fr; }
 .promise a { color: #8eb4ff; font-size: .9rem; }
 
+#coffee .related { margin-top: 2.4rem; }
+
+#coffee .related h2 {
+    margin: 2rem 0 .9rem;
+    font-size: 1.7rem;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+}
+
+#coffee .cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+#coffee .related .product { height: 100%; }
+#coffee .related .buy-row { margin-top: auto; }
+
 @media (max-width: 1100px) {
     .site-header { gap: 1rem; padding: 0 1.2rem; }
     .site-header nav { gap: .9rem; }
@@ -1501,7 +1514,8 @@ a { color: inherit; text-decoration: none; }
     #hero { padding-top: 2rem; padding-bottom: 2rem; }
     .hero-row,
     .week-row,
-    .card-grid { grid-template-columns: 1fr 1fr; }
+    .card-grid,
+    #coffee .cols-3 { grid-template-columns: 1fr 1fr; }
     .roast-card { grid-column: 1 / -1; min-height: 320px; }
 }
 
@@ -1509,6 +1523,7 @@ a { color: inherit; text-decoration: none; }
     .hero-row,
     .week-row,
     .card-grid,
+    #coffee .cols-3,
     .review-grid,
     .site-footer,
     .coffee-layout,

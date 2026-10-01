@@ -189,6 +189,38 @@
             </div>
         </div>
     </div>
+
+    <div class="related">
+        <h2>Also buy</h2>
+        <div class="card-grid cols-3">
+            @foreach (var card in Model.AlsoBuy)
+            {
+                <partial name="_CoffeeCard" model="card" />
+            }
+        </div>
+
+        <h2><a class="section-link" href="#">Similar products</a></h2>
+        <div class="card-grid cols-3">
+            @foreach (var card in Model.Similar)
+            {
+                <partial name="_CoffeeCard" model="card" />
+            }
+        </div>
+
+        <h2>You viewed</h2>
+        <div class="card-grid">
+            @foreach (var card in Model.Viewed)
+            {
+                <partial name="_CoffeeCard" model="card" />
+            }
+            @if (Model.ViewedSet != null)
+            {
+                <partial name="_SetCard" model="Model.ViewedSet" />
+            }
+        </div>
+    </div>
+
+    <svg class="svg-defs" aria-hidden="true"><defs><path id="sticker-ring" d="M50 50m-37 0a37 37 0 1 1 74 0a37 37 0 1 1-74 0" /></defs></svg>
 </section>
 
 @section Scripts {
@@ -204,7 +236,7 @@
             });
         });
 
-        document.querySelectorAll(".formats, .coffee-buy .buy-row").forEach(function (group) {
+        document.querySelectorAll(".formats, .buy-row").forEach(function (group) {
             var buttons = group.querySelectorAll(":scope > button:not(.weight-info)");
             buttons.forEach(function (button) {
                 button.addEventListener("click", function () {
