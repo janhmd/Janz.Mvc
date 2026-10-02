@@ -37,6 +37,11 @@ public class HomeController : Controller
         return View();
     }
 
+    public IActionResult Chocolate()
+    {
+        return View();
+    }
+
     public IActionResult Product(string id)
     {
         if (!string.Equals(id, "floral", StringComparison.OrdinalIgnoreCase))

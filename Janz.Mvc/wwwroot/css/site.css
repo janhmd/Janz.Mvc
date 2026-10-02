@@ -287,7 +287,11 @@ a { color: inherit; text-decoration: none; }
     overflow: hidden;
     color: #fff;
     text-align: center;
+    transition: transform .25s ease;
 }
+
+.shot:hover { transform: translateY(-4px); }
+.shot:active { transform: translateY(-1px); }
 
 .shot video {
     position: absolute;
@@ -361,10 +365,16 @@ a { color: inherit; text-decoration: none; }
     font-weight: 700;
     letter-spacing: .04em;
     text-transform: uppercase;
+    transition: transform .2s ease, border-color .2s ease, background-color .2s ease;
 }
 
 .account-signin { background: #fff; color: #111; }
 .account-register { background: #1c1c1c; color: #fff; border: 1px solid #333; }
+.account-signin:hover,
+.account-register:hover { transform: translateY(-2px); }
+.account-register:hover { border-color: var(--gold); }
+.account-signin:active,
+.account-register:active { transform: scale(.97); }
 
 #week,
 #new,
@@ -633,8 +643,14 @@ a { color: inherit; text-decoration: none; }
     padding: 0 .65rem;
     border-radius: 999px;
     font-size: .75rem;
+    cursor: pointer;
+    transition: border-color .2s ease, color .2s ease, transform .2s ease, background-color .2s ease;
 }
 
+.weight:hover,
+.grind > summary:hover { border-color: var(--gold); transform: translateY(-2px); }
+.weight:active,
+.grind > summary:active { transform: scale(.97); }
 .weight.is-on { border-color: #fff; }
 
 .weight small { color: #d7c4a3; }
@@ -710,9 +726,11 @@ a { color: inherit; text-decoration: none; }
     font-size: .85rem;
     text-align: left;
     cursor: pointer;
+    transition: background-color .2s ease, color .2s ease, transform .2s ease;
 }
 
-.grind-list button:hover { background: #222; }
+.grind-list button:hover { background: #222; color: var(--gold); transform: translateX(4px); }
+.grind-list button:active { transform: scale(.98); }
 
 .grind-list button.is-on { color: #8f8f8f; }
 
@@ -758,9 +776,11 @@ a { color: inherit; text-decoration: none; }
     height: 36px;
     border-radius: 10px;
     cursor: pointer;
+    transition: border-color .2s ease, color .2s ease, transform .2s ease;
 }
 
-.product-actions button:hover { border-color: #fff; }
+.product-actions button:hover { border-color: var(--gold); color: var(--gold); transform: translateY(-2px); }
+.product-actions button:active { transform: scale(.94); }
 
 .product-actions svg {
     width: 17px;
@@ -777,7 +797,11 @@ a { color: inherit; text-decoration: none; }
     padding: 0 .75rem;
     border-radius: 999px;
     cursor: pointer;
+    transition: border-color .2s ease, transform .2s ease;
 }
+
+.price:hover { border-color: var(--gold); transform: translateY(-2px); }
+.price:active { transform: scale(.97); }
 
 .price small {
     padding: .1rem .35rem;
@@ -1060,7 +1084,11 @@ a { color: inherit; text-decoration: none; }
     color: #111;
     font-size: 1rem;
     cursor: pointer;
+    transition: transform .2s ease, background-color .2s ease;
 }
+
+.roast-nav button:hover { transform: translateY(-2px) scale(1.06); }
+.roast-nav button:active { transform: scale(.94); }
 
 .review-stats {
     display: flex;
@@ -1277,8 +1305,11 @@ a { color: inherit; text-decoration: none; }
     border-radius: 14px;
     background: #141414;
     cursor: pointer;
+    transition: border-color .2s ease, transform .2s ease;
 }
 
+.thumbs button:hover { border-color: var(--gold); transform: translateY(-2px); }
+.thumbs button:active { transform: scale(.97); }
 .thumbs button.is-on { border-color: #fff; }
 
 .thumbs img {
@@ -1332,8 +1363,11 @@ a { color: inherit; text-decoration: none; }
     font: inherit;
     font-size: .8rem;
     cursor: pointer;
+    transition: border-color .2s ease, background-color .2s ease, color .2s ease, transform .2s ease;
 }
 
+.formats button:hover { border-color: var(--gold); transform: translateY(-2px); }
+.formats button:active { transform: scale(.97); }
 .formats button.is-on { border-color: #fff; background: #fff; color: #111; }
 
 .cheaper {
@@ -1394,9 +1428,13 @@ a { color: inherit; text-decoration: none; }
     font: inherit;
     font-size: .82rem;
     cursor: pointer;
+    transition: background-color .2s ease, color .2s ease, transform .2s ease;
 }
 
+.coffee-tabs button:hover { color: #fff; transform: translateY(-2px); }
+.coffee-tabs button:active { transform: scale(.97); }
 .coffee-tabs button.is-on { background: #2a2a2a; color: #fff; }
+.coffee-tabs button.is-on:hover { color: #fff; }
 
 #coffee h2 {
     margin: 1.6rem 0 .7rem;
@@ -1762,7 +1800,8 @@ a { color: inherit; text-decoration: none; }
 .listing-sort { display: inline-block; margin-top: .9rem; }
 
 #catalog .listing-sort select,
-#tea .listing-sort select {
+#tea .listing-sort select,
+#chocolate .listing-sort select {
     height: 42px;
     min-width: 220px;
     padding: 0 2.2rem 0 .9rem;
@@ -1778,13 +1817,16 @@ a { color: inherit; text-decoration: none; }
 }
 
 #catalog .listing-sort select:hover,
-#tea .listing-sort select:hover { border-color: var(--gold); transform: translateY(-1px); }
+#tea .listing-sort select:hover,
+#chocolate .listing-sort select:hover { border-color: var(--gold); transform: translateY(-1px); }
 
-#tea {
+#tea,
+#chocolate {
     padding: 2rem 2.4rem 3rem;
 }
 
-#tea h1 {
+#tea h1,
+#chocolate h1 {
     margin: 0 0 1.1rem;
     font-size: 1.7rem;
     font-weight: 800;
@@ -1813,7 +1855,20 @@ a { color: inherit; text-decoration: none; }
     #catalog .filter-options,
     #catalog .listing-tabs button,
     #catalog .listing-sort select,
-    #tea .listing-sort select { transition: none; }
+    #tea .listing-sort select,
+    #chocolate .listing-sort select,
+    .shot,
+    .account-signin,
+    .account-register,
+    .weight,
+    .grind > summary,
+    .grind-list button,
+    .product-actions button,
+    .price,
+    .thumbs button,
+    .formats button,
+    .coffee-tabs button,
+    .roast-nav button { transition: none; }
     .catalog-tags .tag-minute { animation: none; }
 }
 
@@ -1828,7 +1883,8 @@ a { color: inherit; text-decoration: none; }
     #reviews,
     #coffee,
     #catalog,
-    #tea { padding-left: 1.2rem; padding-right: 1.2rem; }
+    #tea,
+    #chocolate { padding-left: 1.2rem; padding-right: 1.2rem; }
     #hero { padding-top: 2rem; padding-bottom: 2rem; }
     .hero-row,
     .week-row,

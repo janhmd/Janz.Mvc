@@ -1,0 +1,49 @@
+@{
+    ViewData["Title"] = "Chocolate and syrups";
+    var kinds = new[]
+    {
+        new { Name = "Chocolate bars", Video = "choc-bars.mp4" },
+        new { Name = "Chocolate shavings", Video = "choc-shavings.mp4" },
+        new { Name = "Syrups", Video = "choc-syrup.mp4" },
+        new { Name = "Dry syrups", Video = "choc-dry-syrup.mp4" },
+        new { Name = "Dry bases", Video = "choc-dry-base.mp4" }
+    };
+}
+
+<section id="chocolate">
+    <h1>Chocolate and syrups</h1>
+    <div class="gear-row">
+        @foreach (var kind in kinds)
+        {
+            <a class="catalog-tile" href="#">
+                <video muted loop playsinline preload="metadata" src="@Url.Content("~/videos/" + kind.Video)"></video>
+                <span>@kind.Name</span>
+            </a>
+        }
+    </div>
+    <label class="listing-sort">
+        <select aria-label="Sort">
+            <option value="" selected>Sort</option>
+            <option value="popular">Popular</option>
+            <option value="new">New</option>
+            <option value="price-asc">Price, low to high</option>
+            <option value="price-desc">Price, high to low</option>
+            <option value="rating">Rating</option>
+        </select>
+    </label>
+</section>
+
+@section Scripts {
+    <script>
+        document.querySelectorAll("#chocolate .catalog-tile").forEach(function (card) {
+            var video = card.querySelector("video");
+            card.addEventListener("mouseenter", function () {
+                video.play();
+            });
+            card.addEventListener("mouseleave", function () {
+                video.pause();
+                video.currentTime = 0;
+            });
+        });
+    </script>
+}
