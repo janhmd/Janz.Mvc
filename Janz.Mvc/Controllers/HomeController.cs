@@ -54,6 +54,18 @@ public class HomeController : Controller
         return View("Reviews");
     }
 
+    [HttpGet]
+    public IActionResult SignIn()
+    {
+        return View();
+    }
+
+    [HttpPost]
+    public IActionResult SignIn(string email, string password, bool remember)
+    {
+        return View();
+    }
+
     public IActionResult Product(string id)
     {
         if (!string.Equals(id, "floral", StringComparison.OrdinalIgnoreCase))

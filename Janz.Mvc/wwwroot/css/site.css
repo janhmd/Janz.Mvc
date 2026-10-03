@@ -1825,14 +1825,16 @@ a { color: inherit; text-decoration: none; }
 #tea,
 #chocolate,
 #bundles,
-#feedback {
+#feedback,
+#signin {
     padding: 2rem 2.4rem 3rem;
 }
 
 #tea h1,
 #chocolate h1,
 #bundles h1,
-#feedback h1 {
+#feedback h1,
+#signin h1 {
     margin: 0 0 1.1rem;
     font-size: 1.7rem;
     font-weight: 800;
@@ -1845,6 +1847,109 @@ a { color: inherit; text-decoration: none; }
     color: #8a8a8a;
     font-weight: 700;
 }
+
+#signin {
+    display: flex;
+    justify-content: center;
+}
+
+.entry-card {
+    width: 100%;
+    max-width: 420px;
+}
+
+#signin h1 { margin-bottom: 1.4rem; }
+
+#signin form {
+    display: flex;
+    flex-direction: column;
+    gap: .75rem;
+}
+
+.entry-field {
+    position: relative;
+    display: block;
+}
+
+.entry-field input {
+    width: 100%;
+    height: 52px;
+    padding: 0 1.1rem;
+    border: 1px solid #2c2c2c;
+    border-radius: 999px;
+    background: #141414;
+    color: #fff;
+    font: inherit;
+    font-size: .95rem;
+}
+
+.entry-field input::placeholder { color: #8d8d8d; }
+
+.entry-field input:focus {
+    outline: none;
+    border-color: var(--gold);
+}
+
+.entry-field input[type="password"],
+.entry-field input[name="password"] { padding-right: 3.2rem; }
+
+.entry-eye {
+    position: absolute;
+    top: 50%;
+    right: .7rem;
+    width: 36px;
+    height: 36px;
+    display: grid;
+    place-items: center;
+    border: 0;
+    background: transparent;
+    color: #cfcfcf;
+    cursor: pointer;
+    transform: translateY(-50%);
+}
+
+.entry-eye svg { width: 20px; height: 20px; }
+.entry-eye:hover { color: #fff; }
+
+#signin .account-signin,
+#signin .account-register { width: 100%; }
+
+.entry-forgot {
+    align-self: flex-start;
+    color: #cfcfcf;
+    font-size: .92rem;
+}
+
+.entry-forgot:hover { color: #fff; }
+
+.entry-remember {
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+    color: #dedede;
+    font-size: .92rem;
+    cursor: pointer;
+}
+
+.entry-remember input {
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    margin: 0;
+    flex: 0 0 18px;
+    border: 1.5px solid #8d8d8d;
+    border-radius: 4px;
+    background: transparent;
+    cursor: pointer;
+}
+
+.entry-remember input:checked {
+    border-color: #fff;
+    background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3.2 8.2l3 3 6.6-7' fill='none' stroke='%23111' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 14px no-repeat;
+}
+
+.entry-remember:hover { color: #fff; }
+.entry-remember:hover input { border-color: var(--gold); }
 
 .feedback-board {
     display: grid;
@@ -1925,6 +2030,9 @@ a { color: inherit; text-decoration: none; }
     .shot,
     .account-signin,
     .account-register,
+    .entry-field input,
+    .entry-eye,
+    .entry-remember input,
     .weight,
     .grind > summary,
     .grind-list button,
@@ -1951,7 +2059,8 @@ a { color: inherit; text-decoration: none; }
     #tea,
     #chocolate,
     #bundles,
-    #feedback { padding-left: 1.2rem; padding-right: 1.2rem; }
+    #feedback,
+    #signin { padding-left: 1.2rem; padding-right: 1.2rem; }
     #hero { padding-top: 2rem; padding-bottom: 2rem; }
     .hero-row,
     .week-row,
