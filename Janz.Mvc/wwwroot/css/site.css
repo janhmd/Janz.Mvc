@@ -1801,7 +1801,8 @@ a { color: inherit; text-decoration: none; }
 
 #catalog .listing-sort select,
 #tea .listing-sort select,
-#chocolate .listing-sort select {
+#chocolate .listing-sort select,
+#bundles .listing-sort select {
     height: 42px;
     min-width: 220px;
     padding: 0 2.2rem 0 .9rem;
@@ -1818,15 +1819,18 @@ a { color: inherit; text-decoration: none; }
 
 #catalog .listing-sort select:hover,
 #tea .listing-sort select:hover,
-#chocolate .listing-sort select:hover { border-color: var(--gold); transform: translateY(-1px); }
+#chocolate .listing-sort select:hover,
+#bundles .listing-sort select:hover { border-color: var(--gold); transform: translateY(-1px); }
 
 #tea,
-#chocolate {
+#chocolate,
+#bundles {
     padding: 2rem 2.4rem 3rem;
 }
 
 #tea h1,
-#chocolate h1 {
+#chocolate h1,
+#bundles h1 {
     margin: 0 0 1.1rem;
     font-size: 1.7rem;
     font-weight: 800;
@@ -1857,6 +1861,7 @@ a { color: inherit; text-decoration: none; }
     #catalog .listing-sort select,
     #tea .listing-sort select,
     #chocolate .listing-sort select,
+    #bundles .listing-sort select,
     .shot,
     .account-signin,
     .account-register,
@@ -1884,7 +1889,8 @@ a { color: inherit; text-decoration: none; }
     #coffee,
     #catalog,
     #tea,
-    #chocolate { padding-left: 1.2rem; padding-right: 1.2rem; }
+    #chocolate,
+    #bundles { padding-left: 1.2rem; padding-right: 1.2rem; }
     #hero { padding-top: 2rem; padding-bottom: 2rem; }
     .hero-row,
     .week-row,

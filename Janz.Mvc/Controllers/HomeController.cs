@@ -42,6 +42,12 @@ public class HomeController : Controller
         return View();
     }
 
+    [ActionName("Sets")]
+    public IActionResult SetsPage()
+    {
+        return View("Sets");
+    }
+
     public IActionResult Product(string id)
     {
         if (!string.Equals(id, "floral", StringComparison.OrdinalIgnoreCase))

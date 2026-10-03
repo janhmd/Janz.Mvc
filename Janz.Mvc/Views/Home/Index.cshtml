@@ -6,15 +6,14 @@
 <section id="hero">
     <h1>Every day we roast coffee and<br>deliver for free all over Azerbaijan</h1>
     <div class="hero-row">
-        <a class="shot" href="#">
+        <a class="shot" asp-controller="Home" asp-action="Catalog">
             <video muted loop playsinline preload="metadata" src="@Url.Content("~/videos/espresso.mp4")"></video>
-            <span>Coffee for espresso</span>
+            <span>Coffee</span>
             <small>45</small>
         </a>
-        <a class="shot" href="#">
-            <video muted loop playsinline preload="metadata" src="@Url.Content("~/videos/filter.mp4")"></video>
-            <span>Coffee for filter</span>
-            <small>45</small>
+        <a class="shot" asp-controller="Home" asp-action="Chocolate">
+            <video muted loop playsinline preload="metadata" src="@Url.Content("~/videos/choc-syrup.mp4")"></video>
+            <span>Syrups</span>
         </a>
         <a class="shot" asp-controller="Home" asp-action="Tea">
             <video muted loop playsinline preload="metadata" src="@Url.Content("~/videos/tea.mp4")"></video>
@@ -235,7 +234,7 @@
 </section>
 
 <section id="sets">
-    <h2><a class="section-link" href="#">Sets</a></h2>
+    <h2><a class="section-link" asp-controller="Home" asp-action="Sets">Sets</a></h2>
     <div class="card-grid">
         @foreach (var set in Model.Sets)
         {
