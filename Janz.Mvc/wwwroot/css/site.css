@@ -1824,19 +1824,79 @@ a { color: inherit; text-decoration: none; }
 
 #tea,
 #chocolate,
-#bundles {
+#bundles,
+#feedback {
     padding: 2rem 2.4rem 3rem;
 }
 
 #tea h1,
 #chocolate h1,
-#bundles h1 {
+#bundles h1,
+#feedback h1 {
     margin: 0 0 1.1rem;
     font-size: 1.7rem;
     font-weight: 800;
     letter-spacing: -0.03em;
     text-transform: uppercase;
 }
+
+#feedback h1 span {
+    margin-left: .35rem;
+    color: #8a8a8a;
+    font-weight: 700;
+}
+
+.feedback-board {
+    display: grid;
+    grid-template-columns: minmax(240px, 320px) 1fr;
+    gap: 2.5rem 4rem;
+    align-items: center;
+    max-width: 980px;
+}
+
+.score-block + .score-block { margin-top: 1.45rem; }
+
+.score-block p {
+    margin: 0 0 .45rem;
+    color: #c8c8c8;
+    font-size: .95rem;
+}
+
+.score-block ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.score-block li {
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+    margin: .12rem 0;
+}
+
+.score-stars {
+    color: #3d3d3d;
+    letter-spacing: .12em;
+    font-size: .95rem;
+    line-height: 1;
+}
+
+.score-stars .is-on { color: #f5b400; }
+
+.score-count {
+    color: #d5d5d5;
+    font-size: .92rem;
+    font-variant-numeric: tabular-nums;
+}
+
+.feedback-scores {
+    display: flex;
+    align-items: flex-end;
+    gap: 3.4rem;
+}
+
+.opinion-list { margin-top: 2.4rem; }
 
 .gear-row {
     display: grid;
@@ -1890,7 +1950,8 @@ a { color: inherit; text-decoration: none; }
     #catalog,
     #tea,
     #chocolate,
-    #bundles { padding-left: 1.2rem; padding-right: 1.2rem; }
+    #bundles,
+    #feedback { padding-left: 1.2rem; padding-right: 1.2rem; }
     #hero { padding-top: 2rem; padding-bottom: 2rem; }
     .hero-row,
     .week-row,
@@ -1912,7 +1973,9 @@ a { color: inherit; text-decoration: none; }
     .review-grid,
     .site-footer,
     .coffee-layout,
-    .promise-grid { grid-template-columns: 1fr; }
+    .promise-grid,
+    .feedback-board { grid-template-columns: 1fr; }
+    .feedback-scores { flex-wrap: wrap; gap: 1.6rem; }
     .gallery { grid-template-columns: 1fr; }
     .thumbs { flex-direction: row; }
     .gallery-photo { height: 280px; }

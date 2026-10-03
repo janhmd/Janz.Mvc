@@ -1,0 +1,74 @@
+@{
+    ViewData["Title"] = "Reviews";
+    var shop = new[]
+    {
+        new { Stars = 5, Count = "0" },
+        new { Stars = 4, Count = "0" },
+        new { Stars = 3, Count = "0" },
+        new { Stars = 2, Count = "0" },
+        new { Stars = 1, Count = "0" }
+    };
+    var delivery = new[]
+    {
+        new { Stars = 5, Count = "0" },
+        new { Stars = 4, Count = "0" },
+        new { Stars = 3, Count = "0" },
+        new { Stars = 2, Count = "0" },
+        new { Stars = 1, Count = "0" }
+    };
+}
+
+<section id="feedback">
+    <h1>Reviews <span>44,828</span></h1>
+    <div class="feedback-board">
+        <div class="score-groups">
+            <div class="score-block">
+                <p>With a shop rating</p>
+                <ul>
+                    @foreach (var row in shop)
+                    {
+                        <li>
+                            <span class="score-stars" aria-label="@row.Stars stars">
+                                @for (var star = 1; star <= 5; star++)
+                                {
+                                    <span class="@(star <= row.Stars ? "is-on" : null)">★</span>
+                                }
+                            </span>
+                            <span class="score-count">@row.Count</span>
+                        </li>
+                    }
+                </ul>
+            </div>
+            <div class="score-block">
+                <p>With a delivery rating</p>
+                <ul>
+                    @foreach (var row in delivery)
+                    {
+                        <li>
+                            <span class="score-stars" aria-label="@row.Stars stars">
+                                @for (var star = 1; star <= 5; star++)
+                                {
+                                    <span class="@(star <= row.Stars ? "is-on" : null)">★</span>
+                                }
+                            </span>
+                            <span class="score-count">@row.Count</span>
+                        </li>
+                    }
+                </ul>
+            </div>
+        </div>
+        <div class="feedback-scores">
+            <div class="stat">
+                <div class="stat-value">4.9</div>
+                <div class="stat-star">★</div>
+                <div class="stat-label">Average<br>shop rating</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value">4.7</div>
+                <div class="stat-star">★</div>
+                <div class="stat-label">Average<br>delivery rating</div>
+            </div>
+        </div>
+    </div>
+    <div class="opinion-list" aria-label="Customer comments"></div>
+</section>
