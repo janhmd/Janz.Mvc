@@ -1,274 +1,467 @@
-@model ProductPage
 @{
-    ViewData["Title"] = Model.Name;
-    var grinds = new[]
-    {
-        "Whole beans", "For French press (coarse)", "For drip coffee maker (coarse)", "For Chemex (coarse)",
-        "For pour-over (medium)", "For AeroPress (medium)", "For moka pot (medium)", "For espresso, coarse (medium)",
-        "For espresso, fine (fine)", "For Turkish coffee (fine)", "For a cup (medium)"
-    };
-    var photos = new[] { "floral.png", "floral-bag.png", "floral-beans.jpg" };
+    ViewData["Title"] = "Floral";
 }
 
-<section id="coffee">
-    <div class="crumb">
-        <a asp-action="Index">Home</a>
-        <span>·</span>
-        <a href="#">Coffee</a>
-        <span>·</span>
-        <span>@Model.Name</span>
-    </div>
+<main>
+        <section id="coffee">
+            <div class="crumb">
+                <a href="/">Home</a>
+                <span>·</span>
+                <a href="/Home/Catalog">Coffee</a>
+                <span>·</span>
+                <span>Floral</span>
+            </div>
 
-    <div class="coffee-layout">
-        <div class="gallery">
-            <div class="thumbs">
-                @for (var i = 0; i < photos.Length; i++)
-                {
-                    <button type="button" class="@(i == 0 ? "is-on" : null)">
-                        <img src="@Url.Content("~/images/" + photos[i])" alt="" />
-                    </button>
-                }
-            </div>
-            <img class="gallery-photo" src="@Url.Content("~/images/floral.png")" alt="@Model.Name coffee" />
-        </div>
-
-        <div class="coffee-buy">
-            <div class="coffee-meta">
-                <div class="rating">
-                    <span class="rating-item"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.9l-5.2 2.7 1-5.8-4.3-4.1 5.9-.9z" /></svg>@Model.Rating</span>
-                    <span class="rating-item"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11.5a8 8 0 0 1-11.6 7.1L4 20l1.4-4.2A8 8 0 1 1 20 11.5z" /></svg>@Model.Reviews</span>
-                </div>
-                @if (Model.CoffeeOfTheWeek)
-                {
-                    <div class="badges"><span>Coffee of the week</span></div>
-                }
-                @if (Model.Tag != null)
-                {
-                    <div class="tag-note">@Model.Tag</div>
-                }
-            </div>
-            <div class="coffee-use">@Model.Use</div>
-            <h1>@Model.Name</h1>
-            <div class="kind">@Model.Kind</div>
-            <div class="taste">
-                @Model.TasteLead
-                @for (var i = 0; i < Model.Notes.Length; i++)
-                {
-                    <text><span class="note @Model.Notes[i].CssClass">@Model.Notes[i].Name</span>@(i < Model.Notes.Length - 2 ? ", " : i == Model.Notes.Length - 2 ? " and " : "")</text>
-                }
-            </div>
-            <div class="meters">
-                <div>
-                    <span>Density</span>
-                    <i><b style="width:@(Model.Density)%"></b></i>
-                </div>
-                <div>
-                    <span>Acidity</span>
-                    <i><b style="width:@(Model.Acidity)%"></b></i>
-                </div>
-            </div>
-            <div class="formats">
-                <button type="button" class="is-on">Pack</button>
-                <button type="button">Nespresso capsules, 10 pcs</button>
-                <button type="button">Nespresso capsules, 40 pcs</button>
-            </div>
-            <div class="cheaper">
-                <div>
-                    <div class="cheaper-title">Sign in, and it gets cheaper</div>
-                    <div class="cheaper-note">More discounts in your account</div>
-                </div>
-                <a asp-controller="Home" asp-action="SignIn" aria-label="Sign in">→</a>
-            </div>
-            <div class="buy-row">
-                <button type="button" class="weight is-on">250 g <small>-15%</small></button>
-                <button type="button" class="weight">1000 g <small>-20%</small></button>
-                <details class="grind click-menu">
-                    <summary><span>@grinds[0]</span></summary>
-                    <div class="grind-list">
-                        <p>Grind</p>
-                        @foreach (var grind in grinds)
-                        {
-                            <button type="button" class="@(grind == grinds[0] ? "is-on" : null)">@grind</button>
-                        }
+            <div class="coffee-layout">
+                <div class="gallery">
+                    <div class="thumbs">
+                        <button type="button" class="is-on"><img src="/images/floral.png" alt="" /></button>
+                        <button type="button"><img src="/images/floral-bag.png" alt="" /></button>
+                        <button type="button"><img src="/images/floral-beans.jpg" alt="" /></button>
                     </div>
-                </details>
+                    <img class="gallery-photo" src="/images/floral.png" alt="Floral coffee" />
+                </div>
+
+                <div class="coffee-buy">
+                    <div class="coffee-meta">
+                        <div class="rating">
+                            <span class="rating-item"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.9l-5.2 2.7 1-5.8-4.3-4.1 5.9-.9z" /></svg>4.6</span>
+                            <span class="rating-item"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11.5a8 8 0 0 1-11.6 7.1L4 20l1.4-4.2A8 8 0 1 1 20 11.5z" /></svg>687</span>
+                        </div>
+                        <div class="badges"><span>Coffee of the week</span></div>
+                        <div class="tag-note">Popular</div>
+                    </div>
+                    <div class="coffee-use">For espresso</div>
+                    <h1>Floral</h1>
+                    <div class="kind">Blend</div>
+                    <div class="taste">A light coffee with notes of <span class="note note-flowers">flowers</span>, <span class="note note-berries">dark berries</span> and <span class="note note-citrus">citrus</span></div>
+                    <div class="meters">
+                        <div><span>Density</span><i><b style="width:38%"></b></i></div>
+                        <div><span>Acidity</span><i><b style="width:72%"></b></i></div>
+                    </div>
+                    <div class="formats">
+                        <button type="button" class="is-on">Pack</button>
+                        <button type="button">Nespresso capsules, 10 pcs</button>
+                        <button type="button">Nespresso capsules, 40 pcs</button>
+                    </div>
+                    <div class="cheaper">
+                        <div>
+                            <div class="cheaper-title">Sign in, and it gets cheaper</div>
+                            <div class="cheaper-note">More discounts in your account</div>
+                        </div>
+                        <a href="/Home/SignIn" aria-label="Sign in">→</a>
+                    </div>
+                    <div class="buy-row">
+                        <button type="button" class="weight is-on">250 g <small>-15%</small></button>
+                        <button type="button" class="weight">1000 g <small>-20%</small></button>
+                        <details class="grind click-menu">
+                            <summary><span>Whole beans</span></summary>
+                            <div class="grind-list">
+                                <p>Grind</p>
+                                <button type="button" class="is-on">Whole beans</button>
+                                <button type="button">For French press (coarse)</button>
+                                <button type="button">For drip coffee maker (coarse)</button>
+                                <button type="button">For Chemex (coarse)</button>
+                                <button type="button">For pour-over (medium)</button>
+                                <button type="button">For AeroPress (medium)</button>
+                                <button type="button">For moka pot (medium)</button>
+                                <button type="button">For espresso, coarse (medium)</button>
+                                <button type="button">For espresso, fine (fine)</button>
+                                <button type="button">For Turkish coffee (fine)</button>
+                                <button type="button">For a cup (medium)</button>
+                            </div>
+                        </details>
+                    </div>
+                    <div class="price-row">
+                        <button type="button" class="price">
+                            <s>₼32.50</s>
+                            <strong>₼29.90</strong>
+                            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 8h15v11.5a1.5 1.5 0 0 1-1.5 1.5H6a1.5 1.5 0 0 1-1.5-1.5z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" /><path d="M9 8V6.5a3 3 0 0 1 6 0V8M9.3 14.2l1.9 1.9 3.6-3.8" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                        </button>
+                        <span class="product-actions">
+                            <button type="button" aria-label="Add to wishlist"><svg viewBox="0 0 24 24"><path d="M12 19s-7-4.4-7-9a4 4 0 0 1 7-2 4 4 0 0 1 7 2c0 4.6-7 9-7 9z" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></button>
+                            <button type="button" aria-label="Compare"><svg viewBox="0 0 24 24"><path d="M12 3v15M8 20h8M4.5 7h15" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M4.5 7l-2.2 4.2a2.6 2.6 0 0 0 4.4 0zM19.5 7l-2.2 4.2a2.6 2.6 0 0 0 4.4 0z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg></button>
+                            <button type="button" aria-label="Product details"><svg viewBox="0 0 24 24"><path d="M7 3h7l4 4v14H7z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M14 3v4h4M9.5 12h5M9.5 15.5h5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></button>
+                        </span>
+                    </div>
+                    <div class="arrives">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7h11v8H3zM14 10h4l3 3v2h-7z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><circle cx="7" cy="17.5" r="1.4" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="17" cy="17.5" r="1.4" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
+                        We'll deliver 3 – 6 October
+                    </div>
+                </div>
             </div>
-            <div class="price-row">
-                <button type="button" class="price">
-                    <s>@Model.OldPrice</s>
-                    <strong>@Model.Price</strong>
-                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 8h15v11.5a1.5 1.5 0 0 1-1.5 1.5H6a1.5 1.5 0 0 1-1.5-1.5z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" /><path d="M9 8V6.5a3 3 0 0 1 6 0V8M9.3 14.2l1.9 1.9 3.6-3.8" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" /></svg>
-                </button>
-                <span class="product-actions">
-                    <button type="button" aria-label="Add to wishlist"><svg viewBox="0 0 24 24"><path d="M12 19s-7-4.4-7-9a4 4 0 0 1 7-2 4 4 0 0 1 7 2c0 4.6-7 9-7 9z" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></button>
-                    <button type="button" aria-label="Compare"><svg viewBox="0 0 24 24"><path d="M12 3v15M8 20h8M4.5 7h15" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M4.5 7l-2.2 4.2a2.6 2.6 0 0 0 4.4 0zM19.5 7l-2.2 4.2a2.6 2.6 0 0 0 4.4 0z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg></button>
-                    <button type="button" aria-label="Product details"><svg viewBox="0 0 24 24"><path d="M7 3h7l4 4v14H7z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M14 3v4h4M9.5 12h5M9.5 15.5h5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></button>
-                </span>
+
+            <div class="coffee-tabs">
+                <button type="button" class="is-on">Description</button>
+                <button type="button">Comments 688</button>
+                <button type="button">Recipes 46</button>
+                <button type="button">Where to try</button>
             </div>
-            <div class="arrives">
-                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7h11v8H3zM14 10h4l3 3v2h-7z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><circle cx="7" cy="17.5" r="1.4" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="17" cy="17.5" r="1.4" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
-                We'll deliver @Model.DeliveryWhen
+
+            <h2>Details</h2>
+            <div class="facts">
+                <div><span>Roast level</span><strong>Espresso</strong></div>
+                <div><span>Region</span><strong>Ethiopia</strong></div>
+                <div><span>Processing</span><strong>Blend</strong></div>
+                <div><span>Roaster</span><strong>Loring S70 Peregrine</strong></div>
+                <div><span>Caffeine</span><strong>1.24%</strong></div>
             </div>
-        </div>
-    </div>
 
-    <div class="coffee-tabs">
-        <button type="button" class="is-on">Description</button>
-        <button type="button">Comments 688</button>
-        <button type="button">Recipes 46</button>
-        <button type="button">Where to try</button>
-    </div>
-
-    <h2>Details</h2>
-    <div class="facts">
-        <div><span>Roast level</span><strong>@Model.Roast</strong></div>
-        <div><span>Region</span><strong>@Model.Region</strong></div>
-        <div><span>Processing</span><strong>@Model.Process</strong></div>
-        <div><span>Roaster</span><strong>@Model.Roaster</strong></div>
-        <div><span>Caffeine</span><strong>@Model.Caffeine</strong></div>
-    </div>
-
-    <h2>Description</h2>
-    <div class="coffee-copy">
-        <p>@Model.Summary</p>
-        <p>@Model.Taste</p>
-        <p>You can read more about coffee from Ethiopia <a href="#">in the article</a>.</p>
-    </div>
-
-    <h2>Brewing</h2>
-    <div class="brew-grid">
-        <a href="#">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 8h10v8H5zM15 10h3a2 2 0 0 1 0 4h-3" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
-            <span>Espresso machine</span>
-            <small>Open the guide</small>
-        </a>
-        <a href="#">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 9h6l-1 8H9zM9 6h4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
-            <span>Turkish coffee</span>
-            <small>Open the guide</small>
-        </a>
-        <a href="#">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 10h10v6a3 3 0 0 1-3 3H10a3 3 0 0 1-3-3zM9 7h6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
-            <span>Moka pot</span>
-            <small>Open the guide</small>
-        </a>
-    </div>
-
-    <h2>Storage</h2>
-    <div class="store-grid">
-        <div>
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 8h12l-1 11H7zM8 8V6h8v2" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
-            <strong>At room temperature</strong>
-            <p>In a closed pack at room temperature, coffee keeps for 1–2 months.</p>
-            <p>After you open the pack that time gets shorter, so buy only as much as you will drink in one or two weeks.</p>
-            <p>After grinding, freshness fades in minutes, not days. Grind the beans right before brewing.</p>
-        </div>
-        <div>
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l2 3h3l-1 3 2 3h-3l-1 3-2-3H7l2-3-1-3h3z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
-            <strong>In the freezer</strong>
-            <p>In a closed pack in the freezer, coffee keeps for a long time.</p>
-            <p>Keep it away from other food, or the coffee can take on that smell. You can freeze it, but thaw it only once, for 10–12 hours at room temperature before brewing. Do not freeze it again.</p>
-        </div>
-    </div>
-
-    <div class="promise-grid">
-        <div>
-            <h2>Delivery</h2>
-            <div class="promise">
-                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7h11v8H3zM14 10h4l3 3v2h-7z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><circle cx="7" cy="17.5" r="1.4" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="17" cy="17.5" r="1.4" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
-                <p>You can place an order from ₼24, and we will deliver it to any city, to a pickup point or to your door.</p>
-                <p>The delivery cost is calculated in the cart. It depends on your city, the amount and the weight. We almost always deliver for free.</p>
+            <h2>Description</h2>
+            <div class="coffee-copy">
+                <p>An espresso blend of 100% arabica from two Ethiopian coffees, one natural and one washed, mixed in equal parts.</p>
+                <p>A light coffee with notes of flowers, dark berries and citrus.</p>
+                <p>You can read more about coffee from Ethiopia <a href="#">in the article</a>.</p>
             </div>
-        </div>
-        <div>
-            <h2>Guarantee</h2>
-            <div class="promise">
-                <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M8.5 12.2l2.2 2.2 4.8-5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                <p>We roast this coffee every day. If you don't like it, we will replace it for free or refund your payment.</p>
-                <a href="#">How does it work?</a>
+
+            <h2>Brewing</h2>
+            <div class="brew-grid">
+                <a href="#">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 8h10v8H5zM15 10h3a2 2 0 0 1 0 4h-3" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
+                    <span>Espresso machine</span>
+                    <small>Open the guide</small>
+                </a>
+                <a href="#">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 9h6l-1 8H9zM9 6h4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+                    <span>Turkish coffee</span>
+                    <small>Open the guide</small>
+                </a>
+                <a href="#">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 10h10v6a3 3 0 0 1-3 3H10a3 3 0 0 1-3-3zM9 7h6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+                    <span>Moka pot</span>
+                    <small>Open the guide</small>
+                </a>
             </div>
-        </div>
-    </div>
 
-    <div class="related">
-        <h2>Also buy</h2>
-        <div class="card-grid cols-3">
-            @foreach (var card in Model.AlsoBuy)
-            {
-                <partial name="_CoffeeCard" model="card" />
-            }
-        </div>
+            <h2>Storage</h2>
+            <div class="store-grid">
+                <div>
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 8h12l-1 11H7zM8 8V6h8v2" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+                    <strong>At room temperature</strong>
+                    <p>In a closed pack at room temperature, coffee keeps for 1–2 months.</p>
+                    <p>After you open the pack that time gets shorter, so buy only as much as you will drink in one or two weeks.</p>
+                    <p>After grinding, freshness fades in minutes, not days. Grind the beans right before brewing.</p>
+                </div>
+                <div>
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l2 3h3l-1 3 2 3h-3l-1 3-2-3H7l2-3-1-3h3z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+                    <strong>In the freezer</strong>
+                    <p>In a closed pack in the freezer, coffee keeps for a long time.</p>
+                    <p>Keep it away from other food, or the coffee can take on that smell. You can freeze it, but thaw it only once, for 10–12 hours at room temperature before brewing. Do not freeze it again.</p>
+                </div>
+            </div>
 
-        <h2><a class="section-link" href="#">Similar products</a></h2>
-        <div class="card-grid cols-3">
-            @foreach (var card in Model.Similar)
-            {
-                <partial name="_CoffeeCard" model="card" />
-            }
-        </div>
+            <div class="promise-grid">
+                <div>
+                    <h2>Delivery</h2>
+                    <div class="promise">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7h11v8H3zM14 10h4l3 3v2h-7z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><circle cx="7" cy="17.5" r="1.4" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="17" cy="17.5" r="1.4" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
+                        <p>You can place an order from ₼24, and we will deliver it to any city, to a pickup point or to your door.</p>
+                        <p>The delivery cost is calculated in the cart. It depends on your city, the amount and the weight. We almost always deliver for free.</p>
+                    </div>
+                </div>
+                <div>
+                    <h2>Guarantee</h2>
+                    <div class="promise">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M8.5 12.2l2.2 2.2 4.8-5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        <p>We roast this coffee every day. If you don't like it, we will replace it for free or refund your payment.</p>
+                        <a href="#">How does it work?</a>
+                    </div>
+                </div>
+            </div>
 
-        <h2>You viewed</h2>
-        <div class="card-grid">
-            @foreach (var card in Model.Viewed)
-            {
-                <partial name="_CoffeeCard" model="card" />
-            }
-            @if (Model.ViewedSet != null)
-            {
-                <partial name="_SetCard" model="Model.ViewedSet" />
-            }
-        </div>
-    </div>
+            <div class="related">
+                <h2>Also buy</h2>
+                <div class="card-grid cols-3">
+                    <article>
+                        <div class="product">
+                            <div class="product-top">
+                                <p>For espresso</p>
+                                <div class="product-meta">
+                                    <div class="rating">
+                                        <span class="rating-item"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.9l-5.2 2.7 1-5.8-4.3-4.1 5.9-.9z" /></svg>4.7</span>
+                                        <span class="rating-item"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11.5a8 8 0 0 1-11.6 7.1L4 20l1.4-4.2A8 8 0 1 1 20 11.5z" /></svg>3455</span>
+                                    </div>
+                                    <div class="tag-note">Popular</div>
+                                </div>
+                            </div>
+                            <div class="product-head">
+                                <h3><a class="product-link" href="#">Candy</a></h3>
+                                <div class="kind">Blend</div>
+                            </div>
+                            <div class="photo-wrap">
+                                <img class="product-photo" src="/images/candy.png" alt="Candy espresso coffee" />
+                            </div>
+                            <div class="taste">A dense coffee with notes of <span class="note note-dark-caramel">dark caramel</span>, <span class="note note-candied">candied fruit</span> and <span class="note note-spices">spices</span></div>
+                            <div class="meters">
+                                <div><span>Density</span><i><b style="width:88%"></b></i></div>
+                                <div><span>Acidity</span><i><b style="width:26%"></b></i></div>
+                            </div>
+                            <div class="buy-row">
+                                <button type="button" class="weight is-on">250 g</button>
+                                <button type="button" class="weight">1000 g <small>-15%</small></button>
+                            </div>
+                            <div class="price-row">
+                                <button type="button" class="price"><strong>₼33.20</strong></button>
+                            </div>
+                        </div>
+                    </article>
+                    <article>
+                        <div class="product">
+                            <div class="product-top">
+                                <p>For espresso</p>
+                                <div class="product-meta">
+                                    <div class="rating">
+                                        <span class="rating-item"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.9l-5.2 2.7 1-5.8-4.3-4.1 5.9-.9z" /></svg>4.7</span>
+                                        <span class="rating-item"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11.5a8 8 0 0 1-11.6 7.1L4 20l1.4-4.2A8 8 0 1 1 20 11.5z" /></svg>5512</span>
+                                    </div>
+                                    <div class="tag-note">Popular</div>
+                                </div>
+                            </div>
+                            <div class="product-head">
+                                <h3><a class="product-link" href="#">Nutty</a></h3>
+                                <div class="kind">Blend</div>
+                            </div>
+                            <div class="photo-wrap">
+                                <img class="product-photo" src="/images/candy.png" alt="Nutty espresso coffee" />
+                            </div>
+                            <div class="taste">A dense coffee with notes of <span class="note note-nuts">roasted nuts</span>, <span class="note note-caramel">cookies</span> and <span class="note note-chocolate">nougat</span></div>
+                            <div class="meters">
+                                <div><span>Density</span><i><b style="width:82%"></b></i></div>
+                                <div><span>Acidity</span><i><b style="width:30%"></b></i></div>
+                            </div>
+                            <div class="buy-row">
+                                <button type="button" class="weight is-on">250 g</button>
+                                <button type="button" class="weight">1000 g <small>-15%</small></button>
+                            </div>
+                            <div class="price-row">
+                                <button type="button" class="price"><strong>₼28.80</strong></button>
+                            </div>
+                        </div>
+                    </article>
+                    <article>
+                        <div class="product">
+                            <div class="product-top">
+                                <p>For espresso</p>
+                                <div class="product-meta">
+                                    <div class="rating">
+                                        <span class="rating-item"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.9l-5.2 2.7 1-5.8-4.3-4.1 5.9-.9z" /></svg>4.7</span>
+                                        <span class="rating-item"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11.5a8 8 0 0 1-11.6 7.1L4 20l1.4-4.2A8 8 0 1 1 20 11.5z" /></svg>1175</span>
+                                    </div>
+                                    <div class="tag-note">Recommended</div>
+                                </div>
+                            </div>
+                            <div class="product-head">
+                                <h3><a class="product-link" href="#">Brownie</a></h3>
+                                <div class="kind">Blend</div>
+                            </div>
+                            <div class="photo-wrap">
+                                <img class="product-photo" src="/images/candy.png" alt="Brownie espresso coffee" />
+                            </div>
+                            <div class="taste">A dense coffee with notes of <span class="note note-dark-chocolate">dark chocolate</span>, <span class="note note-fruit">raisins</span> and <span class="note note-nuts">nut paste</span></div>
+                            <div class="meters">
+                                <div><span>Density</span><i><b style="width:90%"></b></i></div>
+                                <div><span>Acidity</span><i><b style="width:16%"></b></i></div>
+                            </div>
+                            <div class="buy-row">
+                                <button type="button" class="weight is-on">250 g</button>
+                                <button type="button" class="weight">1000 g <small>-13%</small></button>
+                            </div>
+                            <div class="price-row">
+                                <button type="button" class="price"><strong>₼32.00</strong></button>
+                            </div>
+                        </div>
+                    </article>
+                </div>
 
-    <svg class="svg-defs" aria-hidden="true"><defs><path id="sticker-ring" d="M50 50m-37 0a37 37 0 1 1 74 0a37 37 0 1 1-74 0" /></defs></svg>
-</section>
+                <h2><a class="section-link" href="#">Similar products</a></h2>
+                <div class="card-grid cols-3">
+                    <article>
+                        <div class="product">
+                            <div class="product-top">
+                                <p>For espresso</p>
+                                <div class="product-meta">
+                                    <div class="rating">
+                                        <span class="rating-item"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.9l-5.2 2.7 1-5.8-4.3-4.1 5.9-.9z" /></svg>4.6</span>
+                                        <span class="rating-item"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11.5a8 8 0 0 1-11.6 7.1L4 20l1.4-4.2A8 8 0 1 1 20 11.5z" /></svg>511</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="product-head">
+                                <h3><a class="product-link" href="#">Fruity</a></h3>
+                                <div class="kind">Blend</div>
+                            </div>
+                            <div class="photo-wrap">
+                                <img class="product-photo" src="/images/floral.png" alt="Fruity espresso coffee" />
+                            </div>
+                            <div class="taste">A juicy coffee with notes of <span class="note note-orange">orange</span>, <span class="note note-chocolate">milk chocolate</span> and <span class="note note-fruit">dried fruit</span></div>
+                            <div class="meters">
+                                <div><span>Density</span><i><b style="width:58%"></b></i></div>
+                                <div><span>Acidity</span><i><b style="width:46%"></b></i></div>
+                            </div>
+                            <div class="buy-row">
+                                <button type="button" class="weight is-on">250 g</button>
+                                <button type="button" class="weight">1000 g <small>-15%</small></button>
+                            </div>
+                            <div class="price-row">
+                                <button type="button" class="price"><strong>₼33.20</strong></button>
+                            </div>
+                        </div>
+                    </article>
+                    <article>
+                        <div class="product">
+                            <div class="product-top">
+                                <p>For espresso</p>
+                                <div class="product-meta">
+                                    <div class="rating">
+                                        <span class="rating-item"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.9l-5.2 2.7 1-5.8-4.3-4.1 5.9-.9z" /></svg>4.5</span>
+                                        <span class="rating-item"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11.5a8 8 0 0 1-11.6 7.1L4 20l1.4-4.2A8 8 0 1 1 20 11.5z" /></svg>157</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="product-head">
+                                <h3><a class="product-link" href="#">Rwanda Kagano</a></h3>
+                                <div class="kind">Microlot</div>
+                            </div>
+                            <div class="photo-wrap">
+                                <img class="product-photo" src="/images/floral.png" alt="Rwanda Kagano coffee" />
+                            </div>
+                            <div class="taste">A sweet coffee with notes of <span class="note note-peach">nectarine</span>, <span class="note note-cherry">bird cherry</span>, <span class="note note-lemon">yellow apple</span> and <span class="note note-berries">prune</span></div>
+                            <div class="meters">
+                                <div><span>Density</span><i><b style="width:52%"></b></i></div>
+                                <div><span>Acidity</span><i><b style="width:60%"></b></i></div>
+                            </div>
+                            <div class="buy-row">
+                                <button type="button" class="weight is-on">250 g</button>
+                                <button type="button" class="weight">1000 g <small>-10%</small></button>
+                            </div>
+                            <div class="price-row">
+                                <button type="button" class="price"><strong>₼36.00</strong></button>
+                            </div>
+                        </div>
+                    </article>
+                    <article>
+                        <div class="product">
+                            <div class="product-top">
+                                <p>Omni</p>
+                                <div class="product-meta">
+                                    <div class="rating">
+                                        <span class="rating-item"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.9l-5.2 2.7 1-5.8-4.3-4.1 5.9-.9z" /></svg>4.1</span>
+                                        <span class="rating-item"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11.5a8 8 0 0 1-11.6 7.1L4 20l1.4-4.2A8 8 0 1 1 20 11.5z" /></svg>137</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="product-head">
+                                <h3><a class="product-link" href="#">Batch Brew Lowcaf</a></h3>
+                                <div class="kind">50% caffeine, ethyl acetate + funky</div>
+                            </div>
+                            <div class="photo-wrap">
+                                <img class="product-photo" src="/images/floral.png" alt="Batch Brew Lowcaf coffee" />
+                            </div>
+                            <div class="taste">A bright coffee with notes of <span class="note note-peach">peach</span>, <span class="note note-fruit">plum</span>, <span class="note note-berries">dark berries</span> and <span class="note note-caramel">caramel</span></div>
+                            <div class="meters">
+                                <div><span>Density</span><i><b style="width:44%"></b></i></div>
+                                <div><span>Acidity</span><i><b style="width:70%"></b></i></div>
+                            </div>
+                            <div class="buy-row">
+                                <button type="button" class="weight is-on">250 g</button>
+                                <button type="button" class="weight">1000 g</button>
+                            </div>
+                            <div class="price-row">
+                                <button type="button" class="price"><strong>₼42.80</strong></button>
+                            </div>
+                        </div>
+                    </article>
+                </div>
 
-@section Scripts {
-    <script>
-        var photo = document.querySelector(".gallery-photo");
-        var weightThumbs = document.querySelectorAll(".thumbs button");
-        weightThumbs.forEach(function (thumb) {
-            thumb.addEventListener("click", function () {
-                weightThumbs.forEach(function (item) {
-                    item.classList.toggle("is-on", item === thumb);
-                });
-                photo.src = thumb.querySelector("img").src;
-            });
-        });
-
-        document.querySelectorAll(".formats, .buy-row").forEach(function (group) {
-            var buttons = group.querySelectorAll(":scope > button:not(.weight-info)");
-            buttons.forEach(function (button) {
-                button.addEventListener("click", function () {
-                    buttons.forEach(function (item) {
-                        item.classList.toggle("is-on", item === button);
-                    });
-                });
-            });
-        });
-
-        document.querySelectorAll(".coffee-buy .weight").forEach(function (button, index) {
-            button.addEventListener("click", function () {
-                var thumb = weightThumbs[index];
-                if (!thumb) return;
-                weightThumbs.forEach(function (item) {
-                    item.classList.toggle("is-on", item === thumb);
-                });
-                photo.src = thumb.querySelector("img").src;
-            });
-        });
-
-        document.querySelectorAll("#coffee .grind").forEach(function (menu) {
-            var label = menu.querySelector("summary span");
-            menu.querySelectorAll(".grind-list button").forEach(function (option) {
-                option.addEventListener("click", function () {
-                    menu.querySelectorAll(".grind-list button").forEach(function (item) {
-                        item.classList.toggle("is-on", item === option);
-                    });
-                    label.textContent = option.textContent;
-                    menu.removeAttribute("open");
-                });
-            });
-        });
-    </script>
-}
+                <h2>You viewed</h2>
+                <div class="card-grid">
+                    <article>
+                        <div class="product">
+                            <div class="product-top">
+                                <p>For espresso</p>
+                                <div class="product-meta">
+                                    <div class="rating">
+                                        <span class="rating-item"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.9l-5.2 2.7 1-5.8-4.3-4.1 5.9-.9z" /></svg>4.5</span>
+                                        <span class="rating-item"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11.5a8 8 0 0 1-11.6 7.1L4 20l1.4-4.2A8 8 0 1 1 20 11.5z" /></svg>157</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="product-head">
+                                <h3><a class="product-link" href="#">Rwanda Kagano</a></h3>
+                                <div class="kind">Microlot</div>
+                            </div>
+                            <div class="photo-wrap">
+                                <img class="product-photo" src="/images/floral.png" alt="Rwanda Kagano coffee" />
+                            </div>
+                            <div class="price-row">
+                                <button type="button" class="price"><strong>₼36.00</strong></button>
+                            </div>
+                        </div>
+                    </article>
+                    <article>
+                        <div class="product">
+                            <div class="product-top">
+                                <p>Chocolate and syrups</p>
+                                <div class="product-meta">
+                                    <div class="rating">
+                                        <span class="rating-item"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.9l-5.2 2.7 1-5.8-4.3-4.1 5.9-.9z" /></svg>4.7</span>
+                                        <span class="rating-item"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11.5a8 8 0 0 1-11.6 7.1L4 20l1.4-4.2A8 8 0 1 1 20 11.5z" /></svg>270</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <h3><a class="product-link" href="#">Marmalade bears with coffee</a></h3>
+                            <img class="product-photo" src="/images/aroma-kit.png" alt="Marmalade bears with coffee" />
+                            <div class="taste">A pack of coffee marmalade bears</div>
+                            <div class="price-row">
+                                <button type="button" class="price"><strong>₼6.00</strong></button>
+                            </div>
+                        </div>
+                    </article>
+                    <article>
+                        <div class="product">
+                            <div class="product-top">
+                                <p>For filter</p>
+                                <div class="product-meta">
+                                    <div class="rating">
+                                        <span class="rating-item"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.9l-5.2 2.7 1-5.8-4.3-4.1 5.9-.9z" /></svg>4.5</span>
+                                        <span class="rating-item"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11.5a8 8 0 0 1-11.6 7.1L4 20l1.4-4.2A8 8 0 1 1 20 11.5z" /></svg>2466</span>
+                                    </div>
+                                    <div class="tag-note">Popular</div>
+                                </div>
+                            </div>
+                            <div class="product-head">
+                                <h3><a class="product-link" href="#">Batch Brew</a></h3>
+                                <div class="kind">Blend</div>
+                            </div>
+                            <div class="photo-wrap">
+                                <img class="product-photo" src="/images/guatemala.png" alt="Batch Brew coffee" />
+                            </div>
+                            <div class="taste">A sweet <span class="note note-fruity">fruity</span> coffee made for batch brew</div>
+                            <div class="price-row">
+                                <button type="button" class="price"><strong>₼33.90</strong></button>
+                            </div>
+                        </div>
+                    </article>
+                    <article>
+                        <div class="product set-card">
+                            <div class="product-top">
+                                <p>Sets</p>
+                                <div class="product-meta">
+                                    <div class="rating">
+                                        <span class="rating-item"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.9l-5.2 2.7 1-5.8-4.3-4.1 5.9-.9z" /></svg>4.9</span>
+                                        <span class="rating-item"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11.5a8 8 0 0 1-11.6 7.1L4 20l1.4-4.2A8 8 0 1 1 20 11.5z" /></svg>266</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <h3><a class="product-link" href="/Home/Sets">Set with coffee for espresso</a></h3>
+                            <img class="product-photo" src="/images/set-box.png" alt="Set with coffee for espresso" />
+                            <div class="set-text">A set of 5 coffee packs for an espresso machine, Turkish coffee and a moka pot</div>
+                            <div class="price-row">
+                                <button type="button" class="price"><strong>₼143.90</strong></button>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </section>
+    </main>

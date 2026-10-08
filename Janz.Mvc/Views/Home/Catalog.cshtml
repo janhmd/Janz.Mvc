@@ -1,199 +1,158 @@
 @{
     ViewData["Title"] = "Coffee catalog";
-    var kinds = new[]
-    {
-        new { Name = "Coffee for espresso", Video = "espresso.mp4" },
-        new { Name = "Coffee for filter", Video = "filter.mp4" },
-        new { Name = "Capsules", Video = "capsules.mp4" },
-        new { Name = "Drip bags", Video = "drip.mp4" },
-        new { Name = "Drinks in cans", Video = "cans.mp4" },
-        new { Name = "Coffee concentrate", Video = "concentrate.mp4" },
-        new { Name = "Instant specialty", Video = "instant.mp4" }
-    };
 }
 
-<section id="catalog">
-    <h1>Coffee catalog</h1>
-    <div class="catalog-row">
-        @foreach (var kind in kinds)
-        {
-            <a class="catalog-tile" href="#">
-                <video muted loop playsinline preload="metadata" src="@Url.Content("~/videos/" + kind.Video)"></video>
-                <span>@kind.Name</span>
-            </a>
-        }
-    </div>
-    <div class="catalog-tags">
-        <a class="tag-minute" href="#">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l1.2 4.2L17.5 8.5 13.2 9.8 12 14l-1.2-4.2L6.5 8.5l4.3-1.3zM18 13l.6 2 2 .6-2 .6-.6 2-.6-2-2-.6 2-.6z" /></svg>
-            Choose coffee in a minute
-        </a>
-        <a href="#">For an espresso machine</a>
-        <a href="#">For Turkish coffee</a>
-        <a href="#">For milk drinks</a>
-        <a href="#">For a portafilter</a>
-        <a href="#">Ground coffee</a>
-        <a href="#">Coffee with low acidity</a>
-        <a href="#">For a cup</a>
-        <a href="#">Fermented coffee</a>
-        <a href="#">Limited edition</a>
-        <a href="#">Whole bean</a>
-        <a href="#">Whole bean 1 kg</a>
-        <button type="button" aria-expanded="false" aria-label="More filters">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </button>
-    </div>
-    <div class="catalog-board">
-        <div class="filter-col">
-            <div class="filter-group">
-                <h2><button type="button" aria-expanded="true">Acidity <svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.2" fill="none" stroke="currentColor" stroke-width="1.2"/><path d="M8 7.2V11.2M8 4.8h.01" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg><svg class="filter-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></h2>
-                <div class="filter-options"><div class="filter-options-inner">
-                    <label><input type="checkbox" name="acidity" value="low"> Low</label>
-                    <label><input type="checkbox" name="acidity" value="medium"> Medium</label>
-                    <label><input type="checkbox" name="acidity" value="high"> High</label>
-                </div></div>
+<main>
+        <section id="catalog">
+            <h1>Coffee catalog</h1>
+            <div class="catalog-row">
+                <a class="catalog-tile" href="#">
+                    <video muted loop playsinline preload="metadata" src="/videos/espresso.mp4"></video>
+                    <span>Coffee for espresso</span>
+                </a>
+                <a class="catalog-tile" href="#">
+                    <video muted loop playsinline preload="metadata" src="/videos/filter.mp4"></video>
+                    <span>Coffee for filter</span>
+                </a>
+                <a class="catalog-tile" href="#">
+                    <video muted loop playsinline preload="metadata" src="/videos/capsules.mp4"></video>
+                    <span>Capsules</span>
+                </a>
+                <a class="catalog-tile" href="#">
+                    <video muted loop playsinline preload="metadata" src="/videos/drip.mp4"></video>
+                    <span>Drip bags</span>
+                </a>
+                <a class="catalog-tile" href="#">
+                    <video muted loop playsinline preload="metadata" src="/videos/cans.mp4"></video>
+                    <span>Drinks in cans</span>
+                </a>
+                <a class="catalog-tile" href="#">
+                    <video muted loop playsinline preload="metadata" src="/videos/concentrate.mp4"></video>
+                    <span>Coffee concentrate</span>
+                </a>
+                <a class="catalog-tile" href="#">
+                    <video muted loop playsinline preload="metadata" src="/videos/instant.mp4"></video>
+                    <span>Instant specialty</span>
+                </a>
             </div>
-            <div class="filter-group">
-                <h2><button type="button" aria-expanded="true">Density <svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.2" fill="none" stroke="currentColor" stroke-width="1.2"/><path d="M8 7.2V11.2M8 4.8h.01" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg><svg class="filter-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></h2>
-                <div class="filter-options"><div class="filter-options-inner">
-                    <label><input type="checkbox" name="density" value="low"> Low</label>
-                    <label><input type="checkbox" name="density" value="medium"> Medium</label>
-                    <label><input type="checkbox" name="density" value="high"> High</label>
-                </div></div>
+            <div class="catalog-tags">
+                <a class="tag-minute" href="#">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l1.2 4.2L17.5 8.5 13.2 9.8 12 14l-1.2-4.2L6.5 8.5l4.3-1.3zM18 13l.6 2 2 .6-2 .6-.6 2-.6-2-2-.6 2-.6z" /></svg>
+                    Choose coffee in a minute
+                </a>
+                <a href="#">For an espresso machine</a>
+                <a href="#">For Turkish coffee</a>
+                <a href="#">For milk drinks</a>
+                <a href="#">For a portafilter</a>
+                <a href="#">Ground coffee</a>
+                <a href="#">Coffee with low acidity</a>
+                <a href="#">For a cup</a>
+                <a href="#">Fermented coffee</a>
+                <a href="#">Limited edition</a>
+                <a href="#">Whole bean</a>
+                <a href="#">Whole bean 1 kg</a>
+                <button type="button" aria-expanded="false" aria-label="More filters">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </button>
             </div>
-            <div class="filter-group">
-                <h2><button type="button" aria-expanded="true">Roast <svg class="filter-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></h2>
-                <div class="filter-options"><div class="filter-options-inner">
-                    <label><input type="checkbox" name="roast" value="light"> Light (for filter)</label>
-                    <label><input type="checkbox" name="roast" value="medium"> Medium (for espresso)</label>
-                    <label><input type="checkbox" name="roast" value="dark"> Dark (for milk)</label>
-                </div></div>
+            <div class="catalog-board">
+                <div class="filter-col">
+                    <div class="filter-group">
+                        <h2><button type="button" aria-expanded="true">Acidity <svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.2" fill="none" stroke="currentColor" stroke-width="1.2"/><path d="M8 7.2V11.2M8 4.8h.01" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg><svg class="filter-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></h2>
+                        <div class="filter-options"><div class="filter-options-inner">
+                            <label><input type="checkbox" name="acidity" value="low"> Low</label>
+                            <label><input type="checkbox" name="acidity" value="medium"> Medium</label>
+                            <label><input type="checkbox" name="acidity" value="high"> High</label>
+                        </div></div>
+                    </div>
+                    <div class="filter-group">
+                        <h2><button type="button" aria-expanded="true">Density <svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.2" fill="none" stroke="currentColor" stroke-width="1.2"/><path d="M8 7.2V11.2M8 4.8h.01" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg><svg class="filter-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></h2>
+                        <div class="filter-options"><div class="filter-options-inner">
+                            <label><input type="checkbox" name="density" value="low"> Low</label>
+                            <label><input type="checkbox" name="density" value="medium"> Medium</label>
+                            <label><input type="checkbox" name="density" value="high"> High</label>
+                        </div></div>
+                    </div>
+                    <div class="filter-group">
+                        <h2><button type="button" aria-expanded="true">Roast <svg class="filter-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></h2>
+                        <div class="filter-options"><div class="filter-options-inner">
+                            <label><input type="checkbox" name="roast" value="light"> Light (for filter)</label>
+                            <label><input type="checkbox" name="roast" value="medium"> Medium (for espresso)</label>
+                            <label><input type="checkbox" name="roast" value="dark"> Dark (for milk)</label>
+                        </div></div>
+                    </div>
+                    <div class="filter-group">
+                        <h2><button type="button" aria-expanded="true">Taste <svg class="filter-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></h2>
+                        <div class="filter-options"><div class="filter-options-inner">
+                            <label><input type="checkbox" name="taste" value="chocolate"> Chocolate / Nuts</label>
+                            <label><input type="checkbox" name="taste" value="flowers"> Flowers / Citrus</label>
+                            <label><input type="checkbox" name="taste" value="fruit"> Fruits / Berries</label>
+                            <label><input type="checkbox" name="taste" value="alcohol"> Alcohol / Funky</label>
+                        </div></div>
+                    </div>
+                    <div class="filter-group">
+                        <h2><button type="button" aria-expanded="true">Process <svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.2" fill="none" stroke="currentColor" stroke-width="1.2"/><path d="M8 7.2V11.2M8 4.8h.01" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg><svg class="filter-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></h2>
+                        <div class="filter-options"><div class="filter-options-inner">
+                            <label><input type="checkbox" name="process" value="washed"> Washed</label>
+                            <label><input type="checkbox" name="process" value="natural"> Natural</label>
+                            <label><input type="checkbox" name="process" value="honey"> Honey</label>
+                            <label><input type="checkbox" name="process" value="funky"> Funky</label>
+                            <label><input type="checkbox" name="process" value="blend"> Blend</label>
+                            <label><input type="checkbox" name="process" value="other"> Other</label>
+                        </div></div>
+                    </div>
+                    <div class="filter-group">
+                        <h2><button type="button" aria-expanded="true">Country <svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.2" fill="none" stroke="currentColor" stroke-width="1.2"/><path d="M8 7.2V11.2M8 4.8h.01" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg><svg class="filter-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></h2>
+                        <div class="filter-options"><div class="filter-options-inner">
+                            <label><input type="checkbox" name="country" value="brazil"> Brazil</label>
+                            <label><input type="checkbox" name="country" value="ethiopia"> Ethiopia</label>
+                            <label><input type="checkbox" name="country" value="colombia"> Colombia</label>
+                            <label><input type="checkbox" name="country" value="costa-rica"> Costa Rica</label>
+                            <label><input type="checkbox" name="country" value="kenya"> Kenya</label>
+                            <label><input type="checkbox" name="country" value="rwanda"> Rwanda</label>
+                            <label><input type="checkbox" name="country" value="uganda"> Uganda</label>
+                            <label><input type="checkbox" name="country" value="peru"> Peru</label>
+                            <label><input type="checkbox" name="country" value="burundi"> Burundi</label>
+                            <label><input type="checkbox" name="country" value="guatemala"> Guatemala</label>
+                            <label><input type="checkbox" name="country" value="indonesia"> Indonesia</label>
+                            <label><input type="checkbox" name="country" value="yemen"> Yemen</label>
+                            <label><input type="checkbox" name="country" value="bolivia"> Bolivia</label>
+                            <label><input type="checkbox" name="country" value="malaysia"> Malaysia</label>
+                        </div></div>
+                    </div>
+                    <div class="filter-group">
+                        <h2><button type="button" aria-expanded="true">Feature <svg class="filter-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></h2>
+                        <div class="filter-options"><div class="filter-options-inner">
+                            <label><input type="checkbox" name="feature" value="blend"> Blend</label>
+                            <label><input type="checkbox" name="feature" value="decaf"> Decaf / Low caffeine</label>
+                            <label><input type="checkbox" name="feature" value="single"> Single origin</label>
+                            <label><input type="checkbox" name="feature" value="microlot"> Microlot</label>
+                            <label><input type="checkbox" name="feature" value="milk"> Ideal for milk drinks</label>
+                            <label><input type="checkbox" name="feature" value="limited"> Limited edition</label>
+                        </div></div>
+                    </div>
+                </div>
+                <div class="listing-main">
+                    <div class="listing-tabs">
+                        <button type="button" class="is-on" aria-pressed="true">All</button>
+                        <button type="button" aria-pressed="false">Recommended</button>
+                        <button type="button" aria-pressed="false">Popular</button>
+                        <button type="button" aria-pressed="false">New</button>
+                        <button type="button" aria-pressed="false">Coffee of the week</button>
+                        <button type="button" aria-pressed="false">Running out</button>
+                        <button type="button" aria-pressed="false">Microlot</button>
+                    </div>
+                    <label class="listing-sort">
+                        <select aria-label="Sort">
+                            <option value="" selected>Sort</option>
+                            <option value="popular">Popular</option>
+                            <option value="new">New</option>
+                            <option value="price-asc">Price, low to high</option>
+                            <option value="price-desc">Price, high to low</option>
+                            <option value="rating">Rating</option>
+                        </select>
+                    </label>
+                </div>
             </div>
-            <div class="filter-group">
-                <h2><button type="button" aria-expanded="true">Taste <svg class="filter-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></h2>
-                <div class="filter-options"><div class="filter-options-inner">
-                    <label><input type="checkbox" name="taste" value="chocolate"> Chocolate / Nuts</label>
-                    <label><input type="checkbox" name="taste" value="flowers"> Flowers / Citrus</label>
-                    <label><input type="checkbox" name="taste" value="fruit"> Fruits / Berries</label>
-                    <label><input type="checkbox" name="taste" value="alcohol"> Alcohol / Funky</label>
-                </div></div>
-            </div>
-            <div class="filter-group">
-                <h2><button type="button" aria-expanded="true">Process <svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.2" fill="none" stroke="currentColor" stroke-width="1.2"/><path d="M8 7.2V11.2M8 4.8h.01" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg><svg class="filter-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></h2>
-                <div class="filter-options"><div class="filter-options-inner">
-                    <label><input type="checkbox" name="process" value="washed"> Washed</label>
-                    <label><input type="checkbox" name="process" value="natural"> Natural</label>
-                    <label><input type="checkbox" name="process" value="honey"> Honey</label>
-                    <label><input type="checkbox" name="process" value="funky"> Funky</label>
-                    <label><input type="checkbox" name="process" value="blend"> Blend</label>
-                    <label><input type="checkbox" name="process" value="other"> Other</label>
-                </div></div>
-            </div>
-            <div class="filter-group">
-                <h2><button type="button" aria-expanded="true">Country <svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.2" fill="none" stroke="currentColor" stroke-width="1.2"/><path d="M8 7.2V11.2M8 4.8h.01" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg><svg class="filter-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></h2>
-                <div class="filter-options"><div class="filter-options-inner">
-                    <label><input type="checkbox" name="country" value="brazil"> Brazil</label>
-                    <label><input type="checkbox" name="country" value="ethiopia"> Ethiopia</label>
-                    <label><input type="checkbox" name="country" value="colombia"> Colombia</label>
-                    <label><input type="checkbox" name="country" value="costa-rica"> Costa Rica</label>
-                    <label><input type="checkbox" name="country" value="kenya"> Kenya</label>
-                    <label><input type="checkbox" name="country" value="rwanda"> Rwanda</label>
-                    <label><input type="checkbox" name="country" value="uganda"> Uganda</label>
-                    <label><input type="checkbox" name="country" value="peru"> Peru</label>
-                    <label><input type="checkbox" name="country" value="burundi"> Burundi</label>
-                    <label><input type="checkbox" name="country" value="guatemala"> Guatemala</label>
-                    <label><input type="checkbox" name="country" value="indonesia"> Indonesia</label>
-                    <label><input type="checkbox" name="country" value="yemen"> Yemen</label>
-                    <label><input type="checkbox" name="country" value="bolivia"> Bolivia</label>
-                    <label><input type="checkbox" name="country" value="malaysia"> Malaysia</label>
-                </div></div>
-            </div>
-            <div class="filter-group">
-                <h2><button type="button" aria-expanded="true">Feature <svg class="filter-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></h2>
-                <div class="filter-options"><div class="filter-options-inner">
-                    <label><input type="checkbox" name="feature" value="blend"> Blend</label>
-                    <label><input type="checkbox" name="feature" value="decaf"> Decaf / Low caffeine</label>
-                    <label><input type="checkbox" name="feature" value="single"> Single origin</label>
-                    <label><input type="checkbox" name="feature" value="microlot"> Microlot</label>
-                    <label><input type="checkbox" name="feature" value="milk"> Ideal for milk drinks</label>
-                    <label><input type="checkbox" name="feature" value="limited"> Limited edition</label>
-                </div></div>
-            </div>
-        </div>
-        <div class="listing-main">
-            <div class="listing-tabs">
-                <button type="button" class="is-on" aria-pressed="true">All</button>
-                <button type="button" aria-pressed="false">Recommended</button>
-                <button type="button" aria-pressed="false">Popular</button>
-                <button type="button" aria-pressed="false">New</button>
-                <button type="button" aria-pressed="false">Coffee of the week</button>
-                <button type="button" aria-pressed="false">Running out</button>
-                <button type="button" aria-pressed="false">Microlot</button>
-            </div>
-            <label class="listing-sort">
-                <select aria-label="Sort">
-                    <option value="" selected>Sort</option>
-                    <option value="popular">Popular</option>
-                    <option value="new">New</option>
-                    <option value="price-asc">Price, low to high</option>
-                    <option value="price-desc">Price, high to low</option>
-                    <option value="rating">Rating</option>
-                </select>
-            </label>
-        </div>
-    </div>
-</section>
-
-@section Scripts {
-    <script>
-        document.querySelectorAll(".catalog-tile").forEach(function (card) {
-            var video = card.querySelector("video");
-            card.addEventListener("mouseenter", function () {
-                video.play();
-            });
-            card.addEventListener("mouseleave", function () {
-                video.pause();
-                video.currentTime = 0;
-            });
-        });
-
-        var tags = document.querySelector(".catalog-tags");
-        var more = tags.querySelector("button");
-
-        function fitTags() {
-            if (tags.classList.contains("is-open")) return;
-            tags.classList.remove("has-more");
-            tags.classList.toggle("has-more", tags.scrollHeight > tags.clientHeight + 1);
-        }
-
-        more.addEventListener("click", function () {
-            var open = tags.classList.toggle("is-open");
-            more.setAttribute("aria-expanded", open ? "true" : "false");
-        });
-
-        tags.addEventListener("transitionend", function (e) {
-            if (e.propertyName === "max-height" && !tags.classList.contains("is-open")) fitTags();
-        });
-
-        fitTags();
-        window.addEventListener("resize", fitTags);
-
-        document.querySelectorAll(".listing-tabs button").forEach(function (tab) {
-            tab.addEventListener("click", function () {
-                document.querySelectorAll(".listing-tabs button").forEach(function (item) {
-                    item.classList.remove("is-on");
-                    item.setAttribute("aria-pressed", "false");
-                });
-                tab.classList.add("is-on");
-                tab.setAttribute("aria-pressed", "true");
-            });
-        });
-
-        document.querySelectorAll(".filter-group h2 button").forEach(function (button) {
-            button.addEventListener("click", function () {
-                var shut = button.closest(".filter-group").classList.toggle("is-shut");
-                button.setAttribute("aria-expanded", shut ? "false" : "true");
-            });
-        });
-    </script>
-}
+        </section>
+    </main>

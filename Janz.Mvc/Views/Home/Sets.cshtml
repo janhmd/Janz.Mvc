@@ -1,46 +1,21 @@
 @{
     ViewData["Title"] = "Sets with coffee";
-    var kinds = new[]
-    {
-        new { Name = "Sample boxes", Video = "set-samples.mp4" },
-        new { Name = "Gift sets", Video = "set-gifts.mp4?v=3" }
-    };
 }
 
-<section id="bundles">
-    <h1>Sets with coffee</h1>
-    <div class="gear-row">
-        @foreach (var kind in kinds)
-        {
-            <a class="catalog-tile" href="#">
-                <video muted loop playsinline preload="metadata" src="@Url.Content("~/videos/" + kind.Video)"></video>
-                <span>@kind.Name</span>
-            </a>
-        }
-    </div>
-    <label class="listing-sort">
-        <select aria-label="Sort">
-            <option value="" selected>Sort</option>
-            <option value="popular">Popular</option>
-            <option value="new">New</option>
-            <option value="price-asc">Price, low to high</option>
-            <option value="price-desc">Price, high to low</option>
-            <option value="rating">Rating</option>
-        </select>
-    </label>
-</section>
-
-@section Scripts {
-    <script>
-        document.querySelectorAll("#bundles .catalog-tile").forEach(function (card) {
-            var video = card.querySelector("video");
-            card.addEventListener("mouseenter", function () {
-                video.play();
-            });
-            card.addEventListener("mouseleave", function () {
-                video.pause();
-                video.currentTime = 0;
-            });
-        });
-    </script>
-}
+<main>        <section id="bundles">
+            <h1>Sets with coffee</h1>
+            <div class="gear-row">
+                <a class="catalog-tile" href="#"><video muted loop playsinline preload="metadata" src="/videos/set-samples.mp4"></video><span>Sample boxes</span></a>
+                <a class="catalog-tile" href="#"><video muted loop playsinline preload="metadata" src="/videos/set-gifts.mp4"></video><span>Gift sets</span></a>
+            </div>
+            <label class="listing-sort">
+                <select aria-label="Sort">
+                    <option value="" selected>Sort</option>
+                    <option value="popular">Popular</option>
+                    <option value="new">New</option>
+                    <option value="price-asc">Price, low to high</option>
+                    <option value="price-desc">Price, high to low</option>
+                    <option value="rating">Rating</option>
+                </select>
+            </label>
+        </section>    </main>

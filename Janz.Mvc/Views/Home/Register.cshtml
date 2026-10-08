@@ -1,0 +1,44 @@
+@{
+    ViewData["Title"] = "Registration";
+}
+
+<main>
+        <section id="register">
+            <div class="entry-card">
+                <h1>Registration</h1>
+                <form action="/Home/Register" method="post">
+                    <label>
+                        <span class="entry-caption">Full name</span>
+                        <span class="entry-field">
+                            <input type="text" name="name" autocomplete="name" required />
+                        </span>
+                    </label>
+                    <label>
+                        <span class="entry-caption">Email</span>
+                        <span class="entry-field">
+                            <input type="email" name="email" autocomplete="email" required />
+                        </span>
+                    </label>
+                    <label>
+                        <span class="entry-caption">New password</span>
+                        <span class="entry-field">
+                            <input type="password" name="password" placeholder="Password" autocomplete="new-password" required />
+                            <button type="button" class="entry-eye" aria-label="Show password">
+                                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12s3.6-6.5 9-6.5S21 12 21 12s-3.6 6.5-9 6.5S3 12 3 12z" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="12" r="2.4" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
+                            </button>
+                        </span>
+                    </label>
+                    <label>
+                        <span class="entry-caption">Repeat</span>
+                        <span class="entry-field">
+                            <input type="password" name="password2" placeholder="Password" autocomplete="new-password" required />
+                            <button type="button" class="entry-eye" aria-label="Show password">
+                                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12s3.6-6.5 9-6.5S21 12 21 12s-3.6 6.5-9 6.5S3 12 3 12z" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="12" r="2.4" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
+                            </button>
+                        </span>
+                    </label>
+                    <button type="submit" class="account-signin">Register</button>
+                </form>
+            </div>
+        </section>
+    </main>

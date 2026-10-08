@@ -1,95 +1,110 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - Janz</title>
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <script>if (localStorage.getItem("janz-theme") === "day") document.documentElement.classList.add("theme-day");</script>
 </head>
 <body>
     <header>
         <div class="site-header">
-        <a class="logo" asp-controller="Home" asp-action="Index" aria-label="Janz">
-            <span class="logo-mark" aria-hidden="true">J</span>
-            <span class="logo-name">Janz</span>
-        </a>
+            <a class="logo" href="/" aria-label="Janz">
+                <span class="logo-mark" aria-hidden="true">J</span>
+                <span class="logo-name">Janz</span>
+            </a>
 
-        <nav aria-label="Main">
-            <div class="nav-drop">
-                <a class="menu-toggle" href="#">Buy</a>
-                <div class="menu-panel">
-                    <a asp-controller="Home" asp-action="Catalog">Coffee</a>
-                    <a asp-controller="Home" asp-action="Tea">Tea</a>
-                    <a asp-controller="Home" asp-action="Chocolate">Chocolate and syrups</a>
-                    <a asp-controller="Home" asp-action="Sets">Sets</a>
+            <nav aria-label="Main">
+                <div class="nav-drop">
+                    <a class="menu-toggle" href="#">Buy</a>
+                    <div class="menu-panel">
+                        <a href="/Home/Catalog">Coffee</a>
+                        <a href="/Home/Tea">Tea</a>
+                        <a href="/Home/Chocolate">Chocolate and syrups</a>
+                        <a href="/Home/Sets">Sets</a>
+                    </div>
                 </div>
-            </div>
-            <a asp-controller="Home" asp-action="Reviews">Reviews <span class="nav-count">44,828</span></a>
-            <a href="#">Community</a>
-            <a href="#">Journal</a>
-            <div class="nav-drop">
-                <a href="#">Terms</a>
-                <div class="menu-panel">
-                    <a href="#">Delivery and payment</a>
-                    <a href="#">Discount system</a>
-                    <a href="#">Refunds</a>
-                    <a href="#">FAQ</a>
+                <a href="/Home/Reviews">Reviews <span class="nav-count">44,828</span></a>
+                <a href="/Home/Community">Community</a>
+                <a href="/Home/Journal">Journal</a>
+                <div class="nav-drop">
+                    <a href="#">Terms</a>
+                    <div class="menu-panel">
+                        <a href="#">Delivery and payment</a>
+                        <a href="#">Discount system</a>
+                        <a href="#">Refunds</a>
+                        <a href="#">FAQ</a>
+                    </div>
                 </div>
-            </div>
-        </nav>
+            </nav>
 
-        <div class="header-actions">
-            <a class="icon-btn" href="#" aria-label="Search">
-                <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M16 16l4.5 4.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
-            </a>
-            <details class="profile click-menu">
-                <summary class="icon-btn" aria-label="Account">
-                    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.2" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="10" r="2.2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M7.8 16.2a4.4 4.4 0 0 1 8.4 0" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
-                </summary>
-                <div class="profile-panel">
-                    <a asp-controller="Home" asp-action="SignIn">Sign in</a>
-                    <a href="#">Register</a>
-                </div>
-            </details>
-            <a class="icon-btn" href="#" aria-label="Wishlist">
-                <svg viewBox="0 0 24 24"><path d="M12 19s-7-4.4-7-9a4 4 0 0 1 7-2 4 4 0 0 1 7 2c0 4.6-7 9-7 9z" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
-            </a>
-            <a class="icon-btn" href="#" aria-label="Compare">
-                <svg viewBox="0 0 24 24"><path d="M12 3v15M8 20h8M4.5 7h15" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M4.5 7l-2.2 4.2a2.6 2.6 0 0 0 4.4 0zM19.5 7l-2.2 4.2a2.6 2.6 0 0 0 4.4 0z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
-            </a>
-            <a class="cart-link" href="#" aria-label="Cart, 0 items">
-                <svg viewBox="0 0 24 24"><path d="M6 7h15l-1.5 9h-12z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M6 7L5 4H2" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="9" cy="20" r="1.2" fill="currentColor"/><circle cx="17" cy="20" r="1.2" fill="currentColor"/></svg>
-                <span>0 pcs</span>
-            </a>
-        </div>
+            <div class="header-actions">
+                <details class="search click-menu">
+                    <summary class="icon-btn" aria-label="Search">
+                        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M16 16l4.5 4.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+                    </summary>
+                    <form class="search-panel" data-where="/Home/Catalog">
+                        <label class="search-field">
+                            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M16 16l4.5 4.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+                            <input type="search" name="q" placeholder="Search" autocomplete="off" />
+                        </label>
+                        <details class="search-where">
+                            <summary>In catalog</summary>
+                            <div class="search-where-list">
+                                <button type="button" class="is-on" data-where="/Home/Catalog">In catalog</button>
+                                <button type="button" data-where="/Home/Journal">In journal</button>
+                            </div>
+                        </details>
+                    </form>
+                </details>
+                <details class="profile click-menu">
+                    <summary class="icon-btn" aria-label="Account">
+                        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.2" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="10" r="2.2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M7.8 16.2a4.4 4.4 0 0 1 8.4 0" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+                    </summary>
+                    <div class="profile-panel">
+                        <a href="/Home/SignIn">Sign in</a>
+                        <a href="/Home/Register">Register</a>
+                    </div>
+                </details>
+                <a class="icon-btn" href="/Home/Wishlist" aria-label="Wishlist">
+                    <svg viewBox="0 0 24 24"><path d="M12 19s-7-4.4-7-9a4 4 0 0 1 7-2 4 4 0 0 1 7 2c0 4.6-7 9-7 9z" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
+                </a>
+                <a class="icon-btn" href="#" aria-label="Compare">
+                    <svg viewBox="0 0 24 24"><path d="M12 3v15M8 20h8M4.5 7h15" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M4.5 7l-2.2 4.2a2.6 2.6 0 0 0 4.4 0zM19.5 7l-2.2 4.2a2.6 2.6 0 0 0 4.4 0z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+                </a>
+                <a class="cart-link" href="/Home/Cart" aria-label="Cart, 0 items">
+                    <svg viewBox="0 0 24 24"><path d="M6 7h15l-1.5 9h-12z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M6 7L5 4H2" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="9" cy="20" r="1.2" fill="currentColor"/><circle cx="17" cy="20" r="1.2" fill="currentColor"/></svg>
+                    <span>0 pcs</span>
+                </a>
+                <button class="icon-btn theme-toggle" type="button" aria-label="Day mode">
+                    <svg class="theme-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 3v2.2M12 18.8V21M4.9 4.9l1.6 1.6M17.5 17.5l1.6 1.6M3 12h2.2M18.8 12H21M4.9 19.1l1.6-1.6M17.5 6.5l1.6-1.6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+                </button>
+            </div>
         </div>
     </header>
-
-    <main>
-        @RenderBody()
-    </main>
-
+    @RenderBody()
     <footer>
         <div class="site-footer">
             <div class="footer-brand">
-                <a class="logo" asp-controller="Home" asp-action="Index" aria-label="Janz">
+                <a class="logo" href="/" aria-label="Janz">
                     <span class="logo-mark" aria-hidden="true">J</span>
                     <span class="logo-name">Janz</span>
                 </a>
                 <p>© 2026 Janz. Materials on this site may be used only with the owner's written permission.</p>
-                <a asp-controller="Home" asp-action="Privacy">Privacy policy</a>
+                <a href="/Home/Privacy">Privacy policy</a>
             </div>
             <div class="footer-col">
                 <div class="footer-title">Catalog</div>
-                <a asp-controller="Home" asp-action="Catalog">Coffee</a>
-                <a asp-controller="Home" asp-action="Tea">Tea</a>
-                <a asp-controller="Home" asp-action="Chocolate">Chocolate and syrups</a>
-                <a asp-controller="Home" asp-action="Sets">Sets</a>
+                <a href="/Home/Catalog">Coffee</a>
+                <a href="/Home/Tea">Tea</a>
+                <a href="/Home/Chocolate">Chocolate and syrups</a>
+                <a href="/Home/Sets">Sets</a>
             </div>
             <div class="footer-col">
                 <div class="footer-title">Help</div>
-                <a href="#">Community</a>
-                <a href="#">Journal</a>
+                <a href="/Home/Community">Community</a>
+                <a href="/Home/Journal">Journal</a>
                 <a href="#">Delivery and payment</a>
                 <a href="#">Discount system</a>
                 <a href="#">Refunds</a>
@@ -113,15 +128,7 @@
             </div>
         </div>
     </footer>
-
+    <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
-    <script>
-        document.addEventListener("click", function (event) {
-            if (event.target.closest(".menu-toggle")) event.preventDefault();
-            document.querySelectorAll(".click-menu[open]").forEach(function (menu) {
-                if (!menu.contains(event.target)) menu.removeAttribute("open");
-            });
-        });
-    </script>
 </body>
 </html>

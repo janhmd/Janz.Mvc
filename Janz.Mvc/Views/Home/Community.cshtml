@@ -1,0 +1,77 @@
+@{
+    ViewData["Title"] = "Community";
+}
+
+<main>
+        <section id="community">
+            <div class="community-wrap">
+                <div class="community-bar">
+                    <h1>Community</h1>
+                    <div class="community-tabs">
+                        <button type="button" class="is-on" aria-pressed="true">Best</button>
+                        <button type="button" aria-pressed="false">New</button>
+                        <button type="button" aria-pressed="false">Channels</button>
+                    </div>
+                </div>
+
+                <label class="community-search">
+                    <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><circle cx="11" cy="11" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M16 16l4.5 4.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+                    <input type="search" placeholder="Search" />
+                    <select aria-label="Search where">
+                        <option selected>Everywhere</option>
+                        <option>Posts</option>
+                        <option>Comments</option>
+                    </select>
+                </label>
+
+                <p class="community-note">To leave a comment, <a href="/Home/SignIn">sign in</a> to your account or <a href="/Home/Register">register</a>.</p>
+
+                <div class="feed">
+                    <article class="feed-card">
+                        <div class="feed-head">
+                            <div class="feed-avatar">C</div>
+                            <div class="feed-who">
+                                <div class="feed-name">Cavanshir</div>
+                                <div class="feed-role">Ambassador, Baku</div>
+                            </div>
+                            <div class="feed-date">12.09.2026</div>
+                        </div>
+                        <p class="feed-copy">In Ethiopia yesterday the new year 2019 started. They are in warm, lamp-lit, pre-pandemic times now.</p>
+                        <p class="feed-copy">The aroma of the beans is soft, sweet, collected. At the grind it smells floral and berry: candied lime, blackcurrant, chocolate, a floral-spicy trail. From the server this is a bright mix of ripe lime and jasmine with jam from dark berries.</p>
+                    </article>
+
+                    <article class="feed-card">
+                        <div class="feed-head">
+                            <div class="feed-avatar">J</div>
+                            <div class="feed-who">
+                                <div class="feed-name">Our news</div>
+                                <div class="feed-role">Support team</div>
+                            </div>
+                            <div class="feed-date">28.09.2026</div>
+                        </div>
+                        <p class="feed-copy">We are extending summer with a new strawberry infusion.</p>
+                        <p class="feed-copy">Infusion is a fermentation method where juice of other berries or fruit is added to coffee cherries. This boosts the sweetness and fruitiness of the coffee.</p>
+                        <p class="feed-copy">While processing this lot from Sumatra, strawberry was added to the coffee cherries. That is how Indonesia Sumatra Strawberry Karo came out — a bright coffee with notes of strawberry, cherry, cream caramel and milk chocolate.</p>
+                        <div class="feed-photos" data-feed-photos>
+                            <div class="feed-track">
+                                <img src="/images/journal.png" alt="Filter coffee outdoors" />
+                                <img src="/images/floral.png" alt="Floral coffee pack" />
+                            </div>
+                            <span class="feed-dots"><i class="is-on"></i><i></i></span>
+                        </div>
+                        <div class="feed-product">
+                            <img src="/images/guatemala.png" alt="" />
+                            <a href="#">Indonesia Sumatra Strawberry Karo</a>
+                        </div>
+                        <div class="feed-actions">
+                            <button type="button" aria-label="Like">▲ 60</button>
+                            <button type="button" aria-label="Dislike">▼</button>
+                            <button type="button" aria-label="Comments">17</button>
+                            <button type="button" class="push" aria-label="Share">↗</button>
+                            <button type="button" aria-label="Save">☆</button>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </section>
+    </main>

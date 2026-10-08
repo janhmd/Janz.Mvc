@@ -1,0 +1,82 @@
+@{
+    ViewData["Title"] = "Journal";
+}
+
+<main>
+        <section id="journal">
+            <div class="journal-top">
+                <aside>
+                    <h1>Journal about coffee</h1>
+                    <ul class="journal-topics">
+                        <li class="all">All topics</li>
+                        <li><a href="#">Brewing guides <span>0</span></a></li>
+                        <li><a href="#">Brewing <span>0</span></a></li>
+                        <li><a href="#">Industry <span>0</span></a></li>
+                        <li><a href="#">Growing <span>0</span></a></li>
+                        <li><a href="#">Roasting <span>0</span></a></li>
+                        <li><a href="#">Marketing <span>0</span></a></li>
+                        <li><a href="#">Tea <span>0</span></a></li>
+                    </ul>
+                </aside>
+                <a class="journal-hero" href="/Home/Article">
+                    <img src="/images/journal.png" alt="" />
+                    <div class="copy">
+                        <div class="meta">Topic<br>Date</div>
+                        <h2>Article title</h2>
+                        <p>Lead text</p>
+                        <div class="journal-stats"><span>0</span><span>0</span><span>0</span><span>0'</span></div>
+                    </div>
+                </a>
+            </div>
+
+            <div class="journal-board">
+                <aside class="journal-side">
+                    <h3>Tags</h3>
+                    <div class="journal-tags">
+                        <a href="#"># Growing</a>
+                        <a href="#"># Varieties</a>
+                        <a href="#"># Roasting</a>
+                        <a href="#"># Brewing</a>
+                        <a href="#"># Industry</a>
+                        <a href="#"># Marketing</a>
+                        <a href="#"># Espresso</a>
+                        <a href="#">All tags</a>
+                    </div>
+                    <h3>Article series</h3>
+                    <a class="journal-series" href="/Home/Article">Brewing espresso</a>
+                </aside>
+                <div>
+                    <div class="journal-toolbar">
+                        <h2>All articles</h2>
+                        <select aria-label="Sort">
+                            <option>Newest first</option>
+                            <option>Oldest first</option>
+                            <option>Most read</option>
+                            <option>Most popular</option>
+                        </select>
+                        <span class="journal-count">0 articles</span>
+                    </div>
+                    <div class="journal-grid">
+                        <a class="journal-card" href="/Home/Article">
+                            <img src="/images/roast.png" alt="" />
+                            <div class="body">
+                                <div class="meta">Topic<br>Date</div>
+                                <h3>Article title</h3>
+                                <p>Lead text</p>
+                                <div class="journal-stats"><span>0</span><span>0</span><span>0</span><span>0'</span></div>
+                            </div>
+                        </a>
+                        <a class="journal-card" href="/Home/Article">
+                            <img src="/images/aroma-kit.png" alt="" />
+                            <div class="body">
+                                <div class="meta">Topic<br>Date</div>
+                                <h3>Article title</h3>
+                                <p>Lead text</p>
+                                <div class="journal-stats"><span>0</span><span>0</span><span>0</span><span>0'</span></div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>

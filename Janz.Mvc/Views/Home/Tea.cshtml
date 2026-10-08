@@ -1,66 +1,30 @@
 @{
     ViewData["Title"] = "Tea";
-    var kinds = new[]
-    {
-        new { Name = "Green tea", Video = "tea-green.mp4" },
-        new { Name = "Black tea", Video = "tea-black.mp4" },
-        new { Name = "Oolong", Video = "tea-oolong.mp4" },
-        new { Name = "White tea", Video = "tea-white.mp4" },
-        new { Name = "Pu-erh", Video = "tea-puerh.mp4" }
-    };
 }
 
-<section id="tea">
-    <h1>Tea</h1>
-    <div class="gear-row">
-        @foreach (var kind in kinds)
-        {
-            <a class="catalog-tile" href="#">
-                <video muted loop playsinline preload="metadata" src="@Url.Content("~/videos/" + kind.Video)"></video>
-                <span>@kind.Name</span>
-            </a>
-        }
-    </div>
-    <div class="listing-tabs">
-        <button type="button" class="is-on" aria-pressed="true">All</button>
-        <button type="button" aria-pressed="false">Recommended</button>
-        <button type="button" aria-pressed="false">Popular</button>
-        <button type="button" aria-pressed="false">New</button>
-    </div>
-    <label class="listing-sort">
-        <select aria-label="Sort">
-            <option value="" selected>Sort</option>
-            <option value="popular">Popular</option>
-            <option value="new">New</option>
-            <option value="price-asc">Price, low to high</option>
-            <option value="price-desc">Price, high to low</option>
-            <option value="rating">Rating</option>
-        </select>
-    </label>
-</section>
-
-@section Scripts {
-    <script>
-        document.querySelectorAll("#tea .catalog-tile").forEach(function (card) {
-            var video = card.querySelector("video");
-            card.addEventListener("mouseenter", function () {
-                video.play();
-            });
-            card.addEventListener("mouseleave", function () {
-                video.pause();
-                video.currentTime = 0;
-            });
-        });
-
-        document.querySelectorAll("#tea .listing-tabs button").forEach(function (tab) {
-            tab.addEventListener("click", function () {
-                document.querySelectorAll("#tea .listing-tabs button").forEach(function (item) {
-                    item.classList.remove("is-on");
-                    item.setAttribute("aria-pressed", "false");
-                });
-                tab.classList.add("is-on");
-                tab.setAttribute("aria-pressed", "true");
-            });
-        });
-    </script>
-}
+<main>        <section id="tea">
+            <h1>Tea</h1>
+            <div class="gear-row">
+                <a class="catalog-tile" href="#"><video muted loop playsinline preload="metadata" src="/videos/tea-green.mp4"></video><span>Green tea</span></a>
+                <a class="catalog-tile" href="#"><video muted loop playsinline preload="metadata" src="/videos/tea-black.mp4"></video><span>Black tea</span></a>
+                <a class="catalog-tile" href="#"><video muted loop playsinline preload="metadata" src="/videos/tea-oolong.mp4"></video><span>Oolong</span></a>
+                <a class="catalog-tile" href="#"><video muted loop playsinline preload="metadata" src="/videos/tea-white.mp4"></video><span>White tea</span></a>
+                <a class="catalog-tile" href="#"><video muted loop playsinline preload="metadata" src="/videos/tea-puerh.mp4"></video><span>Pu-erh</span></a>
+            </div>
+            <div class="listing-tabs">
+                <button type="button" class="is-on" aria-pressed="true">All</button>
+                <button type="button" aria-pressed="false">Recommended</button>
+                <button type="button" aria-pressed="false">Popular</button>
+                <button type="button" aria-pressed="false">New</button>
+            </div>
+            <label class="listing-sort">
+                <select aria-label="Sort">
+                    <option value="" selected>Sort</option>
+                    <option value="popular">Popular</option>
+                    <option value="new">New</option>
+                    <option value="price-asc">Price, low to high</option>
+                    <option value="price-desc">Price, high to low</option>
+                    <option value="rating">Rating</option>
+                </select>
+            </label>
+        </section>    </main>
