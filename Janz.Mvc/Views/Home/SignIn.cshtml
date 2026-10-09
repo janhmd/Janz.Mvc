@@ -5,9 +5,13 @@
 <main>        <section id="signin">
             <div class="entry-card">
                 <h1>Sign in</h1>
-                <form action="/Home/SignIn" method="post">
+                <form asp-controller="Home" asp-action="SignIn" method="post">
+                    @if (ViewBag.Error is string signInError)
+                    {
+                        <p class="entry-error">@signInError</p>
+                    }
                     <label class="entry-field">
-                        <input type="email" name="email" placeholder="Email" autocomplete="email" required />
+                        <input type="email" name="email" placeholder="Email" autocomplete="email" value="@ViewBag.Email" required />
                     </label>
                     <label class="entry-field">
                         <input type="password" name="password" placeholder="Password" autocomplete="current-password" required />

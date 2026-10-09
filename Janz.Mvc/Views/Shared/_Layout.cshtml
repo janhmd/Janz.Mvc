@@ -1,5 +1,11 @@
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Antiforgery
+@{
+    var csrf = Antiforgery.GetAndStoreTokens(Context).RequestToken;
+    var signedIn = Context.Request.Cookies.ContainsKey("janz_token");
+    var userName = Context.Request.Cookies["janz_name"];
+}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-auth="@(signedIn ? "1" : "0")" data-csrf="@csrf">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -63,8 +69,18 @@
                         <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.2" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="10" r="2.2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M7.8 16.2a4.4 4.4 0 0 1 8.4 0" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
                     </summary>
                     <div class="profile-panel">
-                        <a href="/Home/SignIn">Sign in</a>
-                        <a href="/Home/Register">Register</a>
+                        @if (signedIn)
+                        {
+                            <span class="profile-name">@userName</span>
+                            <form asp-controller="Home" asp-action="LogOut" method="post">
+                                <button type="submit">Sign out</button>
+                            </form>
+                        }
+                        else
+                        {
+                            <a href="/Home/SignIn">Sign in</a>
+                            <a href="/Home/Register">Register</a>
+                        }
                     </div>
                 </details>
                 <a class="icon-btn" href="/Home/Wishlist" aria-label="Wishlist">

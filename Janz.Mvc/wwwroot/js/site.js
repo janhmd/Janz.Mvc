@@ -8,7 +8,8 @@ authOverlay.className = "auth-overlay";
 authOverlay.innerHTML =
     '<div class="auth-modal" role="dialog" aria-labelledby="auth-title" aria-modal="true">' +
         "<h2 id=\"auth-title\">Sign in</h2>" +
-        '<form>' +
+        '<form action="/Home/SignIn" method="post">' +
+            '<p class="entry-error" hidden></p>' +
             '<label class="entry-field"><input type="email" name="email" placeholder="Email" autocomplete="email" required /></label>' +
             '<label class="entry-field"><input type="password" name="password" placeholder="Password" autocomplete="current-password" required /><button type="button" class="entry-eye" aria-label="Show password"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12s3.6-6.5 9-6.5S21 12 21 12s-3.6 6.5-9 6.5S3 12 3 12z" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="12" r="2.4" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></button></label>' +
             '<button type="submit" class="account-signin">Sign in</button>' +
@@ -16,6 +17,16 @@ authOverlay.innerHTML =
             '<label class="entry-remember"><input type="checkbox" name="remember" /> Remember password</label>' +
         "</form>" +
     "</div>";
+
+function isSignedIn() {
+    return document.documentElement.getAttribute("data-auth") === "1";
+}
+
+function needsAuth(target) {
+    return target.closest(
+        'a[href="/Home/Wishlist"], [aria-label="Add to wishlist"], [aria-label="Likes"], [aria-label="Save"], .article-comment-votes button'
+    );
+}
 document.body.appendChild(authOverlay);
 
 function openAuth() {
@@ -43,6 +54,38 @@ document.addEventListener("keydown", function (event) {
 
 authOverlay.querySelector("form").addEventListener("submit", function (event) {
     event.preventDefault();
+    var form = event.currentTarget;
+    var errorBox = form.querySelector(".entry-error");
+    var body = new URLSearchParams();
+    body.set("email", form.email.value);
+    body.set("password", form.password.value);
+    body.set("remember", form.remember.checked ? "true" : "false");
+    body.set("__RequestVerificationToken", document.documentElement.getAttribute("data-csrf") || "");
+    errorBox.hidden = true;
+    fetch("/Home/SignIn", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+            "X-Requested-With": "XMLHttpRequest",
+            "RequestVerificationToken": document.documentElement.getAttribute("data-csrf") || ""
+        },
+        body: body.toString()
+    }).then(function (response) {
+        if (response.ok) {
+            window.location.reload();
+            return;
+        }
+        return response.json().then(function (payload) {
+            errorBox.textContent = (payload.errors || []).join(" ") || "Email or password is wrong.";
+            errorBox.hidden = false;
+        }).catch(function () {
+            errorBox.textContent = "Email or password is wrong.";
+            errorBox.hidden = false;
+        });
+    }).catch(function () {
+        errorBox.textContent = "The API is not running.";
+        errorBox.hidden = false;
+    });
 });
 
 authOverlay.querySelectorAll(".entry-eye").forEach(function (button) {
@@ -68,6 +111,14 @@ document.addEventListener("click", function (event) {
         openAuth();
         return;
     }
+    if (!isSignedIn()) {
+        var gated = needsAuth(event.target);
+        if (gated) {
+            event.preventDefault();
+            openAuth();
+            return;
+        }
+    }
     if (event.target.closest(".menu-toggle")) event.preventDefault();
     document.querySelectorAll(".click-menu[open]").forEach(function (menu) {
         if (!menu.contains(event.target)) menu.removeAttribute("open");
@@ -76,6 +127,30 @@ document.addEventListener("click", function (event) {
         if (!menu.contains(event.target)) menu.removeAttribute("open");
     });
 });
+
+document.querySelectorAll("#register .entry-eye, #signin .entry-eye").forEach(function (button) {
+    button.addEventListener("click", function () {
+        var field = button.previousElementSibling;
+        var hidden = field.type === "password";
+        field.type = hidden ? "text" : "password";
+        button.setAttribute("aria-label", hidden ? "Hide password" : "Show password");
+    });
+});
+
+var registerForm = document.querySelector("#register form");
+if (registerForm) {
+    registerForm.addEventListener("submit", function (event) {
+        var password = this.querySelector("[name='password']");
+        var repeat = this.querySelector("[name='password2']");
+        if (password.value !== repeat.value) {
+            event.preventDefault();
+            repeat.setCustomValidity("Passwords do not match");
+            repeat.reportValidity();
+        } else {
+            repeat.setCustomValidity("");
+        }
+    });
+}
 
 document.querySelectorAll(".search").forEach(function (search) {
     var form = search.querySelector(".search-panel");

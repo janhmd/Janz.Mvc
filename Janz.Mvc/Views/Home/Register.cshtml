@@ -6,17 +6,21 @@
         <section id="register">
             <div class="entry-card">
                 <h1>Registration</h1>
-                <form action="/Home/Register" method="post">
+                <form asp-controller="Home" asp-action="Register" method="post">
+                    @if (ViewBag.Error is string registerError)
+                    {
+                        <p class="entry-error">@registerError</p>
+                    }
                     <label>
                         <span class="entry-caption">Full name</span>
                         <span class="entry-field">
-                            <input type="text" name="name" autocomplete="name" required />
+                            <input type="text" name="name" autocomplete="name" value="@ViewBag.Name" required />
                         </span>
                     </label>
                     <label>
                         <span class="entry-caption">Email</span>
                         <span class="entry-field">
-                            <input type="email" name="email" autocomplete="email" required />
+                            <input type="email" name="email" autocomplete="email" value="@ViewBag.Email" required />
                         </span>
                     </label>
                     <label>

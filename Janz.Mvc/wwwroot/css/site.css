@@ -220,17 +220,38 @@ a { color: inherit; text-decoration: none; }
     z-index: 30;
 }
 
-.profile-panel a {
+.profile-panel a,
+.profile-panel button {
     display: block;
+    width: 100%;
     padding: .55rem .75rem;
+    border: 0;
     border-radius: 7px;
+    background: transparent;
     color: #f2f2f2;
+    font: inherit;
     font-size: 14px;
+    text-align: left;
+    cursor: pointer;
 }
 
-.profile-panel a:hover {
+.profile-panel a:hover,
+.profile-panel button:hover {
     background: #1e1e1e;
     color: var(--gold);
+}
+
+.profile-name {
+    display: block;
+    padding: .45rem .75rem .2rem;
+    color: #8d8d8d;
+    font-size: 13px;
+}
+
+.entry-error {
+    margin: 0 0 .15rem;
+    color: #e07070;
+    font-size: .88rem;
 }
 
 .icon-btn,
@@ -3053,6 +3074,7 @@ html.theme-day {
 .menu-panel a,
 .nav-panel a,
 .profile-panel a,
+.profile-panel button,
 .icon-btn,
 .cart-link,
 #hero h1,
@@ -3134,6 +3156,7 @@ html.theme-day {
 
 .menu-panel a:hover,
 .profile-panel a:hover,
+.profile-panel button:hover,
 .grind-list button:hover {
     background: var(--hover);
 }
