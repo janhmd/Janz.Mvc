@@ -1,3 +1,4 @@
+@model List<ProductUIVM>
 @{
     ViewData["Title"] = "Cart";
 }
@@ -13,59 +14,10 @@
 
             <h2 class="cart-like">You might like</h2>
             <div class="card-grid">
-                <article>
-                    <div class="product">
-                        <div class="product-top">
-                            <p>For espresso</p>
-                        </div>
-                        <h3><a class="product-link" href="/Home/Product">Floral</a></h3>
-                        <div class="kind">Blend</div>
-                        <img class="product-photo" src="/images/floral.png" alt="" />
-                        <div class="taste">A light coffee with notes of <span class="note note-flowers">flowers</span>, <span class="note note-berries">dark berries</span> and <span class="note note-citrus">citrus</span></div>
-                        <div class="buy-row">
-                            <button type="button" class="weight is-on">250 g</button>
-                            <button type="button" class="weight">1000 g</button>
-                        </div>
-                        <div class="price-row">
-                            <button type="button" class="price"><strong>₼29.90</strong></button>
-                        </div>
-                    </div>
-                </article>
-                <article>
-                    <div class="product">
-                        <div class="product-top">
-                            <p>For filter</p>
-                        </div>
-                        <h3><a class="product-link" href="/Home/Product">Guatemala Santiago</a></h3>
-                        <div class="kind">Washed</div>
-                        <img class="product-photo" src="/images/guatemala.png" alt="" />
-                        <div class="taste">A sweet coffee with notes of <span class="note note-orange">orange</span>, <span class="note note-fruit">dried fruit</span> and <span class="note note-chocolate">milk chocolate</span></div>
-                        <div class="buy-row">
-                            <button type="button" class="weight is-on">250 g</button>
-                            <button type="button" class="weight">1000 g</button>
-                        </div>
-                        <div class="price-row">
-                            <button type="button" class="price"><strong>₼27.50</strong></button>
-                        </div>
-                    </div>
-                </article>
-                <article>
-                    <div class="product">
-                        <div class="product-top">
-                            <p>Set</p>
-                        </div>
-                        <h3><a class="product-link" href="/Home/Sets">Aroma kit</a></h3>
-                        <div class="kind">Gift</div>
-                        <img class="product-photo" src="/images/aroma-kit.png" alt="" />
-                        <div class="taste">A mixed pick from the catalog. More cards will come from the database.</div>
-                        <div class="buy-row">
-                            <button type="button" class="weight is-on">1 pc</button>
-                        </div>
-                        <div class="price-row">
-                            <button type="button" class="price"><strong>₼45.00</strong></button>
-                        </div>
-                    </div>
-                </article>
+                @foreach (var product in Model)
+                {
+                    <partial name="_ProductCard" model="product" />
+                }
             </div>
         </section>
     </main>

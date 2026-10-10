@@ -1,3 +1,4 @@
+@model List<ProductUIVM>
 @{
     ViewData["Title"] = "Coffee catalog";
 }
@@ -152,6 +153,12 @@
                             <option value="rating">Rating</option>
                         </select>
                     </label>
+                    <div class="card-grid">
+                        @foreach (var product in Model)
+                        {
+                            <partial name="_ProductCard" model="product" />
+                        }
+                    </div>
                 </div>
             </div>
         </section>

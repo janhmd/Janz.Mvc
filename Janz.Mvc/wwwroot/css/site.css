@@ -1967,6 +1967,13 @@ html.theme-day .theme-toggle { color: var(--ink); }
 
 .listing-sort { display: inline-block; margin-top: .9rem; }
 
+#catalog .listing-main .card-grid,
+#tea .card-grid,
+#chocolate .card-grid,
+#bundles .card-grid {
+    margin-top: 1.4rem;
+}
+
 #catalog .listing-sort select,
 #tea .listing-sort select,
 #chocolate .listing-sort select,

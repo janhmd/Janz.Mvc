@@ -2,6 +2,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<Janz.Mvc.Services.AccountApiClient>();
+builder.Services.AddScoped<Janz.Mvc.Services.ProductApiClient>();
 
 builder.Services.AddHttpClient("JanzApi", client =>
 {

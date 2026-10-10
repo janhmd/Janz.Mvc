@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using Janz.Mvc.Models;
 using Janz.Mvc.Services;
+using Janz.Mvc.ViewModels.Products;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Janz.Mvc.Controllers;
@@ -11,35 +12,43 @@ public class HomeController : Controller
     private const string NameCookie = "janz_name";
 
     private readonly AccountApiClient _accountApi;
+    private readonly ProductApiClient _productApi;
 
-    public HomeController(AccountApiClient accountApi)
+    public HomeController(AccountApiClient accountApi, ProductApiClient productApi)
     {
         _accountApi = accountApi;
+        _productApi = productApi;
     }
 
-    public IActionResult Index()
+    public async Task<IActionResult> Index()
     {
-        return View();
+        var coffee = await _productApi.GetByCategoryAsync("coffee");
+        var sets = await _productApi.GetByCategoryAsync("sets");
+        return View(new HomeIndexVM
+        {
+            Coffee = coffee,
+            Sets = sets
+        });
     }
 
-    public IActionResult Catalog()
+    public async Task<IActionResult> Catalog()
     {
-        return View();
+        return View(await _productApi.GetByCategoryAsync("coffee"));
     }
 
-    public IActionResult Tea()
+    public async Task<IActionResult> Tea()
     {
-        return View();
+        return View(await _productApi.GetByCategoryAsync("tea"));
     }
 
-    public IActionResult Chocolate()
+    public async Task<IActionResult> Chocolate()
     {
-        return View();
+        return View(await _productApi.GetByCategoryAsync("chocolate"));
     }
 
-    public IActionResult Sets()
+    public async Task<IActionResult> Sets()
     {
-        return View();
+        return View(await _productApi.GetByCategoryAsync("sets"));
     }
 
     public IActionResult Reviews()
@@ -47,9 +56,33 @@ public class HomeController : Controller
         return View();
     }
 
-    public IActionResult Product()
+    public async Task<IActionResult> Product(int? id)
     {
-        return View();
+        ProductUIVM? product = null;
+        if (id.HasValue)
+        {
+            product = await _productApi.GetByIdAsync(id.Value);
+        }
+        else
+        {
+            product = (await _productApi.GetByCategoryAsync("coffee")).FirstOrDefault();
+        }
+
+        if (product is null)
+        {
+            return NotFound();
+        }
+
+        var related = (await _productApi.GetByCategoryAsync(product.CategorySlug))
+            .Where(m => m.Id != product.Id)
+            .Take(3)
+            .ToList();
+
+        return View(new ProductPageVM
+        {
+            Product = product,
+            Related = related
+        });
     }
 
     public IActionResult Community()
@@ -145,9 +178,10 @@ public class HomeController : Controller
         return View();
     }
 
-    public IActionResult Cart()
+    public async Task<IActionResult> Cart()
     {
-        return View();
+        var products = await _productApi.GetAllAsync();
+        return View(products.Take(3).ToList());
     }
 
     public IActionResult Privacy()

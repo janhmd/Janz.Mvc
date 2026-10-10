@@ -1,0 +1,18 @@
+@model Janz.Mvc.ViewModels.Products.ProductUIVM
+@{
+    var isSet = string.Equals(Model.CategorySlug, "sets", StringComparison.OrdinalIgnoreCase);
+}
+<article>
+    <div class="product@(isSet ? " set-card" : string.Empty)">
+        <div class="product-top">
+            <p>@Model.CategoryName</p>
+        </div>
+        <h3><a class="product-link" href="/Home/Product/@Model.Id">@Model.Name</a></h3>
+        <img class="product-photo" src="@Model.ImagePath" alt="@Model.Name" />
+        <div class="taste">@Model.Description</div>
+        <div class="kind">@Model.Stock in stock</div>
+        <div class="price-row">
+            <button type="button" class="price"><strong>₼@Model.Price.ToString("0.00")</strong></button>
+        </div>
+    </div>
+</article>
