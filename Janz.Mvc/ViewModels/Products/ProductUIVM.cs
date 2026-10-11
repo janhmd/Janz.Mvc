@@ -1,3 +1,5 @@
+using Janz.Mvc.ViewModels.Tags;
+
 namespace Janz.Mvc.ViewModels.Products
 {
     public class ProductUIVM
@@ -11,5 +13,7 @@ namespace Janz.Mvc.ViewModels.Products
         public int CategoryId { get; set; }
         public string CategoryName { get; set; } = string.Empty;
         public string CategorySlug { get; set; } = string.Empty;
+        public List<string> Images { get; set; } = new List<string>();
+        public List<TagUIVM> Tags { get; set; } = new List<TagUIVM>();
     }
 }

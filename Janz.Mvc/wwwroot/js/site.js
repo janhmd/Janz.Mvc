@@ -219,6 +219,19 @@ document.querySelectorAll(".grind").forEach(function (menu) {
     });
 });
 
+document.querySelectorAll(".gallery").forEach(function (gallery) {
+    var photo = gallery.querySelector(".gallery-photo");
+    var thumbs = gallery.querySelectorAll(".thumbs button");
+    thumbs.forEach(function (thumb) {
+        thumb.addEventListener("click", function () {
+            thumbs.forEach(function (item) {
+                item.classList.toggle("is-on", item === thumb);
+            });
+            photo.src = thumb.dataset.src;
+        });
+    });
+});
+
 document.querySelectorAll(".buy-row").forEach(function (row) {
     var weights = row.querySelectorAll(".weight");
     weights.forEach(function (weight) {

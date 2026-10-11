@@ -2,6 +2,7 @@
 @{
     ViewData["Title"] = Model.Product.Name;
     var product = Model.Product;
+    var gallery = product.Images.Count > 0 ? product.Images : new List<string> { product.ImagePath };
 }
 
 <main>
@@ -17,11 +18,12 @@
             <div class="coffee-layout">
                 <div class="gallery">
                     <div class="thumbs">
-                        <button type="button" class="is-on"><img src="@product.ImagePath" alt="" /></button>
-                        <button type="button"><img src="@product.ImagePath" alt="" /></button>
-                        <button type="button"><img src="@product.ImagePath" alt="" /></button>
+                        @for (var i = 0; i < gallery.Count; i++)
+                        {
+                            <button type="button" class="@(i == 0 ? "is-on" : null)" data-src="@gallery[i]"><img src="@gallery[i]" alt="" /></button>
+                        }
                     </div>
-                    <img class="gallery-photo" src="@product.ImagePath" alt="@product.Name" />
+                    <img class="gallery-photo" src="@gallery[0]" alt="@product.Name" />
                 </div>
 
                 <div class="coffee-buy">
@@ -37,6 +39,15 @@
                     <h1>@product.Name</h1>
                     <div class="kind">@product.Stock in stock</div>
                     <div class="taste">@product.Description</div>
+                    @if (product.Tags.Count > 0)
+                    {
+                        <div class="catalog-tags">
+                            @foreach (var tag in product.Tags)
+                            {
+                                <a href="#">@tag.Name</a>
+                            }
+                        </div>
+                    }
                     <div class="meters">
                         <div><span>Density</span><i><b style="width:38%"></b></i></div>
                         <div><span>Acidity</span><i><b style="width:72%"></b></i></div>
