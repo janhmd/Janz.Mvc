@@ -86,7 +86,7 @@
                         </details>
                     </div>
                     <div class="price-row">
-                        <button type="button" class="price">
+                        <button type="button" class="price" data-cart-add="@product.Id" disabled="@(product.Stock <= 0)">
                             <strong>₼@product.Price.ToString("0.00")</strong>
                             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 8h15v11.5a1.5 1.5 0 0 1-1.5 1.5H6a1.5 1.5 0 0 1-1.5-1.5z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" /><path d="M9 8V6.5a3 3 0 0 1 6 0V8M9.3 14.2l1.9 1.9 3.6-3.8" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" /></svg>
                         </button>

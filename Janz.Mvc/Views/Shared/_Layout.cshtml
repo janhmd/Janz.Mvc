@@ -1,8 +1,14 @@
 @inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Antiforgery
+@inject Janz.Mvc.Services.CartApiClient CartApi
 @{
     var csrf = Antiforgery.GetAndStoreTokens(Context).RequestToken;
     var signedIn = Context.Request.Cookies.ContainsKey("janz_token");
     var userName = Context.Request.Cookies["janz_name"];
+    var cartCount = 0;
+    if (signedIn)
+    {
+        cartCount = (await CartApi.GetAsync(Context.Request.Cookies["janz_token"]!)).Cart.Count;
+    }
 }
 <!DOCTYPE html>
 <html lang="en" data-auth="@(signedIn ? "1" : "0")" data-csrf="@csrf">
@@ -89,9 +95,9 @@
                 <a class="icon-btn" href="#" aria-label="Compare">
                     <svg viewBox="0 0 24 24"><path d="M12 3v15M8 20h8M4.5 7h15" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M4.5 7l-2.2 4.2a2.6 2.6 0 0 0 4.4 0zM19.5 7l-2.2 4.2a2.6 2.6 0 0 0 4.4 0z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
                 </a>
-                <a class="cart-link" href="/Home/Cart" aria-label="Cart, 0 items">
+                <a class="cart-link" href="/Home/Cart" aria-label="Cart, @cartCount items">
                     <svg viewBox="0 0 24 24"><path d="M6 7h15l-1.5 9h-12z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M6 7L5 4H2" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="9" cy="20" r="1.2" fill="currentColor"/><circle cx="17" cy="20" r="1.2" fill="currentColor"/></svg>
-                    <span>0 pcs</span>
+                    <span>@cartCount pcs</span>
                 </a>
                 <button class="icon-btn theme-toggle" type="button" aria-label="Day mode">
                     <svg class="theme-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 3v2.2M12 18.8V21M4.9 4.9l1.6 1.6M17.5 17.5l1.6 1.6M3 12h2.2M18.8 12H21M4.9 19.1l1.6-1.6M17.5 6.5l1.6-1.6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>

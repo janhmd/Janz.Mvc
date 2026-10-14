@@ -12,7 +12,7 @@
         <div class="taste">@Model.Description</div>
         <div class="kind">@Model.Stock in stock</div>
         <div class="price-row">
-            <button type="button" class="price"><strong>₼@Model.Price.ToString("0.00")</strong></button>
+            <button type="button" class="price" data-cart-add="@Model.Id" disabled="@(Model.Stock <= 0)"><strong>₼@Model.Price.ToString("0.00")</strong></button>
         </div>
     </div>
 </article>

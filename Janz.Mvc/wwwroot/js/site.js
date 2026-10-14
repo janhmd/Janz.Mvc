@@ -24,7 +24,7 @@ function isSignedIn() {
 
 function needsAuth(target) {
     return target.closest(
-        'a[href="/Home/Wishlist"], [aria-label="Add to wishlist"], [aria-label="Likes"], [aria-label="Save"], .article-comment-votes button'
+        'a[href="/Home/Wishlist"], [aria-label="Add to wishlist"], [aria-label="Likes"], [aria-label="Save"], .article-comment-votes button, [data-cart-add]'
     );
 }
 document.body.appendChild(authOverlay);
@@ -125,6 +125,43 @@ document.addEventListener("click", function (event) {
     });
     document.querySelectorAll(".search-where[open]").forEach(function (menu) {
         if (!menu.contains(event.target)) menu.removeAttribute("open");
+    });
+});
+
+document.addEventListener("click", function (event) {
+    var button = event.target.closest("[data-cart-add]");
+    if (!button || !isSignedIn() || button.disabled) return;
+    var body = new URLSearchParams();
+    body.set("productId", button.getAttribute("data-cart-add"));
+    body.set("quantity", "1");
+    body.set("__RequestVerificationToken", document.documentElement.getAttribute("data-csrf") || "");
+    button.disabled = true;
+    fetch("/Home/AddToCart", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+            "X-Requested-With": "XMLHttpRequest"
+        },
+        body: body.toString()
+    }).then(function (response) {
+        if (response.status === 401) {
+            document.documentElement.setAttribute("data-auth", "0");
+            openAuth();
+            return;
+        }
+        return response.json().then(function (payload) {
+            if (!response.ok) {
+                alert((payload.errors || []).join(" ") || "Could not add to cart.");
+                return;
+            }
+            var cartLink = document.querySelector(".cart-link");
+            cartLink.querySelector("span").textContent = payload.count + " pcs";
+            cartLink.setAttribute("aria-label", "Cart, " + payload.count + " items");
+        });
+    }).catch(function () {
+        alert("The API is not running.");
+    }).finally(function () {
+        button.disabled = false;
     });
 });
 

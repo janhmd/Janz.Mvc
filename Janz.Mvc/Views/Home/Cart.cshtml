@@ -1,20 +1,65 @@
-@model List<ProductUIVM>
+@model Janz.Mvc.ViewModels.Cart.CartPageVM
 @{
     ViewData["Title"] = "Cart";
+    var error = TempData["CartError"] as string;
 }
 
 <main>
-        <!-- Empty copy is replaced by cart lines when products are added. "You might like" is mixed products from the database. -->
         <section id="cart">
-            <div class="wish-empty cart-empty">
-                <h1>The cart is empty</h1>
-                <p>Let’s pick something in the catalog</p>
-                <a href="/Home/Catalog">To catalog</a>
-            </div>
+            @if (Model.Cart.Items.Count == 0)
+            {
+                <div class="wish-empty cart-empty">
+                    <h1>The cart is empty</h1>
+                    <p>Let’s pick something in the catalog</p>
+                    <a href="/Home/Catalog">To catalog</a>
+                </div>
+            }
+            else
+            {
+                <h1 class="cart-title">Cart <span>@Model.Cart.Count pcs</span></h1>
+                @if (!string.IsNullOrEmpty(error))
+                {
+                    <p class="entry-error">@error</p>
+                }
+                <div class="cart-lines">
+                    @foreach (var item in Model.Cart.Items)
+                    {
+                        <div class="cart-line">
+                            <a class="cart-line-photo" href="/Home/Product/@item.ProductId"><img src="@item.ImagePath" alt="@item.ProductName" /></a>
+                            <div class="cart-line-info">
+                                <a href="/Home/Product/@item.ProductId">@item.ProductName</a>
+                                <div class="kind">₼@item.Price.ToString("0.00") · @item.Stock in stock</div>
+                            </div>
+                            <div class="cart-qty">
+                                <form asp-controller="Home" asp-action="UpdateCart" method="post">
+                                    <input type="hidden" name="id" value="@item.Id" />
+                                    <input type="hidden" name="quantity" value="@(item.Quantity - 1)" />
+                                    <button type="submit" aria-label="Less" disabled="@(item.Quantity <= 1)">−</button>
+                                </form>
+                                <span>@item.Quantity</span>
+                                <form asp-controller="Home" asp-action="UpdateCart" method="post">
+                                    <input type="hidden" name="id" value="@item.Id" />
+                                    <input type="hidden" name="quantity" value="@(item.Quantity + 1)" />
+                                    <button type="submit" aria-label="More" disabled="@(item.Quantity >= item.Stock)">+</button>
+                                </form>
+                            </div>
+                            <strong class="cart-line-total">₼@item.Total.ToString("0.00")</strong>
+                            <form asp-controller="Home" asp-action="RemoveFromCart" method="post">
+                                <input type="hidden" name="id" value="@item.Id" />
+                                <button type="submit" class="cart-remove" aria-label="Remove">×</button>
+                            </form>
+                        </div>
+                    }
+                </div>
+                <div class="cart-sum">
+                    <span>Total</span>
+                    <strong>₼@Model.Cart.Total.ToString("0.00")</strong>
+                </div>
+            }
 
             <h2 class="cart-like">You might like</h2>
             <div class="card-grid">
-                @foreach (var product in Model)
+                @foreach (var product in Model.Suggestions)
                 {
                     <partial name="_ProductCard" model="product" />
                 }

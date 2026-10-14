@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using Janz.Mvc.Models;
 using Janz.Mvc.Services;
+using Janz.Mvc.ViewModels.Cart;
 using Janz.Mvc.ViewModels.Products;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,11 +14,13 @@ public class HomeController : Controller
 
     private readonly AccountApiClient _accountApi;
     private readonly ProductApiClient _productApi;
+    private readonly CartApiClient _cartApi;
 
-    public HomeController(AccountApiClient accountApi, ProductApiClient productApi)
+    public HomeController(AccountApiClient accountApi, ProductApiClient productApi, CartApiClient cartApi)
     {
         _accountApi = accountApi;
         _productApi = productApi;
+        _cartApi = cartApi;
     }
 
     public async Task<IActionResult> Index()
@@ -180,8 +183,66 @@ public class HomeController : Controller
 
     public async Task<IActionResult> Cart()
     {
+        var cart = new CartUIVM();
+        var token = Request.Cookies[TokenCookie];
+        if (!string.IsNullOrEmpty(token))
+        {
+            var result = await _cartApi.GetAsync(token);
+            if (result.Success)
+            {
+                cart = result.Cart;
+            }
+        }
+
+        var inCart = cart.Items.Select(m => m.ProductId).ToList();
         var products = await _productApi.GetAllAsync();
-        return View(products.Take(3).ToList());
+        return View(new CartPageVM
+        {
+            Cart = cart,
+            Suggestions = products.Where(m => !inCart.Contains(m.Id)).Take(3).ToList()
+        });
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> AddToCart(int productId, int quantity)
+    {
+        var token = Request.Cookies[TokenCookie];
+        if (string.IsNullOrEmpty(token))
+        {
+            return IsAjax() ? Unauthorized() : RedirectToAction(nameof(SignIn));
+        }
+
+        var result = await _cartApi.AddAsync(token, productId, quantity);
+        return CartResponse(result);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> UpdateCart(int id, int quantity)
+    {
+        var token = Request.Cookies[TokenCookie];
+        if (string.IsNullOrEmpty(token))
+        {
+            return RedirectToAction(nameof(SignIn));
+        }
+
+        var result = await _cartApi.UpdateAsync(token, id, quantity);
+        return CartResponse(result);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> RemoveFromCart(int id)
+    {
+        var token = Request.Cookies[TokenCookie];
+        if (string.IsNullOrEmpty(token))
+        {
+            return RedirectToAction(nameof(SignIn));
+        }
+
+        var result = await _cartApi.RemoveAsync(token, id);
+        return CartResponse(result);
     }
 
     public IActionResult Privacy()
@@ -193,6 +254,35 @@ public class HomeController : Controller
     public IActionResult Error()
     {
         return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+    }
+
+    private IActionResult CartResponse(CartCallResult result)
+    {
+        if (result.Unauthorized)
+        {
+            Response.Cookies.Delete(TokenCookie);
+            Response.Cookies.Delete(NameCookie);
+            return IsAjax() ? Unauthorized() : RedirectToAction(nameof(SignIn));
+        }
+
+        if (IsAjax())
+        {
+            return result.Success
+                ? Ok(new { count = result.Cart.Count })
+                : BadRequest(new { errors = result.Errors });
+        }
+
+        if (!result.Success)
+        {
+            TempData["CartError"] = string.Join(" ", result.Errors);
+        }
+
+        return RedirectToAction(nameof(Cart));
+    }
+
+    private bool IsAjax()
+    {
+        return string.Equals(Request.Headers["X-Requested-With"], "XMLHttpRequest", StringComparison.OrdinalIgnoreCase);
     }
 
     private void WriteAuthCookies(AuthCallResult result, bool remember)
