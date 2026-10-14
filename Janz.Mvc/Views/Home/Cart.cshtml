@@ -54,6 +54,9 @@
                 <div class="cart-sum">
                     <span>Total</span>
                     <strong>₼@Model.Cart.Total.ToString("0.00")</strong>
+                    <form asp-controller="Home" asp-action="PlaceOrder" method="post">
+                        <button type="submit" class="cart-place">Place order</button>
+                    </form>
                 </div>
             }
 

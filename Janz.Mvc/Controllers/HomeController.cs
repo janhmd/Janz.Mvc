@@ -2,6 +2,7 @@ using System.Diagnostics;
 using Janz.Mvc.Models;
 using Janz.Mvc.Services;
 using Janz.Mvc.ViewModels.Cart;
+using Janz.Mvc.ViewModels.Orders;
 using Janz.Mvc.ViewModels.Products;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,12 +16,14 @@ public class HomeController : Controller
     private readonly AccountApiClient _accountApi;
     private readonly ProductApiClient _productApi;
     private readonly CartApiClient _cartApi;
+    private readonly OrderApiClient _orderApi;
 
-    public HomeController(AccountApiClient accountApi, ProductApiClient productApi, CartApiClient cartApi)
+    public HomeController(AccountApiClient accountApi, ProductApiClient productApi, CartApiClient cartApi, OrderApiClient orderApi)
     {
         _accountApi = accountApi;
         _productApi = productApi;
         _cartApi = cartApi;
+        _orderApi = orderApi;
     }
 
     public async Task<IActionResult> Index()
@@ -243,6 +246,57 @@ public class HomeController : Controller
 
         var result = await _cartApi.RemoveAsync(token, id);
         return CartResponse(result);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> PlaceOrder()
+    {
+        var token = Request.Cookies[TokenCookie];
+        if (string.IsNullOrEmpty(token))
+        {
+            return RedirectToAction(nameof(SignIn));
+        }
+
+        var result = await _orderApi.CreateAsync(token);
+        if (result.Unauthorized)
+        {
+            Response.Cookies.Delete(TokenCookie);
+            Response.Cookies.Delete(NameCookie);
+            return RedirectToAction(nameof(SignIn));
+        }
+
+        if (!result.Success)
+        {
+            TempData["CartError"] = string.Join(" ", result.Errors);
+            return RedirectToAction(nameof(Cart));
+        }
+
+        return RedirectToAction(nameof(Order), new { id = result.Order.Id });
+    }
+
+    public async Task<IActionResult> Order(int id)
+    {
+        var token = Request.Cookies[TokenCookie];
+        if (string.IsNullOrEmpty(token))
+        {
+            return RedirectToAction(nameof(SignIn));
+        }
+
+        var result = await _orderApi.GetByIdAsync(token, id);
+        if (result.Unauthorized)
+        {
+            Response.Cookies.Delete(TokenCookie);
+            Response.Cookies.Delete(NameCookie);
+            return RedirectToAction(nameof(SignIn));
+        }
+
+        if (!result.Success)
+        {
+            return NotFound();
+        }
+
+        return View(result.Order);
     }
 
     public IActionResult Privacy()

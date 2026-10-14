@@ -1,0 +1,29 @@
+@model Janz.Mvc.ViewModels.Orders.OrderUIVM
+@{
+    ViewData["Title"] = "Order";
+}
+
+<main>
+        <section id="cart">
+            <h1 class="cart-title">Order <span>@Model.Status</span></h1>
+            <div class="cart-lines">
+                @foreach (var item in Model.Items)
+                {
+                    <div class="cart-line">
+                        <a class="cart-line-photo" href="/Home/Product/@item.ProductId"><img src="@item.ImagePath" alt="@item.ProductName" /></a>
+                        <div class="cart-line-info">
+                            <a href="/Home/Product/@item.ProductId">@item.ProductName</a>
+                            <div class="kind">₼@item.Price.ToString("0.00")</div>
+                        </div>
+                        <div class="cart-qty"><span>@item.Quantity</span></div>
+                        <strong class="cart-line-total">₼@item.Total.ToString("0.00")</strong>
+                    </div>
+                }
+            </div>
+            <div class="cart-sum">
+                <span>Total</span>
+                <strong>₼@Model.Total.ToString("0.00")</strong>
+            </div>
+            <p class="cart-empty"><a href="/Home/Catalog">To catalog</a></p>
+        </section>
+    </main>

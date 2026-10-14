@@ -4,6 +4,7 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<Janz.Mvc.Services.AccountApiClient>();
 builder.Services.AddScoped<Janz.Mvc.Services.ProductApiClient>();
 builder.Services.AddScoped<Janz.Mvc.Services.CartApiClient>();
+builder.Services.AddScoped<Janz.Mvc.Services.OrderApiClient>();
 
 builder.Services.AddHttpClient("JanzApi", client =>
 {
