@@ -2,117 +2,747 @@
 @{
     ViewData["Title"] = "Account";
     var error = TempData["AccountError"] as string ?? ViewBag.Error as string;
-    var edit = Model.Addresses.FirstOrDefault(m => m.Id == Model.EditId);
+    var userName = Context.Request.Cookies["janz_name"];
+    if (string.IsNullOrWhiteSpace(userName))
+    {
+        userName = "Coffee lover";
+    }
+    var letter = userName.Trim().Substring(0, 1).ToUpperInvariant();
 }
 
 <main>
         <section id="account">
-            <h1 class="cart-title">Account</h1>
+            <div class="cabinet-top">
+                <h1>Personal account</h1>
+                <div class="cabinet-balance">
+                    <a class="cabinet-replenish" href="#ledger">Replenish</a>
+                    <a class="cabinet-balance-sum" href="#ledger"><strong>Balance 0₼</strong></a>
+                </div>
+            </div>
             @if (!string.IsNullOrEmpty(error))
             {
-                <p class="entry-error">@error</p>
+                <p class="entry-error cabinet-error">@error</p>
             }
-
-            <h2 class="account-title">Addresses</h2>
-            @if (Model.Addresses.Count == 0 && edit is null)
-            {
-                <p class="account-empty">No addresses yet.</p>
-            }
-            @foreach (var address in Model.Addresses)
-            {
-                if (edit is not null && address.Id == edit.Id)
-                {
-                    continue;
-                }
-                <div class="account-card">
-                    <div>
-                        <strong>@address.FullName</strong>
-                        <div class="kind">@address.Phone</div>
-                        <div class="kind">@address.Line, @address.City, @address.PostalCode</div>
+            <div class="cabinet-row">
+                <nav class="cabinet-nav" aria-label="Account">
+                    <a href="#statistics" class="cabinet-tab" data-pane="statistics">Statistics</a>
+                    <a href="#orders" class="cabinet-tab is-on" data-pane="orders">Orders</a>
+                    <a href="#notifications" class="cabinet-tab" data-pane="notifications">Notifications</a>
+                    <a href="#community" class="cabinet-tab" data-pane="community">Community profile</a>
+                    <a href="#details" class="cabinet-tab" data-pane="details">My details</a>
+                    <a href="#ledger" class="cabinet-tab" data-pane="ledger">Internal account</a>
+                    <a href="#journal" class="cabinet-tab" data-pane="journal">Reading in the journal</a>
+                    <a href="#blacklist" class="cabinet-tab" data-pane="blacklist">Blacklist</a>
+                </nav>
+                <div class="cabinet-main">
+                    <!-- Orders from the API: newest first, each opens the order page -->
+                    <div class="cabinet-pane@(Model.Orders.Count > 0 ? " has-orders" : string.Empty)" data-pane="orders">
+                        @if (Model.Orders.Count == 0)
+                        {
+                            <div class="cabinet-empty">
+                                <h2>You haven't bought anything yet</h2>
+                                <p>Let’s pick something in the catalog</p>
+                                <a href="/Home/Catalog">To catalog</a>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="order-list">
+                                @foreach (var order in Model.Orders)
+                                {
+                                    <a class="order-row" href="/Home/Order/@order.Id">
+                                        <span class="order-row-who">
+                                            <strong>Order #@order.Id</strong>
+                                            <span>@order.CreatedAt.ToString("dd.MM.yyyy") · @order.Items.Sum(m => m.Quantity) pcs</span>
+                                        </span>
+                                        <span class="order-status">@order.Status</span>
+                                        <strong class="order-total">₼@order.Total.ToString("0.00")</strong>
+                                    </a>
+                                }
+                            </div>
+                        }
                     </div>
-                    <div class="account-actions">
-                        <a href="/Home/Account?edit=@address.Id">Edit</a>
-                        <form asp-controller="Home" asp-action="RemoveAddress" method="post">
-                            <input type="hidden" name="id" value="@address.Id" />
-                            <button type="submit" class="cart-remove" aria-label="Remove">×</button>
-                        </form>
+                    <div class="cabinet-pane" data-pane="notifications" hidden>
+                        <div class="notice-bar">
+                            <div class="notice-tabs">
+                                <button type="button" class="is-on" data-kind="all" aria-pressed="true">All</button>
+                                <button type="button" data-kind="shop" aria-pressed="false">Shop</button>
+                                <button type="button" data-kind="journal" aria-pressed="false">Journal</button>
+                                <button type="button" data-kind="community" aria-pressed="false">Community</button>
+                                <button type="button" data-kind="subscription" aria-pressed="false">Subscription</button>
+                            </div>
+                        </div>
+                        <div class="notice-list">
+                            <article class="notice" data-kind="community">
+                                <div class="notice-head">
+                                    <span class="notice-source">
+                                        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="10" r="2.1" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="15.4" cy="10.6" r="1.7" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M5.6 16.4a3.6 3.6 0 0 1 6.8 0M13.2 16.6a3 3 0 0 1 5.2 0" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+                                        Community
+                                    </span>
+                                    <time datetime="2026-10-17T04:33">17 October 2026, 04:33</time>
+                                </div>
+                                <p>@@Our news recently published a new post.</p>
+                                <a class="notice-post" href="/Home/Community">
+                                    <img src="/images/roast.png" alt="" />
+                                    <strong>This is true — we have our own coffee community</strong>
+                                </a>
+                            </article>
+                            <article class="notice" data-kind="shop">
+                                <div class="notice-head">
+                                    <span class="notice-source">
+                                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h16l-1.2 11H5.2z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M8 8V6.4A4 4 0 0 1 16 6.4V8" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
+                                        Shop
+                                    </span>
+                                    <time datetime="2026-10-17T00:34">17 October 2026, 00:34</time>
+                                </div>
+                                <p>New coffees are in the catalog this week — Floral, Guatemala Santiago and Aroma kit.</p>
+                                <div class="notice-products">
+                                    <article>
+                                        <div class="product">
+                                            <div class="product-top"><p>For espresso</p></div>
+                                            <h3><a class="product-link" href="/Home/Product">Floral</a></h3>
+                                            <div class="kind">Blend</div>
+                                            <img class="product-photo" src="/images/floral.png" alt="Floral espresso coffee" />
+                                            <div class="price-row">
+                                                <button type="button" class="price"><strong>₼29.90</strong></button>
+                                            </div>
+                                        </div>
+                                    </article>
+                                    <article>
+                                        <div class="product">
+                                            <div class="product-top"><p>For filter</p></div>
+                                            <h3><a class="product-link" href="/Home/Catalog">Guatemala Santiago</a></h3>
+                                            <div class="kind">Washed</div>
+                                            <img class="product-photo" src="/images/guatemala.png" alt="Guatemala Santiago filter coffee" />
+                                            <div class="price-row">
+                                                <button type="button" class="price"><strong>₼27.50</strong></button>
+                                            </div>
+                                        </div>
+                                    </article>
+                                    <article>
+                                        <div class="product">
+                                            <div class="product-top"><p>Set</p></div>
+                                            <h3><a class="product-link" href="/Home/Sets">Aroma kit</a></h3>
+                                            <div class="kind">Gift</div>
+                                            <img class="product-photo" src="/images/aroma-kit.png" alt="Aroma kit" />
+                                            <div class="price-row">
+                                                <button type="button" class="price"><strong>₼45.00</strong></button>
+                                            </div>
+                                        </div>
+                                    </article>
+                                </div>
+                            </article>
+                        </div>
+                        <div class="cabinet-empty notice-empty" hidden>
+                            <h2>No notifications yet</h2>
+                            <p>News from the shop, journal and community will appear here</p>
+                        </div>
+                    </div>
+                    <div class="cabinet-pane" data-pane="community" hidden>
+                        <div class="profile-board">
+                            <div class="profile-feed">
+                                <div class="profile-composer">
+                                    <button type="button" class="profile-compose">
+                                        <span class="profile-compose-mark" aria-hidden="true">J</span>
+                                        Write a post
+                                    </button>
+                                    <form class="profile-post" hidden>
+                                        <div class="profile-post-head">
+                                            <div class="profile-who">
+                                                <span class="profile-avatar" aria-hidden="true">J</span>
+                                                <div>
+                                                    <strong>Newcomer</strong>
+                                                </div>
+                                            </div>
+                                            <button type="button" class="profile-post-close" aria-label="Close">
+                                                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+                                            </button>
+                                        </div>
+                                        <label class="profile-post-field">
+                                            <input type="text" name="text" placeholder="Write a post" />
+                                            <label class="profile-post-photo">
+                                                <input type="file" accept="image/*" hidden />
+                                                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.8 7.2h3.1l1.3-2h5.6l1.3 2h3.1v11.2H4.8z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><circle cx="12" cy="13" r="3.1" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
+                                            </label>
+                                        </label>
+                                        <div class="profile-pick">
+                                            <input type="hidden" name="product" value="" />
+                                            <label class="profile-pick-toggle">
+                                                <input type="search" class="profile-pick-search" placeholder="Choose coffee / product" autocomplete="off" />
+                                            </label>
+                                            <div class="profile-pick-drop" hidden>
+                                                <div class="profile-pick-list">
+                                                    <button type="button" data-name="Floral" data-img="images/floral.png">
+                                                        <img src="/images/floral.png" alt="" />
+                                                        Floral
+                                                    </button>
+                                                    <button type="button" data-name="Guatemala Santiago" data-img="images/guatemala.png">
+                                                        <img src="/images/guatemala.png" alt="" />
+                                                        Guatemala Santiago
+                                                    </button>
+                                                    <button type="button" data-name="Candy" data-img="images/candy.png">
+                                                        <img src="/images/candy.png" alt="" />
+                                                        Candy
+                                                    </button>
+                                                    <button type="button" data-name="Aroma kit" data-img="images/aroma-kit.png">
+                                                        <img src="/images/aroma-kit.png" alt="" />
+                                                        Aroma kit
+                                                    </button>
+                                                    <button type="button" data-name="Set for espresso" data-img="images/set-box.png">
+                                                        <img src="/images/set-box.png" alt="" />
+                                                        Set for espresso
+                                                    </button>
+                                                    <button type="button" data-name="Set with drip bags" data-img="images/set-drip.png">
+                                                        <img src="/images/set-drip.png" alt="" />
+                                                        Set with drip bags
+                                                    </button>
+                                                    <button type="button" data-name="Set with a French press" data-img="images/set-french.png">
+                                                        <img src="/images/set-french.png" alt="" />
+                                                        Set with a French press
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="profile-review" hidden>
+                                            <div class="profile-review-head">
+                                                <div class="profile-review-who">
+                                                    <img class="profile-review-img" alt="" />
+                                                    <strong class="profile-review-name"></strong>
+                                                </div>
+                                                <button type="button" class="profile-review-clear" aria-label="Remove product">
+                                                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+                                                </button>
+                                            </div>
+                                            <div class="profile-rate">
+                                                <p>Rate the coffee</p>
+                                                <div class="profile-stars" role="group" aria-label="Rate the coffee">
+                                                    <button type="button" class="profile-star" data-star="1" aria-label="1 star"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.2l2.5 6.4 6.8.4-5.2 4.5 1.7 6.6L12 17.6 6.2 21.1l1.7-6.6L2.7 10l6.8-.4z"/></svg></button>
+                                                    <button type="button" class="profile-star" data-star="2" aria-label="2 stars"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.2l2.5 6.4 6.8.4-5.2 4.5 1.7 6.6L12 17.6 6.2 21.1l1.7-6.6L2.7 10l6.8-.4z"/></svg></button>
+                                                    <button type="button" class="profile-star" data-star="3" aria-label="3 stars"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.2l2.5 6.4 6.8.4-5.2 4.5 1.7 6.6L12 17.6 6.2 21.1l1.7-6.6L2.7 10l6.8-.4z"/></svg></button>
+                                                    <button type="button" class="profile-star" data-star="4" aria-label="4 stars"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.2l2.5 6.4 6.8.4-5.2 4.5 1.7 6.6L12 17.6 6.2 21.1l1.7-6.6L2.7 10l6.8-.4z"/></svg></button>
+                                                    <button type="button" class="profile-star" data-star="5" aria-label="5 stars"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.2l2.5 6.4 6.8.4-5.2 4.5 1.7 6.6L12 17.6 6.2 21.1l1.7-6.6L2.7 10l6.8-.4z"/></svg></button>
+                                                </div>
+                                                <input type="hidden" name="rating" value="" />
+                                            </div>
+                                            <div class="profile-brew">
+                                                <p>Choose a brewing method</p>
+                                                <div class="profile-brew-pick">
+                                                    <input type="hidden" name="brew" value="" />
+                                                    <button type="button" class="profile-brew-toggle">Brewing method</button>
+                                                    <div class="profile-brew-drop" hidden>
+                                                        <button type="button" data-name="Espresso machine">Espresso machine</button>
+                                                        <button type="button" data-name="Drip coffee maker">Drip coffee maker</button>
+                                                        <button type="button" data-name="cezve">cezve</button>
+                                                        <button type="button" data-name="French press">French press</button>
+                                                        <button type="button" data-name="AeroPress">AeroPress</button>
+                                                        <button type="button" data-name="Pour over">Pour over</button>
+                                                        <button type="button" data-name="Chemex">Chemex</button>
+                                                        <button type="button" data-name="Moka pot">Moka pot</button>
+                                                        <button type="button" data-name="Cold brew">Cold brew</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <label class="profile-review-note">
+                                                <span>Notes for the recipe</span>
+                                                <input type="text" name="recipe" placeholder="Tell how you brew" />
+                                            </label>
+                                            <button type="button" class="profile-recipe-more">Fill in the extended recipe</button>
+                                            <div class="profile-recipe-extra" hidden>
+                                                <input type="text" name="dose" placeholder="Coffee, g" />
+                                                <input type="text" name="water" placeholder="Water, ml" />
+                                                <input type="text" name="grind" placeholder="Grind" />
+                                                <input type="text" name="time" placeholder="Time" />
+                                            </div>
+                                        </div>
+                                        <div class="profile-post-tags">
+                                            <p>Tags</p>
+                                            <div class="profile-tag-chips"></div>
+                                            <div class="profile-tag-pick">
+                                                <span class="profile-tag-plus" aria-hidden="true">+</span>
+                                                <input type="text" class="profile-tag-search" placeholder="Add a tag" autocomplete="off" />
+                                                <input type="hidden" name="tags" value="" />
+                                                <div class="profile-tag-drop" hidden>
+                                                    <button type="button" data-name="Pour over">Pour over</button>
+                                                    <button type="button" data-name="Espresso">Espresso</button>
+                                                    <button type="button" data-name="Filter">Filter</button>
+                                                    <button type="button" data-name="cezve">cezve</button>
+                                                    <button type="button" data-name="French press">French press</button>
+                                                    <button type="button" data-name="AeroPress">AeroPress</button>
+                                                    <button type="button" data-name="Drip">Drip</button>
+                                                    <button type="button" data-name="Chemex">Chemex</button>
+                                                    <button type="button" data-name="Cold brew">Cold brew</button>
+                                                    <button type="button" data-name="Light roast">Light roast</button>
+                                                    <button type="button" data-name="Dark roast">Dark roast</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <button type="submit" class="profile-post-publish">Publish</button>
+                                    </form>
+                                </div>
+                                <div class="cabinet-empty">
+                                    <h2>No posts</h2>
+                                    <p>There are no added posts on the site yet</p>
+                                    <a href="/Home/Community">Go to community</a>
+                                </div>
+                            </div>
+                            <aside class="profile-card">
+                                <div class="profile-card-top">
+                                    <h2>My profile</h2>
+                                    <button type="button" aria-label="Share">
+                                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 5h5v5M19 5l-8 8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M17 13.2V18H6V7h4.8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+                                    </button>
+                                </div>
+                                <div class="profile-who">
+                                    <span class="profile-avatar" aria-hidden="true">J</span>
+                                    <div>
+                                        <strong>Newcomer</strong>
+                                    </div>
+                                </div>
+                                <div class="profile-follow">
+                                    <button type="button" data-follow="subscribers"><b>0</b><span>subscribers</span></button>
+                                    <button type="button" data-follow="subscriptions"><b>0</b><span>subscriptions</span></button>
+                                </div>
+                                <div class="profile-about">
+                                    <p class="profile-bio">Tell about yourself</p>
+                                    <button type="button" class="profile-edit">Edit</button>
+                                    <form class="profile-bio-form" hidden>
+                                        <input type="text" name="bio" placeholder="Tell about yourself" maxlength="180" autocomplete="off" />
+                                        <button type="submit" class="edit-save">Save</button>
+                                    </form>
+                                </div>
+                                <ul class="profile-stats">
+                                    <li>
+                                        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="7.2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 8.2V12l2.4 1.6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+                                        Time on the site —
+                                    </li>
+                                    <li>
+                                        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="7.2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M8.6 12.2l2.2 2.2 4.6-5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                                        Orders placed 0
+                                    </li>
+                                    <li>
+                                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 16.5c1.4 1.4 3.1 2.1 5 2.1s3.6-.7 5-2.1" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M8 8.2h8l-.6 5.2H8.6z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M10 8.2V6.8a2 2 0 0 1 4 0v1.4" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
+                                        Tried 0 different coffees
+                                    </li>
+                                    <li>
+                                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4.6l2.1 4.3 4.7.7-3.4 3.3.8 4.7L12 15.4 7.8 17.6l.8-4.7-3.4-3.3 4.7-.7z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+                                        Average coffee rating 0
+                                    </li>
+                                    <li>
+                                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5.5 6.5h13v9.2H9.2L5.5 18.8z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+                                        Comments 0
+                                    </li>
+                                    <li>
+                                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 15.2l5-9.4 5 9.4z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+                                        Likes received 0
+                                    </li>
+                                    <li>
+                                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.8h7l4 4V19.2H7z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M14 4.8v4h4" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
+                                        Articles read 0
+                                    </li>
+                                </ul>
+                                <div class="profile-cook">
+                                    <div class="profile-cook-head">
+                                        <h3>How I cook</h3>
+                                        <button type="button" class="profile-cook-edit" aria-label="Edit how I cook">
+                                            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.6 5.6l3.8 3.8-9.4 9.4H5.2v-3.8z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M13.2 7l3.8 3.8" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
+                                        </button>
+                                    </div>
+                                    <div class="profile-cook-list"></div>
+                                </div>
+                            </aside>
+                        </div>
+                    </div>
+                    <div class="cabinet-pane" data-pane="details" hidden>
+                        <div class="details-board">
+                            <div class="details-who">
+                                <label class="details-avatar">
+                                    <input type="file" accept="image/*" hidden />
+                                    <span class="details-avatar-letter">@letter</span>
+                                    <img class="details-avatar-photo" alt="" hidden />
+                                    <span class="details-avatar-change">
+                                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.8 7.2h3.1l1.3-2h5.6l1.3 2h3.1v11.2H4.8z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><circle cx="12" cy="13" r="3.1" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
+                                        Change
+                                    </span>
+                                </label>
+                                <div>
+                                    <strong class="details-name">@userName</strong>
+                                </div>
+                            </div>
+                            <button type="button" class="details-edit">Edit details</button>
+                            <h2>Addresses</h2>
+                            <!-- Addresses from the API. New ones are saved with AddAddress, removed with RemoveAddress -->
+                            <div class="details-address-list">
+                                @foreach (var address in Model.Addresses)
+                                {
+                                    <article class="details-address-card">
+                                        <strong>@address.FullName</strong>
+                                        <p>@address.Line, @address.City, @address.PostalCode</p>
+                                        <p>@address.Phone</p>
+                                        <form asp-controller="Home" asp-action="RemoveAddress" method="post">
+                                            <input type="hidden" name="id" value="@address.Id" />
+                                            <button type="submit" class="details-address-remove">Remove</button>
+                                        </form>
+                                    </article>
+                                }
+                            </div>
+                            <button type="button" class="details-add">
+                                <span aria-hidden="true">+</span>
+                                New address
+                            </button>
+                            <h2>Cards</h2>
+                            <div class="details-card-row">
+                                <div class="details-card-list"></div>
+                                <button type="button" class="details-add details-add-card">
+                                    <span aria-hidden="true">+</span>
+                                    New card
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="cabinet-pane" data-pane="ledger" hidden>
+                        <div class="cabinet-empty">
+                            <h2>You haven't topped up your account yet</h2>
+                            <p>This page stores records of all top-ups and write-offs of your account</p>
+                        </div>
+                    </div>
+                    <div class="cabinet-pane" data-pane="journal" hidden>
+                        <div class="reading-board is-empty">
+                            <div class="reading-tabs">
+                                <button type="button" class="is-on" data-read="progress">In progress <span>0</span></button>
+                                <button type="button" data-read="read">Read <span>0</span></button>
+                                <button type="button" data-read="saved">Bookmarks <span>0</span></button>
+                            </div>
+                            <div class="reading-list"></div>
+                            <div class="cabinet-empty reading-empty">
+                                <h2>Nothing saved in the journal</h2>
+                                <p>Articles you read will stay here</p>
+                                <a href="/Home/Journal">To journal</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="cabinet-pane" data-pane="blacklist" hidden>
+                        <!-- Users blocked from community (post or comment menu). They can be unblocked only here. -->
+                        <div class="blacklist-board">
+                            <label class="blacklist-search">
+                                <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M16 16l4.5 4.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+                                <input type="search" placeholder="Search the list" autocomplete="off" />
+                            </label>
+                            <div class="blacklist-list">
+                                <div class="blacklist-item" data-user-id="11">
+                                    <div class="blacklist-avatar">K</div>
+                                    <div class="blacklist-who">
+                                        <div class="blacklist-name"><strong>Kamran</strong><button type="button" class="blacklist-remove">Remove</button></div>
+                                        <p>Expert, Lankaran</p>
+                                    </div>
+                                </div>
+                                <div class="blacklist-item" data-user-id="12">
+                                    <div class="blacklist-avatar">R</div>
+                                    <div class="blacklist-who">
+                                        <div class="blacklist-name"><strong>Rashad</strong><button type="button" class="blacklist-remove">Remove</button></div>
+                                        <p>Coffee lover, Ganja</p>
+                                    </div>
+                                </div>
+                                <div class="blacklist-item" data-user-id="13">
+                                    <div class="blacklist-avatar">E</div>
+                                    <div class="blacklist-who">
+                                        <div class="blacklist-name"><strong>Elvin</strong><button type="button" class="blacklist-remove">Remove</button></div>
+                                        <p>Ambassador, Sheki</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="blacklist-none" hidden>Nobody found</p>
+                        </div>
+                        <div class="cabinet-empty blacklist-empty" hidden>
+                            <h2>Blacklist is empty</h2>
+                            <p>Users you block in the community will collect here</p>
+                        </div>
+                    </div>
+                    <div class="cabinet-pane" data-pane="statistics" hidden>
+                        <h2 class="cabinet-pane-title">Statistics</h2>
+                        <div class="cabinet-stats is-locked">
+                            <div class="cabinet-stats-blur card-grid" aria-hidden="true">
+                                <article>
+                                    <div class="product">
+                                        <div class="product-top"><p>For espresso</p></div>
+                                        <h3>Floral</h3>
+                                        <div class="kind">Blend</div>
+                                        <img class="product-photo" src="/images/floral.png" alt="" />
+                                        <div class="price-row">
+                                            <button type="button" class="price"><strong>₼29.90</strong></button>
+                                        </div>
+                                    </div>
+                                </article>
+                                <article>
+                                    <div class="product">
+                                        <div class="product-top"><p>For filter</p></div>
+                                        <h3>Guatemala Santiago</h3>
+                                        <div class="kind">Washed</div>
+                                        <img class="product-photo" src="/images/guatemala.png" alt="" />
+                                        <div class="price-row">
+                                            <button type="button" class="price"><strong>₼27.50</strong></button>
+                                        </div>
+                                    </div>
+                                </article>
+                                <article>
+                                    <div class="product">
+                                        <div class="product-top"><p>Set</p></div>
+                                        <h3>Aroma kit</h3>
+                                        <div class="kind">Gift</div>
+                                        <img class="product-photo" src="/images/aroma-kit.png" alt="" />
+                                        <div class="price-row">
+                                            <button type="button" class="price"><strong>₼45.00</strong></button>
+                                        </div>
+                                    </div>
+                                </article>
+                            </div>
+                            <a class="cabinet-stats-lock" href="/">
+                                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 8h15l-1.5 9h-12z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M6 8L5 5H3" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="9.2" cy="20" r="1.1" fill="currentColor"/><circle cx="16.6" cy="20" r="1.1" fill="currentColor"/></svg>
+                                To unlock statistics, place your first order
+                            </a>
+                        </div>
                     </div>
                 </div>
-            }
-
-            @if (edit is not null)
-            {
-                <form asp-controller="Home" asp-action="UpdateAddress" method="post" class="account-form">
-                    <input type="hidden" name="id" value="@edit.Id" />
-                    <label>
-                        <span class="entry-caption">Full name</span>
-                        <span class="entry-field"><input type="text" name="fullName" value="@edit.FullName" required maxlength="80" /></span>
-                    </label>
-                    <label>
-                        <span class="entry-caption">Phone</span>
-                        <span class="entry-field"><input type="text" name="phone" value="@edit.Phone" required maxlength="30" /></span>
-                    </label>
-                    <label class="account-wide">
-                        <span class="entry-caption">Address</span>
-                        <span class="entry-field"><input type="text" name="line" value="@edit.Line" required maxlength="200" /></span>
-                    </label>
-                    <label>
-                        <span class="entry-caption">City</span>
-                        <span class="entry-field"><input type="text" name="city" value="@edit.City" required maxlength="80" /></span>
-                    </label>
-                    <label>
-                        <span class="entry-caption">Postal code</span>
-                        <span class="entry-field"><input type="text" name="postalCode" value="@edit.PostalCode" required maxlength="20" /></span>
-                    </label>
-                    <div class="account-wide account-actions">
-                        <button type="submit" class="cart-place">Save address</button>
-                        <a href="/Home/Account">Cancel</a>
-                    </div>
-                </form>
-            }
-            else
-            {
-                <form asp-controller="Home" asp-action="AddAddress" method="post" class="account-form">
-                    <label>
-                        <span class="entry-caption">Full name</span>
-                        <span class="entry-field"><input type="text" name="fullName" required maxlength="80" /></span>
-                    </label>
-                    <label>
-                        <span class="entry-caption">Phone</span>
-                        <span class="entry-field"><input type="text" name="phone" required maxlength="30" /></span>
-                    </label>
-                    <label class="account-wide">
-                        <span class="entry-caption">Address</span>
-                        <span class="entry-field"><input type="text" name="line" required maxlength="200" /></span>
-                    </label>
-                    <label>
-                        <span class="entry-caption">City</span>
-                        <span class="entry-field"><input type="text" name="city" required maxlength="80" /></span>
-                    </label>
-                    <label>
-                        <span class="entry-caption">Postal code</span>
-                        <span class="entry-field"><input type="text" name="postalCode" required maxlength="20" /></span>
-                    </label>
-                    <div class="account-wide">
-                        <button type="submit" class="cart-place">Add address</button>
-                    </div>
-                </form>
-            }
-
-            <h2 class="account-title">Orders</h2>
-            @if (Model.Orders.Count == 0)
-            {
-                <p class="account-empty">No orders yet.</p>
-            }
-            @foreach (var order in Model.Orders)
-            {
-                <div class="account-order">
-                    <div>
-                        <a href="/Home/Order/@order.Id">Order #@order.Id</a>
-                        <div class="kind">@order.CreatedAt.ToString("dd.MM.yyyy") · @order.Status</div>
-                    </div>
-                    <strong>₼@order.Total.ToString("0.00")</strong>
-                </div>
-            }
+            </div>
         </section>
     </main>
+
+    <div class="edit-overlay">
+        <form class="edit-modal" role="dialog" aria-modal="true" aria-labelledby="edit-title">
+            <h2 id="edit-title">Edit details</h2>
+            <label class="edit-field">
+                <span>First and last name</span>
+                <input type="text" name="fullname" value="@userName" autocomplete="name" />
+            </label>
+            <label class="edit-field">
+                <span>Phone</span>
+                <div class="edit-phone">
+                    <select name="phoneCode" aria-label="Country code">
+                        <option value="+994" selected>+994</option>
+                        <option value="+90">+90</option>
+                        <option value="+7">+7</option>
+                    </select>
+                    <input type="tel" name="phone" value="" autocomplete="tel-national" />
+                    <button type="button" class="edit-phone-clear" aria-label="Clear phone">×</button>
+                </div>
+            </label>
+            <div class="edit-fold">
+                <button type="button" class="edit-fold-toggle">Account</button>
+                <div class="edit-fold-body" hidden>
+                    <label class="edit-field">
+                        <span>Email</span>
+                        <input type="email" name="email" value="" autocomplete="email" />
+                    </label>
+                    <div class="edit-field">
+                        <span>Password</span>
+                        <div class="edit-pass">
+                            <input type="password" name="password" value="password12" readonly />
+                            <button type="button" class="edit-pass-change">Change</button>
+                        </div>
+                    </div>
+                    <label class="edit-field">
+                        <span>Public username</span>
+                        <input type="text" name="username" placeholder="Public username" autocomplete="username" />
+                    </label>
+                    <p class="edit-hint">Only A–Z, 0–9, _, - and . are allowed. The name must be unique and 3 to 30 characters.</p>
+                    <p class="edit-hint">The short name will be used as part of your page address.</p>
+                </div>
+            </div>
+            <div class="edit-fold">
+                <button type="button" class="edit-fold-toggle">Organization</button>
+                <div class="edit-fold-body" hidden>
+                    <label class="edit-field">
+                        <span>Full organization name</span>
+                        <input type="text" name="org" placeholder="Full organization name" />
+                    </label>
+                    <label class="edit-field">
+                        <span>Legal address</span>
+                        <input type="text" name="orgAddress" placeholder="City, street, house, apartment" />
+                    </label>
+                    <div class="edit-tax">
+                        <label class="edit-field">
+                            <span>VOEN</span>
+                            <input type="text" name="voen" placeholder="VOEN" />
+                        </label>
+                        <label class="edit-field">
+                            <span>Tax number</span>
+                            <input type="text" name="tax" placeholder="Tax number" />
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <button type="submit" class="edit-save">Save</button>
+            <button type="button" class="edit-cancel">Cancel</button>
+        </form>
+    </div>
+    <!-- Real form: the API saves the address and the page reloads with the new list -->
+    <div class="edit-overlay address-overlay">
+        <form class="edit-modal" asp-controller="Home" asp-action="AddAddress" method="post" role="dialog" aria-modal="true" aria-labelledby="address-title">
+            <h2 id="address-title">Add address</h2>
+            <label class="edit-field">
+                <span>Recipient</span>
+                <input type="text" name="fullName" value="@(userName == "Coffee lover" ? string.Empty : userName)" placeholder="Full name" required maxlength="80" />
+            </label>
+            <label class="edit-field">
+                <span>Phone</span>
+                <input type="tel" name="phone" placeholder="+994 50 000 00 00" required maxlength="30" />
+            </label>
+            <label class="edit-field">
+                <span>City</span>
+                <input type="text" name="city" placeholder="Enter city" required maxlength="80" />
+            </label>
+            <label class="edit-field">
+                <span>Street, house, apartment</span>
+                <input type="text" name="line" placeholder="Enter the address" required maxlength="200" />
+            </label>
+            <label class="edit-field">
+                <span>Postcode</span>
+                <input type="text" name="postalCode" placeholder="Postcode" required maxlength="20" />
+            </label>
+            <button type="submit" class="edit-save">Save</button>
+            <button type="button" class="edit-cancel">Cancel</button>
+        </form>
+    </div>
+    <div class="edit-overlay card-overlay">
+        <form class="edit-modal" role="dialog" aria-modal="true" aria-labelledby="card-title">
+            <h2 id="card-title">Add card</h2>
+            <label class="edit-field">
+                <span>Name on card</span>
+                <input type="text" name="holder" placeholder="Name on card" autocomplete="cc-name" />
+            </label>
+            <label class="edit-field">
+                <span>Card number</span>
+                <input type="text" name="number" inputmode="numeric" placeholder="ACCT-000015" autocomplete="cc-number" maxlength="19" />
+            </label>
+            <div class="edit-tax">
+                <label class="edit-field">
+                    <span>Expiry</span>
+                    <input type="text" name="expiry" inputmode="numeric" placeholder="MM / YY" autocomplete="cc-exp" maxlength="7" />
+                </label>
+                <label class="edit-field">
+                    <span>CVC</span>
+                    <input type="password" name="cvc" inputmode="numeric" placeholder="CVC" autocomplete="cc-csc" maxlength="4" />
+                </label>
+            </div>
+            <label class="edit-check">
+                <input type="checkbox" name="primary" />
+                Make primary
+            </label>
+            <button type="submit" class="edit-save">Save</button>
+            <button type="button" class="edit-cancel">Cancel</button>
+        </form>
+    </div>
+    <div class="edit-overlay topup-overlay">
+        <form class="edit-modal topup-modal" role="dialog" aria-modal="true" aria-labelledby="topup-title">
+            <h2 id="topup-title">Top up balance</h2>
+            <div class="topup-tabs">
+                <button type="button" class="is-on" data-topup="money">Money</button>
+                <button type="button" data-topup="certificate">Certificate</button>
+            </div>
+            <div class="topup-money">
+                <label class="topup-amount">
+                    <input type="text" name="amount" inputmode="decimal" placeholder="Amount" autocomplete="off" />
+                    <span>₼</span>
+                </label>
+                <button type="button" class="topup-pay is-on" aria-pressed="true">
+                    <span class="topup-pay-dot" aria-hidden="true"></span>
+                    <span>Visa, Mastercard</span>
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.6" y="6.4" width="16.8" height="11.2" rx="2.2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M3.6 10.2h16.8" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
+                </button>
+            </div>
+            <div class="topup-cert" hidden>
+                <label class="topup-amount">
+                    <input type="text" name="code" placeholder="Certificate code" autocomplete="off" />
+                </label>
+            </div>
+            <button type="submit" class="edit-save topup-submit">Top up <span class="topup-submit-sum"></span></button>
+            <label class="edit-check topup-agree">
+                <input type="checkbox" name="agree" checked />
+                I agree to the terms of data processing, the user agreement and the offer
+            </label>
+        </form>
+    </div>
+    <div class="edit-overlay cook-overlay">
+        <form class="edit-modal cook-modal" role="dialog" aria-modal="true" aria-labelledby="cook-title">
+            <h2 id="cook-title">How I cook</h2>
+            <div class="cook-grid">
+                <button type="button" class="cook-option" data-name="Espresso machine">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 8.2h9.2v8.2H5zM14.2 10.4H18a2 2 0 0 1 0 4h-3.8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M7.2 6.4h5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+                    <span>Espresso machine</span>
+                </button>
+                <button type="button" class="cook-option" data-name="Moka pot">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 9.2h8l-1.1 8.2H9.1zM9.2 6.6h5.6M12 4.8v1.8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+                    <span>Moka pot</span>
+                </button>
+                <button type="button" class="cook-option" data-name="AeroPress">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8.4 7.2h7.2v10.2H8.4zM9.6 4.8h4.8M10.2 10.2h3.6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+                    <span>AeroPress</span>
+                </button>
+                <button type="button" class="cook-option" data-name="Drip coffee maker">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.4 6.2h11.2v3.2H6.4zM8.2 9.4h7.6v8.2H8.2z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M10 12.2h4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+                    <span>Drip coffee maker</span>
+                </button>
+                <button type="button" class="cook-option" data-name="Pour over">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7.2 7.2h9.6L14 13.4H10zM9.2 13.4h5.6v5H9.2z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+                    <span>Pour over</span>
+                </button>
+                <button type="button" class="cook-option" data-name="Capsules">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8.2 9.2h7.6v4.4c0 2.1-1.7 3.4-3.8 3.4s-3.8-1.3-3.8-3.4z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M9.6 9.2V7.6h4.8v1.6" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
+                    <span>Capsules</span>
+                </button>
+                <button type="button" class="cook-option" data-name="Cezve">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.6 10.2h8.4l-1 7.2H7.6zM15 12.2h3.4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M8.4 8.2h4.8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+                    <span>Cezve</span>
+                </button>
+                <button type="button" class="cook-option" data-name="Immersion dripper">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 6.8h8l-2.4 6.4H10.4zM10 13.2h4v5h-4z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+                    <span>Immersion dripper</span>
+                </button>
+                <button type="button" class="cook-option" data-name="Drip bags">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8.4 8.4h7.2v8.8l-3.6 2.2-3.6-2.2zM9.6 6.4h4.8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+                    <span>Drip bags</span>
+                </button>
+                <button type="button" class="cook-option" data-name="French press">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 9.2h8v8.4a2 2 0 0 1-2 2H10a2 2 0 0 1-2-2zM9.2 6.2h5.6M12 4.8v4.4M8 12.4h8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+                    <span>French press</span>
+                </button>
+                <button type="button" class="cook-option" data-name="In a cup">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.8 8.6h8.6v6.2A3.4 3.4 0 0 1 12 18.2H10.2A3.4 3.4 0 0 1 6.8 14.8zM15.4 10.2H18a1.8 1.8 0 0 1 0 3.6h-2.6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+                    <span>In a cup</span>
+                </button>
+                <button type="button" class="cook-option cook-option-plus" data-name="Other">
+                    <span aria-hidden="true">+</span>
+                    <span>Other</span>
+                </button>
+            </div>
+            <label class="cook-other" hidden>
+                <span>Your method</span>
+                <input type="text" name="other" placeholder="For example, siphon" />
+            </label>
+            <div class="cook-actions">
+                <button type="submit" class="edit-save">Save</button>
+                <button type="button" class="edit-cancel">Cancel</button>
+            </div>
+        </form>
+    </div>
+    <div class="follow-overlay">
+        <div class="follow-modal" role="dialog" aria-modal="true" aria-labelledby="follow-title">
+            <h2 id="follow-title">My subscribers</h2>
+            <label class="follow-search">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M16 16l4.5 4.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+                <input type="search" placeholder="Search subscribers" autocomplete="off" />
+            </label>
+        </div>
+    </div>
+    <div class="unblock-overlay">
+        <div class="unblock-modal" role="dialog" aria-modal="true" aria-labelledby="unblock-title">
+            <h2 id="unblock-title">Remove from blacklist</h2>
+            <div class="blacklist-avatar unblock-avatar"></div>
+            <strong class="unblock-name"></strong>
+            <p class="unblock-role"></p>
+            <div class="unblock-actions">
+                <button type="button" class="edit-save unblock-yes">Yes</button>
+                <button type="button" class="edit-cancel unblock-no">No</button>
+            </div>
+        </div>
+    </div>
+    

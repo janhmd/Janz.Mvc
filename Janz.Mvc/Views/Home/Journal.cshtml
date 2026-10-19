@@ -8,44 +8,56 @@
                 <aside>
                     <h1>Journal about coffee</h1>
                     <ul class="journal-topics">
-                        <li class="all">All topics</li>
-                        <li><a href="#">Brewing guides <span>0</span></a></li>
-                        <li><a href="#">Brewing <span>0</span></a></li>
-                        <li><a href="#">Industry <span>0</span></a></li>
-                        <li><a href="#">Growing <span>0</span></a></li>
-                        <li><a href="#">Roasting <span>0</span></a></li>
-                        <li><a href="#">Marketing <span>0</span></a></li>
-                        <li><a href="#">Tea <span>0</span></a></li>
+                        <li class="all"><a href="#" class="is-on" data-topic="">All topics</a></li>
+                        <li><a href="#" data-topic="Brewing guides">Brewing guides <span>0</span></a></li>
+                        <li><a href="#" data-topic="Brewing">Brewing <span>0</span></a></li>
+                        <li><a href="#" data-topic="Industry">Industry <span>0</span></a></li>
+                        <li><a href="#" data-topic="Growing">Growing <span>0</span></a></li>
+                        <li><a href="#" data-topic="Roasting">Roasting <span>0</span></a></li>
+                        <li><a href="#" data-topic="Marketing">Marketing <span>0</span></a></li>
+                        <li><a href="#" data-topic="Tea">Tea <span>0</span></a></li>
                     </ul>
                 </aside>
-                <a class="journal-hero" href="/Home/Article">
-                    <img src="/images/journal.png" alt="" />
+                <!-- Featured article from DB. Cards below: newest first, filtered by topic or tag on the left. -->
+                <article class="journal-hero" data-id="coffee-pressure" data-title="Coffee and blood pressure: new research on how the drink affects the heart" data-topic="Industry" data-tags="Industry" data-date="19 October 2026" data-sort="2026-10-19" data-lead="Why coffee can raise blood pressure for a short time, but does not cause hypertension" data-image="/images/journal.png" data-href="/Home/Article" data-likes="69" data-comments="7" data-views="912" data-mins="9'">
+                    <a class="journal-hero-photo" href="/Home/Article" aria-label="Coffee and blood pressure: new research on how the drink affects the heart"><img src="/images/journal.png" alt="" /></a>
                     <div class="copy">
-                        <div class="meta">Topic<br>Date</div>
-                        <h2>Article title</h2>
-                        <p>Lead text</p>
-                        <div class="journal-stats"><span>0</span><span>0</span><span>0</span><span>0'</span></div>
+                        <div class="article-meta">Industry<br />19 October 2026</div>
+                        <h2><a href="/Home/Article">Coffee and blood pressure: new research on how the drink affects the heart</a></h2>
+                        <p>Why coffee can raise blood pressure for a short time, but does not cause hypertension</p>
+                        <div class="article-stats">
+                            <button type="button" class="article-like" aria-label="Like" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 11v9H5.2A1.2 1.2 0 0 1 4 18.8v-6.6A1.2 1.2 0 0 1 5.2 11H8zm0 0l3.2-6.1A2.2 2.2 0 0 1 13.2 4h.3A2.5 2.5 0 0 1 16 6.5V11h3.7a1.8 1.8 0 0 1 1.8 2.1l-1.2 6.2A1.8 1.8 0 0 1 18.5 21H8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg><span>69</span></button>
+                            <a class="article-discuss" href="/Home/Article#comments" aria-label="Comments"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4.5c4.4 0 8 2.9 8 6.6s-3.6 6.6-8 6.6c-.9 0-1.8-.1-2.6-.3L5 19.5l1.2-3.6C4.8 14.7 4 13 4 11.1 4 7.4 7.6 4.5 12 4.5z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg><span>7</span></a>
+                            <button type="button" class="article-save" aria-label="Bookmark" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5h10v15l-5-3.4-5 3.4z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg></button>
+                            <span class="article-stat" title="Views"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.8 12s3.4-6 9.2-6 9.2 6 9.2 6-3.4 6-9.2 6-9.2-6-9.2-6z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><circle cx="12" cy="12" r="2.8" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>912</span>
+                            <span class="article-stat" title="Reading time"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="13" r="7.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 9.5V13l2.2 1.6M10 3.5h4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>9&prime;</span>
+                            <span class="article-stat" title="Learning material"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 9.5L12 5l9.5 4.5L12 14z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M6.5 11.5v4.2c1.4 1.4 3.4 2.1 5.5 2.1s4.1-.7 5.5-2.1v-4.2M21.5 9.5v5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                        </div>
                     </div>
-                </a>
+                </article>
             </div>
 
             <div class="journal-board">
                 <aside class="journal-side">
                     <h3>Tags</h3>
                     <div class="journal-tags">
-                        <a href="#"># Growing</a>
-                        <a href="#"># Varieties</a>
-                        <a href="#"># Roasting</a>
-                        <a href="#"># Brewing</a>
-                        <a href="#"># Industry</a>
-                        <a href="#"># Marketing</a>
-                        <a href="#"># Espresso</a>
-                        <a href="#">All tags</a>
+                        <a href="#" data-tag="Growing"># Growing</a>
+                        <a href="#" data-tag="Varieties"># Varieties</a>
+                        <a href="#" data-tag="Roasting"># Roasting</a>
+                        <a href="#" data-tag="Brewing"># Brewing</a>
+                        <a href="#" data-tag="Industry"># Industry</a>
+                        <a href="#" data-tag="Marketing"># Marketing</a>
+                        <a href="#" data-tag="Espresso"># Espresso</a>
+                        <a href="#" data-tag="">All tags</a>
                     </div>
                     <h3>Article series</h3>
                     <a class="journal-series" href="/Home/Article">Brewing espresso</a>
                 </aside>
                 <div>
+                    <section class="journal-recent" hidden>
+                        <h2><a href="/Home/Account#journal">Recently read <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5.5l6.5 6.5L9 18.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></a></h2>
+                        <div class="journal-recent-row"></div>
+                    </section>
                     <div class="journal-toolbar">
                         <h2>All articles</h2>
                         <select aria-label="Sort">
@@ -54,27 +66,160 @@
                             <option>Most read</option>
                             <option>Most popular</option>
                         </select>
-                        <span class="journal-count">0 articles</span>
+                        <span class="journal-count">9 articles</span>
                     </div>
                     <div class="journal-grid">
-                        <a class="journal-card" href="/Home/Article">
-                            <img src="/images/roast.png" alt="" />
-                            <div class="body">
-                                <div class="meta">Topic<br>Date</div>
-                                <h3>Article title</h3>
-                                <p>Lead text</p>
-                                <div class="journal-stats"><span>0</span><span>0</span><span>0</span><span>0'</span></div>
+                        <article class="article-card" data-id="plant-milk" data-title="Plant-based milk: what can be a red flag for baristas and guests" data-topic="Brewing" data-tags="Brewing,Espresso" data-date="28 September 2026" data-sort="2026-09-28" data-lead="How the recipe of plant-based milk changes the taste, texture and stability of the cup" data-image="/images/floral-beans.jpg" data-href="/Home/Article" data-likes="151" data-comments="33" data-views="2140" data-mins="5'">
+                            <a class="article-card-photo" href="/Home/Article">
+                                <img src="/images/floral-beans.jpg" alt="" />
+                                <span class="article-progress"><i></i></span>
+                            </a>
+                            <div class="article-meta">Brewing<br />28 September 2026</div>
+                            <h3><a href="/Home/Article">Plant-based milk: what can be a red flag for baristas and guests</a></h3>
+                            <p>How the recipe of plant-based milk changes the taste, texture and stability of the cup</p>
+                            <div class="article-stats">
+                                <button type="button" class="article-like" aria-label="Like" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 11v9H5.2A1.2 1.2 0 0 1 4 18.8v-6.6A1.2 1.2 0 0 1 5.2 11H8zm0 0l3.2-6.1A2.2 2.2 0 0 1 13.2 4h.3A2.5 2.5 0 0 1 16 6.5V11h3.7a1.8 1.8 0 0 1 1.8 2.1l-1.2 6.2A1.8 1.8 0 0 1 18.5 21H8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg><span>151</span></button>
+                                <a class="article-discuss" href="/Home/Article#comments" aria-label="Comments"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4.5c4.4 0 8 2.9 8 6.6s-3.6 6.6-8 6.6c-.9 0-1.8-.1-2.6-.3L5 19.5l1.2-3.6C4.8 14.7 4 13 4 11.1 4 7.4 7.6 4.5 12 4.5z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg><span>33</span></a>
+                                <button type="button" class="article-save" aria-label="Bookmark" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5h10v15l-5-3.4-5 3.4z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg></button>
+                                <span class="article-stat" title="Views"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.8 12s3.4-6 9.2-6 9.2 6 9.2 6-3.4 6-9.2 6-9.2-6-9.2-6z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><circle cx="12" cy="12" r="2.8" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>2K</span>
+                                <span class="article-stat" title="Reading time"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="13" r="7.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 9.5V13l2.2 1.6M10 3.5h4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>5&prime;</span>
+                                <span class="article-stat" title="Learning material"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 9.5L12 5l9.5 4.5L12 14z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M6.5 11.5v4.2c1.4 1.4 3.4 2.1 5.5 2.1s4.1-.7 5.5-2.1v-4.2M21.5 9.5v5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
                             </div>
-                        </a>
-                        <a class="journal-card" href="/Home/Article">
-                            <img src="/images/aroma-kit.png" alt="" />
-                            <div class="body">
-                                <div class="meta">Topic<br>Date</div>
-                                <h3>Article title</h3>
-                                <p>Lead text</p>
-                                <div class="journal-stats"><span>0</span><span>0</span><span>0</span><span>0'</span></div>
+                        </article>
+                        <article class="article-card" data-id="aroma-kit" data-title="Aroma kit: a tool for developing sensory skills" data-topic="Industry" data-tags="Industry" data-date="21 September 2026" data-sort="2026-09-21" data-lead="We figure out what the first molecular coffee aroma kit is" data-image="/images/aroma-kit.png" data-href="/Home/Article" data-likes="194" data-comments="36" data-views="4210" data-mins="8'">
+                            <a class="article-card-photo" href="/Home/Article">
+                                <img src="/images/aroma-kit.png" alt="" />
+                                <span class="article-progress"><i></i></span>
+                            </a>
+                            <div class="article-meta">Industry<br />21 September 2026</div>
+                            <h3><a href="/Home/Article">Aroma kit: a tool for developing sensory skills</a></h3>
+                            <p>We figure out what the first molecular coffee aroma kit is</p>
+                            <div class="article-stats">
+                                <button type="button" class="article-like" aria-label="Like" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 11v9H5.2A1.2 1.2 0 0 1 4 18.8v-6.6A1.2 1.2 0 0 1 5.2 11H8zm0 0l3.2-6.1A2.2 2.2 0 0 1 13.2 4h.3A2.5 2.5 0 0 1 16 6.5V11h3.7a1.8 1.8 0 0 1 1.8 2.1l-1.2 6.2A1.8 1.8 0 0 1 18.5 21H8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg><span>194</span></button>
+                                <a class="article-discuss" href="/Home/Article#comments" aria-label="Comments"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4.5c4.4 0 8 2.9 8 6.6s-3.6 6.6-8 6.6c-.9 0-1.8-.1-2.6-.3L5 19.5l1.2-3.6C4.8 14.7 4 13 4 11.1 4 7.4 7.6 4.5 12 4.5z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg><span>36</span></a>
+                                <button type="button" class="article-save" aria-label="Bookmark" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5h10v15l-5-3.4-5 3.4z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg></button>
+                                <span class="article-stat" title="Views"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.8 12s3.4-6 9.2-6 9.2 6 9.2 6-3.4 6-9.2 6-9.2-6-9.2-6z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><circle cx="12" cy="12" r="2.8" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>4K</span>
+                                <span class="article-stat" title="Reading time"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="13" r="7.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 9.5V13l2.2 1.6M10 3.5h4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>8&prime;</span>
                             </div>
-                        </a>
+                        </article>
+                        <article class="article-card" data-id="world-of-coffee" data-title="World of Coffee 2026: the most interesting devices and accessories for home brewing" data-topic="Industry" data-tags="Industry,Brewing" data-date="14 September 2026" data-sort="2026-09-14" data-lead="Digital tampers, unusual drippers and much more" data-image="/images/roast.png" data-href="/Home/Article" data-likes="210" data-comments="51" data-views="5030" data-mins="8'">
+                            <a class="article-card-photo" href="/Home/Article">
+                                <img src="/images/roast.png" alt="" />
+                                <span class="article-progress"><i></i></span>
+                            </a>
+                            <div class="article-meta">Industry<br />14 September 2026</div>
+                            <h3><a href="/Home/Article">World of Coffee 2026: the most interesting devices and accessories for home brewing</a></h3>
+                            <p>Digital tampers, unusual drippers and much more</p>
+                            <div class="article-stats">
+                                <button type="button" class="article-like" aria-label="Like" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 11v9H5.2A1.2 1.2 0 0 1 4 18.8v-6.6A1.2 1.2 0 0 1 5.2 11H8zm0 0l3.2-6.1A2.2 2.2 0 0 1 13.2 4h.3A2.5 2.5 0 0 1 16 6.5V11h3.7a1.8 1.8 0 0 1 1.8 2.1l-1.2 6.2A1.8 1.8 0 0 1 18.5 21H8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg><span>210</span></button>
+                                <a class="article-discuss" href="/Home/Article#comments" aria-label="Comments"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4.5c4.4 0 8 2.9 8 6.6s-3.6 6.6-8 6.6c-.9 0-1.8-.1-2.6-.3L5 19.5l1.2-3.6C4.8 14.7 4 13 4 11.1 4 7.4 7.6 4.5 12 4.5z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg><span>51</span></a>
+                                <button type="button" class="article-save" aria-label="Bookmark" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5h10v15l-5-3.4-5 3.4z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg></button>
+                                <span class="article-stat" title="Views"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.8 12s3.4-6 9.2-6 9.2 6 9.2 6-3.4 6-9.2 6-9.2-6-9.2-6z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><circle cx="12" cy="12" r="2.8" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>5K</span>
+                                <span class="article-stat" title="Reading time"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="13" r="7.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 9.5V13l2.2 1.6M10 3.5h4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>8&prime;</span>
+                            </div>
+                        </article>
+                        <article class="article-card" data-id="crema" data-title="Barista Hustle experiment: does artificial crema differ from real crema" data-topic="Brewing" data-tags="Espresso,Brewing" data-date="24 August 2026" data-sort="2026-08-24" data-lead="Is it worth making crema for espresso that was brewed in advance" data-image="/images/guatemala.png" data-href="/Home/Article" data-likes="153" data-comments="36" data-views="2380" data-mins="8'">
+                            <a class="article-card-photo" href="/Home/Article">
+                                <img src="/images/guatemala.png" alt="" />
+                                <span class="article-progress"><i></i></span>
+                            </a>
+                            <div class="article-meta">Brewing<br />24 August 2026</div>
+                            <h3><a href="/Home/Article">Barista Hustle experiment: does artificial crema differ from real crema</a></h3>
+                            <p>Is it worth making crema for espresso that was brewed in advance</p>
+                            <div class="article-stats">
+                                <button type="button" class="article-like" aria-label="Like" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 11v9H5.2A1.2 1.2 0 0 1 4 18.8v-6.6A1.2 1.2 0 0 1 5.2 11H8zm0 0l3.2-6.1A2.2 2.2 0 0 1 13.2 4h.3A2.5 2.5 0 0 1 16 6.5V11h3.7a1.8 1.8 0 0 1 1.8 2.1l-1.2 6.2A1.8 1.8 0 0 1 18.5 21H8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg><span>153</span></button>
+                                <a class="article-discuss" href="/Home/Article#comments" aria-label="Comments"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4.5c4.4 0 8 2.9 8 6.6s-3.6 6.6-8 6.6c-.9 0-1.8-.1-2.6-.3L5 19.5l1.2-3.6C4.8 14.7 4 13 4 11.1 4 7.4 7.6 4.5 12 4.5z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg><span>36</span></a>
+                                <button type="button" class="article-save" aria-label="Bookmark" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5h10v15l-5-3.4-5 3.4z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg></button>
+                                <span class="article-stat" title="Views"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.8 12s3.4-6 9.2-6 9.2 6 9.2 6-3.4 6-9.2 6-9.2-6-9.2-6z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><circle cx="12" cy="12" r="2.8" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>2K</span>
+                                <span class="article-stat" title="Reading time"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="13" r="7.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 9.5V13l2.2 1.6M10 3.5h4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>8&prime;</span>
+                                <span class="article-stat" title="Learning material"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 9.5L12 5l9.5 4.5L12 14z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M6.5 11.5v4.2c1.4 1.4 3.4 2.1 5.5 2.1s4.1-.7 5.5-2.1v-4.2M21.5 9.5v5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                            </div>
+                        </article>
+                        <article class="article-card" data-id="matcha" data-title="Varieties, grades and terroir: why matcha tastes so different" data-topic="Industry, Tea" data-tags="Varieties,Growing" data-date="17 August 2026" data-sort="2026-08-17" data-lead="The co-author of the first book about matcha tea on what makes every cup different" data-image="/images/candy.png" data-href="/Home/Article" data-likes="179" data-comments="47" data-views="4020" data-mins="8'">
+                            <a class="article-card-photo" href="/Home/Article">
+                                <img src="/images/candy.png" alt="" />
+                                <span class="article-progress"><i></i></span>
+                            </a>
+                            <div class="article-meta">Industry, Tea<br />17 August 2026</div>
+                            <h3><a href="/Home/Article">Varieties, grades and terroir: why matcha tastes so different</a></h3>
+                            <p>The co-author of the first book about matcha tea on what makes every cup different</p>
+                            <div class="article-stats">
+                                <button type="button" class="article-like" aria-label="Like" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 11v9H5.2A1.2 1.2 0 0 1 4 18.8v-6.6A1.2 1.2 0 0 1 5.2 11H8zm0 0l3.2-6.1A2.2 2.2 0 0 1 13.2 4h.3A2.5 2.5 0 0 1 16 6.5V11h3.7a1.8 1.8 0 0 1 1.8 2.1l-1.2 6.2A1.8 1.8 0 0 1 18.5 21H8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg><span>179</span></button>
+                                <a class="article-discuss" href="/Home/Article#comments" aria-label="Comments"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4.5c4.4 0 8 2.9 8 6.6s-3.6 6.6-8 6.6c-.9 0-1.8-.1-2.6-.3L5 19.5l1.2-3.6C4.8 14.7 4 13 4 11.1 4 7.4 7.6 4.5 12 4.5z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg><span>47</span></a>
+                                <button type="button" class="article-save" aria-label="Bookmark" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5h10v15l-5-3.4-5 3.4z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg></button>
+                                <span class="article-stat" title="Views"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.8 12s3.4-6 9.2-6 9.2 6 9.2 6-3.4 6-9.2 6-9.2-6-9.2-6z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><circle cx="12" cy="12" r="2.8" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>4K</span>
+                                <span class="article-stat" title="Reading time"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="13" r="7.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 9.5V13l2.2 1.6M10 3.5h4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>8&prime;</span>
+                                <span class="article-stat" title="Learning material"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 9.5L12 5l9.5 4.5L12 14z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M6.5 11.5v4.2c1.4 1.4 3.4 2.1 5.5 2.1s4.1-.7 5.5-2.1v-4.2M21.5 9.5v5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                            </div>
+                        </article>
+                        <article class="article-card" data-id="burundi" data-title="How our first trip to Burundi went" data-topic="Growing" data-tags="Growing,Varieties" data-date="10 August 2026" data-sort="2026-08-10" data-lead="Which Burundi coffee will appear in our range" data-image="/images/floral.png" data-href="/Home/Article" data-likes="241" data-comments="35" data-views="3150" data-mins="7'">
+                            <a class="article-card-photo" href="/Home/Article">
+                                <img src="/images/floral.png" alt="" />
+                                <span class="article-progress"><i></i></span>
+                            </a>
+                            <div class="article-meta">Growing<br />10 August 2026</div>
+                            <h3><a href="/Home/Article">How our first trip to Burundi went</a></h3>
+                            <p>Which Burundi coffee will appear in our range</p>
+                            <div class="article-stats">
+                                <button type="button" class="article-like" aria-label="Like" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 11v9H5.2A1.2 1.2 0 0 1 4 18.8v-6.6A1.2 1.2 0 0 1 5.2 11H8zm0 0l3.2-6.1A2.2 2.2 0 0 1 13.2 4h.3A2.5 2.5 0 0 1 16 6.5V11h3.7a1.8 1.8 0 0 1 1.8 2.1l-1.2 6.2A1.8 1.8 0 0 1 18.5 21H8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg><span>241</span></button>
+                                <a class="article-discuss" href="/Home/Article#comments" aria-label="Comments"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4.5c4.4 0 8 2.9 8 6.6s-3.6 6.6-8 6.6c-.9 0-1.8-.1-2.6-.3L5 19.5l1.2-3.6C4.8 14.7 4 13 4 11.1 4 7.4 7.6 4.5 12 4.5z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg><span>35</span></a>
+                                <button type="button" class="article-save" aria-label="Bookmark" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5h10v15l-5-3.4-5 3.4z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg></button>
+                                <span class="article-stat" title="Views"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.8 12s3.4-6 9.2-6 9.2 6 9.2 6-3.4 6-9.2 6-9.2-6-9.2-6z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><circle cx="12" cy="12" r="2.8" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>3K</span>
+                                <span class="article-stat" title="Reading time"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="13" r="7.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 9.5V13l2.2 1.6M10 3.5h4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>7&prime;</span>
+                                <span class="article-stat" title="Learning material"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 9.5L12 5l9.5 4.5L12 14z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M6.5 11.5v4.2c1.4 1.4 3.4 2.1 5.5 2.1s4.1-.7 5.5-2.1v-4.2M21.5 9.5v5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                            </div>
+                        </article>
+                        <article class="article-card" data-id="roast-profiles" data-title="Roast profiles explained: from light to dark" data-topic="Roasting" data-tags="Roasting" data-date="3 August 2026" data-sort="2026-08-03" data-lead="What happens to the bean at every stage and how to read a roast curve" data-image="/images/floral-bag.png" data-href="/Home/Article" data-likes="98" data-comments="12" data-views="1530" data-mins="6'">
+                            <a class="article-card-photo" href="/Home/Article">
+                                <img src="/images/floral-bag.png" alt="" />
+                                <span class="article-progress"><i></i></span>
+                            </a>
+                            <div class="article-meta">Roasting<br />3 August 2026</div>
+                            <h3><a href="/Home/Article">Roast profiles explained: from light to dark</a></h3>
+                            <p>What happens to the bean at every stage and how to read a roast curve</p>
+                            <div class="article-stats">
+                                <button type="button" class="article-like" aria-label="Like" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 11v9H5.2A1.2 1.2 0 0 1 4 18.8v-6.6A1.2 1.2 0 0 1 5.2 11H8zm0 0l3.2-6.1A2.2 2.2 0 0 1 13.2 4h.3A2.5 2.5 0 0 1 16 6.5V11h3.7a1.8 1.8 0 0 1 1.8 2.1l-1.2 6.2A1.8 1.8 0 0 1 18.5 21H8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg><span>98</span></button>
+                                <a class="article-discuss" href="/Home/Article#comments" aria-label="Comments"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4.5c4.4 0 8 2.9 8 6.6s-3.6 6.6-8 6.6c-.9 0-1.8-.1-2.6-.3L5 19.5l1.2-3.6C4.8 14.7 4 13 4 11.1 4 7.4 7.6 4.5 12 4.5z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg><span>12</span></a>
+                                <button type="button" class="article-save" aria-label="Bookmark" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5h10v15l-5-3.4-5 3.4z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg></button>
+                                <span class="article-stat" title="Views"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.8 12s3.4-6 9.2-6 9.2 6 9.2 6-3.4 6-9.2 6-9.2-6-9.2-6z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><circle cx="12" cy="12" r="2.8" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>1K</span>
+                                <span class="article-stat" title="Reading time"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="13" r="7.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 9.5V13l2.2 1.6M10 3.5h4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>6&prime;</span>
+                                <span class="article-stat" title="Learning material"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 9.5L12 5l9.5 4.5L12 14z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M6.5 11.5v4.2c1.4 1.4 3.4 2.1 5.5 2.1s4.1-.7 5.5-2.1v-4.2M21.5 9.5v5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                            </div>
+                        </article>
+                        <article class="article-card" data-id="french-press" data-title="Brewing guide: French press at home" data-topic="Brewing guides" data-tags="Brewing" data-date="27 July 2026" data-sort="2026-07-27" data-lead="Grind, ratio and time for a clean and sweet cup" data-image="/images/set-box.png" data-href="/Home/Article" data-likes="87" data-comments="9" data-views="1210" data-mins="4'">
+                            <a class="article-card-photo" href="/Home/Article">
+                                <img src="/images/set-box.png" alt="" />
+                                <span class="article-progress"><i></i></span>
+                            </a>
+                            <div class="article-meta">Brewing guides<br />27 July 2026</div>
+                            <h3><a href="/Home/Article">Brewing guide: French press at home</a></h3>
+                            <p>Grind, ratio and time for a clean and sweet cup</p>
+                            <div class="article-stats">
+                                <button type="button" class="article-like" aria-label="Like" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 11v9H5.2A1.2 1.2 0 0 1 4 18.8v-6.6A1.2 1.2 0 0 1 5.2 11H8zm0 0l3.2-6.1A2.2 2.2 0 0 1 13.2 4h.3A2.5 2.5 0 0 1 16 6.5V11h3.7a1.8 1.8 0 0 1 1.8 2.1l-1.2 6.2A1.8 1.8 0 0 1 18.5 21H8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg><span>87</span></button>
+                                <a class="article-discuss" href="/Home/Article#comments" aria-label="Comments"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4.5c4.4 0 8 2.9 8 6.6s-3.6 6.6-8 6.6c-.9 0-1.8-.1-2.6-.3L5 19.5l1.2-3.6C4.8 14.7 4 13 4 11.1 4 7.4 7.6 4.5 12 4.5z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg><span>9</span></a>
+                                <button type="button" class="article-save" aria-label="Bookmark" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5h10v15l-5-3.4-5 3.4z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg></button>
+                                <span class="article-stat" title="Views"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.8 12s3.4-6 9.2-6 9.2 6 9.2 6-3.4 6-9.2 6-9.2-6-9.2-6z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><circle cx="12" cy="12" r="2.8" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>1K</span>
+                                <span class="article-stat" title="Reading time"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="13" r="7.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 9.5V13l2.2 1.6M10 3.5h4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>4&prime;</span>
+                                <span class="article-stat" title="Learning material"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 9.5L12 5l9.5 4.5L12 14z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M6.5 11.5v4.2c1.4 1.4 3.4 2.1 5.5 2.1s4.1-.7 5.5-2.1v-4.2M21.5 9.5v5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                            </div>
+                        </article>
+                        <article class="article-card" data-id="coffee-stories" data-title="How we tell our coffee stories on social media" data-topic="Marketing" data-tags="Marketing" data-date="20 July 2026" data-sort="2026-07-20" data-lead="Photos, short videos and why every lot needs its own story" data-image="/images/set-drip.png" data-href="/Home/Article" data-likes="45" data-comments="6" data-views="820" data-mins="5'">
+                            <a class="article-card-photo" href="/Home/Article">
+                                <img src="/images/set-drip.png" alt="" />
+                                <span class="article-progress"><i></i></span>
+                            </a>
+                            <div class="article-meta">Marketing<br />20 July 2026</div>
+                            <h3><a href="/Home/Article">How we tell our coffee stories on social media</a></h3>
+                            <p>Photos, short videos and why every lot needs its own story</p>
+                            <div class="article-stats">
+                                <button type="button" class="article-like" aria-label="Like" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 11v9H5.2A1.2 1.2 0 0 1 4 18.8v-6.6A1.2 1.2 0 0 1 5.2 11H8zm0 0l3.2-6.1A2.2 2.2 0 0 1 13.2 4h.3A2.5 2.5 0 0 1 16 6.5V11h3.7a1.8 1.8 0 0 1 1.8 2.1l-1.2 6.2A1.8 1.8 0 0 1 18.5 21H8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg><span>45</span></button>
+                                <a class="article-discuss" href="/Home/Article#comments" aria-label="Comments"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4.5c4.4 0 8 2.9 8 6.6s-3.6 6.6-8 6.6c-.9 0-1.8-.1-2.6-.3L5 19.5l1.2-3.6C4.8 14.7 4 13 4 11.1 4 7.4 7.6 4.5 12 4.5z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg><span>6</span></a>
+                                <button type="button" class="article-save" aria-label="Bookmark" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5h10v15l-5-3.4-5 3.4z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg></button>
+                                <span class="article-stat" title="Views"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.8 12s3.4-6 9.2-6 9.2 6 9.2 6-3.4 6-9.2 6-9.2-6-9.2-6z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><circle cx="12" cy="12" r="2.8" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>820</span>
+                                <span class="article-stat" title="Reading time"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="13" r="7.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 9.5V13l2.2 1.6M10 3.5h4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>5&prime;</span>
+                            </div>
+                        </article>
+                        <p class="journal-none" hidden>No articles on this topic yet</p>
                     </div>
                 </div>
             </div>
