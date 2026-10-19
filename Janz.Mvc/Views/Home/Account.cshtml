@@ -1,0 +1,118 @@
+@model Janz.Mvc.ViewModels.Account.AccountPageVM
+@{
+    ViewData["Title"] = "Account";
+    var error = TempData["AccountError"] as string ?? ViewBag.Error as string;
+    var edit = Model.Addresses.FirstOrDefault(m => m.Id == Model.EditId);
+}
+
+<main>
+        <section id="account">
+            <h1 class="cart-title">Account</h1>
+            @if (!string.IsNullOrEmpty(error))
+            {
+                <p class="entry-error">@error</p>
+            }
+
+            <h2 class="account-title">Addresses</h2>
+            @if (Model.Addresses.Count == 0 && edit is null)
+            {
+                <p class="account-empty">No addresses yet.</p>
+            }
+            @foreach (var address in Model.Addresses)
+            {
+                if (edit is not null && address.Id == edit.Id)
+                {
+                    continue;
+                }
+                <div class="account-card">
+                    <div>
+                        <strong>@address.FullName</strong>
+                        <div class="kind">@address.Phone</div>
+                        <div class="kind">@address.Line, @address.City, @address.PostalCode</div>
+                    </div>
+                    <div class="account-actions">
+                        <a href="/Home/Account?edit=@address.Id">Edit</a>
+                        <form asp-controller="Home" asp-action="RemoveAddress" method="post">
+                            <input type="hidden" name="id" value="@address.Id" />
+                            <button type="submit" class="cart-remove" aria-label="Remove">×</button>
+                        </form>
+                    </div>
+                </div>
+            }
+
+            @if (edit is not null)
+            {
+                <form asp-controller="Home" asp-action="UpdateAddress" method="post" class="account-form">
+                    <input type="hidden" name="id" value="@edit.Id" />
+                    <label>
+                        <span class="entry-caption">Full name</span>
+                        <span class="entry-field"><input type="text" name="fullName" value="@edit.FullName" required maxlength="80" /></span>
+                    </label>
+                    <label>
+                        <span class="entry-caption">Phone</span>
+                        <span class="entry-field"><input type="text" name="phone" value="@edit.Phone" required maxlength="30" /></span>
+                    </label>
+                    <label class="account-wide">
+                        <span class="entry-caption">Address</span>
+                        <span class="entry-field"><input type="text" name="line" value="@edit.Line" required maxlength="200" /></span>
+                    </label>
+                    <label>
+                        <span class="entry-caption">City</span>
+                        <span class="entry-field"><input type="text" name="city" value="@edit.City" required maxlength="80" /></span>
+                    </label>
+                    <label>
+                        <span class="entry-caption">Postal code</span>
+                        <span class="entry-field"><input type="text" name="postalCode" value="@edit.PostalCode" required maxlength="20" /></span>
+                    </label>
+                    <div class="account-wide account-actions">
+                        <button type="submit" class="cart-place">Save address</button>
+                        <a href="/Home/Account">Cancel</a>
+                    </div>
+                </form>
+            }
+            else
+            {
+                <form asp-controller="Home" asp-action="AddAddress" method="post" class="account-form">
+                    <label>
+                        <span class="entry-caption">Full name</span>
+                        <span class="entry-field"><input type="text" name="fullName" required maxlength="80" /></span>
+                    </label>
+                    <label>
+                        <span class="entry-caption">Phone</span>
+                        <span class="entry-field"><input type="text" name="phone" required maxlength="30" /></span>
+                    </label>
+                    <label class="account-wide">
+                        <span class="entry-caption">Address</span>
+                        <span class="entry-field"><input type="text" name="line" required maxlength="200" /></span>
+                    </label>
+                    <label>
+                        <span class="entry-caption">City</span>
+                        <span class="entry-field"><input type="text" name="city" required maxlength="80" /></span>
+                    </label>
+                    <label>
+                        <span class="entry-caption">Postal code</span>
+                        <span class="entry-field"><input type="text" name="postalCode" required maxlength="20" /></span>
+                    </label>
+                    <div class="account-wide">
+                        <button type="submit" class="cart-place">Add address</button>
+                    </div>
+                </form>
+            }
+
+            <h2 class="account-title">Orders</h2>
+            @if (Model.Orders.Count == 0)
+            {
+                <p class="account-empty">No orders yet.</p>
+            }
+            @foreach (var order in Model.Orders)
+            {
+                <div class="account-order">
+                    <div>
+                        <a href="/Home/Order/@order.Id">Order #@order.Id</a>
+                        <div class="kind">@order.CreatedAt.ToString("dd.MM.yyyy") · @order.Status</div>
+                    </div>
+                    <strong>₼@order.Total.ToString("0.00")</strong>
+                </div>
+            }
+        </section>
+    </main>

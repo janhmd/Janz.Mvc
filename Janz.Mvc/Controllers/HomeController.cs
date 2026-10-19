@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using Janz.Mvc.Models;
 using Janz.Mvc.Services;
+using Janz.Mvc.ViewModels.Account;
 using Janz.Mvc.ViewModels.Cart;
 using Janz.Mvc.ViewModels.Orders;
 using Janz.Mvc.ViewModels.Products;
@@ -17,13 +18,15 @@ public class HomeController : Controller
     private readonly ProductApiClient _productApi;
     private readonly CartApiClient _cartApi;
     private readonly OrderApiClient _orderApi;
+    private readonly AddressApiClient _addressApi;
 
-    public HomeController(AccountApiClient accountApi, ProductApiClient productApi, CartApiClient cartApi, OrderApiClient orderApi)
+    public HomeController(AccountApiClient accountApi, ProductApiClient productApi, CartApiClient cartApi, OrderApiClient orderApi, AddressApiClient addressApi)
     {
         _accountApi = accountApi;
         _productApi = productApi;
         _cartApi = cartApi;
         _orderApi = orderApi;
+        _addressApi = addressApi;
     }
 
     public async Task<IActionResult> Index()
@@ -299,6 +302,89 @@ public class HomeController : Controller
         return View(result.Order);
     }
 
+    public async Task<IActionResult> Account(int? edit)
+    {
+        var token = Request.Cookies[TokenCookie];
+        if (string.IsNullOrEmpty(token))
+        {
+            return RedirectToAction(nameof(SignIn));
+        }
+
+        var addresses = await _addressApi.GetAllAsync(token);
+        if (addresses.Unauthorized)
+        {
+            Response.Cookies.Delete(TokenCookie);
+            Response.Cookies.Delete(NameCookie);
+            return RedirectToAction(nameof(SignIn));
+        }
+
+        var orders = await _orderApi.GetAllAsync(token);
+        if (orders.Unauthorized)
+        {
+            Response.Cookies.Delete(TokenCookie);
+            Response.Cookies.Delete(NameCookie);
+            return RedirectToAction(nameof(SignIn));
+        }
+
+        if (!addresses.Success)
+        {
+            ViewBag.Error = string.Join(" ", addresses.Errors);
+        }
+        else if (!orders.Success)
+        {
+            ViewBag.Error = string.Join(" ", orders.Errors);
+        }
+
+        return View(new AccountPageVM
+        {
+            Addresses = addresses.Addresses,
+            Orders = orders.Orders,
+            EditId = edit
+        });
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> AddAddress(string fullName, string phone, string line, string city, string postalCode)
+    {
+        var token = Request.Cookies[TokenCookie];
+        if (string.IsNullOrEmpty(token))
+        {
+            return RedirectToAction(nameof(SignIn));
+        }
+
+        var result = await _addressApi.CreateAsync(token, fullName ?? string.Empty, phone ?? string.Empty, line ?? string.Empty, city ?? string.Empty, postalCode ?? string.Empty);
+        return AddressResponse(result);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> UpdateAddress(int id, string fullName, string phone, string line, string city, string postalCode)
+    {
+        var token = Request.Cookies[TokenCookie];
+        if (string.IsNullOrEmpty(token))
+        {
+            return RedirectToAction(nameof(SignIn));
+        }
+
+        var result = await _addressApi.UpdateAsync(token, id, fullName ?? string.Empty, phone ?? string.Empty, line ?? string.Empty, city ?? string.Empty, postalCode ?? string.Empty);
+        return AddressResponse(result);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> RemoveAddress(int id)
+    {
+        var token = Request.Cookies[TokenCookie];
+        if (string.IsNullOrEmpty(token))
+        {
+            return RedirectToAction(nameof(SignIn));
+        }
+
+        var result = await _addressApi.DeleteAsync(token, id);
+        return AddressResponse(result);
+    }
+
     public IActionResult Privacy()
     {
         return View();
@@ -308,6 +394,23 @@ public class HomeController : Controller
     public IActionResult Error()
     {
         return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+    }
+
+    private IActionResult AddressResponse(AddressCallResult result)
+    {
+        if (result.Unauthorized)
+        {
+            Response.Cookies.Delete(TokenCookie);
+            Response.Cookies.Delete(NameCookie);
+            return RedirectToAction(nameof(SignIn));
+        }
+
+        if (!result.Success)
+        {
+            TempData["AccountError"] = string.Join(" ", result.Errors);
+        }
+
+        return RedirectToAction(nameof(Account));
     }
 
     private IActionResult CartResponse(CartCallResult result)

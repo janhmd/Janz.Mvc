@@ -20,6 +20,38 @@ namespace Janz.Mvc.Services
             _http = httpClientFactory.CreateClient("JanzApi");
         }
 
+        public async Task<OrderListCallResult> GetAllAsync(string token)
+        {
+            var request = new HttpRequestMessage(HttpMethod.Get, "api/orders");
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+            try
+            {
+                var response = await _http.SendAsync(request);
+                if (response.StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    return OrderListCallResult.Fail(new List<string> { "Please sign in again." }, unauthorized: true);
+                }
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var orders = await response.Content.ReadFromJsonAsync<List<OrderUIVM>>(JsonOptions);
+                    return OrderListCallResult.Ok(orders ?? new List<OrderUIVM>());
+                }
+
+                var json = await response.Content.ReadFromJsonAsync<JsonElement>();
+                return OrderListCallResult.Fail(ReadErrors(json));
+            }
+            catch (HttpRequestException)
+            {
+                return OrderListCallResult.Fail(new List<string> { "The API is not running." });
+            }
+            catch (JsonException)
+            {
+                return OrderListCallResult.Fail(new List<string> { "The API did not return a valid response." });
+            }
+        }
+
         public Task<OrderCallResult> CreateAsync(string token)
         {
             return SendAsync(HttpMethod.Post, "api/orders", token);

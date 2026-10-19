@@ -78,6 +78,7 @@
                         @if (signedIn)
                         {
                             <span class="profile-name">@userName</span>
+                            <a href="/Home/Account">Account</a>
                             <form asp-controller="Home" asp-action="LogOut" method="post">
                                 <button type="submit">Sign out</button>
                             </form>
