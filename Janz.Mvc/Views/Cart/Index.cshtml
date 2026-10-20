@@ -11,7 +11,7 @@
                 <div class="wish-empty cart-empty">
                     <h1>The cart is empty</h1>
                     <p>Let’s pick something in the catalog</p>
-                    <a href="/Home/Catalog">To catalog</a>
+                    <a href="/Products">To catalog</a>
                 </div>
             }
             else
@@ -25,26 +25,26 @@
                     @foreach (var item in Model.Cart.Items)
                     {
                         <div class="cart-line">
-                            <a class="cart-line-photo" href="/Home/Product/@item.ProductId"><img src="@item.ImagePath" alt="@item.ProductName" /></a>
+                            <a class="cart-line-photo" href="/Products/Detail/@item.ProductId"><img src="@item.ImagePath" alt="@item.ProductName" /></a>
                             <div class="cart-line-info">
-                                <a href="/Home/Product/@item.ProductId">@item.ProductName</a>
+                                <a href="/Products/Detail/@item.ProductId">@item.ProductName</a>
                                 <div class="kind">₼@item.Price.ToString("0.00") · @item.Stock in stock</div>
                             </div>
                             <div class="cart-qty">
-                                <form asp-controller="Home" asp-action="UpdateCart" method="post">
+                                <form asp-controller="Cart" asp-action="Update" method="post">
                                     <input type="hidden" name="id" value="@item.Id" />
                                     <input type="hidden" name="quantity" value="@(item.Quantity - 1)" />
                                     <button type="submit" aria-label="Less" disabled="@(item.Quantity <= 1)">−</button>
                                 </form>
                                 <span>@item.Quantity</span>
-                                <form asp-controller="Home" asp-action="UpdateCart" method="post">
+                                <form asp-controller="Cart" asp-action="Update" method="post">
                                     <input type="hidden" name="id" value="@item.Id" />
                                     <input type="hidden" name="quantity" value="@(item.Quantity + 1)" />
                                     <button type="submit" aria-label="More" disabled="@(item.Quantity >= item.Stock)">+</button>
                                 </form>
                             </div>
                             <strong class="cart-line-total">₼@item.Total.ToString("0.00")</strong>
-                            <form asp-controller="Home" asp-action="RemoveFromCart" method="post">
+                            <form asp-controller="Cart" asp-action="Remove" method="post">
                                 <input type="hidden" name="id" value="@item.Id" />
                                 <button type="submit" class="cart-remove" aria-label="Remove">×</button>
                             </form>
@@ -57,11 +57,11 @@
                     @if (Model.Addresses.Count == 0)
                     {
                         @* Ünvan olmadan sifariş olmur: əvvəl Account → My details-də ünvan əlavə edilir *@
-                        <a class="cart-place" href="/Home/Account#details">Add a delivery address</a>
+                        <a class="cart-place" href="/Profile#details">Add a delivery address</a>
                     }
                     else
                     {
-                        <form class="cart-checkout" asp-controller="Home" asp-action="PlaceOrder" method="post">
+                        <form class="cart-checkout" asp-controller="Orders" asp-action="Create" method="post">
                             <label class="cart-address">
                                 <span>Deliver to</span>
                                 <select name="addressId" required>

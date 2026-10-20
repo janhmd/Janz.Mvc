@@ -1,8 +1,8 @@
-@model Janz.Mvc.ViewModels.Account.AccountPageVM
+@model Janz.Mvc.ViewModels.Profile.ProfilePageVM
 @{
     ViewData["Title"] = "Account";
     var error = TempData["AccountError"] as string ?? ViewBag.Error as string;
-    var userName = Context.Request.Cookies["janz_name"];
+    var userName = User.Identity?.Name;
     if (string.IsNullOrWhiteSpace(userName))
     {
         userName = "Coffee lover";
@@ -42,7 +42,7 @@
                             <div class="cabinet-empty">
                                 <h2>You haven't bought anything yet</h2>
                                 <p>Let’s pick something in the catalog</p>
-                                <a href="/Home/Catalog">To catalog</a>
+                                <a href="/Products">To catalog</a>
                             </div>
                         }
                         else
@@ -50,7 +50,7 @@
                             <div class="order-list">
                                 @foreach (var order in Model.Orders)
                                 {
-                                    <a class="order-row" href="/Home/Order/@order.Id">
+                                    <a class="order-row" href="/Orders/Detail/@order.Id">
                                         <span class="order-row-who">
                                             <strong>Order #@order.Id</strong>
                                             <span>@order.CreatedAt.ToString("dd.MM.yyyy") · @order.Items.Sum(m => m.Quantity) pcs</span>
@@ -82,7 +82,7 @@
                                     <time datetime="2026-10-17T04:33">17 October 2026, 04:33</time>
                                 </div>
                                 <p>@@Our news recently published a new post.</p>
-                                <a class="notice-post" href="/Home/Community">
+                                <a class="notice-post" href="/Community">
                                     <img src="/images/roast.png" alt="" />
                                     <strong>This is true — we have our own coffee community</strong>
                                 </a>
@@ -100,7 +100,7 @@
                                     <article>
                                         <div class="product">
                                             <div class="product-top"><p>For espresso</p></div>
-                                            <h3><a class="product-link" href="/Home/Product">Floral</a></h3>
+                                            <h3><a class="product-link" href="/Products/Detail">Floral</a></h3>
                                             <div class="kind">Blend</div>
                                             <img class="product-photo" src="/images/floral.png" alt="Floral espresso coffee" />
                                             <div class="price-row">
@@ -111,7 +111,7 @@
                                     <article>
                                         <div class="product">
                                             <div class="product-top"><p>For filter</p></div>
-                                            <h3><a class="product-link" href="/Home/Catalog">Guatemala Santiago</a></h3>
+                                            <h3><a class="product-link" href="/Products">Guatemala Santiago</a></h3>
                                             <div class="kind">Washed</div>
                                             <img class="product-photo" src="/images/guatemala.png" alt="Guatemala Santiago filter coffee" />
                                             <div class="price-row">
@@ -122,7 +122,7 @@
                                     <article>
                                         <div class="product">
                                             <div class="product-top"><p>Set</p></div>
-                                            <h3><a class="product-link" href="/Home/Sets">Aroma kit</a></h3>
+                                            <h3><a class="product-link" href="/Products/Sets">Aroma kit</a></h3>
                                             <div class="kind">Gift</div>
                                             <img class="product-photo" src="/images/aroma-kit.png" alt="Aroma kit" />
                                             <div class="price-row">
@@ -282,7 +282,7 @@
                                 <div class="cabinet-empty">
                                     <h2>No posts</h2>
                                     <p>There are no added posts on the site yet</p>
-                                    <a href="/Home/Community">Go to community</a>
+                                    <a href="/Community">Go to community</a>
                                 </div>
                             </div>
                             <aside class="profile-card">
@@ -378,7 +378,7 @@
                                         <strong>@address.FullName</strong>
                                         <p>@address.Line, @address.City, @address.PostalCode</p>
                                         <p>@address.Phone</p>
-                                        <form asp-controller="Home" asp-action="RemoveAddress" method="post">
+                                        <form asp-controller="Profile" asp-action="RemoveAddress" method="post">
                                             <input type="hidden" name="id" value="@address.Id" />
                                             <button type="submit" class="details-address-remove">Remove</button>
                                         </form>
@@ -416,7 +416,7 @@
                             <div class="cabinet-empty reading-empty">
                                 <h2>Nothing saved in the journal</h2>
                                 <p>Articles you read will stay here</p>
-                                <a href="/Home/Journal">To journal</a>
+                                <a href="/Journal">To journal</a>
                             </div>
                         </div>
                     </div>
@@ -576,7 +576,7 @@
     </div>
     <!-- Real form: the API saves the address and the page reloads with the new list -->
     <div class="edit-overlay address-overlay">
-        <form class="edit-modal" asp-controller="Home" asp-action="AddAddress" method="post" role="dialog" aria-modal="true" aria-labelledby="address-title">
+        <form class="edit-modal" asp-controller="Profile" asp-action="AddAddress" method="post" role="dialog" aria-modal="true" aria-labelledby="address-title">
             <h2 id="address-title">Add address</h2>
             <label class="edit-field">
                 <span>Recipient</span>

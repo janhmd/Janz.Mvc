@@ -1,4 +1,4 @@
-namespace Janz.Mvc.ViewModels.Account
+namespace Janz.Mvc.ViewModels.Addresses
 {
     public class AddressUIVM
     {

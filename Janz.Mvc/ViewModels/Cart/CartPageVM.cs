@@ -1,4 +1,4 @@
-using Janz.Mvc.ViewModels.Account;
+using Janz.Mvc.ViewModels.Addresses;
 using Janz.Mvc.ViewModels.Products;
 
 namespace Janz.Mvc.ViewModels.Cart
