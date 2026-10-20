@@ -6235,6 +6235,23 @@ html.theme-day body {
     .order-status { grid-column: 1; justify-self: start; }
 }
 
+/* Xəta səhifəsi (404, 403, 500): boş səbət kartının görünüşü */
+.error-page h1 {
+    margin: 0 0 .7rem;
+    font-size: clamp(1.35rem, 3vw, 2rem);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    text-transform: uppercase;
+}
+
+.error-code {
+    margin: 0 0 .4rem !important;
+    font-size: clamp(3rem, 9vw, 5.5rem);
+    font-weight: 800;
+    line-height: 1;
+    color: var(--muted, #8d8d8d);
+}
+
 html.theme-day {
 .logo,
 .logo-name,

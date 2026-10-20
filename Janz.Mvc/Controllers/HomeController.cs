@@ -1,471 +1,49 @@
-using System.Diagnostics;
-using Janz.Mvc.Models;
-using Janz.Mvc.Services;
-using Janz.Mvc.ViewModels.Account;
-using Janz.Mvc.ViewModels.Cart;
-using Janz.Mvc.ViewModels.Orders;
+using Janz.Mvc.ViewModels.Common;
 using Janz.Mvc.ViewModels.Products;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Janz.Mvc.Controllers;
-
-public class HomeController : Controller
+namespace Janz.Mvc.Controllers
 {
-    private const string TokenCookie = "janz_token";
-    private const string NameCookie = "janz_name";
-
-    private readonly AccountApiClient _accountApi;
-    private readonly ProductApiClient _productApi;
-    private readonly CartApiClient _cartApi;
-    private readonly OrderApiClient _orderApi;
-    private readonly AddressApiClient _addressApi;
-
-    public HomeController(AccountApiClient accountApi, ProductApiClient productApi, CartApiClient cartApi, OrderApiClient orderApi, AddressApiClient addressApi)
+    public class HomeController : ApiControllerBase
     {
-        _accountApi = accountApi;
-        _productApi = productApi;
-        _cartApi = cartApi;
-        _orderApi = orderApi;
-        _addressApi = addressApi;
-    }
-
-    public async Task<IActionResult> Index()
-    {
-        var coffee = await _productApi.GetByCategoryAsync("coffee");
-        var sets = await _productApi.GetByCategoryAsync("sets");
-        return View(new HomeIndexVM
+        public HomeController(IHttpClientFactory httpClientFactory, IConfiguration configuration)
+            : base(httpClientFactory, configuration)
         {
-            Coffee = coffee,
-            Sets = sets
-        });
-    }
-
-    public async Task<IActionResult> Catalog()
-    {
-        return View(await _productApi.GetByCategoryAsync("coffee"));
-    }
-
-    public async Task<IActionResult> Tea()
-    {
-        return View(await _productApi.GetByCategoryAsync("tea"));
-    }
-
-    public async Task<IActionResult> Chocolate()
-    {
-        return View(await _productApi.GetByCategoryAsync("chocolate"));
-    }
-
-    public async Task<IActionResult> Sets()
-    {
-        return View(await _productApi.GetByCategoryAsync("sets"));
-    }
-
-    public IActionResult Reviews()
-    {
-        return View();
-    }
-
-    public async Task<IActionResult> Product(int? id)
-    {
-        ProductUIVM? product = null;
-        if (id.HasValue)
-        {
-            product = await _productApi.GetByIdAsync(id.Value);
-        }
-        else
-        {
-            product = (await _productApi.GetByCategoryAsync("coffee")).FirstOrDefault();
         }
 
-        if (product is null)
+        // Ana səhifə: qəhvə və setlər bölmələri (API işləmirsə bölmələr boş qalır)
+        [HttpGet]
+        public async Task<IActionResult> Index()
         {
-            return NotFound();
+            var (coffee, _) = await GetAsync<List<ProductUIVM>>("api/products/category/coffee");
+            var (sets, _) = await GetAsync<List<ProductUIVM>>("api/products/category/sets");
+
+            return View(new HomeIndexVM
+            {
+                Coffee = coffee ?? new List<ProductUIVM>(),
+                Sets = sets ?? new List<ProductUIVM>()
+            });
         }
 
-        var related = (await _productApi.GetByCategoryAsync(product.CategorySlug))
-            .Where(m => m.Id != product.Id)
-            .Take(3)
-            .ToList();
-
-        return View(new ProductPageVM
+        [HttpGet]
+        public IActionResult Privacy()
         {
-            Product = product,
-            Related = related
-        });
-    }
-
-    public IActionResult Community()
-    {
-        return View();
-    }
-
-    public IActionResult Journal()
-    {
-        return View();
-    }
-
-    public IActionResult Article()
-    {
-        return View();
-    }
-
-    public IActionResult Register()
-    {
-        return View();
-    }
-
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Register(string name, string email, string password, string password2)
-    {
-        if (password != password2)
-        {
-            ViewBag.Error = "Passwords do not match.";
-            ViewBag.Name = name;
-            ViewBag.Email = email;
             return View();
         }
 
-        var result = await _accountApi.RegisterAsync(name ?? string.Empty, email ?? string.Empty, password ?? string.Empty, password2 ?? string.Empty);
-        if (!result.Success)
+        // Xəta səhifəsi. Program.cs-dəki UseStatusCodePagesWithReExecute (404, 403 və s.) və UseExceptionHandler (500) bura yönləndirir
+        public IActionResult Error(int? code)
         {
-            ViewBag.Error = string.Join(" ", result.Errors);
-            ViewBag.Name = name;
-            ViewBag.Email = email;
-            return View();
+            var status = code ?? StatusCodes.Status500InternalServerError;
+            Response.StatusCode = status;
+            return View(new ErrorVM(status));
         }
 
-        WriteAuthCookies(result, remember: true);
-        return RedirectToAction(nameof(Index));
-    }
-
-    public IActionResult SignIn()
-    {
-        return View();
-    }
-
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> SignIn(string email, string password, bool remember)
-    {
-        var result = await _accountApi.LoginAsync(email ?? string.Empty, password ?? string.Empty);
-        var ajax = string.Equals(Request.Headers["X-Requested-With"], "XMLHttpRequest", StringComparison.OrdinalIgnoreCase);
-
-        if (!result.Success)
+        // Rolu uyğun olmayan istifadəçi (cookie AccessDeniedPath) buraya düşür
+        public IActionResult AccessDenied()
         {
-            if (ajax)
-            {
-                return BadRequest(new { errors = result.Errors });
-            }
-
-            ViewBag.Error = string.Join(" ", result.Errors);
-            ViewBag.Email = email;
-            return View();
+            Response.StatusCode = StatusCodes.Status403Forbidden;
+            return View("Error", new ErrorVM(StatusCodes.Status403Forbidden));
         }
-
-        WriteAuthCookies(result, remember);
-
-        if (ajax)
-        {
-            return Ok(new { ok = true });
-        }
-
-        return RedirectToAction(nameof(Index));
-    }
-
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public IActionResult LogOut()
-    {
-        Response.Cookies.Delete(TokenCookie);
-        Response.Cookies.Delete(NameCookie);
-        return RedirectToAction(nameof(Index));
-    }
-
-    public IActionResult Wishlist()
-    {
-        return View();
-    }
-
-    public async Task<IActionResult> Cart()
-    {
-        var cart = new CartUIVM();
-        var addresses = new List<AddressUIVM>();
-        var token = Request.Cookies[TokenCookie];
-        if (!string.IsNullOrEmpty(token))
-        {
-            var result = await _cartApi.GetAsync(token);
-            if (result.Success)
-            {
-                cart = result.Cart;
-            }
-
-            var addressResult = await _addressApi.GetAllAsync(token);
-            if (addressResult.Success)
-            {
-                addresses = addressResult.Addresses;
-            }
-        }
-
-        var inCart = cart.Items.Select(m => m.ProductId).ToList();
-        var products = await _productApi.GetAllAsync();
-        return View(new CartPageVM
-        {
-            Cart = cart,
-            Suggestions = products.Where(m => !inCart.Contains(m.Id)).Take(3).ToList(),
-            Addresses = addresses
-        });
-    }
-
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> AddToCart(int productId, int quantity)
-    {
-        var token = Request.Cookies[TokenCookie];
-        if (string.IsNullOrEmpty(token))
-        {
-            return IsAjax() ? Unauthorized() : RedirectToAction(nameof(SignIn));
-        }
-
-        var result = await _cartApi.AddAsync(token, productId, quantity);
-        return CartResponse(result);
-    }
-
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> UpdateCart(int id, int quantity)
-    {
-        var token = Request.Cookies[TokenCookie];
-        if (string.IsNullOrEmpty(token))
-        {
-            return RedirectToAction(nameof(SignIn));
-        }
-
-        var result = await _cartApi.UpdateAsync(token, id, quantity);
-        return CartResponse(result);
-    }
-
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> RemoveFromCart(int id)
-    {
-        var token = Request.Cookies[TokenCookie];
-        if (string.IsNullOrEmpty(token))
-        {
-            return RedirectToAction(nameof(SignIn));
-        }
-
-        var result = await _cartApi.RemoveAsync(token, id);
-        return CartResponse(result);
-    }
-
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> PlaceOrder(int addressId)
-    {
-        var token = Request.Cookies[TokenCookie];
-        if (string.IsNullOrEmpty(token))
-        {
-            return RedirectToAction(nameof(SignIn));
-        }
-
-        var result = await _orderApi.CreateAsync(token, addressId);
-        if (result.Unauthorized)
-        {
-            Response.Cookies.Delete(TokenCookie);
-            Response.Cookies.Delete(NameCookie);
-            return RedirectToAction(nameof(SignIn));
-        }
-
-        if (!result.Success)
-        {
-            TempData["CartError"] = string.Join(" ", result.Errors);
-            return RedirectToAction(nameof(Cart));
-        }
-
-        return RedirectToAction(nameof(Order), new { id = result.Order.Id });
-    }
-
-    public async Task<IActionResult> Order(int id)
-    {
-        var token = Request.Cookies[TokenCookie];
-        if (string.IsNullOrEmpty(token))
-        {
-            return RedirectToAction(nameof(SignIn));
-        }
-
-        var result = await _orderApi.GetByIdAsync(token, id);
-        if (result.Unauthorized)
-        {
-            Response.Cookies.Delete(TokenCookie);
-            Response.Cookies.Delete(NameCookie);
-            return RedirectToAction(nameof(SignIn));
-        }
-
-        if (!result.Success)
-        {
-            return NotFound();
-        }
-
-        return View(result.Order);
-    }
-
-    public async Task<IActionResult> Account(int? edit)
-    {
-        var token = Request.Cookies[TokenCookie];
-        if (string.IsNullOrEmpty(token))
-        {
-            return RedirectToAction(nameof(SignIn));
-        }
-
-        var addresses = await _addressApi.GetAllAsync(token);
-        if (addresses.Unauthorized)
-        {
-            Response.Cookies.Delete(TokenCookie);
-            Response.Cookies.Delete(NameCookie);
-            return RedirectToAction(nameof(SignIn));
-        }
-
-        var orders = await _orderApi.GetAllAsync(token);
-        if (orders.Unauthorized)
-        {
-            Response.Cookies.Delete(TokenCookie);
-            Response.Cookies.Delete(NameCookie);
-            return RedirectToAction(nameof(SignIn));
-        }
-
-        if (!addresses.Success)
-        {
-            ViewBag.Error = string.Join(" ", addresses.Errors);
-        }
-        else if (!orders.Success)
-        {
-            ViewBag.Error = string.Join(" ", orders.Errors);
-        }
-
-        return View(new AccountPageVM
-        {
-            Addresses = addresses.Addresses,
-            Orders = orders.Orders,
-            EditId = edit
-        });
-    }
-
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> AddAddress(string fullName, string phone, string line, string city, string postalCode)
-    {
-        var token = Request.Cookies[TokenCookie];
-        if (string.IsNullOrEmpty(token))
-        {
-            return RedirectToAction(nameof(SignIn));
-        }
-
-        var result = await _addressApi.CreateAsync(token, fullName ?? string.Empty, phone ?? string.Empty, line ?? string.Empty, city ?? string.Empty, postalCode ?? string.Empty);
-        return AddressResponse(result);
-    }
-
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> UpdateAddress(int id, string fullName, string phone, string line, string city, string postalCode)
-    {
-        var token = Request.Cookies[TokenCookie];
-        if (string.IsNullOrEmpty(token))
-        {
-            return RedirectToAction(nameof(SignIn));
-        }
-
-        var result = await _addressApi.UpdateAsync(token, id, fullName ?? string.Empty, phone ?? string.Empty, line ?? string.Empty, city ?? string.Empty, postalCode ?? string.Empty);
-        return AddressResponse(result);
-    }
-
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> RemoveAddress(int id)
-    {
-        var token = Request.Cookies[TokenCookie];
-        if (string.IsNullOrEmpty(token))
-        {
-            return RedirectToAction(nameof(SignIn));
-        }
-
-        var result = await _addressApi.DeleteAsync(token, id);
-        return AddressResponse(result);
-    }
-
-    public IActionResult Privacy()
-    {
-        return View();
-    }
-
-    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-    public IActionResult Error()
-    {
-        return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-    }
-
-    private IActionResult AddressResponse(AddressCallResult result)
-    {
-        if (result.Unauthorized)
-        {
-            Response.Cookies.Delete(TokenCookie);
-            Response.Cookies.Delete(NameCookie);
-            return RedirectToAction(nameof(SignIn));
-        }
-
-        if (!result.Success)
-        {
-            TempData["AccountError"] = string.Join(" ", result.Errors);
-        }
-
-        return RedirectToAction(nameof(Account));
-    }
-
-    private IActionResult CartResponse(CartCallResult result)
-    {
-        if (result.Unauthorized)
-        {
-            Response.Cookies.Delete(TokenCookie);
-            Response.Cookies.Delete(NameCookie);
-            return IsAjax() ? Unauthorized() : RedirectToAction(nameof(SignIn));
-        }
-
-        if (IsAjax())
-        {
-            return result.Success
-                ? Ok(new { count = result.Cart.Count })
-                : BadRequest(new { errors = result.Errors });
-        }
-
-        if (!result.Success)
-        {
-            TempData["CartError"] = string.Join(" ", result.Errors);
-        }
-
-        return RedirectToAction(nameof(Cart));
-    }
-
-    private bool IsAjax()
-    {
-        return string.Equals(Request.Headers["X-Requested-With"], "XMLHttpRequest", StringComparison.OrdinalIgnoreCase);
-    }
-
-    private void WriteAuthCookies(AuthCallResult result, bool remember)
-    {
-        var life = new CookieOptions
-        {
-            HttpOnly = true,
-            IsEssential = true,
-            SameSite = SameSiteMode.Lax,
-            Secure = Request.IsHttps
-        };
-
-        if (remember)
-        {
-            life.Expires = DateTimeOffset.UtcNow.AddDays(7);
-        }
-
-        Response.Cookies.Append(TokenCookie, result.Token, life);
-        Response.Cookies.Append(NameCookie, result.FullName, life);
     }
 }

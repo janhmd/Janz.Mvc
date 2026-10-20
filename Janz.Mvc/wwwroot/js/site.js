@@ -8,7 +8,7 @@ authOverlay.className = "auth-overlay";
 authOverlay.innerHTML =
     '<div class="auth-modal" role="dialog" aria-labelledby="auth-title" aria-modal="true">' +
         "<h2 id=\"auth-title\">Sign in</h2>" +
-        '<form action="/Home/SignIn" method="post">' +
+        '<form action="/Account/Login" method="post">' +
             '<p class="entry-error" hidden></p>' +
             '<label class="entry-field"><input type="email" name="email" placeholder="Email" autocomplete="email" required /></label>' +
             '<label class="entry-field"><input type="password" name="password" placeholder="Password" autocomplete="current-password" required /><button type="button" class="entry-eye" aria-label="Show password"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12s3.6-6.5 9-6.5S21 12 21 12s-3.6 6.5-9 6.5S3 12 3 12z" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="12" r="2.4" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></button></label>' +
@@ -24,7 +24,7 @@ function isSignedIn() {
 
 function needsAuth(target) {
     return target.closest(
-        'a[href="/Home/Wishlist"], [aria-label="Add to wishlist"], [aria-label="Likes"], [aria-label="Save"], .article-comment-votes button, [data-cart-add]'
+        'a[href="/Wishlist"], [aria-label="Add to wishlist"], [aria-label="Likes"], [aria-label="Save"], .article-comment-votes button, [data-cart-add]'
     );
 }
 document.body.appendChild(authOverlay);
@@ -62,7 +62,7 @@ authOverlay.querySelector("form").addEventListener("submit", function (event) {
     body.set("remember", form.remember.checked ? "true" : "false");
     body.set("__RequestVerificationToken", document.documentElement.getAttribute("data-csrf") || "");
     errorBox.hidden = true;
-    fetch("/Home/SignIn", {
+    fetch("/Account/Login", {
         method: "POST",
         headers: {
             "Content-Type": "application/x-www-form-urlencoded",
@@ -105,7 +105,7 @@ document.addEventListener("click", function (event) {
         themeBtn.setAttribute("aria-label", day ? "Night mode" : "Day mode");
         return;
     }
-    var signLink = event.target.closest('a[href="/Home/SignIn"]');
+    var signLink = event.target.closest('a[href="/Account/Login"]');
     if (signLink) {
         event.preventDefault();
         openAuth();
@@ -136,7 +136,7 @@ document.addEventListener("click", function (event) {
     body.set("quantity", "1");
     body.set("__RequestVerificationToken", document.documentElement.getAttribute("data-csrf") || "");
     button.disabled = true;
-    fetch("/Home/AddToCart", {
+    fetch("/Cart/Add", {
         method: "POST",
         headers: {
             "Content-Type": "application/x-www-form-urlencoded",
@@ -209,7 +209,7 @@ document.querySelectorAll(".search").forEach(function (search) {
     });
     form.addEventListener("submit", function (event) {
         event.preventDefault();
-        var where = form.getAttribute("data-where") || "/Home/Catalog";
+        var where = form.getAttribute("data-where") || "/Products";
         var query = input.value.trim();
         window.location.href = query ? where + "?q=" + encodeURIComponent(query) : where;
     });
@@ -1141,7 +1141,7 @@ function articleMeta(root) {
         date: root.getAttribute("data-date"),
         lead: root.getAttribute("data-lead"),
         image: root.getAttribute("data-image"),
-        href: root.getAttribute("data-href") || "/Home/Article",
+        href: root.getAttribute("data-href") || "/Journal/Article",
         likes: root.getAttribute("data-likes") || "0",
         comments: root.getAttribute("data-comments") || "0",
         views: root.getAttribute("data-views") || "0",
@@ -1238,7 +1238,7 @@ if (readingBoard) {
         shown.forEach(function (item) {
             var card = document.createElement("a");
             card.className = "journal-card";
-            card.href = item.href || "/Home/Article";
+            card.href = item.href || "/Journal/Article";
             card.innerHTML =
                 '<img src="' + (item.image || "/images/aroma-kit.png") + '" alt="" />' +
                 '<div class="body">' +
@@ -1608,7 +1608,7 @@ document.querySelectorAll(".feed-card").forEach(function (card) {
                 note.innerHTML =
                     '<div class="feed-note-head">' +
                         '<div class="feed-note-avatar">Y</div>' +
-                        '<div class="feed-who"><div class="feed-name"><a href="/Home/Account">You</a></div><div class="feed-role">Coffee lover</div></div>' +
+                        '<div class="feed-who"><div class="feed-name"><a href="/Profile">You</a></div><div class="feed-role">Coffee lover</div></div>' +
                         '<time class="feed-date">' + date + "</time>" +
                     "</div>" +
                     '<p class="feed-note-text">' + (value ? escapeHtml(value) : "Photo") + "</p>" +
@@ -1838,7 +1838,7 @@ if (journalGrid && journalGrid.querySelector(".article-card")) {
             });
         }
         // Məqaləyə keçəndə "Recently read"-ə düşür
-        card.querySelectorAll("a[href^='/Home/Article']").forEach(function (link) {
+        card.querySelectorAll("a[href^='/Journal/Article']").forEach(function (link) {
             link.addEventListener("click", function () {
                 rememberArticle(card, { seenAt: Date.now() });
             });
@@ -1872,9 +1872,9 @@ if (journalGrid && journalGrid.querySelector(".article-card")) {
                 });
                 var stats = source ? source.querySelector(".article-stats").outerHTML : "";
                 card.innerHTML =
-                    '<a class="article-card-photo" href="' + (item.href || "/Home/Article") + '"><img src="' + (item.image || "/images/aroma-kit.png") + '" alt="" /><span class="article-progress"><i></i></span></a>' +
+                    '<a class="article-card-photo" href="' + (item.href || "/Journal/Article") + '"><img src="' + (item.image || "/images/aroma-kit.png") + '" alt="" /><span class="article-progress"><i></i></span></a>' +
                     '<div class="article-meta">' + escapeHtml(item.topic || "") + "<br />" + escapeHtml(item.date || "") + "</div>" +
-                    '<h3><a href="' + (item.href || "/Home/Article") + '">' + escapeHtml(item.title || "Article") + "</a></h3>" +
+                    '<h3><a href="' + (item.href || "/Journal/Article") + '">' + escapeHtml(item.title || "Article") + "</a></h3>" +
                     "<p>" + escapeHtml(item.lead || "") + "</p>" + stats;
             }
             journalRecentRow.appendChild(card);

@@ -10,16 +10,16 @@
         <section id="hero">
             <h1>Every day we roast coffee and<br>deliver for free all over Azerbaijan</h1>
             <div class="hero-row">
-                <a class="shot" href="/Home/Catalog">
+                <a class="shot" href="/Products">
                     <video muted loop playsinline preload="metadata" src="/videos/espresso.mp4"></video>
                     <span>Coffee</span>
                     <small>@Model.Coffee.Count</small>
                 </a>
-                <a class="shot" href="/Home/Chocolate">
+                <a class="shot" href="/Products/Chocolate">
                     <video muted loop playsinline preload="metadata" src="/videos/choc-syrup.mp4"></video>
                     <span>Syrups</span>
                 </a>
-                <a class="shot" href="/Home/Tea">
+                <a class="shot" href="/Products/Tea">
                     <video muted loop playsinline preload="metadata" src="/videos/tea.mp4"></video>
                     <span>Tea</span>
                 </a>
@@ -27,8 +27,8 @@
                     <div class="account-card">
                         <div class="account-title">Sign in, and it gets cheaper</div>
                         <div class="account-note">More discounts in your account</div>
-                        <a class="account-signin" href="/Home/SignIn">Sign in</a>
-                        <a class="account-register" href="/Home/Register">Register</a>
+                        <a class="account-signin" href="/Account/Login">Sign in</a>
+                        <a class="account-register" href="/Account/Register">Register</a>
                     </div>
                 </aside>
             </div>
@@ -82,7 +82,7 @@
         </section>
 
         <section id="new">
-            <h2><a class="section-link" href="/Home/Catalog">New</a></h2>
+            <h2><a class="section-link" href="/Products">New</a></h2>
             <div class="card-grid">
                 @foreach (var product in fresh)
                 {
@@ -92,7 +92,7 @@
         </section>
 
         <section id="popular">
-            <h2><a class="section-link" href="/Home/Catalog">Popular</a></h2>
+            <h2><a class="section-link" href="/Products">Popular</a></h2>
             <div class="card-grid">
                 @foreach (var product in popular)
                 {
@@ -110,7 +110,7 @@
         </section>
 
         <section id="sets">
-            <h2><a class="section-link" href="/Home/Sets">Sets</a></h2>
+            <h2><a class="section-link" href="/Products/Sets">Sets</a></h2>
             <div class="card-grid">
                 @foreach (var product in Model.Sets)
                 {
@@ -120,7 +120,7 @@
         </section>
 
         <section id="reviews">
-            <h2><a class="section-link" href="/Home/Reviews">Reviews</a></h2>
+            <h2><a class="section-link" href="/Reviews">Reviews</a></h2>
             <div class="review-stats">
                 <div class="stat">
                     <div class="stat-value">44,828</div>
