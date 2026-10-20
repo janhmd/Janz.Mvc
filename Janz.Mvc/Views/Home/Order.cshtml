@@ -5,7 +5,15 @@
 
 <main>
         <section id="cart">
-            <h1 class="cart-title">Order <span>@Model.Status</span></h1>
+            <h1 class="cart-title">Order #@Model.Id <span>@Model.Status</span></h1>
+            @if (!string.IsNullOrEmpty(Model.DeliveryLine))
+            {
+                <div class="order-delivery">
+                    <span>Delivery</span>
+                    <strong>@Model.DeliveryFullName · @Model.DeliveryPhone</strong>
+                    <p>@Model.DeliveryLine, @Model.DeliveryCity, @Model.DeliveryPostalCode</p>
+                </div>
+            }
             <div class="cart-lines">
                 @foreach (var item in Model.Items)
                 {

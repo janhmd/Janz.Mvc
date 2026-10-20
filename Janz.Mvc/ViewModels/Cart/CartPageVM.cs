@@ -1,3 +1,4 @@
+using Janz.Mvc.ViewModels.Account;
 using Janz.Mvc.ViewModels.Products;
 
 namespace Janz.Mvc.ViewModels.Cart
@@ -6,5 +7,8 @@ namespace Janz.Mvc.ViewModels.Cart
     {
         public CartUIVM Cart { get; set; } = new CartUIVM();
         public List<ProductUIVM> Suggestions { get; set; } = new List<ProductUIVM>();
+
+        // Sifariş üçün çatdırılma ünvanları (giriş edilməyibsə boşdur)
+        public List<AddressUIVM> Addresses { get; set; } = new List<AddressUIVM>();
     }
 }

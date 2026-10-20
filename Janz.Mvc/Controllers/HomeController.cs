@@ -190,6 +190,7 @@ public class HomeController : Controller
     public async Task<IActionResult> Cart()
     {
         var cart = new CartUIVM();
+        var addresses = new List<AddressUIVM>();
         var token = Request.Cookies[TokenCookie];
         if (!string.IsNullOrEmpty(token))
         {
@@ -198,6 +199,12 @@ public class HomeController : Controller
             {
                 cart = result.Cart;
             }
+
+            var addressResult = await _addressApi.GetAllAsync(token);
+            if (addressResult.Success)
+            {
+                addresses = addressResult.Addresses;
+            }
         }
 
         var inCart = cart.Items.Select(m => m.ProductId).ToList();
@@ -205,7 +212,8 @@ public class HomeController : Controller
         return View(new CartPageVM
         {
             Cart = cart,
-            Suggestions = products.Where(m => !inCart.Contains(m.Id)).Take(3).ToList()
+            Suggestions = products.Where(m => !inCart.Contains(m.Id)).Take(3).ToList(),
+            Addresses = addresses
         });
     }
 
@@ -253,7 +261,7 @@ public class HomeController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> PlaceOrder()
+    public async Task<IActionResult> PlaceOrder(int addressId)
     {
         var token = Request.Cookies[TokenCookie];
         if (string.IsNullOrEmpty(token))
@@ -261,7 +269,7 @@ public class HomeController : Controller
             return RedirectToAction(nameof(SignIn));
         }
 
-        var result = await _orderApi.CreateAsync(token);
+        var result = await _orderApi.CreateAsync(token, addressId);
         if (result.Unauthorized)
         {
             Response.Cookies.Delete(TokenCookie);

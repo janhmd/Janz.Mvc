@@ -6171,6 +6171,52 @@ html.theme-day body {
 
 .details-address-card form { margin: .5rem 0 0; }
 
+/* MVC: səbətdə çatdırılma ünvanı seçimi və sifarişdə ünvan */
+.cart-checkout {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: .7rem;
+}
+
+.cart-address {
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+    font-size: .95rem;
+}
+
+.cart-address span { color: #8a8a8a; }
+
+.cart-address select {
+    height: 44px;
+    max-width: 22rem;
+    padding: 0 .9rem;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: #141414;
+    color: inherit;
+    font: inherit;
+}
+
+.order-delivery {
+    margin: 0 0 1.4rem;
+    padding: 1rem 1.2rem;
+    border-radius: 18px;
+    background: #141414;
+}
+
+.order-delivery span {
+    display: block;
+    margin-bottom: .3rem;
+    color: #8a8a8a;
+    font-size: .85rem;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+}
+
+.order-delivery p { margin: .25rem 0 0; color: #cfcfcf; }
+
 .details-address-remove {
     padding: 0;
     border: 0;
@@ -6844,4 +6890,9 @@ html.theme-day {
 .order-status { background: var(--hover); }
 .details-address-remove { color: #2f6fe4; }
 .details-address-remove:hover { color: var(--text); }
+.cart-address select { background: #fff; }
+.order-delivery { background: #fff; box-shadow: 0 8px 24px rgba(0, 0, 0, .06); }
+.cart-address span,
+.order-delivery span,
+.order-delivery p { color: var(--muted); }
 }

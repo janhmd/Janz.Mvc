@@ -52,9 +52,10 @@ namespace Janz.Mvc.Services
             }
         }
 
-        public Task<OrderCallResult> CreateAsync(string token)
+        // Səbətdəki hər şey seçilən ünvana sifariş olunur
+        public Task<OrderCallResult> CreateAsync(string token, int addressId)
         {
-            return SendAsync(HttpMethod.Post, "api/orders", token);
+            return SendAsync(HttpMethod.Post, "api/orders", token, new { addressId });
         }
 
         public Task<OrderCallResult> GetByIdAsync(string token, int id)
@@ -62,10 +63,14 @@ namespace Janz.Mvc.Services
             return SendAsync(HttpMethod.Get, "api/orders/" + id, token);
         }
 
-        private async Task<OrderCallResult> SendAsync(HttpMethod method, string url, string token)
+        private async Task<OrderCallResult> SendAsync(HttpMethod method, string url, string token, object? body = null)
         {
             var request = new HttpRequestMessage(method, url);
             request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            if (body is not null)
+            {
+                request.Content = JsonContent.Create(body);
+            }
 
             try
             {

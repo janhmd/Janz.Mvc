@@ -54,9 +54,26 @@
                 <div class="cart-sum">
                     <span>Total</span>
                     <strong>₼@Model.Cart.Total.ToString("0.00")</strong>
-                    <form asp-controller="Home" asp-action="PlaceOrder" method="post">
-                        <button type="submit" class="cart-place">Place order</button>
-                    </form>
+                    @if (Model.Addresses.Count == 0)
+                    {
+                        @* Ünvan olmadan sifariş olmur: əvvəl Account → My details-də ünvan əlavə edilir *@
+                        <a class="cart-place" href="/Home/Account#details">Add a delivery address</a>
+                    }
+                    else
+                    {
+                        <form class="cart-checkout" asp-controller="Home" asp-action="PlaceOrder" method="post">
+                            <label class="cart-address">
+                                <span>Deliver to</span>
+                                <select name="addressId" required>
+                                    @foreach (var address in Model.Addresses)
+                                    {
+                                        <option value="@address.Id">@address.FullName · @address.Line, @address.City</option>
+                                    }
+                                </select>
+                            </label>
+                            <button type="submit" class="cart-place">Place order</button>
+                        </form>
+                    }
                 </div>
             }
 
