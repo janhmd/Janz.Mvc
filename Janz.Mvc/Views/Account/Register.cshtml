@@ -1,3 +1,4 @@
+@model Janz.Mvc.ViewModels.Account.RegisterVM
 @{
     ViewData["Title"] = "Registration";
 }
@@ -6,21 +7,21 @@
         <section id="register">
             <div class="entry-card">
                 <h1>Registration</h1>
-                <form asp-controller="Home" asp-action="Register" method="post">
-                    @if (ViewBag.Error is string registerError)
+                <form asp-controller="Account" asp-action="Register" method="post">
+                    @foreach (var error in ViewData.ModelState[string.Empty]?.Errors ?? Enumerable.Empty<Microsoft.AspNetCore.Mvc.ModelBinding.ModelError>())
                     {
-                        <p class="entry-error">@registerError</p>
+                        <p class="entry-error">@error.ErrorMessage</p>
                     }
                     <label>
                         <span class="entry-caption">Full name</span>
                         <span class="entry-field">
-                            <input type="text" name="name" autocomplete="name" value="@ViewBag.Name" required />
+                            <input type="text" name="fullName" autocomplete="name" value="@Model.FullName" required />
                         </span>
                     </label>
                     <label>
                         <span class="entry-caption">Email</span>
                         <span class="entry-field">
-                            <input type="email" name="email" autocomplete="email" value="@ViewBag.Email" required />
+                            <input type="email" name="email" autocomplete="email" value="@Model.Email" required />
                         </span>
                     </label>
                     <label>
@@ -35,7 +36,7 @@
                     <label>
                         <span class="entry-caption">Repeat</span>
                         <span class="entry-field">
-                            <input type="password" name="password2" placeholder="Password" autocomplete="new-password" required />
+                            <input type="password" name="repeatPassword" placeholder="Password" autocomplete="new-password" required />
                             <button type="button" class="entry-eye" aria-label="Show password">
                                 <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12s3.6-6.5 9-6.5S21 12 21 12s-3.6 6.5-9 6.5S3 12 3 12z" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="12" r="2.4" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
                             </button>

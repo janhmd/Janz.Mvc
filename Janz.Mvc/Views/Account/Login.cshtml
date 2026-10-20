@@ -1,3 +1,4 @@
+@model Janz.Mvc.ViewModels.Account.LoginVM
 @{
     ViewData["Title"] = "Sign in";
 }
@@ -5,13 +6,14 @@
 <main>        <section id="signin">
             <div class="entry-card">
                 <h1>Sign in</h1>
-                <form asp-controller="Home" asp-action="SignIn" method="post">
-                    @if (ViewBag.Error is string signInError)
+                <form asp-controller="Account" asp-action="Login" method="post">
+                    <input type="hidden" name="returnUrl" value="@Model.ReturnUrl" />
+                    @foreach (var error in ViewData.ModelState[string.Empty]?.Errors ?? Enumerable.Empty<Microsoft.AspNetCore.Mvc.ModelBinding.ModelError>())
                     {
-                        <p class="entry-error">@signInError</p>
+                        <p class="entry-error">@error.ErrorMessage</p>
                     }
                     <label class="entry-field">
-                        <input type="email" name="email" placeholder="Email" autocomplete="email" value="@ViewBag.Email" required />
+                        <input type="email" name="email" placeholder="Email" autocomplete="email" value="@Model.Email" required />
                     </label>
                     <label class="entry-field">
                         <input type="password" name="password" placeholder="Password" autocomplete="current-password" required />
@@ -22,7 +24,7 @@
                     <button type="submit" class="account-signin">Sign in</button>
                     <a class="entry-forgot" href="#">Forgot password?</a>
                     <label class="entry-remember">
-                        <input type="checkbox" name="remember" />
+                        <input type="checkbox" name="remember" value="true" checked="@Model.Remember" />
                         Remember password
                     </label>
                 </form>
