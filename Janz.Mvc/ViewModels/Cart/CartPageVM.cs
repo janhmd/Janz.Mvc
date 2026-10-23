@@ -10,5 +10,12 @@ namespace Janz.Mvc.ViewModels.Cart
 
         // Sifariş üçün çatdırılma ünvanları (giriş edilməyibsə boşdur)
         public List<AddressUIVM> Addresses { get; set; } = new List<AddressUIVM>();
+
+        // Sifariş formunda seçili ünvan (yeni ünvan əlavə olunanda o seçilir)
+        public int? SelectedAddressId { get; set; }
+
+        // Alıcı bölməsi: hesabın adı və emaili
+        public string UserName { get; set; } = string.Empty;
+        public string Email { get; set; } = string.Empty;
     }
 }

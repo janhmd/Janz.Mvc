@@ -2053,3 +2053,24 @@ document.addEventListener("click", function (event) {
         showToast("The API is not running.");
     });
 });
+
+// ---- Sifariş səhifəsi: yeni ünvan formu və alıcı bloku ----
+document.querySelectorAll("[data-toggle-address]").forEach(function (button) {
+    button.addEventListener("click", function () {
+        var form = document.querySelector("[data-address-form]");
+        if (!form) return;
+        form.hidden = !form.hidden;
+        if (!form.hidden) form.querySelector("input[name=line]").focus();
+    });
+});
+
+// Ünvan seçiləndə alıcının adı və telefonu dəyişir (ünvanın özündən gəlir)
+document.querySelectorAll("#checkout input[name=addressId]").forEach(function (radio) {
+    radio.addEventListener("change", function () {
+        var box = document.querySelector("[data-recipient]");
+        if (!box) return;
+        box.hidden = false;
+        box.querySelector("[data-recipient-name]").textContent = radio.getAttribute("data-name");
+        box.querySelector("[data-recipient-phone]").textContent = radio.getAttribute("data-phone");
+    });
+});

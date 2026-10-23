@@ -4,6 +4,7 @@ using Janz.Mvc.ViewModels.Products;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
+using System.Security.Claims;
 
 namespace Janz.Mvc.Controllers
 {
@@ -30,6 +31,15 @@ namespace Janz.Mvc.Controllers
                 // Sifariş üçün çatdırılma ünvanları (alınmasa "ünvan əlavə et" linki görünür)
                 var (addresses, _) = await GetAsync<List<AddressUIVM>>("api/addresses");
                 model.Addresses = addresses ?? new List<AddressUIVM>();
+
+                // Yeni əlavə olunan ünvan seçili gəlir, yoxsa birincisi
+                var picked = TempData["SelectedAddressId"] as int?;
+                model.SelectedAddressId = model.Addresses.Any(m => m.Id == picked)
+                    ? picked
+                    : model.Addresses.FirstOrDefault()?.Id;
+
+                model.UserName = User.Identity?.Name ?? string.Empty;
+                model.Email = User.FindFirstValue(ClaimTypes.Email) ?? string.Empty;
             }
 
             // Səbətdə olmayan 3 məhsul: "You might like"
@@ -102,6 +112,50 @@ namespace Janz.Mvc.Controllers
             }
 
             if (!success) TempData["CartError"] = string.Join(" ", errors);
+            return RedirectToAction(nameof(Index));
+        }
+
+        // Sifariş səhifəsindəki "Clear cart": səbətdəki bütün sətirlər silinir
+        [Authorize]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Clear()
+        {
+            var cart = await LoadCartAsync();
+            foreach (var item in cart.Items)
+            {
+                var (_, _, status) = await DeleteAsync($"api/cart/items/{item.Id}");
+                if (status == HttpStatusCode.Unauthorized) return await SessionExpiredAsync();
+            }
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        // Sifariş səhifəsində "New address": ünvan əlavə olunur və sifariş üçün seçilir
+        [Authorize]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddAddress(string? fullName, string? phone, string? line, string? city, string? postalCode)
+        {
+            var (address, errors, status) = await PostAsync<AddressUIVM>("api/addresses", new
+            {
+                fullName = fullName?.Trim() ?? string.Empty,
+                phone = phone?.Trim() ?? string.Empty,
+                line = line?.Trim() ?? string.Empty,
+                city = city?.Trim() ?? string.Empty,
+                postalCode = postalCode?.Trim() ?? string.Empty
+            });
+            if (status == HttpStatusCode.Unauthorized) return await SessionExpiredAsync();
+
+            if (address is null)
+            {
+                TempData["AddressError"] = string.Join(" ", errors);
+            }
+            else
+            {
+                TempData["SelectedAddressId"] = address.Id;
+            }
+
             return RedirectToAction(nameof(Index));
         }
 
