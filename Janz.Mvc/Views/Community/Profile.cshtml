@@ -1,0 +1,231 @@
+@{
+    ViewData["Title"] = "Cavanshir";
+}
+
+<main>
+    @* İstifadəçinin açıq profili (dizayn: Janz.Front/profile.html): icmada ada basanda açılır. Hələlik nümunədir, icma backend-ə qoşulanda API-dən dolacaq *@
+    <section id="user-profile">
+        <h1>User profile</h1>
+        <div class="up-grid">
+            <aside class="up-side">
+                <div class="up-person">
+                    <div class="feed-avatar"><span>C</span></div>
+                    <div class="up-who">
+                        <b>Cavanshir</b>
+                        <span>Ambassador, Baku</span>
+                    </div>
+                    <button type="button" class="up-share" aria-label="Share profile">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 14V3.8m0 0L8.6 7.2M12 3.8l3.4 3.4M8 10.5H6.2A1.2 1.2 0 0 0 5 11.7v7.1A1.2 1.2 0 0 0 6.2 20h11.6a1.2 1.2 0 0 0 1.2-1.2v-7.1a1.2 1.2 0 0 0-1.2-1.2H16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </button>
+                </div>
+                <div class="up-follow-row">
+                    <div class="up-tile"><b data-followers>641</b><span>followers</span></div>
+                    <div class="up-tile"><b>633</b><span>following</span></div>
+                </div>
+                <button type="button" class="up-follow" aria-pressed="false">Follow</button>
+                <div class="up-bio">
+                    <p>Home barista, drinking filter in the morning and espresso after lunch.</p>
+                    <p>Gear:</p>
+                    <ul>
+                        <li>V60 Hario 01, ceramic</li>
+                        <li>Timemore Sculptor 078</li>
+                        <li>Timemore X-Lite</li>
+                        <li>Felicita Incline</li>
+                    </ul>
+                </div>
+                <ul class="up-stats">
+                    <li><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="13" r="7" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 9.5V13l2 1.6M10 3h4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>On the site <span>2 years 4 months</span></li>
+                    <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>Orders placed <span>47</span></li>
+                    <li><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="7.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M8.5 15.5l7-7" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>Tried <span>86 different coffees</span></li>
+                    <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.9l-5.2 2.7 1-5.8-4.3-4.1 5.9-.9z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>Average coffee rating <span>4.8</span></li>
+                    <li class="up-gap"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11.5a8 8 0 0 1-11.6 7.1L4 20l1.4-4.2A8 8 0 1 1 20 11.5z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>Comments <span>1 284</span></li>
+                    <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 11v9H5.2A1.2 1.2 0 0 1 4 18.8v-6.6A1.2 1.2 0 0 1 5.2 11zm0 0l3.6-6.6a1.8 1.8 0 0 1 3.3 1.3L14 10h4.4a1.6 1.6 0 0 1 1.6 1.9l-1.3 6.6A1.8 1.8 0 0 1 17 20H8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>Likes received <span>3 507</span></li>
+                    <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h7l4 4v14H7z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M14 3v4h4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>Articles read <span>112</span></li>
+                </ul>
+            </aside>
+
+            <div class="feed up-feed">
+                <article class="feed-card" data-post-id="6">
+                    <div class="feed-head">
+                        <div class="feed-avatar"><span>C</span><i class="feed-badge"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="9" cy="10" r="1.1" fill="currentColor"/><circle cx="15" cy="10" r="1.1" fill="currentColor"/><path d="M8.4 14c.9 1.3 2.1 2 3.6 2s2.7-.7 3.6-2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></i></div>
+                        <div class="feed-who">
+                            <div class="feed-name">
+                                <a href="/Community/Profile">Cavanshir</a>
+                                <button type="button" class="feed-follow" aria-pressed="false">Follow</button>
+                            </div>
+                            <div class="feed-role">Ambassador, Baku</div>
+                        </div>
+                        <time class="feed-date">20.10.2026</time>
+                        <button type="button" class="feed-more" aria-label="More"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="5.5" r="1.6" fill="currentColor"/><circle cx="12" cy="12" r="1.6" fill="currentColor"/><circle cx="12" cy="18.5" r="1.6" fill="currentColor"/></svg></button>
+                    </div>
+                    <div class="feed-text">
+                        <p>The descriptors on the pack don’t always match what I get in the cup. Lately I tasted a Kenya where the roaster promised blackcurrant and I found red apple and black tea instead.</p>
+                        <p>How do you feel about it when you don’t find the notes from the pack but find others? Do you count it as a miss, or as your own way of tasting?</p>
+                        <p>My answer: the cup depends on water, grind and even mood, so I write down what I really taste and compare it a week later.</p>
+                    </div>
+                    <div class="feed-tags">
+                        <a href="#"><span>#</span> cupping</a>
+                    </div>
+                    <div class="feed-actions">
+                        <button type="button" class="feed-like" aria-label="Like" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 11v9H5.2A1.2 1.2 0 0 1 4 18.8v-6.6A1.2 1.2 0 0 1 5.2 11H8zm0 0l3.2-6.1A2.2 2.2 0 0 1 13.2 4h.3A2.5 2.5 0 0 1 16 6.5V11h3.7a1.8 1.8 0 0 1 1.8 2.1l-1.2 6.2A1.8 1.8 0 0 1 18.5 21H8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg></button>
+                        <span class="feed-score">41</span>
+                        <button type="button" class="feed-dislike" aria-label="Dislike" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 13V4h2.8A1.2 1.2 0 0 1 20 5.2v6.6A1.2 1.2 0 0 1 18.8 13H16zm0 0l-3.2 6.1a2.2 2.2 0 0 1-2 1.2h-.3A2.5 2.5 0 0 1 8 17.8V13H4.3a1.8 1.8 0 0 1-1.8-2.1l1.2-6.2A1.8 1.8 0 0 1 5.5 3H16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg></button>
+                        <button type="button" class="feed-comments" aria-label="Comments" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4.5c4.4 0 8 2.9 8 6.6s-3.6 6.6-8 6.6c-.9 0-1.8-.1-2.6-.3L5 19.5l1.2-3.6C4.8 14.7 4 13 4 11.1 4 7.4 7.6 4.5 12 4.5z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg><span>0</span></button>
+                        <button type="button" class="feed-repost push" aria-label="Repost"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 19V5m0 0L4.8 8.2M8 5l3.2 3.2M16 5v14m0 0l-3.2-3.2M16 19l3.2-3.2" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+                        <button type="button" class="feed-share" aria-label="Share"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 14V3.8m0 0L8.6 7.2M12 3.8l3.4 3.4M8 10.5H6.2A1.2 1.2 0 0 0 5 11.7v7.1A1.2 1.2 0 0 0 6.2 20h11.6a1.2 1.2 0 0 0 1.2-1.2v-7.1a1.2 1.2 0 0 0-1.2-1.2H16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+                        <button type="button" class="feed-save" aria-label="Save" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5h10v15l-5-3.4-5 3.4z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg></button>
+                    </div>
+                    <div class="feed-thread" hidden>
+                        <p class="feed-thread-empty">No comments yet. Be the first.</p>
+                    </div>
+                    <form class="feed-comment">
+                        <label class="feed-comment-field">
+                            <input type="text" name="comment" placeholder="Write a comment" autocomplete="off" />
+                            <span class="feed-comment-photo" aria-label="Attach photo"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8.2A1.7 1.7 0 0 1 5.7 6.5h2.1l1.4-2h5.6l1.4 2h2.1A1.7 1.7 0 0 1 20 8.2v9.1a1.7 1.7 0 0 1-1.7 1.7H5.7A1.7 1.7 0 0 1 4 17.3z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><circle cx="12" cy="12.6" r="3.3" fill="none" stroke="currentColor" stroke-width="1.6"/></svg><input type="file" name="photo" accept="image/*" /></span>
+                        </label>
+                        <button type="submit" class="feed-comment-send" aria-label="Send"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19.5V5m0 0l-5.2 5.2M12 5l5.2 5.2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+                    </form>
+                </article>
+
+
+                <article class="feed-card" data-post-id="1">
+                    <div class="feed-head">
+                        <div class="feed-avatar"><span>C</span><i class="feed-badge"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="9" cy="10" r="1.1" fill="currentColor"/><circle cx="15" cy="10" r="1.1" fill="currentColor"/><path d="M8.4 14c.9 1.3 2.1 2 3.6 2s2.7-.7 3.6-2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></i></div>
+                        <div class="feed-who">
+                            <div class="feed-name">
+                                <a href="/Community/Profile">Cavanshir</a>
+                                <button type="button" class="feed-follow" aria-pressed="false">Follow</button>
+                            </div>
+                            <div class="feed-role">Ambassador, Baku</div>
+                        </div>
+                        <time class="feed-date">04.10.2026</time>
+                        <button type="button" class="feed-more" aria-label="More"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="5.5" r="1.6" fill="currentColor"/><circle cx="12" cy="12" r="1.6" fill="currentColor"/><circle cx="12" cy="18.5" r="1.6" fill="currentColor"/></svg></button>
+                    </div>
+                    <div class="feed-text">
+                        <p>Autumn countryside vibe.<br />We brewed different Kenyas, listened to country and fed the cats.<br />Promised to order a moka pot for my dad, he was really touched :)</p>
+                    </div>
+                    <div class="feed-photos" data-feed-photos>
+                        <div class="feed-frame">
+                            <div class="feed-track">
+                                <img src="images/journal.png" alt="Filter coffee outdoors" draggable="false" />
+                                <img src="images/floral-beans.jpg" alt="Fresh roasted beans" draggable="false" />
+                                <img src="images/roast.png" alt="Roast profile" draggable="false" />
+                                <img src="images/floral.png" alt="Floral coffee pack" draggable="false" />
+                            </div>
+                        </div>
+                        <div class="feed-dots"><button type="button" class="is-on" aria-label="Photo 1"></button><button type="button" aria-label="Photo 2"></button><button type="button" aria-label="Photo 3"></button><button type="button" aria-label="Photo 4"></button></div>
+                    </div>
+                    <a class="feed-product" href="/Products">
+                        <img src="images/floral-bag.png" alt="" />
+                        <span>Kenya Kiriaini</span>
+                    </a>
+                    <div class="feed-tags">
+                        <a href="#"><span>#</span> tastegram</a>
+                    </div>
+                    <div class="feed-actions">
+                        <button type="button" class="feed-like" aria-label="Like" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 11v9H5.2A1.2 1.2 0 0 1 4 18.8v-6.6A1.2 1.2 0 0 1 5.2 11H8zm0 0l3.2-6.1A2.2 2.2 0 0 1 13.2 4h.3A2.5 2.5 0 0 1 16 6.5V11h3.7a1.8 1.8 0 0 1 1.8 2.1l-1.2 6.2A1.8 1.8 0 0 1 18.5 21H8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg></button>
+                        <span class="feed-score">76</span>
+                        <button type="button" class="feed-dislike" aria-label="Dislike" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 13V4h2.8A1.2 1.2 0 0 1 20 5.2v6.6A1.2 1.2 0 0 1 18.8 13H16zm0 0l-3.2 6.1a2.2 2.2 0 0 1-2 1.2h-.3A2.5 2.5 0 0 1 8 17.8V13H4.3a1.8 1.8 0 0 1-1.8-2.1l1.2-6.2A1.8 1.8 0 0 1 5.5 3H16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg></button>
+                        <button type="button" class="feed-comments" aria-label="Comments" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4.5c4.4 0 8 2.9 8 6.6s-3.6 6.6-8 6.6c-.9 0-1.8-.1-2.6-.3L5 19.5l1.2-3.6C4.8 14.7 4 13 4 11.1 4 7.4 7.6 4.5 12 4.5z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg><span>14</span></button>
+                        <button type="button" class="feed-repost push" aria-label="Repost"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 19V5m0 0L4.8 8.2M8 5l3.2 3.2M16 5v14m0 0l-3.2-3.2M16 19l3.2-3.2" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+                        <button type="button" class="feed-share" aria-label="Share"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 14V3.8m0 0L8.6 7.2M12 3.8l3.4 3.4M8 10.5H6.2A1.2 1.2 0 0 0 5 11.7v7.1A1.2 1.2 0 0 0 6.2 20h11.6a1.2 1.2 0 0 0 1.2-1.2v-7.1a1.2 1.2 0 0 0-1.2-1.2H16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+                        <button type="button" class="feed-save" aria-label="Save" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5h10v15l-5-3.4-5 3.4z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg></button>
+                    </div>
+                    <div class="feed-thread" hidden>
+                        <article class="feed-note" data-comment-id="101">
+                            <div class="feed-note-head">
+                                <div class="feed-note-avatar">E</div>
+                                <div class="feed-who">
+                                    <div class="feed-name"><a href="/Community/Profile">Elvin</a></div>
+                                    <div class="feed-role">Expert, Sheki</div>
+                                </div>
+                                <time class="feed-date">04.10.2026</time>
+                                <button type="button" class="feed-more" aria-label="More"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="5.5" r="1.6" fill="currentColor"/><circle cx="12" cy="12" r="1.6" fill="currentColor"/><circle cx="12" cy="18.5" r="1.6" fill="currentColor"/></svg></button>
+                            </div>
+                            <p class="feed-note-text">Kenya and country music, a perfect pair. Which Kenya was your favourite?</p>
+                            <div class="feed-note-actions">
+                                <button type="button" class="feed-like" aria-label="Like" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 11v9H5.2A1.2 1.2 0 0 1 4 18.8v-6.6A1.2 1.2 0 0 1 5.2 11H8zm0 0l3.2-6.1A2.2 2.2 0 0 1 13.2 4h.3A2.5 2.5 0 0 1 16 6.5V11h3.7a1.8 1.8 0 0 1 1.8 2.1l-1.2 6.2A1.8 1.8 0 0 1 18.5 21H8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg></button>
+                                <span class="feed-score">8</span>
+                                <button type="button" class="feed-dislike" aria-label="Dislike" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 13V4h2.8A1.2 1.2 0 0 1 20 5.2v6.6A1.2 1.2 0 0 1 18.8 13H16zm0 0l-3.2 6.1a2.2 2.2 0 0 1-2 1.2h-.3A2.5 2.5 0 0 1 8 17.8V13H4.3a1.8 1.8 0 0 1-1.8-2.1l1.2-6.2A1.8 1.8 0 0 1 5.5 3H16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg></button>
+                                <button type="button" class="feed-reply">Reply</button>
+                            </div>
+                        </article>
+                        <article class="feed-note" data-comment-id="102">
+                            <div class="feed-note-head">
+                                <div class="feed-note-avatar">A</div>
+                                <div class="feed-who">
+                                    <div class="feed-name"><a href="/Community/Profile">Aysel</a></div>
+                                    <div class="feed-role">Coffee lover, Baku</div>
+                                </div>
+                                <time class="feed-date">05.10.2026</time>
+                                <button type="button" class="feed-more" aria-label="More"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="5.5" r="1.6" fill="currentColor"/><circle cx="12" cy="12" r="1.6" fill="currentColor"/><circle cx="12" cy="18.5" r="1.6" fill="currentColor"/></svg></button>
+                            </div>
+                            <p class="feed-note-text">Moka pot for dad is the best gift. Mine still uses the one we bought him five years ago!</p>
+                            <div class="feed-note-actions">
+                                <button type="button" class="feed-like" aria-label="Like" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 11v9H5.2A1.2 1.2 0 0 1 4 18.8v-6.6A1.2 1.2 0 0 1 5.2 11H8zm0 0l3.2-6.1A2.2 2.2 0 0 1 13.2 4h.3A2.5 2.5 0 0 1 16 6.5V11h3.7a1.8 1.8 0 0 1 1.8 2.1l-1.2 6.2A1.8 1.8 0 0 1 18.5 21H8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg></button>
+                                <span class="feed-score">3</span>
+                                <button type="button" class="feed-dislike" aria-label="Dislike" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 13V4h2.8A1.2 1.2 0 0 1 20 5.2v6.6A1.2 1.2 0 0 1 18.8 13H16zm0 0l-3.2 6.1a2.2 2.2 0 0 1-2 1.2h-.3A2.5 2.5 0 0 1 8 17.8V13H4.3a1.8 1.8 0 0 1-1.8-2.1l1.2-6.2A1.8 1.8 0 0 1 5.5 3H16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg></button>
+                                <button type="button" class="feed-reply">Reply</button>
+                                <span class="feed-edited"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 19l1-4.2L15.6 5.2a1.6 1.6 0 0 1 2.3 0l.9.9a1.6 1.6 0 0 1 0 2.3L9.2 18 5 19z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>Edited</span>
+                            </div>
+                        </article>
+                        <p class="feed-thread-empty" hidden>No comments yet. Be the first.</p>
+                    </div>
+                    <form class="feed-comment">
+                        <label class="feed-comment-field">
+                            <input type="text" name="comment" placeholder="Write a comment" autocomplete="off" />
+                            <span class="feed-comment-photo" aria-label="Attach photo"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8.2A1.7 1.7 0 0 1 5.7 6.5h2.1l1.4-2h5.6l1.4 2h2.1A1.7 1.7 0 0 1 20 8.2v9.1a1.7 1.7 0 0 1-1.7 1.7H5.7A1.7 1.7 0 0 1 4 17.3z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><circle cx="12" cy="12.6" r="3.3" fill="none" stroke="currentColor" stroke-width="1.6"/></svg><input type="file" name="photo" accept="image/*" /></span>
+                        </label>
+                        <button type="submit" class="feed-comment-send" aria-label="Send"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19.5V5m0 0l-5.2 5.2M12 5l5.2 5.2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+                    </form>
+                </article>
+
+            </div>
+
+            <aside class="up-right">
+                <h2>Preferences</h2>
+                <div class="up-tabs" role="tablist" aria-label="Preferences">
+                    <button type="button" class="is-on" data-pref="countries" role="tab" aria-selected="true">Countries</button>
+                    <button type="button" data-pref="process" role="tab" aria-selected="false">Processing</button>
+                    <button type="button" data-pref="group" role="tab" aria-selected="false">Group</button>
+                    <button type="button" data-pref="taste" role="tab" aria-selected="false">Taste</button>
+                </div>
+                <!-- Faizlar istifadəçinin sifarişlərindən hesablanır; hələlik nümunə -->
+                <div class="up-pref" data-pref="countries">
+                    <ul><li data-value="24">Ethiopia</li><li data-value="18">Kenya</li><li data-value="16">Colombia</li><li data-value="13">Brazil</li><li data-value="9">Guatemala</li><li data-value="6">Costa Rica</li><li data-value="4">Rwanda</li><li data-value="10">Other</li></ul>
+                    <svg class="up-donut" viewBox="0 0 42 42" aria-hidden="true"></svg>
+                </div>
+                <div class="up-pref" data-pref="process" hidden>
+                    <ul><li data-value="46">Washed</li><li data-value="31">Natural</li><li data-value="12">Honey</li><li data-value="7">Anaerobic</li><li data-value="4">Other</li></ul>
+                    <svg class="up-donut" viewBox="0 0 42 42" aria-hidden="true"></svg>
+                </div>
+                <div class="up-pref" data-pref="group" hidden>
+                    <ul><li data-value="58">Filter</li><li data-value="27">Espresso</li><li data-value="11">Omni</li><li data-value="4">Drip bags</li></ul>
+                    <svg class="up-donut" viewBox="0 0 42 42" aria-hidden="true"></svg>
+                </div>
+                <div class="up-pref" data-pref="taste" hidden>
+                    <ul><li data-value="34">Fruity</li><li data-value="26">Berry</li><li data-value="18">Chocolate</li><li data-value="14">Floral</li><li data-value="8">Nutty</li></ul>
+                    <svg class="up-donut" viewBox="0 0 42 42" aria-hidden="true"></svg>
+                </div>
+
+                <h2 class="up-brew-title">How I brew</h2>
+                <a class="up-brew" href="/Journal/Article">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4h12l-4 7h-4zM10 11v4M14 11v4M7 20h10M9 15h6l1 5H8z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+                    <span><b>Pour-over</b><em>Open the guide</em></span>
+                </a>
+                <a class="up-brew" href="/Journal/Article">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 8h11v5a5 5 0 0 1-5 5h-1a5 5 0 0 1-5-5zM16 9.5h1.5a2 2 0 0 1 0 4H16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+                    <span><b>In a cup</b><em>Open the guide</em></span>
+                </a>
+                <a class="up-brew" href="/Journal/Article">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3h8v3H8zM9 6v8h6V6M7 14h10l-1 7H8z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+                    <span><b>AeroPress</b><em>Open the guide</em></span>
+                </a>
+            </aside>
+        </div>
+    </section>
+</main>
+
+@section Scripts {
+    <script src="~/js/profile.js" asp-append-version="true"></script>
+}

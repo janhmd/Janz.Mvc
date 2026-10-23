@@ -1,0 +1,56 @@
+@using System.Text.Json
+@model List<Janz.Mvc.ViewModels.Products.ProductUIVM>
+@{
+    ViewData["Title"] = "Compare";
+    var json = JsonSerializer.Serialize(Model.Select(m => new
+    {
+        id = m.Id,
+        name = m.Name,
+        photo = m.ImagePath,
+        price = m.Price,
+        stock = m.Stock,
+        category = m.CategoryName,
+        description = m.Description,
+        tags = m.Tags.Select(t => t.Name)
+    }));
+}
+
+<main>
+    <section id="compare">
+        <h1>Compare</h1>
+        @if (ViewBag.Error is string error)
+        {
+            <p class="entry-error">@error</p>
+        }
+        <label class="compare-diff">
+            <input type="checkbox" />
+            <span>Show only differences</span>
+        </label>
+        <div class="compare-scroll">
+            <div class="compare-table"></div>
+        </div>
+    </section>
+
+    <div class="compare-modal" role="dialog" aria-modal="true" aria-labelledby="compare-modal-title" hidden>
+        <div class="compare-modal-box">
+            <button type="button" class="compare-modal-close" aria-label="Close">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+            </button>
+            <h2 id="compare-modal-title">Add to compare</h2>
+            <label class="compare-search">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M16 16l4 4" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+                <input type="search" placeholder="Search" aria-label="Search products" />
+            </label>
+            <div class="compare-pick"></div>
+            <p class="compare-pick-empty" hidden>Nothing found</p>
+            <button type="button" class="compare-confirm">Confirm</button>
+        </div>
+    </div>
+</main>
+
+@* Məhsullar JS üçün: cədvəl və seçim pəncərəsi brauzerdə çəkilir *@
+<script type="application/json" id="compare-products">@Html.Raw(json)</script>
+
+@section Scripts {
+    <script src="~/js/compare.js" asp-append-version="true"></script>
+}

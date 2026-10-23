@@ -2074,3 +2074,60 @@ document.querySelectorAll("#checkout input[name=addressId]").forEach(function (r
         box.querySelector("[data-recipient-phone]").textContent = radio.getAttribute("data-phone");
     });
 });
+
+// ---- Müqayisə: seçilən məhsulların id-ləri brauzerdə saxlanılır ----
+var compareKey = "janz-compare-ids";
+
+function readCompare() {
+    try {
+        var list = JSON.parse(localStorage.getItem(compareKey) || "[]");
+        return Array.isArray(list) ? list.filter(function (id) { return typeof id === "number"; }) : [];
+    } catch (error) {
+        return [];
+    }
+}
+
+function writeCompare(list) {
+    try { localStorage.setItem(compareKey, JSON.stringify(list)); } catch (error) { }
+    showCompareCount(true);
+    markCompareButtons();
+}
+
+function showCompareCount(bump) {
+    var badge = document.querySelector("[data-compare-count]");
+    if (!badge) return;
+    var count = readCompare().length;
+    if (bump && String(count) !== badge.textContent) {
+        badge.classList.remove("is-bump");
+        void badge.offsetWidth;
+        badge.classList.add("is-bump");
+    }
+    badge.textContent = count;
+    badge.hidden = count === 0;
+}
+
+function markCompareButtons() {
+    var list = readCompare();
+    document.querySelectorAll("[data-compare-toggle]").forEach(function (button) {
+        var on = list.indexOf(parseInt(button.getAttribute("data-compare-toggle"), 10)) !== -1;
+        button.classList.toggle("is-on", on);
+        button.setAttribute("aria-pressed", on ? "true" : "false");
+        button.setAttribute("aria-label", on ? "Remove from compare" : "Compare");
+    });
+}
+
+// Kartdakı tərəzi düyməsi: məhsulu müqayisəyə əlavə edir və ya çıxarır
+document.addEventListener("click", function (event) {
+    var button = event.target.closest("[data-compare-toggle]");
+    if (!button) return;
+    var id = parseInt(button.getAttribute("data-compare-toggle"), 10);
+    var list = readCompare();
+    var index = list.indexOf(id);
+    if (index === -1) list.push(id);
+    else list.splice(index, 1);
+    writeCompare(list);
+    showToast(index === -1 ? "Added to compare" : "Removed from compare");
+});
+
+showCompareCount(false);
+markCompareButtons();

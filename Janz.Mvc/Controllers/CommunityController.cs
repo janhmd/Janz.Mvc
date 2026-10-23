@@ -11,5 +11,12 @@ namespace Janz.Mvc.Controllers
         {
             return View();
         }
+
+        // İstifadəçinin açıq profili: postları, statistikası və üstünlükləri (hələlik nümunə)
+        [HttpGet]
+        public IActionResult Profile()
+        {
+            return View();
+        }
     }
 }
