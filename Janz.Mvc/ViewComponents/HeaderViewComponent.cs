@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Janz.Mvc.ViewComponents
 {
-    // Saytın header-i: menyu, profil menyusu və səbətdəki məhsul sayı (hər səhifədə)
+    // Saytın header-i: menyu, profil menyusu, səbətdəki məhsul sayı və səbət paneli (hər səhifədə)
     public class HeaderViewComponent : ViewComponent
     {
         private readonly IHttpClientFactory _httpClientFactory;
@@ -31,7 +31,8 @@ namespace Janz.Mvc.ViewComponents
                     if (response.IsSuccessStatusCode)
                     {
                         var cart = await response.Content.ReadFromJsonAsync<CartUIVM>();
-                        model.CartCount = cart?.Count ?? 0;
+                        model.Cart = cart ?? new CartUIVM();
+                        model.CartCount = model.Cart.Count;
                     }
                 }
                 catch (HttpRequestException)

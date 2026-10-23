@@ -6913,3 +6913,341 @@ html.theme-day {
 .order-delivery span,
 .order-delivery p { color: var(--muted); }
 }
+
+/* ---- Header: bildirişlər (zəng düyməsi) ---- */
+.notify {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.notify-btn { position: relative; }
+
+.notify-count {
+    position: absolute;
+    top: -6px;
+    right: -8px;
+    min-width: 17px;
+    height: 17px;
+    padding: 0 4px;
+    border-radius: 999px;
+    background: #b08cff;
+    color: #111;
+    font-size: .66rem;
+    font-weight: 800;
+    line-height: 17px;
+    text-align: center;
+}
+
+.notify-count[hidden] { display: none; }
+
+.notify-panel {
+    display: none;
+    position: absolute;
+    top: 100%;
+    right: -6rem;
+    width: 360px;
+    padding: 1.2rem 1.2rem 1rem;
+    margin-top: 12px;
+    background: #141414;
+    border: 1px solid #2c2c2c;
+    border-radius: 18px;
+    box-shadow: 0 18px 40px rgba(0, 0, 0, .35);
+    z-index: 40;
+}
+
+/* Siçan düymədən panelə keçəndə panel bağlanmasın */
+.notify-panel::before {
+    content: "";
+    position: absolute;
+    top: -14px;
+    left: 0;
+    right: 0;
+    height: 14px;
+}
+
+.notify:hover .notify-panel,
+.notify:focus-within .notify-panel { display: block; }
+
+.notify-title { margin-bottom: .8rem; font-weight: 700; font-size: 1rem; }
+
+.notify-tabs {
+    display: flex;
+    gap: .2rem;
+    padding: .25rem;
+    margin-bottom: .9rem;
+    border-radius: 12px;
+    background: #1f1f1f;
+}
+
+.notify-tabs button {
+    flex: 1;
+    padding: .5rem .3rem;
+    border: 0;
+    border-radius: 9px;
+    background: none;
+    color: #8d8d8d;
+    font: inherit;
+    font-size: .72rem;
+    font-weight: 800;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+    cursor: pointer;
+}
+
+.notify-tabs button.is-on { background: #2c2c2c; color: #fff; }
+.notify-tabs button span { color: #8d8d8d; font-weight: 600; }
+
+.notify-list {
+    display: flex;
+    flex-direction: column;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.notify-item {
+    display: grid;
+    gap: .2rem;
+    padding: .75rem .6rem .75rem 1.1rem;
+    border-radius: 12px;
+    position: relative;
+}
+
+.notify-item:hover { background: #1f1f1f; }
+.notify-item[hidden] { display: none; }
+
+.notify-item.is-new::before {
+    content: "";
+    position: absolute;
+    top: 1.05rem;
+    left: .35rem;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #b08cff;
+}
+
+.notify-item strong { font-size: .9rem; font-weight: 700; }
+.notify-item span { color: var(--gold); font-size: .9rem; line-height: 1.35; }
+.notify-item time { color: #8d8d8d; font-size: .76rem; }
+
+.notify-empty { margin: .6rem 0 1rem; color: #8d8d8d; font-size: .9rem; text-align: center; }
+
+.notify-actions { display: flex; gap: .5rem; margin-top: .8rem; }
+
+.notify-all,
+.notify-clear {
+    display: inline-flex;
+    align-items: center;
+    height: 36px;
+    padding: 0 1rem;
+    border-radius: 999px;
+    font-size: .8rem;
+    font-weight: 800;
+}
+
+.notify-all { background: #fff; color: #111; }
+.notify-clear { border: 1px solid #2c2c2c; background: none; color: #f2f2f2; cursor: pointer; font-family: inherit; }
+.notify-clear:hover { border-color: #8d8d8d; }
+
+@media (max-width: 900px) {
+    /* Telefonda hover yoxdur: zəng birbaşa Account → Notifications-a aparır */
+    .notify-panel { display: none !important; }
+}
+
+html.theme-day .notify-panel { background: var(--card); border-color: var(--line); box-shadow: 0 18px 40px rgba(0, 0, 0, .12); }
+html.theme-day .notify-tabs { background: var(--hover); }
+html.theme-day .notify-tabs button.is-on { background: var(--card); color: var(--text); }
+html.theme-day .notify-item:hover { background: var(--hover); }
+html.theme-day .notify-item span { color: #2f6fd6; }
+html.theme-day .notify-all { background: var(--ink); color: #fff; }
+html.theme-day .notify-clear { border-color: var(--line); color: var(--text); }
+html.theme-day .notify-btn { color: var(--text); }
+
+/* ---- Header: seçilmişlər və müqayisə sayğacı ---- */
+.icon-btn.has-count { position: relative; }
+
+.icon-count {
+    position: absolute;
+    top: -6px;
+    right: -8px;
+    min-width: 17px;
+    height: 17px;
+    padding: 0 4px;
+    border-radius: 999px;
+    background: #b08cff;
+    color: #111;
+    font-size: .66rem;
+    font-weight: 800;
+    line-height: 17px;
+    text-align: center;
+}
+
+.icon-count[hidden] { display: none; }
+
+.icon-count.is-bump { animation: count-bump .35s ease; }
+
+@keyframes count-bump {
+    50% { transform: scale(1.35); }
+}
+
+/* Kartda seçilmiş düymə */
+.product-actions button.is-on { border-color: var(--gold); color: var(--gold); }
+.product-actions button.is-on[aria-label="Remove from wishlist"] svg path { fill: currentColor; }
+
+
+/* Səbətdə sayğac ikonun üstündə olsun, "pcs" yazısının yox */
+.cart-link { position: relative; }
+.cart-link .icon-count { top: -7px; left: 8px; right: auto; }
+
+/* ---- Header: səbətin hover paneli ---- */
+.cart-drop {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.mini-cart {
+    display: none;
+    position: absolute;
+    top: 100%;
+    right: -3rem;
+    width: 770px;
+    padding: 1.4rem 1.5rem 1.3rem;
+    margin-top: 12px;
+    background: #141414;
+    border: 1px solid #2c2c2c;
+    border-radius: 18px;
+    box-shadow: 0 18px 40px rgba(0, 0, 0, .35);
+    z-index: 40;
+}
+
+.mini-cart::before {
+    content: "";
+    position: absolute;
+    top: -14px;
+    left: 0;
+    right: 0;
+    height: 14px;
+}
+
+.cart-drop:hover .mini-cart,
+.cart-drop:focus-within .mini-cart { display: block; }
+
+.mini-cart-title { margin-bottom: .6rem; font-weight: 700; }
+
+.mini-cart-list {
+    display: flex;
+    flex-direction: column;
+    max-height: 360px;
+    overflow-y: auto;
+}
+
+.mini-cart-row {
+    display: grid;
+    grid-template-columns: 72px minmax(0, 1fr) auto 96px 36px;
+    align-items: center;
+    gap: .8rem;
+    padding: .8rem 0;
+}
+
+.mini-cart-row + .mini-cart-row { border-top: 1px solid #222; }
+
+.mini-cart-photo img { width: 72px; height: 72px; object-fit: contain; }
+
+.mini-cart-name {
+    display: block;
+    margin-bottom: .5rem;
+    font-size: 1.15rem;
+    font-weight: 800;
+    text-transform: uppercase;
+}
+
+.mini-cart-name:hover { color: var(--gold); }
+
+.mini-cart-options { display: flex; flex-wrap: wrap; align-items: center; gap: .4rem; }
+
+.mini-cart-weight,
+.mini-cart-grind {
+    height: 32px;
+    padding: 0 .65rem;
+    border: 1px solid #333;
+    border-radius: 999px;
+    background: #161616;
+    color: #fff;
+    font: inherit;
+    font-size: .85rem;
+    cursor: pointer;
+}
+
+.mini-cart-weight { display: inline-flex; align-items: center; gap: .3rem; border-color: transparent; background: none; }
+.mini-cart-weight.is-on { border-color: #333; background: #1f1f1f; }
+.mini-cart-weight small { color: #8d8d8d; font-size: .65rem; align-self: flex-start; margin-top: .3rem; }
+.mini-cart-grind { max-width: 150px; }
+.mini-cart.is-empty { width: 320px; }
+
+.mini-cart-qty { display: flex; align-items: center; gap: .6rem; }
+
+.mini-cart-qty button,
+.mini-cart-remove {
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    border: 1px solid #2c2c2c;
+    border-radius: 10px;
+    background: #1b1b1b;
+    color: #fff;
+    font: inherit;
+    font-size: 1.1rem;
+    cursor: pointer;
+}
+
+.mini-cart-qty button:disabled { opacity: .4; cursor: default; }
+.mini-cart-qty span { min-width: 1.2rem; text-align: center; }
+.mini-cart-qty button:not(:disabled):hover,
+.mini-cart-remove:hover { border-color: var(--gold); color: var(--gold); }
+.mini-cart-remove svg { width: 18px; height: 18px; }
+
+.mini-cart-price { display: grid; justify-items: end; gap: .15rem; }
+.mini-cart-price s { color: #8d8d8d; font-size: .85rem; }
+.mini-cart-price strong { font-size: 1.15rem; font-weight: 800; }
+
+.mini-cart-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 1rem;
+}
+
+.mini-cart-order {
+    display: inline-flex;
+    align-items: center;
+    height: 38px;
+    padding: 0 1.1rem;
+    border-radius: 999px;
+    background: #fff;
+    color: #111;
+    font-size: .85rem;
+    font-weight: 800;
+}
+
+.mini-cart-total { font-weight: 700; }
+.mini-cart-empty { margin: .4rem 0 1rem; color: #8d8d8d; }
+
+@media (max-width: 900px) {
+    /* Telefonda hover yoxdur: səbət düyməsi birbaşa səbət səhifəsini açır */
+    .mini-cart { display: none !important; }
+}
+
+html.theme-day .mini-cart { background: var(--card); border-color: var(--line); box-shadow: 0 18px 40px rgba(0, 0, 0, .12); }
+html.theme-day .mini-cart-row + .mini-cart-row { border-top-color: var(--line); }
+html.theme-day .mini-cart-weight,
+html.theme-day .mini-cart-grind { color: var(--text); }
+html.theme-day .mini-cart-weight.is-on,
+html.theme-day .mini-cart-grind { border-color: var(--line); background: var(--hover); }
+html.theme-day .mini-cart-qty button,
+html.theme-day .mini-cart-remove { border-color: var(--line); background: var(--hover); color: var(--text); }
+html.theme-day .mini-cart-order { background: var(--ink); color: #fff; }
+
+.mini-cart-each { color: #8d8d8d; font-size: .85rem; }

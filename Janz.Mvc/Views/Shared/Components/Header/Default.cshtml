@@ -49,6 +49,32 @@
                     </details>
                 </form>
             </details>
+            @* Bildirişlər: hələlik sabit nümunədir (oxunanlar brauzerdə yadda qalır). Bildiriş sistemi gələndə API-dən dolacaq *@
+            <div class="notify">
+                <a class="icon-btn notify-btn" href="/Profile#notifications" aria-label="Notifications, 3 new">
+                    <svg viewBox="0 0 24 24"><path d="M6.5 16.5V11a5.5 5.5 0 0 1 11 0v5.5l1.5 1.8H5z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M10 20.2a2.2 2.2 0 0 0 4 0" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+                    <span class="notify-count">3</span>
+                </a>
+                <div class="notify-panel" role="dialog" aria-label="Notifications">
+                    <div class="notify-title">Notifications</div>
+                    <div class="notify-tabs">
+                        <button type="button" class="is-on" data-kind="all">All <span>3</span></button>
+                        <button type="button" data-kind="shop">Shop</button>
+                        <button type="button" data-kind="journal">Journal</button>
+                        <button type="button" data-kind="community">Community</button>
+                    </div>
+                    <div class="notify-list">
+                        <a class="notify-item is-new" href="/Journal/Article" data-kind="journal"><strong>New article in the journal:</strong><span>How to dial in espresso at home</span><time datetime="2026-10-19T23:49">19 October 2026 at 23:49</time></a>
+                        <a class="notify-item is-new" href="/Products" data-kind="shop"><strong>New in the catalog:</strong><span>Floral, Guatemala Santiago and Aroma kit</span><time datetime="2026-10-17T00:34">17 October 2026 at 00:34</time></a>
+                        <a class="notify-item is-new" href="/Community" data-kind="community"><strong>@@Our news published a new post:</strong><span>This is true — we have our own coffee community</span><time datetime="2026-10-17T04:33">17 October 2026 at 04:33</time></a>
+                    </div>
+                    <p class="notify-empty" hidden>No new notifications</p>
+                    <div class="notify-actions">
+                        <a class="notify-all" href="/Profile#notifications">Show all</a>
+                        <button type="button" class="notify-clear">Clear</button>
+                    </div>
+                </div>
+            </div>
             <details class="profile click-menu">
                 <summary class="icon-btn" aria-label="Account">
                     <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.2" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="10" r="2.2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M7.8 16.2a4.4 4.4 0 0 1 8.4 0" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
@@ -75,10 +101,15 @@
             <a class="icon-btn" href="#" aria-label="Compare">
                 <svg viewBox="0 0 24 24"><path d="M12 3v15M8 20h8M4.5 7h15" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M4.5 7l-2.2 4.2a2.6 2.6 0 0 0 4.4 0zM19.5 7l-2.2 4.2a2.6 2.6 0 0 0 4.4 0z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
             </a>
-            <a class="cart-link" href="/Cart" aria-label="Cart, @Model.CartCount items">
-                <svg viewBox="0 0 24 24"><path d="M6 7h15l-1.5 9h-12z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M6 7L5 4H2" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="9" cy="20" r="1.2" fill="currentColor"/><circle cx="17" cy="20" r="1.2" fill="currentColor"/></svg>
-                <span>@Model.CartCount pcs</span>
-            </a>
+            @* Səbət: üzərinə gələndə məhsullar görünür (panel _MiniCart-dır, dəyişəndə JS onu yeniləyir) *@
+            <div class="cart-drop">
+                <a class="cart-link" href="/Cart" aria-label="Cart, @Model.CartCount items">
+                    <svg viewBox="0 0 24 24"><path d="M6 7h15l-1.5 9h-12z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M6 7L5 4H2" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="9" cy="20" r="1.2" fill="currentColor"/><circle cx="17" cy="20" r="1.2" fill="currentColor"/></svg>
+                    <span>@Model.CartCount pcs</span>
+                    <b class="icon-count" hidden="@(Model.CartCount == 0)">@Model.CartCount</b>
+                </a>
+                <partial name="_MiniCart" model="Model.Cart" />
+            </div>
             <button class="icon-btn theme-toggle" type="button" aria-label="Day mode">
                 <svg class="theme-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 3v2.2M12 18.8V21M4.9 4.9l1.6 1.6M17.5 17.5l1.6 1.6M3 12h2.2M18.8 12H21M4.9 19.1l1.6-1.6M17.5 6.5l1.6-1.6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
             </button>

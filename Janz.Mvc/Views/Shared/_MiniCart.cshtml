@@ -1,0 +1,48 @@
+@using Janz.Mvc.Helpers
+@model Janz.Mvc.ViewModels.Cart.CartUIVM
+@inject IConfiguration Configuration
+@{
+    var apiBase = Configuration["ApiSettings:BaseUrl"];
+    var signedIn = User.Identity?.IsAuthenticated == true;
+}
+@* Header-dəki səbət paneli. Səbət dəyişəndə JS bu hissəni /Cart/Panel-dən təzədən götürür *@
+<div class="mini-cart@(Model.Items.Count == 0 ? " is-empty" : null)" role="dialog" aria-label="Cart" data-count="@Model.Count">
+    <div class="mini-cart-title">Items in your cart</div>
+    @if (Model.Items.Count == 0)
+    {
+        <p class="mini-cart-empty">@(signedIn ? "Your cart is empty for now" : "Sign in to see your cart")</p>
+        <a class="mini-cart-order" href="@(signedIn ? "/Products" : "/Account/Login")">@(signedIn ? "Go to catalog" : "Sign in")</a>
+    }
+    else
+    {
+        <div class="mini-cart-list">
+            @foreach (var item in Model.Items)
+            {
+                <div class="mini-cart-row">
+                    <a class="mini-cart-photo" href="/Products/Detail/@item.ProductId">
+                        <img src="@ApiUrl.ToAbsolute(apiBase, item.ImagePath)" alt="" />
+                    </a>
+                    <div class="mini-cart-info">
+                        <a class="mini-cart-name" href="/Products/Detail/@item.ProductId">@item.ProductName</a>
+                        <span class="mini-cart-each">₼@item.Price.ToString("0.00") each</span>
+                    </div>
+                    <div class="mini-cart-qty">
+                        <button type="button" aria-label="Less @item.ProductName" data-mini-qty="@item.Id" data-quantity="@(item.Quantity - 1)" disabled="@(item.Quantity <= 1)">−</button>
+                        <span>@item.Quantity</span>
+                        <button type="button" aria-label="More @item.ProductName" data-mini-qty="@item.Id" data-quantity="@(item.Quantity + 1)" disabled="@(item.Quantity >= item.Stock)">+</button>
+                    </div>
+                    <div class="mini-cart-price">
+                        <strong>₼@item.Total.ToString("0.00")</strong>
+                    </div>
+                    <button type="button" class="mini-cart-remove" aria-label="Remove @item.ProductName" data-mini-remove="@item.Id">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7h14M10 7V5h4v2M7 7l1 13h8l1-13M10.5 11v5.5M13.5 11v5.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </button>
+                </div>
+            }
+        </div>
+        <div class="mini-cart-footer">
+            <a class="mini-cart-order" href="/Cart">Place an order</a>
+            <span class="mini-cart-total">Total ₼@Model.Total.ToString("0.00")</span>
+        </div>
+    }
+</div>

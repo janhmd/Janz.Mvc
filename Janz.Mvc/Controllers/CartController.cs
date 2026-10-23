@@ -43,6 +43,13 @@ namespace Janz.Mvc.Controllers
             return View(model);
         }
 
+        // Header-dəki səbət paneli: səbət dəyişəndə JS onu buradan təzədən götürür
+        [HttpGet]
+        public async Task<IActionResult> Panel()
+        {
+            return PartialView("_MiniCart", await LoadCartAsync());
+        }
+
         // Kataloqdakı "səbətə at" düyməsi fetch() ilə çağırır: cavabda header üçün yeni say qayıdır
         [Authorize]
         [HttpPost]
@@ -71,6 +78,12 @@ namespace Janz.Mvc.Controllers
             var (success, errors, status) = await PutAsync($"api/cart/items/{id}", new { quantity });
             if (status == HttpStatusCode.Unauthorized) return await SessionExpiredAsync();
 
+            // Header panelindən gələndə yenilənmiş panel qaytarılır
+            if (IsAjax())
+            {
+                return success ? PartialView("_MiniCart", await LoadCartAsync()) : BadRequest(new { errors });
+            }
+
             if (!success) TempData["CartError"] = string.Join(" ", errors);
             return RedirectToAction(nameof(Index));
         }
@@ -83,8 +96,25 @@ namespace Janz.Mvc.Controllers
             var (success, errors, status) = await DeleteAsync($"api/cart/items/{id}");
             if (status == HttpStatusCode.Unauthorized) return await SessionExpiredAsync();
 
+            if (IsAjax())
+            {
+                return success ? PartialView("_MiniCart", await LoadCartAsync()) : BadRequest(new { errors });
+            }
+
             if (!success) TempData["CartError"] = string.Join(" ", errors);
             return RedirectToAction(nameof(Index));
+        }
+
+        // Giriş edilməyibsə və ya API cavab vermirsə boş səbət
+        private async Task<CartUIVM> LoadCartAsync()
+        {
+            if (User.Identity?.IsAuthenticated != true)
+            {
+                return new CartUIVM();
+            }
+
+            var (cart, _) = await GetAsync<CartUIVM>("api/cart");
+            return cart ?? new CartUIVM();
         }
     }
 }

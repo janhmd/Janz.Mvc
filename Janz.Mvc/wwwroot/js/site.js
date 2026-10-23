@@ -154,9 +154,8 @@ document.addEventListener("click", function (event) {
                 alert((payload.errors || []).join(" ") || "Could not add to cart.");
                 return;
             }
-            var cartLink = document.querySelector(".cart-link");
-            cartLink.querySelector("span").textContent = payload.count + " pcs";
-            cartLink.setAttribute("aria-label", "Cart, " + payload.count + " items");
+            setCartCount(payload.count);
+            refreshMiniCart();
             showToast("Added to cart");
         });
     }).catch(function () {
@@ -1902,4 +1901,155 @@ document.addEventListener("keydown", function (event) {
     closeCook();
     closeAbout();
     closeTopup();
+});
+
+// ---- Header: bildirişlər ----
+// Hələlik nümunədir: oxunanlar və "Clear" yalnız bu brauzerdə yadda qalır (janz-notify); backend gələndə API-dən gələcək
+(function () {
+    var box = document.querySelector(".notify");
+    if (!box) return;
+    var items = box.querySelectorAll(".notify-item");
+    var count = box.querySelector(".notify-count");
+    var allTab = box.querySelector('.notify-tabs [data-kind="all"] span');
+    var empty = box.querySelector(".notify-empty");
+    var state = {};
+    try { state = JSON.parse(localStorage.getItem("janz-notify") || "{}"); } catch (e) { state = {}; }
+
+    function save() {
+        try { localStorage.setItem("janz-notify", JSON.stringify(state)); } catch (e) { }
+    }
+
+    function refresh() {
+        var fresh = 0;
+        var visible = 0;
+        items.forEach(function (item) {
+            var key = item.getAttribute("href") + item.querySelector("time").getAttribute("datetime");
+            item.hidden = item.hidden || !!state.cleared;
+            if (state.read && state.read[key]) item.classList.remove("is-new");
+            if (!item.hidden) visible += 1;
+            if (!state.cleared && item.classList.contains("is-new")) fresh += 1;
+        });
+        count.textContent = fresh;
+        count.hidden = fresh === 0;
+        if (allTab) allTab.textContent = fresh || "";
+        box.querySelector(".notify-btn").setAttribute("aria-label", fresh ? "Notifications, " + fresh + " new" : "Notifications");
+        empty.hidden = visible > 0;
+    }
+
+    box.querySelectorAll(".notify-tabs button").forEach(function (button) {
+        button.addEventListener("click", function () {
+            var kind = button.getAttribute("data-kind");
+            box.querySelectorAll(".notify-tabs button").forEach(function (other) {
+                other.classList.toggle("is-on", other === button);
+            });
+            items.forEach(function (item) {
+                item.hidden = !!state.cleared || (kind !== "all" && item.getAttribute("data-kind") !== kind);
+            });
+            refresh();
+        });
+    });
+
+    // Bildirişə basanda oxunmuş sayılır, sonra öz səhifəsi açılır
+    items.forEach(function (item) {
+        item.addEventListener("click", function () {
+            state.read = state.read || {};
+            state.read[item.getAttribute("href") + item.querySelector("time").getAttribute("datetime")] = true;
+            save();
+        });
+    });
+
+    box.querySelector(".notify-clear").addEventListener("click", function () {
+        state.cleared = true;
+        save();
+        refresh();
+    });
+
+    refresh();
+})();
+
+// ---- Header: səbətin sayğacı və paneli ----
+// Panel serverdə çəkilir (_MiniCart): say dəyişəndə /Cart/Panel-dən təzədən götürülür
+function setCartCount(count) {
+    var link = document.querySelector(".cart-link");
+    if (!link) return;
+    link.querySelector("span").textContent = count + " pcs";
+    link.setAttribute("aria-label", "Cart, " + count + (count === 1 ? " item" : " items"));
+    var badge = link.querySelector(".icon-count");
+    if (badge) {
+        if (String(count) !== badge.textContent) {
+            badge.classList.remove("is-bump");
+            void badge.offsetWidth;
+            badge.classList.add("is-bump");
+        }
+        badge.textContent = count;
+        badge.hidden = count === 0;
+    }
+}
+
+function replaceMiniCart(html) {
+    var panel = document.querySelector(".cart-drop .mini-cart");
+    if (!panel) return;
+    var holder = document.createElement("div");
+    holder.innerHTML = html.trim();
+    var next = holder.querySelector(".mini-cart");
+    if (!next) return;
+    panel.replaceWith(next);
+    setCartCount(parseInt(next.getAttribute("data-count"), 10) || 0);
+}
+
+function refreshMiniCart() {
+    fetch("/Cart/Panel", { headers: { "X-Requested-With": "XMLHttpRequest" } })
+        .then(function (response) { return response.ok ? response.text() : null; })
+        .then(function (html) { if (html) replaceMiniCart(html); })
+        .catch(function () { });
+}
+
+// Paneldəki − / + və sil düymələri: dəyişiklik API-yə gedir, cavabda yenilənmiş panel gəlir
+document.addEventListener("click", function (event) {
+    var qty = event.target.closest("[data-mini-qty]");
+    var remove = event.target.closest("[data-mini-remove]");
+    if (!qty && !remove) return;
+
+    var button = qty || remove;
+    var body = new URLSearchParams();
+    body.set("__RequestVerificationToken", document.documentElement.getAttribute("data-csrf") || "");
+    var url;
+    if (qty) {
+        url = "/Cart/Update";
+        body.set("id", qty.getAttribute("data-mini-qty"));
+        body.set("quantity", qty.getAttribute("data-quantity"));
+    } else {
+        url = "/Cart/Remove";
+        body.set("id", remove.getAttribute("data-mini-remove"));
+    }
+
+    button.disabled = true;
+    fetch(url, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+            "X-Requested-With": "XMLHttpRequest"
+        },
+        body: body.toString()
+    }).then(function (response) {
+        if (response.status === 401) {
+            window.location.href = "/Account/Login";
+            return;
+        }
+        if (!response.ok) {
+            return response.json().then(function (payload) {
+                showToast((payload.errors || []).join(" ") || "Could not change the cart.");
+                button.disabled = false;
+            });
+        }
+        return response.text().then(function (html) {
+            replaceMiniCart(html);
+            if (remove) showToast("Removed from cart");
+            // Səbət səhifəsindəyiksə səhifənin özü də yenilənsin
+            if (window.location.pathname.toLowerCase().indexOf("/cart") === 0) window.location.reload();
+        });
+    }).catch(function () {
+        button.disabled = false;
+        showToast("The API is not running.");
+    });
 });
