@@ -18,8 +18,8 @@
     <script>if (localStorage.getItem("janz-theme") === "day") document.documentElement.classList.add("theme-day");</script>
 </head>
 <body>
-    <div id="app">
-        <div id="sidebar" class="active">
+    <div class="app">
+        <div class="sidebar active">
             <div class="sidebar-wrapper active">
                 <div class="sidebar-header">
                     <div class="d-flex justify-content-between align-items-center">
@@ -83,16 +83,18 @@
             </div>
         </div>
 
-        <div id="main">
-            <header class="admin-top">
-                <a href="#" class="burger-btn d-block d-xl-none" aria-label="Open menu"><i class="bi bi-list"></i></a>
-                <div class="admin-top-title">@ViewData["Title"]</div>
-                <button class="admin-theme" type="button" aria-label="Day mode"><i class="bi bi-sun"></i></button>
-                <div class="admin-user">
-                    <span class="admin-avatar" aria-hidden="true">@name.Substring(0, 1).ToUpperInvariant()</span>
-                    <div>
-                        <div class="admin-user-name">@name</div>
-                        <div class="admin-user-role">@AppRoles.MainRole(User)</div>
+        <div class="main">
+            <header>
+                <div class="admin-top">
+                    <a href="#" class="burger-btn d-block d-xl-none" aria-label="Open menu"><i class="bi bi-list"></i></a>
+                    <div class="admin-top-title">@ViewData["Title"]</div>
+                    <button class="admin-theme" type="button" aria-label="Day mode"><i class="bi bi-sun"></i></button>
+                    <div class="admin-user">
+                        <span class="admin-avatar" aria-hidden="true">@name.Substring(0, 1).ToUpperInvariant()</span>
+                        <div>
+                            <div class="admin-user-name">@name</div>
+                            <div class="admin-user-role">@AppRoles.MainRole(User)</div>
+                        </div>
                     </div>
                 </div>
             </header>
@@ -109,9 +111,11 @@
                 @RenderBody()
             </div>
 
-            <footer class="admin-footer">
-                <span>© 2026 Janz</span>
-                <span>Admin panel</span>
+            <footer>
+                <div class="admin-footer">
+                    <span>© 2026 Janz</span>
+                    <span>Admin panel</span>
+                </div>
             </footer>
         </div>
     </div>

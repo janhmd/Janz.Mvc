@@ -7,7 +7,7 @@
     <section id="user-profile">
         <h1>User profile</h1>
         <div class="up-grid">
-            <aside class="up-side">
+            <div class="up-side">
                 <div class="up-person">
                     <div class="feed-avatar"><span>C</span></div>
                     <div class="up-who">
@@ -42,10 +42,10 @@
                     <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 11v9H5.2A1.2 1.2 0 0 1 4 18.8v-6.6A1.2 1.2 0 0 1 5.2 11zm0 0l3.6-6.6a1.8 1.8 0 0 1 3.3 1.3L14 10h4.4a1.6 1.6 0 0 1 1.6 1.9l-1.3 6.6A1.8 1.8 0 0 1 17 20H8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>Likes received <span>3 507</span></li>
                     <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h7l4 4v14H7z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M14 3v4h4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>Articles read <span>112</span></li>
                 </ul>
-            </aside>
+            </div>
 
             <div class="feed up-feed">
-                <article class="feed-card" data-post-id="6">
+                <div class="feed-card" data-post-id="6">
                     <div class="feed-head">
                         <div class="feed-avatar"><span>C</span><i class="feed-badge"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="9" cy="10" r="1.1" fill="currentColor"/><circle cx="15" cy="10" r="1.1" fill="currentColor"/><path d="M8.4 14c.9 1.3 2.1 2 3.6 2s2.7-.7 3.6-2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></i></div>
                         <div class="feed-who">
@@ -85,10 +85,10 @@
                         </label>
                         <button type="submit" class="feed-comment-send" aria-label="Send"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19.5V5m0 0l-5.2 5.2M12 5l5.2 5.2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
                     </form>
-                </article>
+                </div>
 
 
-                <article class="feed-card" data-post-id="1">
+                <div class="feed-card" data-post-id="1">
                     <div class="feed-head">
                         <div class="feed-avatar"><span>C</span><i class="feed-badge"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="9" cy="10" r="1.1" fill="currentColor"/><circle cx="15" cy="10" r="1.1" fill="currentColor"/><path d="M8.4 14c.9 1.3 2.1 2 3.6 2s2.7-.7 3.6-2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></i></div>
                         <div class="feed-who">
@@ -132,7 +132,7 @@
                         <button type="button" class="feed-save" aria-label="Save" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5h10v15l-5-3.4-5 3.4z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg></button>
                     </div>
                     <div class="feed-thread" hidden>
-                        <article class="feed-note" data-comment-id="101">
+                        <div class="feed-note" data-comment-id="101">
                             <div class="feed-note-head">
                                 <div class="feed-note-avatar">E</div>
                                 <div class="feed-who">
@@ -149,8 +149,8 @@
                                 <button type="button" class="feed-dislike" aria-label="Dislike" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 13V4h2.8A1.2 1.2 0 0 1 20 5.2v6.6A1.2 1.2 0 0 1 18.8 13H16zm0 0l-3.2 6.1a2.2 2.2 0 0 1-2 1.2h-.3A2.5 2.5 0 0 1 8 17.8V13H4.3a1.8 1.8 0 0 1-1.8-2.1l1.2-6.2A1.8 1.8 0 0 1 5.5 3H16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg></button>
                                 <button type="button" class="feed-reply">Reply</button>
                             </div>
-                        </article>
-                        <article class="feed-note" data-comment-id="102">
+                        </div>
+                        <div class="feed-note" data-comment-id="102">
                             <div class="feed-note-head">
                                 <div class="feed-note-avatar">A</div>
                                 <div class="feed-who">
@@ -168,7 +168,7 @@
                                 <button type="button" class="feed-reply">Reply</button>
                                 <span class="feed-edited"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 19l1-4.2L15.6 5.2a1.6 1.6 0 0 1 2.3 0l.9.9a1.6 1.6 0 0 1 0 2.3L9.2 18 5 19z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>Edited</span>
                             </div>
-                        </article>
+                        </div>
                         <p class="feed-thread-empty" hidden>No comments yet. Be the first.</p>
                     </div>
                     <form class="feed-comment">
@@ -178,11 +178,11 @@
                         </label>
                         <button type="submit" class="feed-comment-send" aria-label="Send"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19.5V5m0 0l-5.2 5.2M12 5l5.2 5.2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
                     </form>
-                </article>
+                </div>
 
             </div>
 
-            <aside class="up-right">
+            <div class="up-right">
                 <h2>Preferences</h2>
                 <div class="up-tabs" role="tablist" aria-label="Preferences">
                     <button type="button" class="is-on" data-pref="countries" role="tab" aria-selected="true">Countries</button>
@@ -190,7 +190,6 @@
                     <button type="button" data-pref="group" role="tab" aria-selected="false">Group</button>
                     <button type="button" data-pref="taste" role="tab" aria-selected="false">Taste</button>
                 </div>
-                <!-- Faizlar istifadəçinin sifarişlərindən hesablanır; hələlik nümunə -->
                 <div class="up-pref" data-pref="countries">
                     <ul><li data-value="24">Ethiopia</li><li data-value="18">Kenya</li><li data-value="16">Colombia</li><li data-value="13">Brazil</li><li data-value="9">Guatemala</li><li data-value="6">Costa Rica</li><li data-value="4">Rwanda</li><li data-value="10">Other</li></ul>
                     <svg class="up-donut" viewBox="0 0 42 42" aria-hidden="true"></svg>
@@ -221,11 +220,7 @@
                     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3h8v3H8zM9 6v8h6V6M7 14h10l-1 7H8z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
                     <span><b>AeroPress</b><em>Open the guide</em></span>
                 </a>
-            </aside>
+            </div>
         </div>
     </section>
 </main>
-
-@section Scripts {
-    <script src="~/js/profile.js" asp-append-version="true"></script>
-}

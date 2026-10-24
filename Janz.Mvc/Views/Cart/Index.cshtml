@@ -50,7 +50,7 @@
                         </div>
                     </div>
 
-                    <section class="co-card">
+                    <div class="co-card">
                         <div class="co-card-head">
                             <h1>Cart <span>@Model.Cart.Count</span></h1>
                             <button type="submit" class="co-clear" form="cart-clear">Clear cart
@@ -85,9 +85,9 @@
                                 </div>
                             }
                         </div>
-                    </section>
+                    </div>
 
-                    <section class="co-card">
+                    <div class="co-card">
                         <h2>Delivery</h2>
                         <h3>Address</h3>
                         <div class="co-addresses">
@@ -118,9 +118,9 @@
                             <b data-recipient-name>@selected?.FullName</b>
                             <span><span data-recipient-phone>@selected?.Phone</span> · @Model.Email</span>
                         </div>
-                    </section>
+                    </div>
 
-                    <section class="co-card">
+                    <div class="co-card">
                         <h2>Delivery and payment</h2>
                         <div class="co-facts">
                             <div>
@@ -134,10 +134,10 @@
                                 <small>You pay only when you get the order</small>
                             </div>
                         </div>
-                    </section>
+                    </div>
                 </div>
 
-                <aside class="co-side">
+                <div class="co-side">
                     <div class="co-total">
                         <div class="co-total-head">
                             <h2>To pay</h2>
@@ -154,7 +154,7 @@
                             <span>I agree to the terms of data processing, the user agreement and the offer</span>
                         </label>
                     </div>
-                </aside>
+                </div>
             </form>
 
             @* Ayrı formlar: HTML-də form form içində ola bilməz *@

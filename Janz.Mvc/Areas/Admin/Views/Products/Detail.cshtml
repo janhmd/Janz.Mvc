@@ -6,7 +6,7 @@
     var stockClass = Model.Stock == 0 ? " is-out" : Model.Stock < AdminRules.LowStock ? " is-low" : null;
 }
 
-<section class="admin-head">
+<div class="admin-head">
     <div>
         <p class="admin-eyebrow"><a asp-action="Index">Products</a> / #@Model.Id</p>
         <h1>@Model.Name</h1>
@@ -15,10 +15,10 @@
         <a class="admin-btn is-ghost" href="/Products/Detail/@Model.Id" target="_blank" rel="noopener"><i class="bi bi-box-arrow-up-right"></i> On the site</a>
         <a class="admin-btn" asp-action="Edit" asp-route-id="@Model.Id"><i class="bi bi-pencil"></i> Edit</a>
     </div>
-</section>
+</div>
 
 <div class="admin-grid">
-    <section class="admin-card">
+    <div class="admin-card">
         <dl class="admin-facts">
             <dt>Category</dt><dd>@Model.CategoryName</dd>
             <dt>Price</dt><dd>₼@Model.Price.ToString("0.00")</dd>
@@ -26,8 +26,8 @@
             <dt>Tags</dt><dd>@(Model.Tags.Count == 0 ? "—" : string.Join(", ", Model.Tags.Select(m => m.Name)))</dd>
             <dt>Description</dt><dd>@Model.Description</dd>
         </dl>
-    </section>
-    <section class="admin-card">
+    </div>
+    <div class="admin-card">
         <div class="admin-gallery">
             <img class="is-main" src="@ApiUrl.ToAbsolute(apiBase, Model.ImagePath)" alt="@Model.Name" />
             @foreach (var image in Model.Images)
@@ -36,7 +36,7 @@
             }
         </div>
         <p class="admin-note admin-note-top">The gold frame is the main image shown in the catalog.</p>
-    </section>
+    </div>
 </div>
 
 <div class="admin-detail-foot">

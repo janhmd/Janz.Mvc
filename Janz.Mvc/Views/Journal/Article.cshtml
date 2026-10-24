@@ -4,7 +4,7 @@
 
 <main>
         <!-- Article from DB: title, stats, blocks, tags, comments. Redactor adds blocks/tags. Signed-in users add comments. -->
-        <article id="article"
+        <section id="article"
             data-id="aroma-kit"
             data-title="Aroma kit: a tool for developing sensory skills"
             data-topic="Industry"
@@ -53,13 +53,13 @@
 
                 <div class="article-split">
                     <h2 class="article-sub">Section heading</h2>
-                    <aside class="article-author">
+                    <div class="article-author">
                         <span class="article-avatar" aria-hidden="true">A</span>
                         <div>
                             <strong>Author name</strong>
                             <span>Article author</span>
                         </div>
-                    </aside>
+                    </div>
                 </div>
 
                 <div class="article-block">
@@ -97,17 +97,17 @@
                     <p>Fourth heading to show an article is not limited to three. Extra blocks can follow the same pattern.</p>
                 </div>
 
-                <section class="article-tags" aria-label="Tags">
+                <div class="article-tags" aria-label="Tags">
                     <h2>Tags <span>1</span></h2>
                     <div class="article-tag-list">
                         <a href="#"># Tag</a>
                     </div>
-                </section>
+                </div>
 
-                <section class="article-comments" aria-label="Comments">
+                <div class="article-comments" aria-label="Comments">
                     <h2>Comments <span>2</span></h2>
                     <p class="article-comment-note">To leave a comment, <a href="/Account/Login">sign in</a> to your account or <a href="/Account/Register">register</a>.</p>
-                    <article class="article-comment">
+                    <div class="article-comment">
                         <div class="article-comment-head">
                             <span class="article-avatar" aria-hidden="true">A</span>
                             <div class="article-comment-who">
@@ -127,8 +127,8 @@
                                 <svg viewBox="0 0 24 24"><path d="M16 13V4h2.8A1.2 1.2 0 0 1 20 5.2v6.6A1.2 1.2 0 0 1 18.8 13H16zm0 0l-3.2 6.1A2.2 2.2 0 0 1 10.8 20h-.3A2.5 2.5 0 0 1 8 17.5V13H4.3a1.8 1.8 0 0 1-1.8-2.1l1.2-6.2A1.8 1.8 0 0 1 5.5 3H16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
                             </button>
                         </div>
-                    </article>
-                    <article class="article-comment">
+                    </div>
+                    <div class="article-comment">
                         <div class="article-comment-head">
                             <span class="article-avatar" aria-hidden="true">B</span>
                             <div class="article-comment-who">
@@ -148,8 +148,8 @@
                                 <svg viewBox="0 0 24 24"><path d="M16 13V4h2.8A1.2 1.2 0 0 1 20 5.2v6.6A1.2 1.2 0 0 1 18.8 13H16zm0 0l-3.2 6.1A2.2 2.2 0 0 1 10.8 20h-.3A2.5 2.5 0 0 1 8 17.5V13H4.3a1.8 1.8 0 0 1-1.8-2.1l1.2-6.2A1.8 1.8 0 0 1 5.5 3H16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
                             </button>
                         </div>
-                    </article>
-                </section>
+                    </div>
+                </div>
             </div>
-        </article>
+        </section>
     </main>

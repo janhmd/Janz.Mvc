@@ -301,7 +301,6 @@ if (promo) {
     });
 }
 
-// ---- Front-dan gələn hissələr: Account tabları və modalları, oxuma, community, bildiriş, Blacklist, Journal ----
 
 var followOverlay = document.querySelector(".follow-overlay");
 var followTitle = followOverlay ? followOverlay.querySelector("#follow-title") : null;
@@ -439,7 +438,6 @@ if (addressOverlay && addressForm) {
     });
     addressForm.querySelector(".edit-cancel").addEventListener("click", closeAddress);
     addressForm.addEventListener("submit", function (event) {
-        // MVC-də forma API-yə gedir (AddAddress): brauzer özü göndərir, səhifə yeni siyahı ilə açılır
         if (addressForm.hasAttribute("action")) return;
         event.preventDefault();
         var title = addressForm.title.value.trim() || "Address";
@@ -452,7 +450,7 @@ if (addressOverlay && addressForm) {
         if (addressForm.primary.checked && addressList) {
             addressList.querySelectorAll("em").forEach(function (mark) { mark.remove(); });
         }
-        var card = document.createElement("article");
+        var card = document.createElement("div");
         card.className = "details-address-card";
         var head = document.createElement("strong");
         head.textContent = title;
@@ -516,7 +514,7 @@ if (cardOverlay && cardForm) {
         if (cardForm.primary.checked && cardList) {
             cardList.querySelectorAll("em").forEach(function (mark) { mark.remove(); });
         }
-        var item = document.createElement("article");
+        var item = document.createElement("div");
         item.className = "details-card-item";
         var num = document.createElement("strong");
         num.textContent = "•••• " + last;
@@ -659,7 +657,7 @@ function renderCookList() {
         var option = cookForm.querySelector('.cook-option[data-name="' + name + '"]');
         var icon = option ? option.querySelector("svg") : null;
         var title = name === "Other" && cookOtherText ? cookOtherText : name;
-        var card = document.createElement("article");
+        var card = document.createElement("div");
         card.className = "profile-cook-item";
         if (icon) {
             card.appendChild(icon.cloneNode(true));
@@ -1188,7 +1186,6 @@ if (articleRoot && articleRoot.getAttribute("data-id")) {
 
     window.addEventListener("scroll", trackArticle, { passive: true });
 
-    // Məqalə açılan kimi Journal-dakı "Recently read" siyahısına düşür
     rememberArticle(articleRoot, { seenAt: Date.now() });
 
     if (bookmarkBtn) {
@@ -1272,10 +1269,7 @@ if (readingBoard) {
     renderReading();
 }
 
-// Community postları: şəkil karuseli, like/dislike, yadda saxlama, izləmə, şərhlər və cavablar.
-// Hələlik hər şey səhifədədir; backend gələndə düymələr API-yə sorğu göndərəcək
 
-// Like +1 edir, dislike sayı göstərmir; ikisi eyni anda seçilə bilməz. Post və hər şərh üçün ayrıca işləyir
 function bindVotes(box) {
     var like = box.querySelector(":scope > .feed-like");
     var dislike = box.querySelector(":scope > .feed-dislike");
@@ -1303,7 +1297,6 @@ function bindNote(note, card) {
     var actions = note.querySelector(":scope > .feed-note-actions");
     if (actions) bindVotes(actions);
 
-    // "Reply" şərh sahəsinə müəllifin adını yazır
     var reply = actions ? actions.querySelector(".feed-reply") : null;
     var input = card.querySelector(".feed-comment input[type='text']");
     if (reply && input) {
@@ -1332,13 +1325,11 @@ function escapeHtml(text) {
     return box.innerHTML;
 }
 
-// Paylaşma pəncərəsi, bildiriş və ⋮ menyusu yalnız community postları olan səhifədə yaranır
 var shareOverlay = null;
 var toastBox = null;
 var toastTimer = null;
 
 function postLink(card, note) {
-    // Hələlik səhifənin öz ünvanı; backend gələndə /community?post=ID olacaq
     var link = location.href.split(/[?#]/)[0] + "?post=" + card.getAttribute("data-post-id");
     if (note) link += "&comment=" + note.getAttribute("data-comment-id");
     return link;
@@ -1365,7 +1356,6 @@ function closeShare() {
 function showToast(text) {
     if (!toastBox) return;
     toastBox.querySelector(".toast-text").textContent = text;
-    // Animasiya hər dəfə əvvəldən başlasın deyə sinif çıxarılıb yenidən əlavə olunur
     toastBox.classList.remove("is-on");
     void toastBox.offsetWidth;
     toastBox.classList.add("is-on");
@@ -1383,7 +1373,6 @@ function closeMenus(except) {
     });
 }
 
-// Bildiriş (toast) bütün səhifələrdə var: blok, səbətə əlavə və s.
 toastBox = document.createElement("div");
 toastBox.className = "toast";
 toastBox.setAttribute("role", "status");
@@ -1429,7 +1418,6 @@ if (document.querySelector(".feed-card")) {
         }
     });
 
-    // ⋮ basanda menyu açılır; menyudan kənara basanda bağlanır
     document.addEventListener("click", function (event) {
         var more = event.target.closest(".feed-more");
         if (!more) {
@@ -1452,7 +1440,6 @@ if (document.querySelector(".feed-card")) {
 
             menu.querySelector("[data-menu='block']").addEventListener("click", function () {
                 menu.hidden = true;
-                // Backend gələndə istifadəçi qara siyahıya yazılacaq (Account → Blacklist)
                 showToast("You blocked the user");
             });
             menu.querySelector("[data-menu='share']").addEventListener("click", function () {
@@ -1491,7 +1478,6 @@ document.querySelectorAll(".feed-card").forEach(function (card) {
             });
         });
 
-        // Bir şəkil varsa sürüşdürmək lazım deyil
         if (count > 1) {
             frame.addEventListener("pointerdown", function (event) {
                 startX = event.clientX;
@@ -1510,7 +1496,6 @@ document.querySelectorAll(".feed-card").forEach(function (card) {
             function endDrag() {
                 if (startX === null) return;
                 frame.classList.remove("is-dragging");
-                // Şəklin beşdə biri qədər çəkilibsə növbəti/əvvəlki şəkil açılır
                 if (Math.abs(deltaX) > frame.clientWidth / 5) {
                     showPhoto(index + (deltaX < 0 ? 1 : -1));
                 } else {
@@ -1555,7 +1540,6 @@ document.querySelectorAll(".feed-card").forEach(function (card) {
         });
     }
 
-    // Şərh düyməsi şərhləri açıb-bağlayır
     var thread = card.querySelector(".feed-thread");
     var commentsBtn = card.querySelector(".feed-comments");
     var commentsCount = commentsBtn ? commentsBtn.querySelector("span") : null;
@@ -1588,7 +1572,6 @@ document.querySelectorAll(".feed-card").forEach(function (card) {
             });
         }
 
-        // Boş şərh göndərilmir: ya mətn, ya şəkil olmalıdır. Yeni şərh siyahının sonuna düşür
         comment.addEventListener("submit", function (event) {
             event.preventDefault();
             var value = text.value.trim();
@@ -1602,7 +1585,7 @@ document.querySelectorAll(".feed-card").forEach(function (card) {
                 var today = new Date();
                 var date = ("0" + today.getDate()).slice(-2) + "." + ("0" + (today.getMonth() + 1)).slice(-2) + "." + today.getFullYear();
                 var template = thread.querySelector(".feed-note");
-                var note = document.createElement("article");
+                var note = document.createElement("div");
                 note.className = "feed-note";
                 note.innerHTML =
                     '<div class="feed-note-head">' +
@@ -1635,7 +1618,6 @@ document.querySelectorAll(".feed-card").forEach(function (card) {
     }
 });
 
-// Blacklist (Account): axtarış və bloku götürmək. Hələlik yalnız səhifədə; backend gələndə API-dən silinəcək
 var blacklistPane = document.querySelector(".cabinet-pane[data-pane='blacklist']");
 var unblockOverlay = document.querySelector(".unblock-overlay");
 
@@ -1646,7 +1628,6 @@ if (blacklistPane && unblockOverlay) {
     var blacklistEmpty = blacklistPane.querySelector(".blacklist-empty");
     var unblockTarget = null;
 
-    // Siyahı boşdursa "Blacklist is empty" görünür, axtarışda heç kim tapılmasa "Nobody found"
     function syncBlacklist() {
         var items = blacklistPane.querySelectorAll(".blacklist-item");
         var query = blacklistSearch.value.trim().toLowerCase();
@@ -1701,8 +1682,6 @@ if (blacklistPane && unblockOverlay) {
 }
 
 
-// Journal: mövzu və tag filtri, sıralama, like, bookmark, oxunma xətti və "Recently read".
-// Bookmark və oxunma Account → "Reading in the journal" ilə ortaqdır (janz-reading)
 var journalGrid = document.querySelector(".journal-grid");
 
 if (journalGrid && journalGrid.querySelector(".article-card")) {
@@ -1727,7 +1706,6 @@ if (journalGrid && journalGrid.querySelector(".article-card")) {
         });
     }
 
-    // Soldakı mövzuların yanındakı rəqəmlər kartlardan hesablanır
     document.querySelectorAll(".journal-topics a[data-topic]").forEach(function (link) {
         var topic = link.getAttribute("data-topic");
         var count = link.querySelector("span");
@@ -1791,7 +1769,6 @@ if (journalGrid && journalGrid.querySelector(".article-card")) {
 
     if (journalSort) journalSort.addEventListener("change", renderJournal);
 
-    // Kartın (və hero-nun) düymələri və oxunma xətti janz-reading-dən oxunur
     function syncArticle(card) {
         var item = loadReading()[card.getAttribute("data-id")] || {};
         var like = card.querySelector(".article-like");
@@ -1836,7 +1813,6 @@ if (journalGrid && journalGrid.querySelector(".article-card")) {
                 syncAll();
             });
         }
-        // Məqaləyə keçəndə "Recently read"-ə düşür
         card.querySelectorAll("a[href^='/Journal/Article']").forEach(function (link) {
             link.addEventListener("click", function () {
                 rememberArticle(card, { seenAt: Date.now() });
@@ -1857,14 +1833,13 @@ if (journalGrid && journalGrid.querySelector(".article-card")) {
 
         journalRecentRow.innerHTML = "";
         seen.forEach(function (item) {
-            // Kart artıq səhifədədirsə ondan kopyalanır, yoxdursa yadda saxlanan məlumatdan qurulur
             var source = document.querySelector(".article-card[data-id='" + item.id + "'], .journal-hero[data-id='" + item.id + "']");
             var card;
             if (source && source.classList.contains("article-card")) {
                 card = source.cloneNode(true);
                 card.hidden = false;
             } else {
-                card = document.createElement("article");
+                card = document.createElement("div");
                 card.className = "article-card";
                 ["id", "title", "topic", "date", "lead", "image", "href", "likes", "comments", "views", "mins"].forEach(function (key) {
                     if (item[key]) card.setAttribute("data-" + key, item[key]);
@@ -1887,11 +1862,9 @@ if (journalGrid && journalGrid.querySelector(".article-card")) {
     renderJournal();
     renderRecent();
 
-    // Başqa tabda məqalə oxunanda geri qayıdanda yenilənsin
     window.addEventListener("pageshow", renderRecent);
 }
 
-// Account modalları Esc ilə bağlanır
 document.addEventListener("keydown", function (event) {
     if (event.key !== "Escape") return;
     closeFollow();
@@ -1903,8 +1876,6 @@ document.addEventListener("keydown", function (event) {
     closeTopup();
 });
 
-// ---- Header: bildirişlər ----
-// Hələlik nümunədir: oxunanlar və "Clear" yalnız bu brauzerdə yadda qalır (janz-notify); backend gələndə API-dən gələcək
 (function () {
     var box = document.querySelector(".notify");
     if (!box) return;
@@ -1949,7 +1920,6 @@ document.addEventListener("keydown", function (event) {
         });
     });
 
-    // Bildirişə basanda oxunmuş sayılır, sonra öz səhifəsi açılır
     items.forEach(function (item) {
         item.addEventListener("click", function () {
             state.read = state.read || {};
@@ -1967,8 +1937,6 @@ document.addEventListener("keydown", function (event) {
     refresh();
 })();
 
-// ---- Header: səbətin sayğacı və paneli ----
-// Panel serverdə çəkilir (_MiniCart): say dəyişəndə /Cart/Panel-dən təzədən götürülür
 function setCartCount(count) {
     var link = document.querySelector(".cart-link");
     if (!link) return;
@@ -2004,7 +1972,6 @@ function refreshMiniCart() {
         .catch(function () { });
 }
 
-// Paneldəki − / + və sil düymələri: dəyişiklik API-yə gedir, cavabda yenilənmiş panel gəlir
 document.addEventListener("click", function (event) {
     var qty = event.target.closest("[data-mini-qty]");
     var remove = event.target.closest("[data-mini-remove]");
@@ -2045,7 +2012,6 @@ document.addEventListener("click", function (event) {
         return response.text().then(function (html) {
             replaceMiniCart(html);
             if (remove) showToast("Removed from cart");
-            // Səbət səhifəsindəyiksə səhifənin özü də yenilənsin
             if (window.location.pathname.toLowerCase().indexOf("/cart") === 0) window.location.reload();
         });
     }).catch(function () {
@@ -2054,7 +2020,6 @@ document.addEventListener("click", function (event) {
     });
 });
 
-// ---- Sifariş səhifəsi: yeni ünvan formu və alıcı bloku ----
 document.querySelectorAll("[data-toggle-address]").forEach(function (button) {
     button.addEventListener("click", function () {
         var form = document.querySelector("[data-address-form]");
@@ -2064,7 +2029,6 @@ document.querySelectorAll("[data-toggle-address]").forEach(function (button) {
     });
 });
 
-// Ünvan seçiləndə alıcının adı və telefonu dəyişir (ünvanın özündən gəlir)
 document.querySelectorAll("#checkout input[name=addressId]").forEach(function (radio) {
     radio.addEventListener("change", function () {
         var box = document.querySelector("[data-recipient]");
@@ -2075,7 +2039,6 @@ document.querySelectorAll("#checkout input[name=addressId]").forEach(function (r
     });
 });
 
-// ---- Müqayisə: seçilən məhsulların id-ləri brauzerdə saxlanılır ----
 var compareKey = "janz-compare-ids";
 
 function readCompare() {
@@ -2116,7 +2079,6 @@ function markCompareButtons() {
     });
 }
 
-// Kartdakı tərəzi düyməsi: məhsulu müqayisəyə əlavə edir və ya çıxarır
 document.addEventListener("click", function (event) {
     var button = event.target.closest("[data-compare-toggle]");
     if (!button) return;
@@ -2131,3 +2093,320 @@ document.addEventListener("click", function (event) {
 
 showCompareCount(false);
 markCompareButtons();
+
+(function () {
+    var table = document.querySelector(".compare-table");
+    var source = document.getElementById("compare-products");
+    if (!table || !source) return;
+
+    var products = JSON.parse(source.textContent || "[]");
+    var diffBox = document.querySelector(".compare-diff input");
+    var modal = document.querySelector(".compare-modal");
+    var pick = modal.querySelector(".compare-pick");
+    var search = modal.querySelector(".compare-search input");
+    var pickEmpty = modal.querySelector(".compare-pick-empty");
+
+    var rows = [
+        { label: "Category", value: function (item) { return item.category; } },
+        { label: "Price", value: function (item) { return "₼" + item.price.toFixed(2); } },
+        { label: "Availability", value: function (item) { return item.stock > 0 ? item.stock + " in stock" : "Out of stock"; } },
+        { label: "Tags", value: function (item) { return item.tags.join(", ") || "-"; }, tags: true },
+        { label: "Description", value: function (item) { return item.description || "-"; } }
+    ];
+
+    var trashIcon = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7h14M10 7V5h4v2M7 7l1 13h8l1-13M10.5 11v5.5M13.5 11v5.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+    var bagIcon = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 8h15v11.5a1.5 1.5 0 0 1-1.5 1.5H6a1.5 1.5 0 0 1-1.5-1.5z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M8.5 8V6.5a3.5 3.5 0 0 1 7 0V8M9.5 13l2 2 3.5-3.5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+    var plusIcon = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v16M4 12h16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>';
+
+    function el(tag, className, text) {
+        var node = document.createElement(tag);
+        if (className) node.className = className;
+        if (text !== undefined) node.textContent = text;
+        return node;
+    }
+
+    function findProduct(id) {
+        return products.filter(function (item) { return item.id === id; })[0];
+    }
+
+    function render() {
+        var chosen = readCompare().map(findProduct).filter(Boolean);
+        table.innerHTML = "";
+        table.style.setProperty("--compare-cols", chosen.length + 1);
+        table.classList.toggle("is-empty", !chosen.length);
+        diffBox.disabled = chosen.length < 2;
+
+        var head = el("div", "compare-row compare-head");
+        head.appendChild(el("div", "compare-label"));
+        chosen.forEach(function (item) {
+            var card = el("div", "compare-card");
+            var top = el("div", "compare-card-top");
+            var name = el("a", "compare-name", item.name);
+            name.href = "/Products/Detail/" + item.id;
+            top.appendChild(name);
+            var remove = el("button", "compare-remove");
+            remove.type = "button";
+            remove.setAttribute("aria-label", "Remove " + item.name + " from compare");
+            remove.innerHTML = trashIcon;
+            remove.addEventListener("click", function () {
+                writeCompare(readCompare().filter(function (id) { return id !== item.id; }));
+                render();
+                showToast("Removed from compare");
+            });
+            top.appendChild(remove);
+            card.appendChild(top);
+
+            var photo = el("a", "compare-photo");
+            photo.href = "/Products/Detail/" + item.id;
+            var img = el("img");
+            img.src = item.photo;
+            img.alt = item.name;
+            photo.appendChild(img);
+            card.appendChild(photo);
+
+            var buy = el("button", "compare-buy");
+            buy.type = "button";
+            buy.setAttribute("data-cart-add", item.id);
+            buy.setAttribute("aria-label", "Add " + item.name + " to cart");
+            buy.disabled = item.stock <= 0;
+            buy.innerHTML = "<strong>₼" + item.price.toFixed(2) + "</strong>" + bagIcon;
+            card.appendChild(buy);
+            head.appendChild(card);
+        });
+
+        var addCell = el("div", "compare-add-cell");
+        var add = el("button", "compare-add");
+        add.type = "button";
+        add.setAttribute("aria-label", "Add products to compare");
+        add.innerHTML = plusIcon;
+        add.addEventListener("click", openModal);
+        addCell.appendChild(add);
+        head.appendChild(addCell);
+        table.appendChild(head);
+
+        if (!chosen.length) return;
+
+        rows.forEach(function (rowInfo) {
+            var row = el("div", "compare-row");
+            var values = chosen.map(rowInfo.value);
+            row.dataset.same = values.every(function (value) { return value === values[0]; }) ? "true" : "false";
+            row.appendChild(el("div", "compare-label", rowInfo.label));
+            chosen.forEach(function (item, index) {
+                var cell = el("div", "compare-cell");
+                if (rowInfo.tags && item.tags.length) {
+                    var tags = el("div", "compare-tags");
+                    item.tags.forEach(function (tag) { tags.appendChild(el("span", "", tag)); });
+                    cell.appendChild(tags);
+                } else {
+                    cell.textContent = values[index];
+                }
+                row.appendChild(cell);
+            });
+            row.appendChild(el("div"));
+            table.appendChild(row);
+        });
+        applyDiff();
+    }
+
+    function applyDiff() {
+        var only = diffBox.checked && !diffBox.disabled;
+        table.querySelectorAll(".compare-row[data-same]").forEach(function (row) {
+            row.hidden = only && row.dataset.same === "true";
+        });
+    }
+
+    diffBox.addEventListener("change", applyDiff);
+
+    function fillPick() {
+        var chosen = readCompare();
+        pick.innerHTML = "";
+        products.forEach(function (item) {
+            var label = el("label", "compare-pick-item");
+            label.dataset.name = item.name.toLowerCase();
+            var box = el("input");
+            box.type = "checkbox";
+            box.value = item.id;
+            box.checked = chosen.indexOf(item.id) !== -1;
+            label.appendChild(box);
+            var img = el("img");
+            img.src = item.photo;
+            img.alt = "";
+            label.appendChild(img);
+            label.appendChild(el("span", "", item.name));
+            pick.appendChild(label);
+        });
+    }
+
+    function filterPick() {
+        var text = search.value.trim().toLowerCase();
+        var shown = 0;
+        pick.querySelectorAll(".compare-pick-item").forEach(function (item) {
+            item.hidden = text !== "" && item.dataset.name.indexOf(text) === -1;
+            if (!item.hidden) shown += 1;
+        });
+        pickEmpty.hidden = shown > 0;
+    }
+
+    var lastFocus = null;
+
+    function openModal() {
+        lastFocus = document.activeElement;
+        fillPick();
+        search.value = "";
+        filterPick();
+        modal.hidden = false;
+        document.body.classList.add("is-locked");
+        search.focus();
+    }
+
+    function closeModal() {
+        modal.hidden = true;
+        document.body.classList.remove("is-locked");
+        if (lastFocus) lastFocus.focus();
+    }
+
+    search.addEventListener("input", filterPick);
+    modal.querySelector(".compare-modal-close").addEventListener("click", closeModal);
+    modal.addEventListener("click", function (event) {
+        if (event.target === modal) closeModal();
+    });
+    document.addEventListener("keydown", function (event) {
+        if (event.key === "Escape" && !modal.hidden) closeModal();
+    });
+
+    modal.querySelector(".compare-confirm").addEventListener("click", function () {
+        var picked = [];
+        pick.querySelectorAll("input:checked").forEach(function (box) { picked.push(parseInt(box.value, 10)); });
+        var list = readCompare().filter(function (id) { return picked.indexOf(id) !== -1; });
+        picked.forEach(function (id) { if (list.indexOf(id) === -1) list.push(id); });
+        writeCompare(list);
+        closeModal();
+        render();
+    });
+
+    render();
+})();
+
+(function () {
+    var page = document.getElementById("user-profile");
+    if (!page) return;
+
+    var colorCount = 9;
+    var svgNs = "http://www.w3.org/2000/svg";
+
+    page.querySelectorAll(".up-pref").forEach(function (pref) {
+        var items = pref.querySelectorAll("li");
+        var svg = pref.querySelector(".up-donut");
+        var total = 0;
+        items.forEach(function (item) { total += parseFloat(item.getAttribute("data-value")) || 0; });
+        var radius = 15.915;
+        var offset = 25;
+
+        var wrap = document.createElement("div");
+        wrap.className = "up-donut-wrap";
+        svg.parentNode.insertBefore(wrap, svg);
+        wrap.appendChild(svg);
+        var tip = document.createElement("div");
+        tip.className = "up-tip";
+        tip.hidden = true;
+        wrap.appendChild(tip);
+
+        function showPart(index, event) {
+            var item = items[index];
+            var rings = svg.querySelectorAll("circle");
+            rings.forEach(function (ring, ringIndex) { ring.classList.toggle("is-on", ringIndex === index); });
+            items.forEach(function (other, otherIndex) { other.classList.toggle("is-on", otherIndex === index); });
+            tip.textContent = item.firstChild.textContent.trim() + " ";
+            tip.appendChild(item.querySelector("b").cloneNode(true));
+            tip.hidden = false;
+            var box = wrap.getBoundingClientRect();
+            var x = event && event.clientX ? event.clientX - box.left : box.width / 2;
+            var y = event && event.clientY ? event.clientY - box.top : box.height / 2;
+            tip.style.left = x + "px";
+            tip.style.top = y + "px";
+        }
+
+        function hidePart() {
+            tip.hidden = true;
+            svg.querySelectorAll("circle").forEach(function (ring) { ring.classList.remove("is-on"); });
+            items.forEach(function (item) { item.classList.remove("is-on"); });
+        }
+
+        wrap.addEventListener("mouseleave", hidePart);
+        items.forEach(function (item, index) {
+            var value = parseFloat(item.getAttribute("data-value")) || 0;
+            var share = total ? value / total * 100 : 0;
+            var color = "var(--up-c" + (index % colorCount) + ")";
+
+            var mark = document.createElement("b");
+            mark.textContent = Math.round(share) + "%";
+            item.appendChild(document.createTextNode(" "));
+            item.appendChild(mark);
+            item.style.setProperty("--dot", color);
+
+            var ring = document.createElementNS(svgNs, "circle");
+            ring.setAttribute("cx", "21");
+            ring.setAttribute("cy", "21");
+            ring.setAttribute("r", String(radius));
+            ring.setAttribute("fill", "none");
+            ring.style.stroke = color;
+            ring.setAttribute("stroke-width", "4.5");
+            ring.setAttribute("stroke-dasharray", Math.max(share - 1, 0.5) + " " + (100 - Math.max(share - 1, 0.5)));
+            ring.setAttribute("stroke-dashoffset", String(offset));
+            svg.appendChild(ring);
+            offset -= share;
+
+            ring.addEventListener("mousemove", function (event) { showPart(index, event); });
+            item.addEventListener("mouseenter", function () { showPart(index, null); });
+            item.addEventListener("mouseleave", hidePart);
+        });
+    });
+
+    page.querySelectorAll(".up-tabs button").forEach(function (tab) {
+        tab.addEventListener("click", function () {
+            var name = tab.getAttribute("data-pref");
+            page.querySelectorAll(".up-tabs button").forEach(function (other) {
+                other.classList.toggle("is-on", other === tab);
+                other.setAttribute("aria-selected", other === tab ? "true" : "false");
+            });
+            page.querySelectorAll(".up-pref").forEach(function (pref) {
+                pref.hidden = pref.getAttribute("data-pref") !== name;
+            });
+        });
+    });
+
+    var follow = page.querySelector(".up-follow");
+    var followers = page.querySelector("[data-followers]");
+    var postFollows = page.querySelectorAll(".feed-follow");
+
+    function setFollow(on) {
+        follow.classList.toggle("is-on", on);
+        follow.setAttribute("aria-pressed", on ? "true" : "false");
+        follow.textContent = on ? "Following" : "Follow";
+        postFollows.forEach(function (button) {
+            button.classList.toggle("is-on", on);
+            button.setAttribute("aria-pressed", on ? "true" : "false");
+            button.textContent = on ? "Following" : "Follow";
+        });
+    }
+
+    follow.addEventListener("click", function () {
+        var on = !follow.classList.contains("is-on");
+        followers.textContent = String((parseInt(followers.textContent, 10) || 0) + (on ? 1 : -1));
+        setFollow(on);
+    });
+
+    postFollows.forEach(function (button) {
+        button.addEventListener("click", function () {
+            var on = button.classList.contains("is-on");
+            if (on !== follow.classList.contains("is-on")) {
+                followers.textContent = String((parseInt(followers.textContent, 10) || 0) + (on ? 1 : -1));
+                setFollow(on);
+            }
+        });
+    });
+
+    page.querySelector(".up-share").addEventListener("click", function () {
+        if (typeof openShare === "function") openShare(window.location.href);
+    });
+})();

@@ -7,19 +7,19 @@
     var canShop = User.IsInRole(AppRoles.SuperAdmin) || User.IsInRole(AppRoles.Admin);
 }
 
-<section class="admin-head">
+<div class="admin-head">
     <div>
         <p class="admin-eyebrow">Overview</p>
         <h1>Dashboard</h1>
     </div>
-</section>
+</div>
 
 @if (ViewBag.Error is string error)
 {
     <div class="admin-flash admin-flash-error" role="alert">@error</div>
 }
 
-<section class="admin-stats">
+<div class="admin-stats">
     <div class="admin-stat is-gold">
         <i class="bi bi-cash-stack"></i>
         <span class="admin-stat-label">Revenue</span>
@@ -66,11 +66,11 @@
             <strong>@Model.ProductCount</strong>
         </div>
     }
-</section>
+</div>
 
 <div class="admin-grid">
     <div class="admin-stack">
-        <section class="admin-card">
+        <div class="admin-card">
             <div class="admin-card-head">
                 <h2>Sales, last 7 days</h2>
                 <span class="admin-count">₼@Model.SalesLast7Days.Sum(m => m.Total).ToString("0.00")</span>
@@ -87,9 +87,9 @@
                     </div>
                 }
             </div>
-        </section>
+        </div>
 
-        <section class="admin-card admin-card-flush">
+        <div class="admin-card admin-card-flush">
             <div class="admin-card-head admin-card-pad">
                 <h2>Recent orders</h2>
                 <span class="admin-count">@Model.OrderCount</span>
@@ -126,11 +126,11 @@
                     </table>
                 </div>
             }
-        </section>
+        </div>
     </div>
 
     <div class="admin-stack">
-        <section class="admin-card">
+        <div class="admin-card">
             <div class="admin-card-head">
                 <h2>Orders by status</h2>
             </div>
@@ -140,9 +140,9 @@
                     <span class="admin-status status-@pair.Key.ToLowerInvariant()">@pair.Key · @pair.Value</span>
                 }
             </div>
-        </section>
+        </div>
 
-        <section class="admin-card">
+        <div class="admin-card">
             <div class="admin-card-head">
                 <h2>Low stock <span class="admin-count">@Model.LowStock.Count</span></h2>
                 @if (canShop && Model.LowStock.Count > 0)
@@ -174,9 +174,9 @@
                     }
                 </ul>
             }
-        </section>
+        </div>
 
-        <section class="admin-card">
+        <div class="admin-card">
             <div class="admin-card-head">
                 <h2>Best sellers</h2>
             </div>
@@ -203,6 +203,6 @@
                     }
                 </ul>
             }
-        </section>
+        </div>
     </div>
 </div>

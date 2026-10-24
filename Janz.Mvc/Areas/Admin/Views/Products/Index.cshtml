@@ -6,7 +6,7 @@
     var filtered = !string.IsNullOrWhiteSpace(Model.Search) || Model.CategoryId is not null || Model.LowStock;
 }
 
-<section class="admin-head">
+<div class="admin-head">
     <div>
         <p class="admin-eyebrow">Shop</p>
         <h1>Products <span>@Model.Total</span></h1>
@@ -23,15 +23,17 @@
         </form>
         <a class="admin-btn" asp-action="Create"><i class="bi bi-plus"></i> New product</a>
     </div>
-</section>
+</div>
 
-<nav class="admin-filter" aria-label="Filter products">
-    <a class="@(Model.CategoryId is null && !Model.LowStock ? "is-on" : null)" asp-action="Index" asp-route-search="@Model.Search">All</a>
-    @foreach (var category in Model.Categories)
-    {
-        <a class="@(Model.CategoryId == category.Id ? "is-on" : null)" asp-action="Index" asp-route-categoryId="@category.Id" asp-route-search="@Model.Search">@category.Name</a>
-    }
-    <a class="@(Model.LowStock ? "is-on" : null)" asp-action="Index" asp-route-lowStock="true">Low stock</a>
+<nav aria-label="Filter products">
+    <div class="admin-filter">
+        <a class="@(Model.CategoryId is null && !Model.LowStock ? "is-on" : null)" asp-action="Index" asp-route-search="@Model.Search">All</a>
+        @foreach (var category in Model.Categories)
+        {
+            <a class="@(Model.CategoryId == category.Id ? "is-on" : null)" asp-action="Index" asp-route-categoryId="@category.Id" asp-route-search="@Model.Search">@category.Name</a>
+        }
+        <a class="@(Model.LowStock ? "is-on" : null)" asp-action="Index" asp-route-lowStock="true">Low stock</a>
+    </div>
 </nav>
 
 @if (ViewBag.Error is string error)
@@ -39,7 +41,7 @@
     <div class="admin-flash admin-flash-error" role="alert">@error</div>
 }
 
-<section class="admin-card admin-card-flush">
+<div class="admin-card admin-card-flush">
     @if (Model.Products.Count == 0)
     {
         <p class="admin-empty">@(filtered ? "No products match this filter." : "No products yet.")</p>
@@ -88,4 +90,4 @@
             </table>
         </div>
     }
-</section>
+</div>

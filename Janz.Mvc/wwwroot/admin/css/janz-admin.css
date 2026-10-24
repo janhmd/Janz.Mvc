@@ -1,5 +1,3 @@
-/* Janz admin paneli: Mazer şablonunun (bootstrap.css + app.css) üstündən saytın dizaynı.
-   Gecə rejimi əsasdır, gündüz rejimi saytla eyni açarla (janz-theme) açılır. */
 
 :root {
     --a-bg: #070707;
@@ -42,17 +40,16 @@ a:hover { color: inherit; }
 
 h1, h2, h3 { color: var(--a-text); }
 
-/* ---- Sidebar ---- */
 .sidebar-wrapper {
     width: 260px;
     background: var(--a-side);
     border-right: 1px solid var(--a-line);
 }
 
-#main { margin-left: 260px; padding: 0 2.2rem 2rem; }
+.main { margin-left: 260px; padding: 0 2.2rem 2rem; }
 
 @media screen and (max-width: 1199px) {
-    #main { margin-left: 0; padding: 0 1rem 1.5rem; }
+    .main { margin-left: 0; padding: 0 1rem 1.5rem; }
     .sidebar-wrapper { left: -260px; }
 }
 
@@ -134,7 +131,6 @@ h1, h2, h3 { color: var(--a-text); }
 .sidebar-hide,
 .burger-btn { color: var(--a-text); font-size: 1.6rem; }
 
-/* ---- Yuxarı panel ---- */
 .admin-top {
     display: flex;
     align-items: center;
@@ -192,7 +188,6 @@ h1, h2, h3 { color: var(--a-text); }
     .admin-user > div { display: none; }
 }
 
-/* ---- Səhifə başlığı ---- */
 .page-heading { margin: 0; }
 
 .admin-head {
@@ -231,7 +226,6 @@ h1, h2, h3 { color: var(--a-text); }
 
 .admin-eyebrow a:hover { color: var(--a-text); }
 
-/* ---- Düymələr ---- */
 .admin-btn {
     display: inline-flex;
     align-items: center;
@@ -276,7 +270,6 @@ h1, h2, h3 { color: var(--a-text); }
 .admin-link { color: var(--a-muted); font-size: .85rem; font-weight: 600; }
 .admin-link:hover { color: var(--a-text); }
 
-/* ---- Bildiriş ---- */
 .admin-flash {
     margin: 0 0 1.2rem;
     padding: .85rem 1.1rem;
@@ -289,7 +282,6 @@ h1, h2, h3 { color: var(--a-text); }
 .admin-flash-ok { border-color: #3c6e4f; }
 .admin-flash-error { border-color: var(--a-danger); color: var(--a-danger); }
 
-/* ---- Kartlar ---- */
 .admin-card {
     margin-bottom: 1.4rem;
     padding: 1.4rem;
@@ -346,7 +338,6 @@ h1, h2, h3 { color: var(--a-text); }
     .admin-grid { grid-template-columns: minmax(0, 1fr); }
 }
 
-/* ---- Statistika ---- */
 .admin-stats {
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -391,7 +382,6 @@ a.admin-stat:hover { border-color: var(--a-muted); color: var(--a-text); }
 .admin-stat.is-gold i,
 .admin-stat.is-gold strong { color: var(--a-gold); }
 
-/* ---- Cədvəl ---- */
 .admin-table {
     width: 100%;
     border-collapse: collapse;
@@ -446,7 +436,6 @@ a.admin-stat:hover { border-color: var(--a-muted); color: var(--a-text); }
 
 .admin-empty { margin: 0; padding: 1.4rem; color: var(--a-muted); text-align: center; }
 
-/* ---- Status və stok nişanları ---- */
 .admin-status {
     display: inline-block;
     padding: .25rem .7rem;
@@ -475,7 +464,6 @@ html.theme-day .status-delivered { color: #1d7a45; }
 .admin-stock.is-low { color: #e2b45a; }
 .admin-stock.is-out { color: var(--a-danger); }
 
-/* ---- Siyahı (Dashboard → Low stock) ---- */
 .admin-list { margin: 0; padding: 0; list-style: none; }
 
 .admin-list li {
@@ -490,7 +478,6 @@ html.theme-day .status-delivered { color: #1d7a45; }
 .admin-list a { flex: 1; min-width: 0; font-weight: 600; }
 .admin-list a:hover { color: var(--a-gold); }
 
-/* ---- Filtr ---- */
 .admin-filter { display: flex; flex-wrap: wrap; gap: .5rem; margin-bottom: 1.2rem; }
 
 .admin-filter a {
@@ -505,7 +492,6 @@ html.theme-day .status-delivered { color: #1d7a45; }
 .admin-filter a:hover { color: var(--a-text); border-color: var(--a-muted); }
 .admin-filter a.is-on { background: var(--a-btn); border-color: var(--a-btn); color: var(--a-btn-text); }
 
-/* ---- Məlumat siyahısı (Detail) ---- */
 .admin-facts {
     display: grid;
     grid-template-columns: 8rem minmax(0, 1fr);
@@ -527,7 +513,6 @@ html.theme-day .status-delivered { color: #1d7a45; }
 .admin-gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: .7rem; }
 .admin-gallery img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 14px; background: var(--a-card-2); }
 
-/* ---- Formalar ---- */
 .admin-form-narrow { max-width: 36rem; }
 
 .admin-form-grid {
@@ -593,7 +578,6 @@ html.theme-day .status-delivered { color: #1d7a45; }
 .admin-status-form { display: flex; gap: .7rem; }
 .admin-status-form select { flex: 1; }
 
-/* ---- Footer ---- */
 .admin-footer {
     display: flex;
     justify-content: space-between;
@@ -604,7 +588,6 @@ html.theme-day .status-delivered { color: #1d7a45; }
     font-size: .8rem;
 }
 
-/* ---- Users ---- */
 .admin-search {
     display: flex;
     align-items: center;
@@ -660,7 +643,6 @@ html.theme-day .status-active { color: #1d7a45; }
 .admin-btn.is-danger-ghost:hover { color: var(--a-danger); }
 .admin-table tbody tr.is-searched-out { display: none; }
 
-/* ---- Reviews ---- */
 .admin-grid-side { grid-template-columns: minmax(0, 1.8fr) minmax(0, 1fr); }
 
 .admin-reviews { display: grid; gap: 1rem; }
@@ -723,7 +705,6 @@ html.theme-day .status-published { color: #1d7a45; }
     .admin-grid-side { grid-template-columns: minmax(0, 1fr); }
 }
 
-/* ---- Coupons ---- */
 .admin-code {
     padding: .25rem .6rem;
     border: 1px dashed var(--a-gold);
@@ -766,12 +747,10 @@ html.theme-day .status-published { color: #1d7a45; }
 .admin-field input[type="date"] { color-scheme: dark; }
 html.theme-day .admin-field input[type="date"] { color-scheme: light; }
 
-/* ---- Dashboard: son rəylər ---- */
 .admin-list-reviews .admin-stars { min-width: 2.6rem; font-weight: 800; letter-spacing: 0; font-size: .85rem; }
 .admin-list-reviews .admin-stars.is-low { color: var(--a-danger); }
 .admin-list-reviews li > span:last-child { color: var(--a-muted); font-size: .82rem; }
 
-/* ---- Roles ---- */
 .admin-inline-form { display: flex; gap: .6rem; flex-wrap: wrap; }
 
 .admin-inline-form input {
@@ -823,7 +802,6 @@ html.theme-day .admin-field input[type="date"] { color-scheme: light; }
 .role-admin, .role-editor, .role-support { color: #6aa9ff; border-color: rgba(106, 169, 255, .45); }
 html.theme-day .role-admin, html.theme-day .role-editor, html.theme-day .role-support { color: #1f5fbf; }
 
-/* ---- User: balans və titul ---- */
 .admin-note-top { margin: .8rem 0 0; }
 .admin-balance { font-size: 1.4rem; font-weight: 800; color: var(--a-gold); }
 
@@ -858,9 +836,7 @@ html.theme-day .role-admin, html.theme-day .role-editor, html.theme-day .role-su
 .admin-ledger b.is-plus { color: #5fcf8f; }
 .admin-ledger b.is-minus { color: var(--a-danger); }
 
-/* ---- Məhsul forması: tag-lar, şəkillər ---- */
 .admin-form .admin-grid > .admin-stack > .admin-card { margin: 0; }
-
 
 .admin-chips-field { margin-top: 1rem; }
 .admin-chips { display: flex; flex-wrap: wrap; gap: .45rem; }
@@ -947,7 +923,6 @@ html.theme-day .role-admin, html.theme-day .role-editor, html.theme-day .role-su
 .admin-cell-input:hover,
 .admin-cell-input:focus { border-color: var(--a-line); background: var(--a-card-2); }
 
-/* ---- Journal ---- */
 .admin-sub { display: block; color: var(--a-muted); font-size: .78rem; font-weight: 400; }
 .admin-product a:hover { color: var(--a-gold); }
 .status-draft { color: var(--a-muted); }
@@ -987,7 +962,6 @@ html.theme-day .status-scheduled { color: #1f5fbf; }
 .admin-editor { font-family: Consolas, "Courier New", monospace; font-size: .9rem; line-height: 1.6; }
 @media (max-width: 991px) { .admin-grid-even { grid-template-columns: minmax(0, 1fr); } }
 
-/* ---- Tablar (Community) ---- */
 .admin-tabs { display: flex; flex-wrap: wrap; gap: .3rem; margin-bottom: 1.2rem; border-bottom: 1px solid var(--a-line); }
 
 .admin-tabs button {
@@ -1013,7 +987,6 @@ html.theme-day .status-scheduled { color: #1f5fbf; }
 .admin-table td.admin-wrap { white-space: normal; min-width: 12rem; }
 [data-pane][hidden] { display: none !important; }
 
-/* ---- Discount levels ---- */
 .admin-cell-unit { display: inline-flex; align-items: center; gap: .15rem; color: var(--a-muted); }
 .admin-cell-num { width: 5.5rem; text-align: right; }
 .admin-cell-wide { max-width: none; min-width: 14rem; }
@@ -1021,23 +994,19 @@ html.theme-day .status-scheduled { color: #1f5fbf; }
 .admin-steps { margin: 0; padding-left: 1.1rem; color: var(--a-muted); line-height: 1.7; font-size: .9rem; }
 .admin-steps li::marker { color: var(--a-gold); }
 
-/* ---- Notifications ---- */
 .admin-checks { display: flex; flex-wrap: wrap; gap: 1.2rem; margin-top: 1rem; }
 .admin-field[hidden] { display: none; }
 .page-heading > .admin-after-grid { margin-top: 1.4rem; display: block; }
 
-/* ---- Settings ---- */
 .admin-grid-top { margin-top: 0; }
 .admin-checks .admin-check { font-weight: 600; }
 .page-heading code { color: var(--a-gold); }
 
-/* ---- Shop reviews ---- */
 .admin-shop-rates { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; margin: .4rem 0 .6rem; }
 .admin-shop-rates > div > span:first-child { display: block; color: var(--a-muted); font-size: .72rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
 .admin-shop-rates p { margin: .35rem 0 0; }
 @media (max-width: 575px) { .admin-shop-rates { grid-template-columns: 1fr; } }
 
-/* ---- MVC: hələ yazılmayan bölmələr, bildirişin itməsi, dashboard qrafiki ---- */
 .sidebar-wrapper .menu .sidebar-item.is-soon .sidebar-link { cursor: default; opacity: .45; }
 .sidebar-wrapper .menu .sidebar-item.is-soon .sidebar-link:hover { background: none; }
 .admin-soon { margin-left: auto; padding: .05rem .45rem; border: 1px solid var(--a-line); border-radius: 999px; color: var(--a-muted); font-size: .65rem; text-transform: uppercase; letter-spacing: .06em; }
@@ -1055,7 +1024,6 @@ html.theme-day .status-scheduled { color: #1f5fbf; }
 .admin-status-row a { display: inline-flex; align-items: center; gap: .4rem; }
 .admin-empty { margin: 0; padding: 1rem 0; color: var(--a-muted); }
 
-/* ---- Products: forma və şəkillər ---- */
 .admin-head-actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: .7rem; }
 .admin-head-actions .admin-search { width: min(100%, 18rem); margin: 0; }
 .admin-drop i { line-height: 1; }

@@ -15,7 +15,7 @@
 
     <div class="admin-grid">
         <div class="admin-stack">
-            <section class="admin-card">
+            <div class="admin-card">
                 <h2>Main</h2>
                 <div class="admin-form-grid">
                     <label class="admin-field admin-field-wide">
@@ -28,9 +28,9 @@
                         <small>Shown on the product page. Up to 500 characters.</small>
                     </label>
                 </div>
-            </section>
+            </div>
 
-            <section class="admin-card">
+            <div class="admin-card">
                 <h2>Main image</h2>
                 <div class="admin-thumbs" data-preview="main">
                     @if (hasMain)
@@ -47,9 +47,9 @@
                     <span>@(hasMain ? "Replace the main image" : "Choose the main image")</span>
                     <small>Shown in the catalog. PNG, JPG or WEBP, up to 2 MB.</small>
                 </label>
-            </section>
+            </div>
 
-            <section class="admin-card">
+            <div class="admin-card">
                 <h2>Gallery <span class="admin-count">@Model.Images.Count / @AdminRules.MaxGallery</span></h2>
                 <div class="admin-thumbs">
                     @foreach (var image in Model.Images)
@@ -75,11 +75,11 @@
                     <span>Add images to the gallery</span>
                     <small>Shown on the product page. Up to @AdminRules.MaxGallery images, 2 MB each.</small>
                 </label>
-            </section>
+            </div>
         </div>
 
         <div class="admin-stack">
-            <section class="admin-card">
+            <div class="admin-card">
                 <h2>Price and stock</h2>
                 <div class="admin-form-grid">
                     <label class="admin-field">
@@ -92,9 +92,9 @@
                     </label>
                 </div>
                 <p class="admin-note admin-note-top">A product that is in orders can't be deleted: set its stock to 0 instead.</p>
-            </section>
+            </div>
 
-            <section class="admin-card">
+            <div class="admin-card">
                 <h2>Catalog</h2>
                 <div class="admin-form-grid">
                     <label class="admin-field admin-field-wide">
@@ -127,14 +127,14 @@
                         </div>
                     }
                 </div>
-            </section>
+            </div>
 
-            <section class="admin-card">
+            <div class="admin-card">
                 <div class="admin-form-actions admin-form-actions-flat">
                     <button type="submit" class="admin-btn">@(Model.IsNew ? "Create" : "Save")</button>
                     <a class="admin-btn is-ghost" asp-action="@(Model.IsNew ? "Index" : "Detail")" asp-route-id="@(Model.IsNew ? null : Model.Id)">Cancel</a>
                 </div>
-            </section>
+            </div>
         </div>
     </div>
 </form>
