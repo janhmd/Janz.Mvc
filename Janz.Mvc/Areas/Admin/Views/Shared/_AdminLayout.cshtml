@@ -1,0 +1,125 @@
+@{
+    // Menyu rola görədir (Helpers/AdminSections.cs): hər işçi yalnız öz bölmələrini görür
+    var current = ViewContext.RouteData.Values["controller"]?.ToString();
+    var sections = AdminSections.For(User).ToList();
+    var name = User.Identity?.Name ?? "Admin";
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Janz Admin</title>
+    <link rel="stylesheet" href="~/admin/css/bootstrap.css" />
+    <link rel="stylesheet" href="~/admin/vendors/perfect-scrollbar/perfect-scrollbar.css" />
+    <link rel="stylesheet" href="~/admin/vendors/bootstrap-icons/bootstrap-icons.css" />
+    <link rel="stylesheet" href="~/admin/css/app.css" />
+    <link rel="stylesheet" href="~/admin/css/janz-admin.css" asp-append-version="true" />
+    <script>if (localStorage.getItem("janz-theme") === "day") document.documentElement.classList.add("theme-day");</script>
+</head>
+<body>
+    <div id="app">
+        <div id="sidebar" class="active">
+            <div class="sidebar-wrapper active">
+                <div class="sidebar-header">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <a class="logo" aria-label="Janz admin" asp-area="Admin" asp-controller="Dashboard" asp-action="Index">
+                            <span class="logo-mark" aria-hidden="true">J</span>
+                            <span class="logo-name">Janz</span>
+                            <span class="logo-tag">Admin</span>
+                        </a>
+                        <div class="toggler">
+                            <a href="#" class="sidebar-hide d-xl-none d-block" aria-label="Close menu"><i class="bi bi-x bi-middle"></i></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="sidebar-menu">
+                    <ul class="menu">
+                        @foreach (var group in sections.GroupBy(m => m.Group))
+                        {
+                            <li class="sidebar-title">@group.Key</li>
+                            @foreach (var item in group)
+                            {
+                                if (item.Controller is null)
+                                {
+                                    @* Hələ yazılmayan bölmə: görünür, amma açılmır *@
+                                    <li class="sidebar-item is-soon">
+                                        <span class="sidebar-link" aria-disabled="true">
+                                            <i class="bi @item.Icon"></i>
+                                            <span>@item.Title</span>
+                                            <small class="admin-soon">soon</small>
+                                        </span>
+                                    </li>
+                                }
+                                else
+                                {
+                                    <li class="sidebar-item@(item.Controller == current ? " active" : null)">
+                                        <a class="sidebar-link" asp-area="Admin" asp-controller="@item.Controller" asp-action="Index">
+                                            <i class="bi @item.Icon"></i>
+                                            <span>@item.Title</span>
+                                        </a>
+                                    </li>
+                                }
+                            }
+                        }
+
+                        <li class="sidebar-title">Account</li>
+                        <li class="sidebar-item">
+                            <a class="sidebar-link" href="/">
+                                <i class="bi bi-shop"></i>
+                                <span>Go to site</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item">
+                            <form asp-area="" asp-controller="Account" asp-action="Logout" method="post">
+                                <button type="submit" class="sidebar-link sidebar-button">
+                                    <i class="bi bi-box-arrow-left"></i>
+                                    <span>Sign out</span>
+                                </button>
+                            </form>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div id="main">
+            <header class="admin-top">
+                <a href="#" class="burger-btn d-block d-xl-none" aria-label="Open menu"><i class="bi bi-list"></i></a>
+                <div class="admin-top-title">@ViewData["Title"]</div>
+                <button class="admin-theme" type="button" aria-label="Day mode"><i class="bi bi-sun"></i></button>
+                <div class="admin-user">
+                    <span class="admin-avatar" aria-hidden="true">@name.Substring(0, 1).ToUpperInvariant()</span>
+                    <div>
+                        <div class="admin-user-name">@name</div>
+                        <div class="admin-user-role">@AppRoles.MainRole(User)</div>
+                    </div>
+                </div>
+            </header>
+
+            <div class="page-heading">
+                @if (TempData["AdminSuccess"] is string success)
+                {
+                    <div class="admin-flash admin-flash-ok" role="status">@success</div>
+                }
+                @if (TempData["AdminError"] is string failure)
+                {
+                    <div class="admin-flash admin-flash-error" role="alert">@failure</div>
+                }
+                @RenderBody()
+            </div>
+
+            <footer class="admin-footer">
+                <span>© 2026 Janz</span>
+                <span>Admin panel</span>
+            </footer>
+        </div>
+    </div>
+
+    <script src="~/admin/vendors/perfect-scrollbar/perfect-scrollbar.min.js"></script>
+    <script src="~/admin/js/bootstrap.bundle.min.js"></script>
+    <script src="~/admin/js/main.js"></script>
+    <script src="~/admin/js/admin.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

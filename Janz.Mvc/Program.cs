@@ -53,6 +53,11 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
+// Admin panel: /Admin/{controller}/{action} (Areas/Admin). Default route-dan əvvəl olmalıdır
+app.MapControllerRoute(
+    name: "areas",
+    pattern: "{area:exists}/{controller=Dashboard}/{action=Index}/{id?}");
+
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");

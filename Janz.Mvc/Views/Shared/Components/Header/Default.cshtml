@@ -84,6 +84,10 @@
                     {
                         <span class="profile-name">@Model.UserName</span>
                         <a href="/Profile">Account</a>
+                        @if (Janz.Mvc.Helpers.AppRoles.IsStaff(User))
+                        {
+                            <a href="/Admin">Admin panel</a>
+                        }
                         <form asp-controller="Account" asp-action="Logout" method="post">
                             <button type="submit">Sign out</button>
                         </form>

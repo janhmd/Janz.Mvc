@@ -1,3 +1,4 @@
+using Janz.Mvc.Helpers;
 using Janz.Mvc.ViewModels.Account;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -62,13 +63,13 @@ namespace Janz.Mvc.Controllers
                 return Ok(new { ok = true });
             }
 
-            // Əvvəl getmək istədiyi yerə (ReturnUrl), yoxdursa ana səhifəyə
+            // Əvvəl getmək istədiyi yerə (ReturnUrl), yoxdursa işçi admin panelinə, müştəri ana səhifəyə
             if (!string.IsNullOrEmpty(model.ReturnUrl) && Url.IsLocalUrl(model.ReturnUrl))
             {
                 return LocalRedirect(model.ReturnUrl);
             }
 
-            return RedirectToAction("Index", "Home");
+            return LocalRedirect(RoleRedirect.HomeUrl(RolePrincipal(result.Role)));
         }
 
         [HttpGet]
@@ -137,6 +138,17 @@ namespace Janz.Mvc.Controllers
                 ModelState.AddModelError(string.Empty, error);
 
             return View(model);
+        }
+
+        // Giriş yenicə edildiyi üçün User hələ köhnədir: yönləndirmə API-dən gələn rola görə seçilir
+        private static ClaimsPrincipal RolePrincipal(string? role)
+        {
+            var identity = new ClaimsIdentity("login");
+            if (!string.IsNullOrEmpty(role))
+            {
+                identity.AddClaim(new Claim(ClaimTypes.Role, role));
+            }
+            return new ClaimsPrincipal(identity);
         }
 
         private async Task SignInAsync(LoginResponseVM login, bool remember)
