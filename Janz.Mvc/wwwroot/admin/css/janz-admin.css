@@ -1054,3 +1054,40 @@ html.theme-day .status-scheduled { color: #1f5fbf; }
 .admin-status-row { display: flex; flex-wrap: wrap; gap: .5rem; }
 .admin-status-row a { display: inline-flex; align-items: center; gap: .4rem; }
 .admin-empty { margin: 0; padding: 1rem 0; color: var(--a-muted); }
+
+/* ---- Products: forma və şəkillər ---- */
+.admin-head-actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: .7rem; }
+.admin-head-actions .admin-search { width: min(100%, 18rem); margin: 0; }
+.admin-drop i { line-height: 1; }
+
+.admin-errors {
+    margin-bottom: 1.2rem;
+    padding: .9rem 1.2rem;
+    border: 1px solid var(--a-danger);
+    border-radius: 14px;
+    background: var(--a-card);
+    color: var(--a-danger);
+    font-size: .9rem;
+}
+
+.admin-errors ul { margin: 0; padding-left: 1.1rem; }
+.admin-errors.validation-summary-valid { display: none; }
+
+.admin-thumb-label { color: var(--a-muted); font-size: .78rem; font-weight: 700; }
+.admin-thumb.is-main .admin-thumb-label { color: var(--a-gold); }
+.admin-thumb.is-new { border-style: dashed; }
+.admin-thumb.is-invalid { border-color: var(--a-danger); }
+.admin-thumb.is-invalid .admin-thumb-label { color: var(--a-danger); }
+.admin-thumb.is-removed img { opacity: .35; filter: grayscale(1); }
+
+.admin-thumb-remove { display: inline-flex; align-items: center; gap: .35rem; cursor: pointer; }
+.admin-thumb-remove input { position: absolute; opacity: 0; pointer-events: none; }
+.admin-thumb.is-removed .admin-thumb-remove { border-color: var(--a-danger); }
+
+.admin-card h2 .admin-count { margin-left: .4rem; vertical-align: middle; }
+.admin-form-actions-flat { margin-top: 0; }
+
+.admin-gallery img.is-main { outline: 2px solid var(--a-gold); outline-offset: 2px; }
+
+.admin-detail-foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1rem; margin-top: 1.2rem; }
+.admin-detail-foot form { margin: 0; }

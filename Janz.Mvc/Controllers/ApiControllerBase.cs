@@ -109,6 +109,44 @@ namespace Janz.Mvc.Controllers
             }
         }
 
+        // multipart/form-data (şəkilli formalar): POST yaradır, cavabda yaranan obyekt qayıdır
+        protected async Task<(T? Data, string[] Errors, HttpStatusCode? Status)> PostFormAsync<T>(string url, MultipartFormDataContent form) where T : class
+        {
+            try
+            {
+                var response = await Api.PostAsync(url, form);
+                if (response.IsSuccessStatusCode)
+                {
+                    return (await response.Content.ReadFromJsonAsync<T>(), Array.Empty<string>(), response.StatusCode);
+                }
+
+                return (null, await ReadErrorsAsync(response), response.StatusCode);
+            }
+            catch (HttpRequestException)
+            {
+                return (null, new[] { UnavailableMessage }, null);
+            }
+            catch (JsonException)
+            {
+                return (null, new[] { "Something went wrong. Please try again." }, null);
+            }
+        }
+
+        // multipart/form-data ilə PUT: yalnız nəticə lazımdır
+        protected async Task<(bool Success, string[] Errors, HttpStatusCode? Status)> PutFormAsync(string url, MultipartFormDataContent form)
+        {
+            try
+            {
+                var response = await Api.PutAsync(url, form);
+                if (response.IsSuccessStatusCode) return (true, Array.Empty<string>(), response.StatusCode);
+                return (false, await ReadErrorsAsync(response), response.StatusCode);
+            }
+            catch (HttpRequestException)
+            {
+                return (false, new[] { UnavailableMessage }, null);
+            }
+        }
+
         private async Task<string[]> ReadErrorsAsync(HttpResponseMessage response)
         {
             if (response.StatusCode == HttpStatusCode.NotFound)

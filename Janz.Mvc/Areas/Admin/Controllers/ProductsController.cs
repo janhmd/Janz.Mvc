@@ -1,0 +1,276 @@
+using Janz.Mvc.Controllers;
+using Janz.Mvc.Helpers;
+using Janz.Mvc.ViewModels.Categories;
+using Janz.Mvc.ViewModels.Products;
+using Janz.Mvc.ViewModels.Tags;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using System.Globalization;
+using System.Net;
+using System.Net.Http.Headers;
+
+namespace Janz.Mvc.Areas.Admin.Controllers
+{
+    // Admin panel: məhsullar (api/admin/products). Yalnız Admin və SuperAdmin
+    [Area("Admin")]
+    [Authorize(Roles = AppRoles.ShopManagers)]
+    public class ProductsController : ApiControllerBase
+    {
+        public ProductsController(IHttpClientFactory httpClientFactory, IConfiguration configuration)
+            : base(httpClientFactory, configuration)
+        {
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Index(string? search, int? categoryId, bool lowStock = false)
+        {
+            var (products, status) = await GetAsync<List<ProductUIVM>>("api/admin/products");
+            if (status == HttpStatusCode.Unauthorized) return await SessionExpiredAsync();
+            if (products is null) ViewBag.Error = UnavailableMessage;
+
+            var (categories, _) = await GetAsync<List<CategoryUIVM>>("api/admin/categories");
+
+            var all = products ?? new List<ProductUIVM>();
+            IEnumerable<ProductUIVM> list = all;
+
+            // "#12" id ilə, qalanı ada görə axtarır
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                var text = search.Trim();
+                list = text.StartsWith('#') && int.TryParse(text[1..], out var id)
+                    ? list.Where(m => m.Id == id)
+                    : list.Where(m => m.Name.Contains(text, StringComparison.OrdinalIgnoreCase));
+            }
+
+            if (categoryId is not null)
+            {
+                list = list.Where(m => m.CategoryId == categoryId);
+            }
+
+            if (lowStock)
+            {
+                list = list.Where(m => m.Stock < AdminRules.LowStock).OrderBy(m => m.Stock);
+            }
+            else
+            {
+                list = list.OrderByDescending(m => m.Id);
+            }
+
+            return View(new ProductListVM
+            {
+                Products = list.ToList(),
+                Categories = categories ?? new List<CategoryUIVM>(),
+                Total = all.Count,
+                Search = search,
+                CategoryId = categoryId,
+                LowStock = lowStock
+            });
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Detail(int id)
+        {
+            var (product, status) = await GetAsync<ProductUIVM>($"api/admin/products/{id}");
+            if (status == HttpStatusCode.Unauthorized) return await SessionExpiredAsync();
+            if (product is null) return NotFound();
+
+            return View(product);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Create()
+        {
+            var model = new ProductFormVM();
+            await FillListsAsync(model);
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create(ProductFormVM model)
+        {
+            model.Id = 0;
+            if (model.Image is null || model.Image.Length == 0)
+            {
+                ModelState.AddModelError(nameof(model.Image), "Choose the main image.");
+            }
+            CheckFiles(model);
+
+            if (!ModelState.IsValid)
+            {
+                await FillListsAsync(model);
+                return View(model);
+            }
+
+            using var form = ToForm(model);
+            var (created, errors, status) = await PostFormAsync<ProductUIVM>("api/admin/products", form);
+            if (status == HttpStatusCode.Unauthorized) return await SessionExpiredAsync();
+
+            if (created is null)
+            {
+                AddErrors(errors);
+                await FillListsAsync(model);
+                return View(model);
+            }
+
+            TempData["AdminSuccess"] = $"\"{created.Name}\" was added.";
+            return RedirectToAction(nameof(Detail), new { id = created.Id });
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Edit(int id)
+        {
+            var (product, status) = await GetAsync<ProductUIVM>($"api/admin/products/{id}");
+            if (status == HttpStatusCode.Unauthorized) return await SessionExpiredAsync();
+            if (product is null) return NotFound();
+
+            var model = new ProductFormVM
+            {
+                Id = product.Id,
+                Name = product.Name,
+                Description = product.Description,
+                Price = product.Price,
+                Stock = product.Stock,
+                CategoryId = product.CategoryId,
+                TagIds = product.Tags.Select(m => m.Id).ToList()
+            };
+            await FillListsAsync(model, product);
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int id, ProductFormVM model)
+        {
+            model.Id = id;
+            CheckFiles(model);
+
+            if (ModelState.IsValid)
+            {
+                using var form = ToForm(model);
+                var (success, errors, status) = await PutFormAsync($"api/admin/products/{id}", form);
+                if (status == HttpStatusCode.Unauthorized) return await SessionExpiredAsync();
+                if (status == HttpStatusCode.NotFound) return NotFound();
+
+                if (success)
+                {
+                    TempData["AdminSuccess"] = "The changes were saved.";
+                    return RedirectToAction(nameof(Detail), new { id });
+                }
+
+                AddErrors(errors);
+            }
+
+            // Səhv olanda köhnə şəkilləri yenidən göstərmək üçün məhsulu API-dən alırıq (yazılan sahələr qalır)
+            var (product, _) = await GetAsync<ProductUIVM>($"api/admin/products/{id}");
+            await FillListsAsync(model, product);
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var (success, errors, status) = await DeleteAsync($"api/admin/products/{id}");
+            if (status == HttpStatusCode.Unauthorized) return await SessionExpiredAsync();
+
+            // Sifarişdə olan məhsul silinmir: API-nin mesajı olduğu kimi göstərilir
+            if (success) TempData["AdminSuccess"] = "The product was deleted.";
+            else TempData["AdminError"] = string.Join(" ", errors);
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        // Kateqoriya və teq siyahıları, redaktədə isə hazırkı şəkillər
+        private async Task FillListsAsync(ProductFormVM model, ProductUIVM? product = null)
+        {
+            var (categories, _) = await GetAsync<List<CategoryUIVM>>("api/admin/categories");
+            var (tags, _) = await GetAsync<List<TagUIVM>>("api/admin/tags");
+            model.Categories = categories ?? new List<CategoryUIVM>();
+            model.Tags = tags ?? new List<TagUIVM>();
+
+            if (product is not null)
+            {
+                model.ImagePath = product.ImagePath;
+                model.Images = product.Images;
+            }
+        }
+
+        // Faylları API-yə göndərmədən yoxlayırıq: ölçü, tip və qalereyanın limiti
+        private void CheckFiles(ProductFormVM model)
+        {
+            model.Gallery = model.Gallery.Where(m => m.Length > 0).ToList();
+
+            var files = model.Gallery.ToList();
+            if (model.Image is not null && model.Image.Length > 0) files.Add(model.Image);
+
+            foreach (var file in files)
+            {
+                if (file.Length > AdminRules.MaxImageBytes)
+                {
+                    ModelState.AddModelError(string.Empty, $"\"{file.FileName}\" is larger than 2 MB.");
+                }
+                else if (!AdminRules.ImageTypes.Contains(file.ContentType))
+                {
+                    ModelState.AddModelError(string.Empty, $"\"{file.FileName}\" must be a PNG, JPG or WEBP image.");
+                }
+            }
+
+            if (model.Gallery.Count > AdminRules.MaxGallery)
+            {
+                ModelState.AddModelError(nameof(model.Gallery), $"The gallery can have at most {AdminRules.MaxGallery} images.");
+            }
+        }
+
+        private void AddErrors(IEnumerable<string> errors)
+        {
+            foreach (var error in errors)
+            {
+                ModelState.AddModelError(string.Empty, error);
+            }
+        }
+
+        // API-nin gözlədiyi sahə adları: CreateProductDto / UpdateProductDto
+        private static MultipartFormDataContent ToForm(ProductFormVM model)
+        {
+            var form = new MultipartFormDataContent
+            {
+                { new StringContent(model.Name ?? string.Empty), "Name" },
+                { new StringContent(model.Description ?? string.Empty), "Description" },
+                // API InvariantCulture ilə oxuyur: 29.90 vergül yox, nöqtə ilə getməlidir
+                { new StringContent(model.Price.ToString(CultureInfo.InvariantCulture)), "Price" },
+                { new StringContent(model.Stock.ToString(CultureInfo.InvariantCulture)), "Stock" },
+                { new StringContent(model.CategoryId.ToString(CultureInfo.InvariantCulture)), "CategoryId" }
+            };
+
+            foreach (var tagId in model.TagIds.Distinct())
+            {
+                form.Add(new StringContent(tagId.ToString(CultureInfo.InvariantCulture)), "TagIds");
+            }
+
+            if (model.Image is not null && model.Image.Length > 0)
+            {
+                AddFile(form, model.Image, "Image");
+            }
+
+            foreach (var file in model.Gallery)
+            {
+                AddFile(form, file, "Gallery");
+            }
+
+            foreach (var path in model.RemoveImages.Distinct())
+            {
+                form.Add(new StringContent(path), "RemoveImages");
+            }
+
+            return form;
+        }
+
+        private static void AddFile(MultipartFormDataContent form, IFormFile file, string name)
+        {
+            var content = new StreamContent(file.OpenReadStream());
+            content.Headers.ContentType = new MediaTypeHeaderValue(file.ContentType);
+            form.Add(content, name, file.FileName);
+        }
+    }
+}

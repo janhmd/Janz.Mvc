@@ -23,7 +23,7 @@ namespace Janz.Mvc.Helpers
         {
             new() { Group = "Menu", Title = "Dashboard", Icon = "bi-grid-1x2", Controller = "Dashboard", Roles = All },
 
-            new() { Group = "Shop", Title = "Products", Icon = "bi-box-seam", Roles = Shop },
+            new() { Group = "Shop", Title = "Products", Icon = "bi-box-seam", Controller = "Products", Roles = Shop },
             new() { Group = "Shop", Title = "Categories", Icon = "bi-layers", Roles = Shop },
             new() { Group = "Shop", Title = "Tags", Icon = "bi-tags", Roles = Shop },
             new() { Group = "Shop", Title = "Orders", Icon = "bi-bag-check", Roles = Orders },

@@ -50,11 +50,22 @@
         <span class="admin-stat-label">Customers · @Model.NewCustomersThisMonth new</span>
         <strong>@Model.CustomerCount</strong>
     </div>
-    <div class="admin-stat">
-        <i class="bi bi-box-seam"></i>
-        <span class="admin-stat-label">Products</span>
-        <strong>@Model.ProductCount</strong>
-    </div>
+    @if (canShop)
+    {
+        <a class="admin-stat" asp-controller="Products" asp-action="Index">
+            <i class="bi bi-box-seam"></i>
+            <span class="admin-stat-label">Products</span>
+            <strong>@Model.ProductCount</strong>
+        </a>
+    }
+    else
+    {
+        <div class="admin-stat">
+            <i class="bi bi-box-seam"></i>
+            <span class="admin-stat-label">Products</span>
+            <strong>@Model.ProductCount</strong>
+        </div>
+    }
 </section>
 
 <div class="admin-grid">
@@ -133,8 +144,11 @@
 
         <section class="admin-card">
             <div class="admin-card-head">
-                <h2>Low stock</h2>
-                <span class="admin-count">@Model.LowStock.Count</span>
+                <h2>Low stock <span class="admin-count">@Model.LowStock.Count</span></h2>
+                @if (canShop && Model.LowStock.Count > 0)
+                {
+                    <a class="admin-link" asp-controller="Products" asp-action="Index" asp-route-lowStock="true">All</a>
+                }
             </div>
             @if (Model.LowStock.Count == 0)
             {
@@ -146,7 +160,15 @@
                     @foreach (var product in Model.LowStock)
                     {
                         <li>
-                            <span>@product.Name</span>
+                            @* Admin birbaşa redaktəyə keçib stoku artıra bilir *@
+                            @if (canShop)
+                            {
+                                <a asp-controller="Products" asp-action="Edit" asp-route-id="@product.ProductId">@product.Name</a>
+                            }
+                            else
+                            {
+                                <span>@product.Name</span>
+                            }
                             <span class="admin-stock@(product.Stock == 0 ? " is-out" : null)">@product.Stock left</span>
                         </li>
                     }
@@ -168,7 +190,14 @@
                     @foreach (var product in Model.TopProducts)
                     {
                         <li>
-                            <span>@product.Name</span>
+                            @if (canShop)
+                            {
+                                <a asp-controller="Products" asp-action="Detail" asp-route-id="@product.ProductId">@product.Name</a>
+                            }
+                            else
+                            {
+                                <span>@product.Name</span>
+                            }
                             <span class="admin-muted">@product.Sold sold · ₼@product.Revenue.ToString("0.00")</span>
                         </li>
                     }

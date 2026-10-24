@@ -1,7 +1,12 @@
 using Janz.Mvc.Handlers;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using System.Globalization;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Qiymət kimi onluq ədədlər formadan nöqtə ilə gəlir (29.90): kompüterin dil ayarından asılı olmasın (API-də də belədir)
+CultureInfo.DefaultThreadCurrentCulture = CultureInfo.InvariantCulture;
+CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.InvariantCulture;
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();

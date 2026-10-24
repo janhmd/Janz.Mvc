@@ -1,0 +1,13 @@
+@model ProductFormVM
+@{
+    ViewData["Title"] = "Edit product";
+}
+
+<section class="admin-head">
+    <div>
+        <p class="admin-eyebrow"><a asp-action="Index">Products</a> / <a asp-action="Detail" asp-route-id="@Model.Id">#@Model.Id</a></p>
+        <h1>Edit product</h1>
+    </div>
+</section>
+
+<partial name="_ProductForm" model="Model" />

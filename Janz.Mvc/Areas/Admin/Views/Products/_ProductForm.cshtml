@@ -1,0 +1,140 @@
+@model ProductFormVM
+@using System.Globalization
+@inject IConfiguration Configuration
+@{
+    var apiBase = Configuration["ApiSettings:BaseUrl"];
+    var hasMain = !string.IsNullOrEmpty(Model.ImagePath);
+    // Rəqəmlər həmişə nöqtə ilə (input type="number" vergülü qəbul etmir)
+    var price = Model.Price > 0 ? Model.Price.ToString("0.00", CultureInfo.InvariantCulture) : string.Empty;
+    var stock = Model.IsNew && Model.Stock == 0 ? string.Empty : Model.Stock.ToString(CultureInfo.InvariantCulture);
+}
+
+<form class="admin-form" method="post" enctype="multipart/form-data"
+      asp-action="@(Model.IsNew ? "Create" : "Edit")" asp-route-id="@(Model.IsNew ? null : Model.Id)">
+    <div asp-validation-summary="All" class="admin-errors" role="alert"></div>
+
+    <div class="admin-grid">
+        <div class="admin-stack">
+            <section class="admin-card">
+                <h2>Main</h2>
+                <div class="admin-form-grid">
+                    <label class="admin-field admin-field-wide">
+                        <span>Name</span>
+                        <input asp-for="Name" required maxlength="150" />
+                    </label>
+                    <label class="admin-field admin-field-wide">
+                        <span>Description</span>
+                        <textarea asp-for="Description" rows="5" required maxlength="500"></textarea>
+                        <small>Shown on the product page. Up to 500 characters.</small>
+                    </label>
+                </div>
+            </section>
+
+            <section class="admin-card">
+                <h2>Main image</h2>
+                <div class="admin-thumbs" data-preview="main">
+                    @if (hasMain)
+                    {
+                        <figure class="admin-thumb is-main">
+                            <img src="@ApiUrl.ToAbsolute(apiBase, Model.ImagePath)" alt="" />
+                            <figcaption><span class="admin-thumb-label">Main</span></figcaption>
+                        </figure>
+                    }
+                </div>
+                <label class="admin-drop">
+                    <input type="file" name="Image" accept="@AdminRules.ImageAccept" data-preview-input="main" />
+                    <i class="bi bi-image" aria-hidden="true"></i>
+                    <span>@(hasMain ? "Replace the main image" : "Choose the main image")</span>
+                    <small>Shown in the catalog. PNG, JPG or WEBP, up to 2 MB.</small>
+                </label>
+            </section>
+
+            <section class="admin-card">
+                <h2>Gallery <span class="admin-count">@Model.Images.Count / @AdminRules.MaxGallery</span></h2>
+                <div class="admin-thumbs">
+                    @foreach (var image in Model.Images)
+                    {
+                        var remove = Model.RemoveImages.Contains(image);
+                        <figure class="admin-thumb@(remove ? " is-removed" : null)">
+                            <img src="@ApiUrl.ToAbsolute(apiBase, image)" alt="" />
+                            <figcaption>
+                                @* Checkbox seçiləndə yadda saxlayanda şəkil silinir; o vaxta qədər geri qaytarmaq olar *@
+                                <label class="admin-btn-sm is-danger admin-thumb-remove">
+                                    <input type="checkbox" name="RemoveImages" value="@image" checked="@remove" data-remove-toggle />
+                                    <i class="bi bi-trash" aria-hidden="true"></i>
+                                    <span>@(remove ? "Undo" : "Remove")</span>
+                                </label>
+                            </figcaption>
+                        </figure>
+                    }
+                </div>
+                <div class="admin-thumbs" data-preview="gallery"></div>
+                <label class="admin-drop">
+                    <input type="file" name="Gallery" accept="@AdminRules.ImageAccept" multiple data-preview-input="gallery" />
+                    <i class="bi bi-images" aria-hidden="true"></i>
+                    <span>Add images to the gallery</span>
+                    <small>Shown on the product page. Up to @AdminRules.MaxGallery images, 2 MB each.</small>
+                </label>
+            </section>
+        </div>
+
+        <div class="admin-stack">
+            <section class="admin-card">
+                <h2>Price and stock</h2>
+                <div class="admin-form-grid">
+                    <label class="admin-field">
+                        <span>Price, ₼</span>
+                        <input name="Price" type="number" step="0.01" min="0.01" max="100000" value="@price" required />
+                    </label>
+                    <label class="admin-field">
+                        <span>Stock</span>
+                        <input name="Stock" type="number" min="0" max="100000" value="@stock" required />
+                    </label>
+                </div>
+                <p class="admin-note admin-note-top">A product that is in orders can't be deleted: set its stock to 0 instead.</p>
+            </section>
+
+            <section class="admin-card">
+                <h2>Catalog</h2>
+                <div class="admin-form-grid">
+                    <label class="admin-field admin-field-wide">
+                        <span>Category</span>
+                        <select name="CategoryId" required>
+                            <option value="">Choose a category</option>
+                            @foreach (var category in Model.Categories)
+                            {
+                                <option value="@category.Id" selected="@(category.Id == Model.CategoryId)">@category.Name</option>
+                            }
+                        </select>
+                    </label>
+                </div>
+                <div class="admin-field admin-field-wide admin-chips-field">
+                    <span>Tags</span>
+                    @if (Model.Tags.Count == 0)
+                    {
+                        <small>No tags yet.</small>
+                    }
+                    else
+                    {
+                        <div class="admin-chips">
+                            @foreach (var tag in Model.Tags)
+                            {
+                                <label class="admin-chip">
+                                    <input type="checkbox" name="TagIds" value="@tag.Id" checked="@Model.TagIds.Contains(tag.Id)" />
+                                    <span>@tag.Name</span>
+                                </label>
+                            }
+                        </div>
+                    }
+                </div>
+            </section>
+
+            <section class="admin-card">
+                <div class="admin-form-actions admin-form-actions-flat">
+                    <button type="submit" class="admin-btn">@(Model.IsNew ? "Create" : "Save")</button>
+                    <a class="admin-btn is-ghost" asp-action="@(Model.IsNew ? "Index" : "Detail")" asp-route-id="@(Model.IsNew ? null : Model.Id)">Cancel</a>
+                </div>
+            </section>
+        </div>
+    </div>
+</form>

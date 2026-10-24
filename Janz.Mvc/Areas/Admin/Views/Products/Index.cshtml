@@ -1,0 +1,91 @@
+@model ProductListVM
+@inject IConfiguration Configuration
+@{
+    ViewData["Title"] = "Products";
+    var apiBase = Configuration["ApiSettings:BaseUrl"];
+    var filtered = !string.IsNullOrWhiteSpace(Model.Search) || Model.CategoryId is not null || Model.LowStock;
+}
+
+<section class="admin-head">
+    <div>
+        <p class="admin-eyebrow">Shop</p>
+        <h1>Products <span>@Model.Total</span></h1>
+    </div>
+    <div class="admin-head-actions">
+        @* Axtarış GET ilə gedir: filtr linkdə qalır, səhifəni yeniləyəndə itmir *@
+        <form class="admin-search" method="get" asp-action="Index" role="search">
+            <i class="bi bi-search" aria-hidden="true"></i>
+            <input type="search" name="search" value="@Model.Search" placeholder="Search by name or #id" aria-label="Search products" />
+            @if (Model.CategoryId is not null)
+            {
+                <input type="hidden" name="categoryId" value="@Model.CategoryId" />
+            }
+        </form>
+        <a class="admin-btn" asp-action="Create"><i class="bi bi-plus"></i> New product</a>
+    </div>
+</section>
+
+<nav class="admin-filter" aria-label="Filter products">
+    <a class="@(Model.CategoryId is null && !Model.LowStock ? "is-on" : null)" asp-action="Index" asp-route-search="@Model.Search">All</a>
+    @foreach (var category in Model.Categories)
+    {
+        <a class="@(Model.CategoryId == category.Id ? "is-on" : null)" asp-action="Index" asp-route-categoryId="@category.Id" asp-route-search="@Model.Search">@category.Name</a>
+    }
+    <a class="@(Model.LowStock ? "is-on" : null)" asp-action="Index" asp-route-lowStock="true">Low stock</a>
+</nav>
+
+@if (ViewBag.Error is string error)
+{
+    <div class="admin-flash admin-flash-error" role="alert">@error</div>
+}
+
+<section class="admin-card admin-card-flush">
+    @if (Model.Products.Count == 0)
+    {
+        <p class="admin-empty">@(filtered ? "No products match this filter." : "No products yet.")</p>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th class="num">Id</th>
+                        <th>Product</th>
+                        <th>Category</th>
+                        <th class="num">Price</th>
+                        <th class="num">Stock</th>
+                        <th class="actions">Operations</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var product in Model.Products)
+                    {
+                        var stockClass = product.Stock == 0 ? " is-out" : product.Stock < AdminRules.LowStock ? " is-low" : null;
+                        <tr>
+                            <td class="num">@product.Id</td>
+                            <td>
+                                <span class="admin-product">
+                                    <img src="@ApiUrl.ToAbsolute(apiBase, product.ImagePath)" alt="" />
+                                    <a asp-action="Detail" asp-route-id="@product.Id">@product.Name</a>
+                                </span>
+                            </td>
+                            <td>@product.CategoryName</td>
+                            <td class="num">₼@product.Price.ToString("0.00")</td>
+                            <td class="num"><span class="admin-stock@(stockClass)">@product.Stock</span></td>
+                            <td class="actions">
+                                <span class="admin-actions">
+                                    <a class="admin-btn-sm" asp-action="Detail" asp-route-id="@product.Id">Detail</a>
+                                    <a class="admin-btn-sm" asp-action="Edit" asp-route-id="@product.Id">Edit</a>
+                                    <form method="post" asp-action="Delete" asp-route-id="@product.Id" data-confirm="Delete @product.Name?">
+                                        <button type="submit" class="admin-btn-sm is-danger">Delete</button>
+                                    </form>
+                                </span>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</section>
