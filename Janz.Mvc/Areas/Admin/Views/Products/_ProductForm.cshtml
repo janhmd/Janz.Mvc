@@ -7,6 +7,7 @@
     // Rəqəmlər həmişə nöqtə ilə (input type="number" vergülü qəbul etmir)
     var price = Model.Price > 0 ? Model.Price.ToString("0.00", CultureInfo.InvariantCulture) : string.Empty;
     var stock = Model.IsNew && Model.Stock == 0 ? string.Empty : Model.Stock.ToString(CultureInfo.InvariantCulture);
+    var oldPrice = Model.OldPrice?.ToString("0.00", CultureInfo.InvariantCulture);
 }
 
 <form class="admin-form" method="post" enctype="multipart/form-data"
@@ -27,7 +28,26 @@
                         <textarea asp-for="Description" rows="5" required maxlength="500"></textarea>
                         <small>Shown on the product page. Up to 500 characters.</small>
                     </label>
+                    <label class="admin-field admin-field-wide">
+                        <span>Brewing</span>
+                        <textarea asp-for="Brewing" rows="3" maxlength="1000" placeholder="Espresso: 18 g in, 36 g out, 27–30 s"></textarea>
+                    </label>
+                    <label class="admin-field admin-field-wide">
+                        <span>Storage</span>
+                        <textarea asp-for="Storage" rows="2" maxlength="500" placeholder="Keep closed, away from light and heat"></textarea>
+                    </label>
                 </div>
+            </div>
+
+            <div class="admin-card">
+                <h2>Details</h2>
+                <div class="admin-form-grid">
+                    <label class="admin-field"><span>Roast level</span><input asp-for="Roast" maxlength="50" placeholder="Espresso" /></label>
+                    <label class="admin-field"><span>Region</span><input asp-for="Region" maxlength="50" placeholder="Ethiopia" /></label>
+                    <label class="admin-field"><span>Processing</span><input asp-for="Processing" maxlength="50" placeholder="Washed" /></label>
+                    <label class="admin-field"><span>Caffeine</span><input asp-for="Caffeine" maxlength="20" placeholder="1.2%" /></label>
+                </div>
+                <p class="admin-note admin-note-top">Shown in the Details block on the product page. Empty fields are hidden.</p>
             </div>
 
             <div class="admin-card">
@@ -87,6 +107,10 @@
                         <input name="Price" type="number" step="0.01" min="0.01" max="100000" value="@price" required />
                     </label>
                     <label class="admin-field">
+                        <span>Old price, ₼</span>
+                        <input name="OldPrice" type="number" step="0.01" min="0.01" max="100000" value="@oldPrice" placeholder="for Sale" />
+                    </label>
+                    <label class="admin-field admin-field-wide">
                         <span>Stock</span>
                         <input name="Stock" type="number" min="0" max="100000" value="@stock" required />
                     </label>
@@ -107,6 +131,17 @@
                             }
                         </select>
                     </label>
+                    <label class="admin-field admin-field-wide">
+                        <span>Badge</span>
+                        <select name="Badge">
+                            <option value="">None</option>
+                            @foreach (var badge in ProductBadges.All)
+                            {
+                                <option value="@badge" selected="@(badge == Model.Badge)">@badge</option>
+                            }
+                        </select>
+                        <small>"Coffee of the week" puts the product in that block on the home page.</small>
+                    </label>
                 </div>
                 <div class="admin-field admin-field-wide admin-chips-field">
                     <span>Tags</span>
@@ -126,11 +161,16 @@
                             }
                         </div>
                     }
+                    <small><a class="admin-link" asp-controller="Tags" asp-action="Index">Manage tags</a></small>
                 </div>
             </div>
 
             <div class="admin-card">
-                <div class="admin-form-actions admin-form-actions-flat">
+                <label class="admin-check">
+                    <input asp-for="IsVisible" type="checkbox" />
+                    <span>Visible in the shop</span>
+                </label>
+                <div class="admin-form-actions">
                     <button type="submit" class="admin-btn">@(Model.IsNew ? "Create" : "Save")</button>
                     <a class="admin-btn is-ghost" asp-action="@(Model.IsNew ? "Index" : "Detail")" asp-route-id="@(Model.IsNew ? null : Model.Id)">Cancel</a>
                 </div>

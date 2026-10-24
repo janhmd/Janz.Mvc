@@ -69,7 +69,17 @@
                             <td>
                                 <span class="admin-product">
                                     <img src="@ApiUrl.ToAbsolute(apiBase, product.ImagePath)" alt="" />
-                                    <a asp-action="Detail" asp-route-id="@product.Id">@product.Name</a>
+                                    <span>
+                                        <a asp-action="Detail" asp-route-id="@product.Id">@product.Name</a>
+                                        @if (!string.IsNullOrEmpty(product.Badge))
+                                        {
+                                            <span class="admin-badge">@product.Badge</span>
+                                        }
+                                        @if (!product.IsVisible)
+                                        {
+                                            <span class="admin-sub">Hidden from the shop</span>
+                                        }
+                                    </span>
                                 </span>
                             </td>
                             <td>@product.CategoryName</td>

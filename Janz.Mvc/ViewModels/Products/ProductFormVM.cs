@@ -28,6 +28,31 @@ namespace Janz.Mvc.ViewModels.Products
 
         public List<int> TagIds { get; set; } = new List<int>();
 
+        [Range(0.01, 100000, ErrorMessage = "The old price must be between 0.01 and 100 000.")]
+        public decimal? OldPrice { get; set; }
+
+        public string? Badge { get; set; }
+
+        public bool IsVisible { get; set; } = true;
+
+        [StringLength(50, ErrorMessage = "The roast level can be at most 50 characters.")]
+        public string? Roast { get; set; }
+
+        [StringLength(50, ErrorMessage = "The region can be at most 50 characters.")]
+        public string? Region { get; set; }
+
+        [StringLength(50, ErrorMessage = "The processing can be at most 50 characters.")]
+        public string? Processing { get; set; }
+
+        [StringLength(20, ErrorMessage = "The caffeine can be at most 20 characters.")]
+        public string? Caffeine { get; set; }
+
+        [StringLength(1000, ErrorMessage = "The brewing text can be at most 1000 characters.")]
+        public string? Brewing { get; set; }
+
+        [StringLength(500, ErrorMessage = "The storage text can be at most 500 characters.")]
+        public string? Storage { get; set; }
+
         // Yeni əsas şəkil (yaradanda mütləqdir, dəyişəndə istəyə bağlı)
         public IFormFile? Image { get; set; }
 

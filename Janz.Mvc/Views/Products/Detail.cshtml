@@ -1,8 +1,17 @@
 @model ProductPageVM
+@using Janz.Mvc.Helpers
+@inject IConfiguration Configuration
 @{
     ViewData["Title"] = Model.Product.Name;
     var product = Model.Product;
-    var gallery = product.Images.Count > 0 ? product.Images : new List<string> { product.ImagePath };
+    var apiBase = Configuration["ApiSettings:BaseUrl"];
+    // Admin paneldən yüklənən şəkillər API-dədir (/uploads/...): tam ünvan lazımdır
+    var gallery = (product.Images.Count > 0 ? product.Images : new List<string> { product.ImagePath })
+        .Select(m => ApiUrl.ToAbsolute(apiBase, m)).ToList();
+    var isCoffee = string.Equals(product.CategorySlug, "coffee", StringComparison.OrdinalIgnoreCase);
+    // Boş sahələr göstərilmir
+    var facts = new[] { ("Roast level", product.Roast), ("Region", product.Region), ("Processing", product.Processing), ("Caffeine", product.Caffeine) }
+        .Where(m => !string.IsNullOrWhiteSpace(m.Item2)).ToList();
 }
 
 <main>
@@ -32,8 +41,10 @@
                             <span class="rating-item"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.9l-5.2 2.7 1-5.8-4.3-4.1 5.9-.9z" /></svg>4.6</span>
                             <span class="rating-item"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11.5a8 8 0 0 1-11.6 7.1L4 20l1.4-4.2A8 8 0 1 1 20 11.5z" /></svg>687</span>
                         </div>
-                        <div class="badges"><span>Coffee of the week</span></div>
-                        <div class="tag-note">Popular</div>
+                        @if (!string.IsNullOrEmpty(product.Badge))
+                        {
+                            <div class="badges"><span>@product.Badge</span></div>
+                        }
                     </div>
                     <div class="coffee-use">@product.CategoryName</div>
                     <h1>@product.Name</h1>
@@ -87,6 +98,11 @@
                     </div>
                     <div class="price-row">
                         <button type="button" class="price" data-cart-add="@product.Id" disabled="@(product.Stock <= 0)">
+                            @if (product.DiscountPercent > 0)
+                            {
+                                <small>-@product.DiscountPercent%</small>
+                                <s>₼@product.OldPrice!.Value.ToString("0.00")</s>
+                            }
                             <strong>₼@product.Price.ToString("0.00")</strong>
                             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 8h15v11.5a1.5 1.5 0 0 1-1.5 1.5H6a1.5 1.5 0 0 1-1.5-1.5z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" /><path d="M9 8V6.5a3 3 0 0 1 6 0V8M9.3 14.2l1.9 1.9 3.6-3.8" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" /></svg>
                         </button>
@@ -110,56 +126,79 @@
                 <button type="button">Where to try</button>
             </div>
 
-            <h2>Details</h2>
-            <div class="facts">
-                <div><span>Roast level</span><strong>Espresso</strong></div>
-                <div><span>Region</span><strong>Ethiopia</strong></div>
-                <div><span>Processing</span><strong>Blend</strong></div>
-                <div><span>Roaster</span><strong>Loring S70 Peregrine</strong></div>
-                <div><span>Caffeine</span><strong>1.24%</strong></div>
-            </div>
+            @if (facts.Count > 0)
+            {
+                <h2>Details</h2>
+                <div class="facts">
+                    @foreach (var (label, value) in facts)
+                    {
+                        <div><span>@label</span><strong>@value</strong></div>
+                    }
+                </div>
+            }
 
             <h2>Description</h2>
             <div class="coffee-copy">
                 <p>@product.Description</p>
-                <p>You can read more about coffee from Ethiopia <a href="#">in the article</a>.</p>
             </div>
 
-            <h2>Brewing</h2>
-            <div class="brew-grid">
-                <a href="#">
-                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 8h10v8H5zM15 10h3a2 2 0 0 1 0 4h-3" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
-                    <span>Espresso machine</span>
-                    <small>Open the guide</small>
-                </a>
-                <a href="#">
-                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 9h6l-1 8H9zM9 6h4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
-                    <span>Turkish coffee</span>
-                    <small>Open the guide</small>
-                </a>
-                <a href="#">
-                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 10h10v6a3 3 0 0 1-3 3H10a3 3 0 0 1-3-3zM9 7h6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
-                    <span>Moka pot</span>
-                    <small>Open the guide</small>
-                </a>
-            </div>
+            @if (!string.IsNullOrWhiteSpace(product.Brewing) || isCoffee)
+            {
+                <h2>Brewing</h2>
+                @if (!string.IsNullOrWhiteSpace(product.Brewing))
+                {
+                    <div class="coffee-copy"><p>@product.Brewing</p></div>
+                }
+                @* Ümumi qəhvə bələdçisi yalnız qəhvə məhsullarında *@
+                @if (isCoffee)
+                {
+                    <div class="brew-grid">
+                    <a href="#">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 8h10v8H5zM15 10h3a2 2 0 0 1 0 4h-3" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
+                        <span>Espresso machine</span>
+                        <small>Open the guide</small>
+                    </a>
+                    <a href="#">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 9h6l-1 8H9zM9 6h4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+                        <span>Turkish coffee</span>
+                        <small>Open the guide</small>
+                    </a>
+                    <a href="#">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 10h10v6a3 3 0 0 1-3 3H10a3 3 0 0 1-3-3zM9 7h6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+                        <span>Moka pot</span>
+                        <small>Open the guide</small>
+                    </a>
+                </div>
+                }
+            }
 
-            <h2>Storage</h2>
-            <div class="store-grid">
-                <div>
-                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 8h12l-1 11H7zM8 8V6h8v2" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
-                    <strong>At room temperature</strong>
-                    <p>In a closed pack at room temperature, coffee keeps for 1–2 months.</p>
-                    <p>After you open the pack that time gets shorter, so buy only as much as you will drink in one or two weeks.</p>
-                    <p>After grinding, freshness fades in minutes, not days. Grind the beans right before brewing.</p>
+            @if (!string.IsNullOrWhiteSpace(product.Storage) || isCoffee)
+            {
+                <h2>Storage</h2>
+                @if (!string.IsNullOrWhiteSpace(product.Storage))
+                {
+                    <div class="coffee-copy"><p>@product.Storage</p></div>
+                }
+                @* Ümumi qəhvə bələdçisi yalnız qəhvə məhsullarında *@
+                @if (isCoffee)
+                {
+                    <div class="store-grid">
+                    <div>
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 8h12l-1 11H7zM8 8V6h8v2" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+                        <strong>At room temperature</strong>
+                        <p>In a closed pack at room temperature, coffee keeps for 1–2 months.</p>
+                        <p>After you open the pack that time gets shorter, so buy only as much as you will drink in one or two weeks.</p>
+                        <p>After grinding, freshness fades in minutes, not days. Grind the beans right before brewing.</p>
+                    </div>
+                    <div>
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l2 3h3l-1 3 2 3h-3l-1 3-2-3H7l2-3-1-3h3z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+                        <strong>In the freezer</strong>
+                        <p>In a closed pack in the freezer, coffee keeps for a long time.</p>
+                        <p>Keep it away from other food, or the coffee can take on that smell. You can freeze it, but thaw it only once, for 10–12 hours at room temperature before brewing. Do not freeze it again.</p>
+                    </div>
                 </div>
-                <div>
-                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l2 3h3l-1 3 2 3h-3l-1 3-2-3H7l2-3-1-3h3z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
-                    <strong>In the freezer</strong>
-                    <p>In a closed pack in the freezer, coffee keeps for a long time.</p>
-                    <p>Keep it away from other food, or the coffee can take on that smell. You can freeze it, but thaw it only once, for 10–12 hours at room temperature before brewing. Do not freeze it again.</p>
-                </div>
-            </div>
+                }
+            }
 
             <div class="promise-grid">
                 <div>

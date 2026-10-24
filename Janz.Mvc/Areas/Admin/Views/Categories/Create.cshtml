@@ -1,0 +1,13 @@
+@model Janz.Mvc.ViewModels.Categories.CategoryFormVM
+@{
+    ViewData["Title"] = "New category";
+}
+
+<div class="admin-head">
+    <div>
+        <p class="admin-eyebrow"><a asp-action="Index">Categories</a> / New</p>
+        <h1>New category</h1>
+    </div>
+</div>
+
+<partial name="_CategoryForm" model="Model" />

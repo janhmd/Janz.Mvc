@@ -266,6 +266,7 @@ h1, h2, h3 { color: var(--a-text); }
 .admin-btn-sm:hover { border-color: var(--a-text); color: var(--a-text); }
 .admin-btn-sm.is-danger { color: var(--a-danger); }
 .admin-btn-sm.is-danger:hover { border-color: var(--a-danger); color: var(--a-danger); }
+.admin-btn-sm:disabled { opacity: .35; cursor: not-allowed; pointer-events: none; }
 
 .admin-link { color: var(--a-muted); font-size: .85rem; font-weight: 600; }
 .admin-link:hover { color: var(--a-text); }
@@ -1053,7 +1054,6 @@ html.theme-day .status-scheduled { color: #1f5fbf; }
 .admin-thumb.is-removed .admin-thumb-remove { border-color: var(--a-danger); }
 
 .admin-card h2 .admin-count { margin-left: .4rem; vertical-align: middle; }
-.admin-form-actions-flat { margin-top: 0; }
 
 .admin-gallery img.is-main { outline: 2px solid var(--a-gold); outline-offset: 2px; }
 

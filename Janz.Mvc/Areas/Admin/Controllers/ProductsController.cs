@@ -132,7 +132,16 @@ namespace Janz.Mvc.Areas.Admin.Controllers
                 Price = product.Price,
                 Stock = product.Stock,
                 CategoryId = product.CategoryId,
-                TagIds = product.Tags.Select(m => m.Id).ToList()
+                TagIds = product.Tags.Select(m => m.Id).ToList(),
+                OldPrice = product.OldPrice,
+                Badge = product.Badge,
+                IsVisible = product.IsVisible,
+                Roast = product.Roast,
+                Region = product.Region,
+                Processing = product.Processing,
+                Caffeine = product.Caffeine,
+                Brewing = product.Brewing,
+                Storage = product.Storage
             };
             await FillListsAsync(model, product);
             return View(model);
@@ -216,6 +225,17 @@ namespace Janz.Mvc.Areas.Admin.Controllers
                 }
             }
 
+            // Köhnə qiymət yalnız endirim varsa: indiki qiymətdən böyük olmalıdır (API də yoxlayır)
+            if (model.OldPrice is decimal old && old <= model.Price)
+            {
+                ModelState.AddModelError(nameof(model.OldPrice), "The old price must be more than the price.");
+            }
+
+            if (!string.IsNullOrEmpty(model.Badge) && !ProductBadges.All.Contains(model.Badge))
+            {
+                ModelState.AddModelError(nameof(model.Badge), "Choose a badge from the list.");
+            }
+
             if (model.Gallery.Count > AdminRules.MaxGallery)
             {
                 ModelState.AddModelError(nameof(model.Gallery), $"The gallery can have at most {AdminRules.MaxGallery} images.");
@@ -243,6 +263,17 @@ namespace Janz.Mvc.Areas.Admin.Controllers
                 { new StringContent(model.CategoryId.ToString(CultureInfo.InvariantCulture)), "CategoryId" }
             };
 
+            // Boş sahələr göndərilmir: API onları boş (null) saxlayır
+            AddText(form, "OldPrice", model.OldPrice?.ToString(CultureInfo.InvariantCulture));
+            AddText(form, "Badge", model.Badge);
+            AddText(form, "IsVisible", model.IsVisible ? "true" : "false");
+            AddText(form, "Roast", model.Roast);
+            AddText(form, "Region", model.Region);
+            AddText(form, "Processing", model.Processing);
+            AddText(form, "Caffeine", model.Caffeine);
+            AddText(form, "Brewing", model.Brewing);
+            AddText(form, "Storage", model.Storage);
+
             foreach (var tagId in model.TagIds.Distinct())
             {
                 form.Add(new StringContent(tagId.ToString(CultureInfo.InvariantCulture)), "TagIds");
@@ -264,6 +295,14 @@ namespace Janz.Mvc.Areas.Admin.Controllers
             }
 
             return form;
+        }
+
+        private static void AddText(MultipartFormDataContent form, string name, string? value)
+        {
+            if (!string.IsNullOrWhiteSpace(value))
+            {
+                form.Add(new StringContent(value.Trim()), name);
+            }
         }
 
         private static void AddFile(MultipartFormDataContent form, IFormFile file, string name)

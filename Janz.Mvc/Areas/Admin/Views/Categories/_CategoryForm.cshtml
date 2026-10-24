@@ -1,0 +1,21 @@
+@model Janz.Mvc.ViewModels.Categories.CategoryFormVM
+
+<form class="admin-form admin-card admin-form-narrow" method="post"
+      asp-action="@(Model.IsNew ? "Create" : "Edit")" asp-route-id="@(Model.IsNew ? null : Model.Id)">
+    <div asp-validation-summary="All" class="admin-errors" role="alert"></div>
+    <div class="admin-form-grid">
+        <label class="admin-field admin-field-wide">
+            <span>Name</span>
+            <input asp-for="Name" required maxlength="100" />
+        </label>
+        <label class="admin-field admin-field-wide">
+            <span>Slug</span>
+            <input asp-for="Slug" maxlength="100" pattern="[a-z0-9-]+" placeholder="coffee" />
+            <small>Used in the address: /Products/... Only small letters, digits and "-". Leave it empty to make it from the name.</small>
+        </label>
+    </div>
+    <div class="admin-form-actions">
+        <button type="submit" class="admin-btn">@(Model.IsNew ? "Create" : "Save")</button>
+        <a class="admin-btn is-ghost" asp-action="Index">Cancel</a>
+    </div>
+</form>
