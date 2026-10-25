@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Html;
+
 namespace Janz.Mvc.Helpers
 {
     // API-dəki Domain/Constants/BrewMethods və GrindOptions ilə eyni olmalıdır
@@ -43,6 +45,50 @@ namespace Janz.Mvc.Helpers
         };
 
         public static string BrewIcon(string method) => BrewIcons.TryGetValue(method, out var icon) ? icon : BrewIcons["Cup"];
+
+        // API-dəki Domain/Constants/TasteGroups ilə eyni olmalıdır (kataloqdakı Taste filtri)
+        public static readonly string[] TasteGroups = { "Chocolate / Nuts", "Flowers / Citrus", "Fruits / Berries", "Alcohol / Funky" };
+
+        // Kartın yuxarısındakı təyinat üçün təkliflər (başqasını da yazmaq olar)
+        public static readonly string[] Uses = { "For espresso", "For filter", "For espresso and filter", "For milk drinks", "For Turkish coffee" };
+
+        // Kartda notun rəngi (site.css-dəki note-* sinifləri). Tanınmayan not rəngsiz qalır
+        private static readonly (string Word, string Css)[] NoteColors =
+        {
+            ("dark chocolate", "dark-chocolate"), ("chocolate", "chocolate"), ("cocoa", "cocoa"),
+            ("dark caramel", "dark-caramel"), ("candied", "candied"), ("peanut", "peanut"), ("nut", "nuts"), ("almond", "nuts"), ("hazelnut", "nuts"), ("biscuit", "biscuit"), ("cookie", "biscuit"),
+            ("nougat", "nougat"), ("caramel", "caramel"), ("honey", "honey"), ("spice", "spices"), ("cinnamon", "spices"),
+            ("strawberr", "strawberry"), ("raspberr", "raspberry"), ("cherr", "cherry"), ("berr", "berries"),
+            ("flower", "flowers"), ("jasmine", "flowers"), ("tangerine", "tangerine"), ("orange", "orange"),
+            ("lemon", "lemon"), ("citrus", "citrus"), ("mango", "mango"), ("apricot", "apricot"), ("peach", "peach"),
+            ("pineapple", "pineapple"), ("apple", "apple"), ("grape", "grapes"), ("passion", "passion"), ("vermouth", "vermouth"), ("wine", "vermouth"), ("fruit", "fruit")
+        };
+
+        public static string? NoteClass(string note)
+        {
+            var match = NoteColors.FirstOrDefault(m => note.Contains(m.Word, StringComparison.OrdinalIgnoreCase));
+            return match.Css is null ? null : "note-" + match.Css;
+        }
+
+        // Kartdakı və məhsul səhifəsindəki cümlə: "Dense coffee with notes of <nuts>, <chocolate> and <caramel>".
+        // Bir sətirdə qurulur ki, notlarla vergüllər arasında boşluq qalmasın (mətnlər HTML-encode olunur)
+        public static IHtmlContent TasteLine(string? taste, List<string> notes, string? fallback = null)
+        {
+            var line = new HtmlContentBuilder();
+            if (notes.Count == 0) return line.Append(taste ?? fallback ?? string.Empty);
+
+            line.Append(taste is null ? "Notes of " : taste + " with notes of ");
+            for (var i = 0; i < notes.Count; i++)
+            {
+                if (i > 0) line.Append(i == notes.Count - 1 ? " and " : ", ");
+                var css = NoteClass(notes[i]);
+                line.AppendHtml("<span class=\"note" + (css is null ? string.Empty : " " + css) + "\">");
+                line.Append(notes[i]);
+                line.AppendHtml("</span>");
+            }
+
+            return line;
+        }
 
         // Üyütmə seçimi yalnız paketdəki qəhvədə var
         public static bool HasGrind(string? format) => string.Equals(format, "Pack", StringComparison.OrdinalIgnoreCase);

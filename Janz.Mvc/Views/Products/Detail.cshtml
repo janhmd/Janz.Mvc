@@ -76,10 +76,17 @@
                             <div class="badges"><span>@product.Badge</span></div>
                         }
                     </div>
-                    <div class="coffee-use">@product.CategoryName</div>
+                    <div class="coffee-use">@(product.Use ?? product.CategoryName)</div>
                     <h1>@product.Name</h1>
+                    @if (!string.IsNullOrWhiteSpace(product.Processing))
+                    {
+                        <div class="kind">@product.Processing</div>
+                    }
                     <div class="kind" data-variant-stock>@(stock > 0 ? $"{stock} in stock" : "Out of stock")</div>
-                    <div class="taste">@product.Description</div>
+                    @if (product.Notes.Count > 0 || product.Taste is not null)
+                    {
+                        <div class="taste">@ProductOptions.TasteLine(product.Taste, product.Notes)</div>
+                    }
                     @if (product.Tags.Count > 0)
                     {
                         <div class="catalog-tags">
@@ -89,10 +96,13 @@
                             }
                         </div>
                     }
-                    <div class="meters">
-                        <div><span>Density</span><i><b style="width:38%"></b></i></div>
-                        <div><span>Acidity</span><i><b style="width:72%"></b></i></div>
-                    </div>
+                    @if (product.Density is not null || product.Acidity is not null)
+                    {
+                        <div class="meters">
+                            <div><span>Density</span><i><b style="width:@(product.Density ?? 0)%"></b></i></div>
+                            <div><span>Acidity</span><i><b style="width:@(product.Acidity ?? 0)%"></b></i></div>
+                        </div>
+                    }
                     @if (formats.Count > 1)
                     {
                         <div class="formats">

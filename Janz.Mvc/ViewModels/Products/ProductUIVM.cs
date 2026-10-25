@@ -20,6 +20,12 @@ namespace Janz.Mvc.ViewModels.Products
         public string? Brewing { get; set; }
         public string? Storage { get; set; }
         public List<string> BrewMethods { get; set; } = new List<string>();
+        public string? Use { get; set; }
+        public string? Taste { get; set; }
+        public List<string> Notes { get; set; } = new List<string>();
+        public int? Density { get; set; }
+        public int? Acidity { get; set; }
+        public string? TasteGroup { get; set; }
         public List<ProductVariantUIVM> Variants { get; set; } = new List<ProductVariantUIVM>();
 
         // Səhifə açılanda və kartdan səbətə əlavə olunanda seçilən variant: admin sırasında stokda olan ilk variant

@@ -55,6 +55,24 @@ namespace Janz.Mvc.ViewModels.Products
 
         public List<string> BrewMethods { get; set; } = new List<string>();
 
+        // Kartdakı dad təsviri: "For espresso", "Dense coffee with notes of ...", zolaqlar və Taste filtri
+        [StringLength(50, ErrorMessage = "The use can be at most 50 characters.")]
+        public string? Use { get; set; }
+
+        [StringLength(60, ErrorMessage = "The taste can be at most 60 characters.")]
+        public string? Taste { get; set; }
+
+        [StringLength(150, ErrorMessage = "The notes can be at most 150 characters.")]
+        public string? Notes { get; set; }
+
+        [Range(0, 100, ErrorMessage = "The density must be from 0 to 100.")]
+        public int? Density { get; set; }
+
+        [Range(0, 100, ErrorMessage = "The acidity must be from 0 to 100.")]
+        public int? Acidity { get; set; }
+
+        public string? TasteGroup { get; set; }
+
         // Variantlar varsa qiymət və stok onlardandır (məhsulun öz qiymət sahələri istifadə olunmur)
         public List<ProductVariantFormVM> Variants { get; set; } = new List<ProductVariantFormVM>();
         public bool HasVariants => Variants.Count > 0;

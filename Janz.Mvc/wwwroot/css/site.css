@@ -753,6 +753,9 @@ html.theme-day .theme-toggle { color: var(--ink); }
 .product:hover .note-dark-chocolate { background: #3e2519; color: #fff; }
 .product:hover .note-pineapple { background: #e8c547; color: #1a1406; }
 .product:hover .note-vermouth { background: #7a1f3d; color: #fff; }
+.product:hover .note-biscuit { background: #d9b07a; color: #1a1006; }
+.product:hover .note-nougat { background: #e6cfa3; color: #1a1006; }
+.product:hover .note-honey { background: #e3a72f; color: #1a1006; }
 .product:hover .note-dark-caramel { background: #5a3316; color: #fff; }
 .product:hover .note-candied { background: #e58a3a; color: #1a1006; }
 .product:hover .note-spices { background: #a0522d; color: #fff; }
@@ -822,6 +825,7 @@ html.theme-day .theme-toggle { color: var(--ink); }
 .weight.is-on { border-color: #fff; }
 
 .weight small { color: #d7c4a3; }
+.weight { flex-shrink: 0; white-space: nowrap; }
 
 .grind {
     position: relative;
@@ -1511,6 +1515,34 @@ html.theme-day .theme-toggle { color: var(--ink); }
 #coffee .coffee-buy .note-flowers { background: #d9a3c7; color: #1a1014; }
 #coffee .coffee-buy .note-berries { background: #6b2f55; color: #fff; }
 #coffee .coffee-buy .note-citrus { background: #f2c230; color: #1a1406; }
+#coffee .coffee-buy .note-orange { background: #f5a623; color: #1a1006; }
+#coffee .coffee-buy .note-fruit { background: #9a4e2c; color: #fff; }
+#coffee .coffee-buy .note-chocolate { background: #6e4431; color: #fff; }
+#coffee .coffee-buy .note-strawberry { background: #e0475b; color: #fff; }
+#coffee .coffee-buy .note-cherry { background: #9b1b30; color: #fff; }
+#coffee .coffee-buy .note-caramel { background: #c98a3c; color: #1a1006; }
+#coffee .coffee-buy .note-tangerine { background: #f28c28; color: #1a1006; }
+#coffee .coffee-buy .note-mango { background: #f4b400; color: #1a1406; }
+#coffee .coffee-buy .note-apricot { background: #f0a35e; color: #1a1006; }
+#coffee .coffee-buy .note-lemon { background: #f2e05a; color: #1a1806; }
+#coffee .coffee-buy .note-passion { background: #7b4b94; color: #fff; }
+#coffee .coffee-buy .note-peach { background: #f6b08a; color: #1a1006; }
+#coffee .coffee-buy .note-raspberry { background: #c2185b; color: #fff; }
+#coffee .coffee-buy .note-dark-chocolate { background: #3e2519; color: #fff; }
+#coffee .coffee-buy .note-pineapple { background: #e8c547; color: #1a1406; }
+#coffee .coffee-buy .note-vermouth { background: #7a1f3d; color: #fff; }
+#coffee .coffee-buy .note-biscuit { background: #d9b07a; color: #1a1006; }
+#coffee .coffee-buy .note-nougat { background: #e6cfa3; color: #1a1006; }
+#coffee .coffee-buy .note-honey { background: #e3a72f; color: #1a1006; }
+#coffee .coffee-buy .note-dark-caramel { background: #5a3316; color: #fff; }
+#coffee .coffee-buy .note-candied { background: #e58a3a; color: #1a1006; }
+#coffee .coffee-buy .note-spices { background: #a0522d; color: #fff; }
+#coffee .coffee-buy .note-nuts { background: #b07a4a; color: #fff; }
+#coffee .coffee-buy .note-apple { background: #c62828; color: #fff; }
+#coffee .coffee-buy .note-grapes { background: #4a2a5c; color: #fff; }
+#coffee .coffee-buy .note-cocoa { background: #7a5230; color: #fff; }
+#coffee .coffee-buy .note-peanut { background: #e3c9a0; color: #1a1006; }
+#coffee .coffee-buy .note-fruity { background: #e8573a; color: #fff; }
 
 #coffee .meters { margin: 1rem 0 1.1rem; }
 

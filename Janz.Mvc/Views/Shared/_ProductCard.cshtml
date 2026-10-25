@@ -1,19 +1,22 @@
 @using Janz.Mvc.Helpers
 @model Janz.Mvc.ViewModels.Products.ProductUIVM
-@inject IConfiguration Configuration
 @{
     var isSet = string.Equals(Model.CategorySlug, "sets", StringComparison.OrdinalIgnoreCase);
-    // Variantlı məhsulda kart düymənin səbətə atdığı variantın qiymətini göstərir
+    // Variantlı məhsulda kart səhifədəki kimi ilk variantla açılır, çəki düymələri onun paket növünün ölçüləridir
     var variant = Model.DefaultVariant;
+    var sizes = variant is null ? new List<Janz.Mvc.ViewModels.Products.ProductVariantUIVM>()
+        : Model.Variants.Where(m => m.Format == variant.Format && !string.IsNullOrWhiteSpace(m.Size)).ToList();
     var price = variant?.Price ?? Model.Price;
     var oldPrice = variant is null ? Model.OldPrice : variant.OldPrice;
     var discount = variant?.DiscountPercent ?? Model.DiscountPercent;
     var stock = variant?.Stock ?? Model.Stock;
+    var hasGrind = variant is not null && ProductOptions.HasGrind(variant.Format);
+    var hasMeters = Model.Density is not null || Model.Acidity is not null;
 }
 <article>
     <div class="product@(isSet ? " set-card" : string.Empty)">
         <div class="product-top">
-            <p>@Model.CategoryName</p>
+            <p>@(Model.Use ?? Model.CategoryName)</p>
             @if (!string.IsNullOrEmpty(Model.Badge))
             {
                 <div class="product-meta">
@@ -22,11 +25,43 @@
             }
         </div>
         <h3><a class="product-link" href="/Products/Detail/@Model.Id">@Model.Name</a></h3>
-        <img class="product-photo" src="@ApiUrl.ToAbsolute(Configuration["ApiSettings:BaseUrl"], Model.ImagePath)" alt="@Model.Name" />
-        <div class="taste">@Model.Description</div>
-        <div class="kind">@(variant is null ? null : $"{variant.Label} · ")@stock in stock</div>
+        @if (!string.IsNullOrWhiteSpace(Model.Processing))
+        {
+            <div class="kind">@Model.Processing</div>
+        }
+        <img class="product-photo" src="@ApiUrl.ToAbsolute(null, variant is not null && variant.Images.Count > 0 ? variant.Images[0] : Model.ImagePath)" alt="@Model.Name" />
+        <div class="taste">@ProductOptions.TasteLine(Model.Taste, Model.Notes, Model.Description)</div>
+        @if (hasMeters)
+        {
+            <div class="meters">
+                <div><span>Density</span><i><b style="width:@(Model.Density ?? 0)%"></b></i></div>
+                <div><span>Acidity</span><i><b style="width:@(Model.Acidity ?? 0)%"></b></i></div>
+            </div>
+        }
+        @if (sizes.Count > 0 || hasGrind)
+        {
+            <div class="buy-row">
+                @foreach (var item in sizes)
+                {
+                    <button type="button" class="weight@(item.Id == variant!.Id ? " is-on" : null)" data-card-variant="@item.Id" data-price="@item.Price.ToString("0.00")" data-old-price="@(item.OldPrice?.ToString("0.00"))" data-discount="@item.DiscountPercent" data-stock="@item.Stock" data-image="@(item.Images.Count > 0 ? ApiUrl.ToAbsolute(null, item.Images[0]) : null)">@item.Size@if (item.DiscountPercent > 0){<text> </text><small>-@item.DiscountPercent%</small>}</button>
+                }
+                @if (hasGrind)
+                {
+                    <details class="grind click-menu">
+                        <summary><span>@ProductOptions.Grinds[0]</span></summary>
+                        <div class="grind-list">
+                            <p>Grind</p>
+                            @for (var i = 0; i < ProductOptions.Grinds.Length; i++)
+                            {
+                                <button type="button" class="@(i == 0 ? "is-on" : null)">@ProductOptions.Grinds[i]</button>
+                            }
+                        </div>
+                    </details>
+                }
+            </div>
+        }
         <div class="price-row">
-            <button type="button" class="price" data-cart-add="@Model.Id" data-variant="@variant?.Id" disabled="@(stock <= 0)">@if (discount > 0){<small>-@discount%</small><s>₼@oldPrice!.Value.ToString("0.00")</s>}<strong>₼@price.ToString("0.00")</strong></button>
+            <button type="button" class="price" data-cart-add="@Model.Id" data-variant="@variant?.Id" data-grind="@(hasGrind ? ProductOptions.Grinds[0] : null)" disabled="@(stock <= 0)"><small hidden="@(discount == 0)">-@discount%</small><s hidden="@(discount == 0)">₼@(oldPrice?.ToString("0.00"))</s><strong>₼@price.ToString("0.00")</strong></button>
             @* Müqayisə brauzerdə saxlanılır (site.js: data-compare-toggle), ətraflı düyməsi məhsul səhifəsini açır *@
             <span class="product-actions">
                 <button type="button" aria-label="Compare" data-compare-toggle="@Model.Id"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v15M8 20h8M4.5 7h15" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M4.5 7l-2.2 4.2a2.6 2.6 0 0 0 4.4 0zM19.5 7l-2.2 4.2a2.6 2.6 0 0 0 4.4 0z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg></button>

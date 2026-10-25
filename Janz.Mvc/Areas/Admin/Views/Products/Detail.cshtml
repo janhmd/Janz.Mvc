@@ -23,6 +23,10 @@
             <dt>Category</dt><dd>@Model.CategoryName</dd>
             <dt>Price</dt><dd>₼@Model.Price.ToString("0.00")@(Model.OldPrice is decimal old ? $" (was ₼{old:0.00})" : null)</dd>
             <dt>Stock</dt><dd><span class="admin-stock@(stockClass)">@Model.Stock</span></dd>
+            <dt>Use</dt><dd>@(Model.Use ?? "—")</dd>
+            <dt>Taste</dt><dd>@(Model.Taste ?? "—")@(Model.Notes.Count > 0 ? " with notes of " + string.Join(", ", Model.Notes) : null)</dd>
+            <dt>Density / acidity</dt><dd>@(Model.Density?.ToString() ?? "—") / @(Model.Acidity?.ToString() ?? "—")</dd>
+            <dt>Taste group</dt><dd>@(Model.TasteGroup ?? "—")</dd>
             <dt>Brewing methods</dt><dd>@(Model.BrewMethods.Count == 0 ? "—" : string.Join(", ", Model.BrewMethods))</dd>
             <dt>Tags</dt><dd>@(Model.Tags.Count == 0 ? "—" : string.Join(", ", Model.Tags.Select(m => m.Name)))</dd>
             <dt>Badge</dt><dd>@(Model.Badge ?? "—")</dd>

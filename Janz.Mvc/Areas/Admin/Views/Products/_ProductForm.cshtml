@@ -53,6 +53,34 @@
             </div>
 
             <div class="admin-card">
+                <h2>Taste</h2>
+                <div class="admin-form-grid">
+                    <label class="admin-field"><span>Use</span><input asp-for="Use" maxlength="50" list="product-uses" placeholder="For espresso" /></label>
+                    <label class="admin-field"><span>Taste</span><input asp-for="Taste" maxlength="60" placeholder="Dense coffee" /></label>
+                    <label class="admin-field admin-field-wide"><span>Notes</span><input asp-for="Notes" maxlength="150" placeholder="roasted nuts, chocolate, caramel" /></label>
+                    <label class="admin-field"><span>Density, 0–100</span><input asp-for="Density" type="number" min="0" max="100" step="5" placeholder="60" /></label>
+                    <label class="admin-field"><span>Acidity, 0–100</span><input asp-for="Acidity" type="number" min="0" max="100" step="5" placeholder="40" /></label>
+                    <label class="admin-field">
+                        <span>Taste group</span>
+                        <select name="TasteGroup">
+                            <option value="">None</option>
+                            @foreach (var group in ProductOptions.TasteGroups)
+                            {
+                                <option value="@group" selected="@(group == Model.TasteGroup)">@group</option>
+                            }
+                        </select>
+                    </label>
+                </div>
+                <datalist id="product-uses">
+                    @foreach (var use in ProductOptions.Uses)
+                    {
+                        <option value="@use"></option>
+                    }
+                </datalist>
+                <p class="admin-note admin-note-top">Shown on the product card: "Dense coffee with notes of roasted nuts, chocolate and caramel". Notes are separated by commas. Density, acidity and the taste group are also used in the catalog filters.</p>
+            </div>
+
+            <div class="admin-card">
                 <h2>Details</h2>
                 <div class="admin-form-grid">
                     <label class="admin-field"><span>Roast level</span><input asp-for="Roast" maxlength="50" placeholder="Espresso" /></label>

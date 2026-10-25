@@ -254,8 +254,9 @@ document.querySelectorAll(".grind").forEach(function (menu) {
             });
             label.textContent = option.textContent;
             menu.removeAttribute("open");
-            var buy = menu.closest("[data-product-buy]");
-            if (buy) buy.querySelector("[data-cart-add]").setAttribute("data-grind", option.textContent);
+            var buy = menu.closest("[data-product-buy]") || menu.closest(".product");
+            var cart = buy && buy.querySelector("[data-cart-add]");
+            if (cart) cart.setAttribute("data-grind", option.textContent);
         });
     });
 });
@@ -387,8 +388,27 @@ document.querySelectorAll("[data-product-buy]").forEach(function (buy) {
     });
 });
 
+document.addEventListener("click", function (event) {
+    var weight = event.target.closest("[data-card-variant]");
+    if (!weight) return;
+    var card = weight.closest(".product");
+    var cart = card.querySelector("[data-cart-add]");
+    var discount = parseInt(weight.getAttribute("data-discount"), 10) || 0;
+    card.querySelectorAll("[data-card-variant]").forEach(function (item) {
+        item.classList.toggle("is-on", item === weight);
+    });
+    cart.setAttribute("data-variant", weight.getAttribute("data-card-variant"));
+    cart.disabled = parseInt(weight.getAttribute("data-stock"), 10) <= 0;
+    cart.querySelector("strong").textContent = "₼" + weight.getAttribute("data-price");
+    cart.querySelector("small").hidden = !discount;
+    cart.querySelector("small").textContent = "-" + discount + "%";
+    cart.querySelector("s").hidden = !discount;
+    cart.querySelector("s").textContent = discount ? "₼" + weight.getAttribute("data-old-price") : "";
+    if (weight.getAttribute("data-image")) card.querySelector(".product-photo").src = weight.getAttribute("data-image");
+});
+
 document.querySelectorAll(".buy-row").forEach(function (row) {
-    if (row.closest("[data-product-buy]")) return;
+    if (row.closest("[data-product-buy]") || row.querySelector("[data-card-variant]")) return;
     var weights = row.querySelectorAll(".weight");
     weights.forEach(function (weight) {
         weight.addEventListener("click", function () {

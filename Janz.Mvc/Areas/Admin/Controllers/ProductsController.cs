@@ -144,6 +144,12 @@ namespace Janz.Mvc.Areas.Admin.Controllers
                 Brewing = product.Brewing,
                 Storage = product.Storage,
                 BrewMethods = product.BrewMethods,
+                Use = product.Use,
+                Taste = product.Taste,
+                Notes = string.Join(", ", product.Notes),
+                Density = product.Density,
+                Acidity = product.Acidity,
+                TasteGroup = product.TasteGroup,
                 Variants = product.Variants.Select(m => new ProductVariantFormVM
                 {
                     Id = m.Id,
@@ -347,6 +353,12 @@ namespace Janz.Mvc.Areas.Admin.Controllers
             AddText(form, "Caffeine", model.Caffeine);
             AddText(form, "Brewing", model.Brewing);
             AddText(form, "Storage", model.Storage);
+            AddText(form, "Use", model.Use);
+            AddText(form, "Taste", model.Taste);
+            AddText(form, "Notes", model.Notes);
+            AddText(form, "Density", model.Density?.ToString(CultureInfo.InvariantCulture));
+            AddText(form, "Acidity", model.Acidity?.ToString(CultureInfo.InvariantCulture));
+            AddText(form, "TasteGroup", model.TasteGroup);
 
             foreach (var method in model.BrewMethods.Where(m => ProductOptions.BrewMethods.Contains(m)).Distinct())
             {
