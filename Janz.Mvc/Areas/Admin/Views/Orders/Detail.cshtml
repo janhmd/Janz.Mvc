@@ -1,0 +1,86 @@
+@model AdminOrderUIVM
+@{
+    ViewData["Title"] = $"Order #{Model.Id}";
+}
+
+<div class="admin-head">
+    <div>
+        <p class="admin-eyebrow"><a asp-action="Index">Orders</a> / #@Model.Id</p>
+        <h1>Order #@Model.Id <span class="admin-status status-@Model.Status.ToLowerInvariant()">@Model.Status</span></h1>
+    </div>
+</div>
+
+<div class="admin-grid">
+    <div class="admin-card">
+        <h2>Customer and delivery</h2>
+        <dl class="admin-facts">
+            <dt>Customer</dt><dd>@Model.CustomerName<br /><small class="admin-muted">@Model.CustomerEmail</small></dd>
+            <dt>Date</dt><dd>@Model.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</dd>
+            <dt>Recipient</dt><dd>@(string.IsNullOrEmpty(Model.DeliveryFullName) ? "—" : Model.DeliveryFullName)</dd>
+            <dt>Phone</dt><dd>@(string.IsNullOrEmpty(Model.DeliveryPhone) ? "—" : Model.DeliveryPhone)</dd>
+            <dt>Address</dt><dd>@(string.IsNullOrEmpty(Model.DeliveryLine) ? "—" : $"{Model.DeliveryLine}, {Model.DeliveryCity} {Model.DeliveryPostalCode}")</dd>
+            <dt>Total</dt><dd>₼@Model.Total.ToString("0.00")</dd>
+        </dl>
+    </div>
+    <div class="admin-card">
+        <h2>Status</h2>
+        @if (Model.NextStatuses.Count == 0)
+        {
+            <p class="admin-note">This order is @Model.Status.ToLowerInvariant(): its status can't change any more.</p>
+        }
+        else
+        {
+            <form class="admin-status-form" method="post" asp-action="Status" asp-route-id="@Model.Id">
+                <select name="status" aria-label="New status">
+                    @foreach (var status in Model.NextStatuses)
+                    {
+                        <option value="@status">@status</option>
+                    }
+                </select>
+                <button type="submit" class="admin-btn">Save</button>
+            </form>
+            <p class="admin-note admin-note-top">Cancelling an order returns its items to stock.</p>
+        }
+    </div>
+</div>
+
+<div class="admin-card admin-card-flush admin-card-gap">
+    <div class="table-responsive">
+        <table class="admin-table admin-variant-table">
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th class="num">Price</th>
+                    <th class="num">Quantity</th>
+                    <th class="num">Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Items)
+                {
+                    <tr>
+                        <td>
+                            <span class="admin-product">
+                                <img src="@ApiUrl.ToAbsolute(null, item.ImagePath)" alt="" />
+                                <span>
+                                    <a asp-controller="Products" asp-action="Detail" asp-route-id="@item.ProductId">@item.ProductName</a>
+                                    @if (!string.IsNullOrEmpty(item.VariantLabel) || !string.IsNullOrEmpty(item.Grind))
+                                    {
+                                        <small>@string.Join(" · ", new[] { item.VariantLabel, item.Grind }.Where(m => !string.IsNullOrEmpty(m)))</small>
+                                    }
+                                </span>
+                            </span>
+                        </td>
+                        <td class="num">₼@item.Price.ToString("0.00")</td>
+                        <td class="num">@item.Quantity</td>
+                        <td class="num">₼@item.Total.ToString("0.00")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="admin-detail-foot">
+    <a class="admin-link" asp-action="Index"><i class="bi bi-arrow-left"></i> Back to orders</a>
+</div>

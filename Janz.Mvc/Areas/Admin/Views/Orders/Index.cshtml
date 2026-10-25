@@ -1,0 +1,76 @@
+@model AdminOrderListVM
+@{
+    ViewData["Title"] = "Orders";
+    var filtered = Model.Status is not null || Model.Search is not null;
+}
+
+<div class="admin-head">
+    <div>
+        <p class="admin-eyebrow">Shop</p>
+        <h1>Orders <span>@Model.Orders.Count</span></h1>
+    </div>
+    <div class="admin-head-actions">
+        <form class="admin-search" method="get" asp-action="Index" role="search">
+            <i class="bi bi-search" aria-hidden="true"></i>
+            <input type="search" name="search" value="@Model.Search" placeholder="Name, email or #id" aria-label="Search orders" />
+            @if (Model.Status is not null)
+            {
+                <input type="hidden" name="status" value="@Model.Status" />
+            }
+        </form>
+    </div>
+</div>
+
+<nav aria-label="Filter orders">
+    <div class="admin-filter">
+        <a class="@(Model.Status is null ? "is-on" : null)" asp-action="Index" asp-route-search="@Model.Search">All</a>
+        @foreach (var status in AdminOrderListVM.Statuses)
+        {
+            <a class="@(Model.Status == status ? "is-on" : null)" asp-action="Index" asp-route-status="@status" asp-route-search="@Model.Search">@status</a>
+        }
+    </div>
+</nav>
+
+@if (ViewBag.Error is string error)
+{
+    <div class="admin-flash admin-flash-error" role="alert">@error</div>
+}
+
+<div class="admin-card admin-card-flush">
+    @if (Model.Orders.Count == 0)
+    {
+        <p class="admin-empty admin-card-pad">@(filtered ? "No orders match this filter." : "No orders yet.")</p>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>Order</th>
+                        <th>Customer</th>
+                        <th>Date</th>
+                        <th class="num">Items</th>
+                        <th>Status</th>
+                        <th class="num">Total</th>
+                        <th class="actions">Operations</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var order in Model.Orders)
+                    {
+                        <tr>
+                            <td><a asp-action="Detail" asp-route-id="@order.Id">#@order.Id</a></td>
+                            <td>@order.CustomerName<br /><small class="admin-muted">@order.CustomerEmail</small></td>
+                            <td>@order.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</td>
+                            <td class="num">@order.ItemCount</td>
+                            <td><span class="admin-status status-@order.Status.ToLowerInvariant()">@order.Status</span></td>
+                            <td class="num">₼@order.Total.ToString("0.00")</td>
+                            <td class="actions"><a class="admin-btn-sm" asp-action="Detail" asp-route-id="@order.Id">Detail</a></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>

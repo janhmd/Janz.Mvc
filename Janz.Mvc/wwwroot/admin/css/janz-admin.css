@@ -1074,3 +1074,7 @@ html.theme-day .status-scheduled { color: #1f5fbf; }
 .admin-card-gap { margin-top: 1.2rem; }
 .admin-variant-images { display: flex; gap: .4rem; }
 .admin-variant-images img { width: 44px; height: 44px; object-fit: cover; border-radius: 8px; border: 1px solid var(--a-line); }
+.admin-muted { color: var(--a-muted); }
+.admin-product small { display: block; color: var(--a-muted); font-size: .78rem; }
+.admin-muted { color: var(--a-muted); }
+.admin-product small { display: block; color: var(--a-muted); font-size: .78rem; }
