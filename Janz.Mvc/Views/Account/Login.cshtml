@@ -8,9 +8,17 @@
                 <h1>Sign in</h1>
                 <form asp-controller="Account" asp-action="Login" method="post">
                     <input type="hidden" name="returnUrl" value="@Model.ReturnUrl" />
+                    @if (TempData["AccountDone"] is string done)
+                    {
+                        <p class="entry-done">@done</p>
+                    }
                     @foreach (var error in ViewData.ModelState[string.Empty]?.Errors ?? Enumerable.Empty<Microsoft.AspNetCore.Mvc.ModelBinding.ModelError>())
                     {
                         <p class="entry-error">@error.ErrorMessage</p>
+                        @if (error.ErrorMessage.StartsWith("Confirm your email"))
+                        {
+                            <a class="entry-link" asp-action="Verify" asp-route-email="@Model.Email">Send the confirmation link again</a>
+                        }
                     }
                     <label class="entry-field">
                         <input type="email" name="email" placeholder="Email" autocomplete="email" value="@Model.Email" required />
@@ -22,7 +30,7 @@
                         </button>
                     </label>
                     <button type="submit" class="account-signin">Sign in</button>
-                    <a class="entry-forgot" href="#">Forgot password?</a>
+                    <a class="entry-forgot" asp-action="ForgotPassword">Forgot password?</a>
                     <label class="entry-remember">
                         <input type="checkbox" name="remember" value="true" checked="@Model.Remember" />
                         Remember password

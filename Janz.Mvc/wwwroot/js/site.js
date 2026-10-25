@@ -13,7 +13,7 @@ authOverlay.innerHTML =
             '<label class="entry-field"><input type="email" name="email" placeholder="Email" autocomplete="email" required /></label>' +
             '<label class="entry-field"><input type="password" name="password" placeholder="Password" autocomplete="current-password" required /><button type="button" class="entry-eye" aria-label="Show password"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12s3.6-6.5 9-6.5S21 12 21 12s-3.6 6.5-9 6.5S3 12 3 12z" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="12" r="2.4" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></button></label>' +
             '<button type="submit" class="account-signin">Sign in</button>' +
-            '<a class="entry-forgot" href="#">Forgot password?</a>' +
+            '<a class="entry-forgot" href="/Account/ForgotPassword">Forgot password?</a>' +
             '<label class="entry-remember"><input type="checkbox" name="remember" /> Remember password</label>' +
         "</form>" +
     "</div>";
@@ -176,11 +176,10 @@ document.querySelectorAll("#register .entry-eye, #signin .entry-eye").forEach(fu
     });
 });
 
-var registerForm = document.querySelector("#register form");
-if (registerForm) {
+document.querySelectorAll("#register form, #reset form").forEach(function (registerForm) {
     registerForm.addEventListener("submit", function (event) {
         var password = this.querySelector("[name='password']");
-        var repeat = this.querySelector("[name='password2']");
+        var repeat = this.querySelector("[name='password2'], [name='repeatPassword']");
         if (password.value !== repeat.value) {
             event.preventDefault();
             repeat.setCustomValidity("Passwords do not match");
@@ -189,7 +188,10 @@ if (registerForm) {
             repeat.setCustomValidity("");
         }
     });
-}
+    registerForm.addEventListener("input", function (event) {
+        if (event.target.name === "repeatPassword" || event.target.name === "password2") event.target.setCustomValidity("");
+    });
+});
 
 document.querySelectorAll(".search").forEach(function (search) {
     var form = search.querySelector(".search-panel");
@@ -1500,6 +1502,12 @@ function showToast(text) {
     toastBox.classList.add("is-on");
     clearTimeout(toastTimer);
     toastTimer = setTimeout(hideToast, 4000);
+}
+
+if (document.documentElement.getAttribute("data-toast")) {
+    window.addEventListener("load", function () {
+        showToast(document.documentElement.getAttribute("data-toast"));
+    });
 }
 
 function hideToast() {

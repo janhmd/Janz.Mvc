@@ -2041,6 +2041,9 @@ html.theme-day .theme-toggle { color: var(--ink); }
 #feedback,
 #signin,
 #register,
+#forgot,
+#reset,
+#verify,
 #community,
 #journal,
 #article,
@@ -2056,6 +2059,9 @@ html.theme-day .theme-toggle { color: var(--ink); }
 #feedback h1,
 #signin h1,
 #register h1,
+#forgot h1,
+#reset h1,
+#verify h1,
 #community h1,
 #journal h1,
 #wishlist h1 {
@@ -2073,7 +2079,10 @@ html.theme-day .theme-toggle { color: var(--ink); }
 }
 
 #signin,
-#register {
+#register,
+#forgot,
+#reset,
+#verify {
     display: flex;
     justify-content: center;
 }
@@ -2084,10 +2093,16 @@ html.theme-day .theme-toggle { color: var(--ink); }
 }
 
 #signin h1,
-#register h1 { margin-bottom: 1.4rem; }
+#register h1,
+#forgot h1,
+#reset h1,
+#verify h1 { margin-bottom: 1.4rem; }
 
 #signin form,
-#register form {
+#register form,
+#forgot form,
+#reset form,
+#verify form {
     display: flex;
     flex-direction: column;
     gap: .75rem;
@@ -2148,7 +2163,10 @@ html.theme-day .theme-toggle { color: var(--ink); }
 
 #signin .account-signin,
 #signin .account-register,
-#register .account-signin { width: 100%; }
+#register .account-signin,
+#forgot .account-signin,
+#reset .account-signin,
+#verify .account-signin { width: 100%; }
 
 .auth-overlay {
     position: fixed;
@@ -6082,6 +6100,9 @@ a.journal-card:hover { transform: translateY(-3px); }
     #feedback,
     #signin,
     #register,
+    #forgot,
+    #reset,
+    #verify,
     #community,
     #journal,
     #article,
@@ -8207,3 +8228,8 @@ html.theme-day .product-actions .product-details { background: var(--card); bord
 .co-variant,
 .mini-cart-variant,
 .cart-line-variant { display: block; color: #d7c4a3; font-size: .78rem; }
+
+.entry-text { margin: 0 0 1rem; color: #b5b5b5; font-size: .92rem; line-height: 1.55; }
+.entry-text strong { color: #fff; }
+.entry-done { margin: 0 0 .6rem; color: #8fd19e; font-size: .9rem; }
+.entry-link { display: inline-block; margin-top: 1rem; color: var(--gold); font-size: .88rem; }

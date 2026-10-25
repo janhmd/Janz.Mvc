@@ -4,7 +4,7 @@
     var signedIn = User.Identity?.IsAuthenticated == true;
 }
 <!DOCTYPE html>
-<html lang="en" data-auth="@(signedIn ? "1" : "0")" data-csrf="@csrf">
+<html lang="en" data-auth="@(signedIn ? "1" : "0")" data-csrf="@csrf" data-toast="@TempData["Toast"]">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />

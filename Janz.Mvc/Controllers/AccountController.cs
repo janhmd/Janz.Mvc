@@ -98,7 +98,7 @@ namespace Janz.Mvc.Controllers
                 return View(model);
             }
 
-            var (result, errors, _) = await PostAsync<LoginResponseVM>("api/account/register", new
+            var (result, errors, _) = await PostAsync<AccountEmailVM>("api/account/register", new
             {
                 fullName = model.FullName?.Trim() ?? string.Empty,
                 email = model.Email?.Trim() ?? string.Empty,
@@ -106,7 +106,7 @@ namespace Janz.Mvc.Controllers
                 repeatPassword = repeatPassword ?? string.Empty
             });
 
-            if (result is null || string.IsNullOrEmpty(result.Token))
+            if (result is null)
             {
                 foreach (var error in errors)
                     ModelState.AddModelError(string.Empty, error);
@@ -114,9 +114,119 @@ namespace Janz.Mvc.Controllers
                 return View(model);
             }
 
-            // Qeydiyyatdan sonra ayrıca giriş lazım deyil
+            // Giriş email təsdiqlənəndən sonradır: emaildəki link ConfirmEmail-ə gətirir
+            return RedirectToAction(nameof(Verify), new { email = result.Email });
+        }
+
+        // "Emailinizi yoxlayın" səhifəsi: linki yenidən göndərmək də buradadır
+        [HttpGet]
+        public IActionResult Verify(string? email)
+        {
+            return View(new AccountEmailVM { Email = email ?? string.Empty });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Verify(AccountEmailVM model)
+        {
+            if (string.IsNullOrWhiteSpace(model.Email))
+            {
+                ModelState.AddModelError(string.Empty, "Enter your email.");
+                return View(model);
+            }
+
+            var (success, errors, _) = await PostAsync("api/account/resend-confirmation", new { email = model.Email.Trim() });
+            if (!success)
+            {
+                foreach (var error in errors)
+                    ModelState.AddModelError(string.Empty, error);
+                return View(model);
+            }
+
+            TempData["AccountDone"] = "If this email is waiting for confirmation, we sent a new link.";
+            return RedirectToAction(nameof(Verify), new { email = model.Email.Trim() });
+        }
+
+        // Emaildəki təsdiq linki: uğurlu olarsa istifadəçi dərhal daxil olur
+        [HttpGet]
+        public async Task<IActionResult> ConfirmEmail(string? userId, string? token)
+        {
+            var (result, errors, _) = await PostAsync<LoginResponseVM>("api/account/confirm-email", new { userId, token });
+            if (result is null || string.IsNullOrEmpty(result.Token))
+            {
+                foreach (var error in errors)
+                    ModelState.AddModelError(string.Empty, error);
+                return View(nameof(Verify), new AccountEmailVM());
+            }
+
             await SignInAsync(result, remember: true);
-            return RedirectToAction("Index", "Home");
+            TempData["Toast"] = "Your email is confirmed. Welcome to Janz!";
+            return LocalRedirect(RoleRedirect.HomeUrl(RolePrincipal(result.Role)));
+        }
+
+        [HttpGet]
+        public IActionResult ForgotPassword(string? email)
+        {
+            return View(new AccountEmailVM { Email = email ?? string.Empty });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ForgotPassword(AccountEmailVM model)
+        {
+            if (string.IsNullOrWhiteSpace(model.Email))
+            {
+                ModelState.AddModelError(string.Empty, "Enter your email.");
+                return View(model);
+            }
+
+            var (success, errors, _) = await PostAsync("api/account/forgot-password", new { email = model.Email.Trim() });
+            if (!success)
+            {
+                foreach (var error in errors)
+                    ModelState.AddModelError(string.Empty, error);
+                return View(model);
+            }
+
+            // Email qeydiyyatdadırmı, bildirilmir
+            TempData["AccountDone"] = "If an account with this email exists, we sent a link to reset the password.";
+            return RedirectToAction(nameof(ForgotPassword), new { email = model.Email.Trim() });
+        }
+
+        [HttpGet]
+        public IActionResult ResetPassword(string? userId, string? token)
+        {
+            if (string.IsNullOrWhiteSpace(userId) || string.IsNullOrWhiteSpace(token))
+            {
+                return RedirectToAction(nameof(ForgotPassword));
+            }
+
+            return View(new ResetPasswordVM { UserId = userId, Token = token });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ResetPassword(ResetPasswordVM model)
+        {
+            var (result, errors, _) = await PostAsync<AccountEmailVM>("api/account/reset-password", new
+            {
+                userId = model.UserId,
+                token = model.Token,
+                password = model.Password ?? string.Empty,
+                repeatPassword = model.RepeatPassword ?? string.Empty
+            });
+
+            model.Password = string.Empty;
+            model.RepeatPassword = string.Empty;
+            if (result is null)
+            {
+                foreach (var error in errors)
+                    ModelState.AddModelError(string.Empty, error);
+                return View(model);
+            }
+
+            TempData["AccountDone"] = "Your password was changed. Sign in with the new one.";
+            return RedirectToAction(nameof(Login));
         }
 
         [HttpPost]
