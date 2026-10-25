@@ -10,5 +10,9 @@ namespace Janz.Mvc.ViewModels.Cart
         public int Stock { get; set; }
         public int Quantity { get; set; }
         public decimal Total { get; set; }
+
+        // Variant ("Pack · 250 g") və üyütmə: səbətdə və sifarişdə adın altında görünür
+        public string? VariantLabel { get; set; }
+        public string? Grind { get; set; }
     }
 }

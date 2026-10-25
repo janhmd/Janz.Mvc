@@ -52,3 +52,73 @@ document.querySelectorAll("[data-remove-toggle]").forEach(function (box) {
         box.parentElement.querySelector("span").textContent = box.checked ? "Undo" : "Remove";
     });
 });
+
+(function () {
+    var list = document.querySelector("[data-variant-list]");
+    if (!list) return;
+    var template = document.querySelector("[data-variant-template]");
+    var addButton = document.querySelector("[data-variant-add]");
+    var count = document.querySelector("[data-variant-count]");
+    var note = document.querySelector("[data-variant-note]");
+    var priceFields = document.querySelectorAll("[data-price-fields] input");
+    var max = parseInt(list.getAttribute("data-max"), 10) || 8;
+
+    function refresh() {
+        var rows = list.querySelectorAll("[data-variant-row]");
+        rows.forEach(function (row, index) {
+            row.querySelectorAll("[name]").forEach(function (field) {
+                field.name = field.name.replace(/^Variants\[[^\]]+\]/, "Variants[" + index + "]");
+            });
+            row.querySelector("[data-variant-title]").textContent = "Variant " + (index + 1);
+        });
+        if (count) count.textContent = rows.length + " / " + max;
+        addButton.disabled = rows.length >= max;
+        var hasVariants = rows.length > 0;
+        priceFields.forEach(function (field) { field.disabled = hasVariants; });
+        if (note) note.hidden = !hasVariants;
+    }
+
+    addButton.addEventListener("click", function () {
+        var row = template.content.firstElementChild.cloneNode(true);
+        list.appendChild(row);
+        refresh();
+        row.querySelector("input[name$='.Format']").focus();
+    });
+
+    list.addEventListener("click", function (event) {
+        var remove = event.target.closest("[data-variant-remove]");
+        if (!remove) return;
+        remove.closest("[data-variant-row]").remove();
+        refresh();
+    });
+
+    list.addEventListener("change", function (event) {
+        var keep = event.target.closest("[data-keep-toggle]");
+        if (keep) {
+            keep.closest(".admin-thumb").classList.toggle("is-removed", !keep.checked);
+            keep.parentElement.querySelector("span").textContent = keep.checked ? "Remove" : "Undo";
+            return;
+        }
+        var input = event.target.closest("[data-variant-input]");
+        if (!input) return;
+        var box = input.closest("[data-variant-row]").querySelector("[data-variant-preview]");
+        box.innerHTML = "";
+        Array.prototype.forEach.call(input.files, function (file) {
+            var figure = document.createElement("figure");
+            figure.className = "admin-thumb is-new" + (file.size > 2 * 1024 * 1024 ? " is-invalid" : "");
+            var image = document.createElement("img");
+            image.alt = "";
+            image.src = URL.createObjectURL(file);
+            var caption = document.createElement("figcaption");
+            var label = document.createElement("span");
+            label.className = "admin-thumb-label";
+            label.textContent = file.size > 2 * 1024 * 1024 ? "Larger than 2 MB" : "New";
+            caption.appendChild(label);
+            figure.appendChild(image);
+            figure.appendChild(caption);
+            box.appendChild(figure);
+        });
+    });
+
+    refresh();
+})();

@@ -69,6 +69,7 @@
                                     <a class="co-photo" href="/Products/Detail/@item.ProductId"><img src="@ApiUrl.ToAbsolute(apiBase, item.ImagePath)" alt="" /></a>
                                     <div class="co-info">
                                         <a class="co-name" href="/Products/Detail/@item.ProductId">@item.ProductName</a>
+                                        @if (!string.IsNullOrEmpty(item.VariantLabel) || !string.IsNullOrEmpty(item.Grind)){<span class="co-variant">@string.Join(" · ", new[] { item.VariantLabel, item.Grind }.Where(m => !string.IsNullOrEmpty(m)))</span>}
                                         <span class="co-each">₼@item.Price.ToString("0.00") each · @item.Stock in stock</span>
                                     </div>
                                     <div class="mini-cart-qty">

@@ -1059,3 +1059,18 @@ html.theme-day .status-scheduled { color: #1f5fbf; }
 
 .admin-detail-foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1rem; margin-top: 1.2rem; }
 .admin-detail-foot form { margin: 0; }
+
+.admin-variants { display: grid; gap: 1rem; margin-bottom: 1rem; }
+.admin-variants:empty { display: none; }
+.admin-variant { padding: 1rem; border: 1px solid var(--a-line); border-radius: 16px; background: var(--a-card-2); }
+.admin-variant-head { display: flex; justify-content: space-between; align-items: center; gap: 1rem; margin-bottom: .8rem; }
+.admin-variant-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); margin-bottom: .8rem; }
+.admin-variant-grid > :first-child { grid-column: span 2; }
+@media (max-width: 640px) { .admin-variant-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.admin-variant .admin-thumbs { grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); }
+.admin-drop-sm { padding: .9rem; }
+.admin-drop-sm i { font-size: 1.2rem; }
+.admin-variant-table td small { display: block; color: var(--a-muted); }
+.admin-card-gap { margin-top: 1.2rem; }
+.admin-variant-images { display: flex; gap: .4rem; }
+.admin-variant-images img { width: 44px; height: 44px; object-fit: cover; border-radius: 8px; border: 1px solid var(--a-line); }

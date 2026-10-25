@@ -134,6 +134,8 @@ document.addEventListener("click", function (event) {
     var body = new URLSearchParams();
     body.set("productId", button.getAttribute("data-cart-add"));
     body.set("quantity", "1");
+    if (button.getAttribute("data-variant")) body.set("variantId", button.getAttribute("data-variant"));
+    if (button.getAttribute("data-grind")) body.set("grind", button.getAttribute("data-grind"));
     body.set("__RequestVerificationToken", document.documentElement.getAttribute("data-csrf") || "");
     button.disabled = true;
     fetch("/Cart/Add", {
@@ -252,11 +254,14 @@ document.querySelectorAll(".grind").forEach(function (menu) {
             });
             label.textContent = option.textContent;
             menu.removeAttribute("open");
+            var buy = menu.closest("[data-product-buy]");
+            if (buy) buy.querySelector("[data-cart-add]").setAttribute("data-grind", option.textContent);
         });
     });
 });
 
 document.querySelectorAll(".gallery").forEach(function (gallery) {
+    if (gallery.closest(".coffee-layout") && gallery.closest(".coffee-layout").querySelector("[data-variants]")) return;
     var photo = gallery.querySelector(".gallery-photo");
     var thumbs = gallery.querySelectorAll(".thumbs button");
     thumbs.forEach(function (thumb) {
@@ -269,7 +274,121 @@ document.querySelectorAll(".gallery").forEach(function (gallery) {
     });
 });
 
+document.querySelectorAll("[data-product-buy]").forEach(function (buy) {
+    var source = buy.querySelector("[data-variants]");
+    if (!source) return;
+    var variants = JSON.parse(source.textContent);
+    var page = buy.closest(".coffee-layout");
+    var photo = page.querySelector(".gallery-photo");
+    var thumbs = page.querySelector(".thumbs");
+    var sizes = buy.querySelector("[data-sizes]");
+    var grind = buy.querySelector(".grind");
+    var stock = buy.querySelector("[data-variant-stock]");
+    var cart = buy.querySelector("[data-cart-add]");
+    var current = variants.filter(function (item) { return String(item.id) === cart.getAttribute("data-variant"); })[0];
+
+    function money(value) {
+        return "₼" + Number(value).toFixed(2);
+    }
+
+    function showGallery(format) {
+        var list = variants.filter(function (item) { return item.format === format; });
+        var images = [];
+        list.forEach(function (item) { if (item.images[0] && images.indexOf(item.images[0]) === -1) images.push(item.images[0]); });
+        list.forEach(function (item) {
+            item.images.slice(1).forEach(function (image) { if (images.indexOf(image) === -1) images.push(image); });
+        });
+        if (!images.length) return;
+        thumbs.innerHTML = "";
+        images.forEach(function (image) {
+            var button = document.createElement("button");
+            button.type = "button";
+            button.dataset.src = image;
+            var img = document.createElement("img");
+            img.src = image;
+            img.alt = "";
+            button.appendChild(img);
+            thumbs.appendChild(button);
+        });
+    }
+
+    function showPhoto(src) {
+        photo.src = src;
+        thumbs.querySelectorAll("button").forEach(function (item) {
+            item.classList.toggle("is-on", item.dataset.src === src);
+        });
+    }
+
+    function select(variant) {
+        current = variant;
+        cart.setAttribute("data-variant", variant.id);
+        cart.disabled = variant.stock <= 0;
+        cart.querySelector("strong").textContent = money(variant.price);
+        cart.querySelector("small").hidden = !variant.discount;
+        cart.querySelector("small").textContent = "-" + variant.discount + "%";
+        cart.querySelector("s").hidden = !variant.discount;
+        cart.querySelector("s").textContent = variant.oldPrice ? money(variant.oldPrice) : "";
+        stock.textContent = variant.stock > 0 ? variant.stock + " in stock" : "Out of stock";
+        grind.hidden = !variant.grind;
+        if (variant.grind) {
+            cart.setAttribute("data-grind", grind.querySelector("summary span").textContent);
+        } else {
+            cart.removeAttribute("data-grind");
+        }
+        sizes.querySelectorAll("button").forEach(function (item) {
+            item.classList.toggle("is-on", item.getAttribute("data-variant-id") === String(variant.id));
+        });
+        if (variant.images[0]) showPhoto(variant.images[0]);
+    }
+
+    function cheapest(list) {
+        var inStock = list.filter(function (item) { return item.stock > 0; });
+        return (inStock.length ? inStock : list).slice().sort(function (a, b) { return a.price - b.price; })[0];
+    }
+
+    function showFormat(format) {
+        buy.querySelectorAll("[data-format]").forEach(function (item) {
+            item.classList.toggle("is-on", item.getAttribute("data-format") === format);
+        });
+        var list = variants.filter(function (item) { return item.format === format; });
+        sizes.innerHTML = "";
+        list.filter(function (item) { return item.size; }).forEach(function (item) {
+            var button = document.createElement("button");
+            button.type = "button";
+            button.className = "weight";
+            button.setAttribute("data-variant-id", item.id);
+            button.textContent = item.size;
+            if (item.discount) {
+                var small = document.createElement("small");
+                small.textContent = " -" + item.discount + "%";
+                button.appendChild(small);
+            }
+            sizes.appendChild(button);
+        });
+        showGallery(format);
+        select(cheapest(list));
+    }
+
+    buy.addEventListener("click", function (event) {
+        var format = event.target.closest("[data-format]");
+        if (format) {
+            showFormat(format.getAttribute("data-format"));
+            return;
+        }
+        var size = event.target.closest("[data-variant-id]");
+        if (size) {
+            select(variants.filter(function (item) { return String(item.id) === size.getAttribute("data-variant-id"); })[0]);
+        }
+    });
+
+    thumbs.addEventListener("click", function (event) {
+        var thumb = event.target.closest("button");
+        if (thumb) showPhoto(thumb.dataset.src);
+    });
+});
+
 document.querySelectorAll(".buy-row").forEach(function (row) {
+    if (row.closest("[data-product-buy]")) return;
     var weights = row.querySelectorAll(".weight");
     weights.forEach(function (weight) {
         weight.addEventListener("click", function () {
@@ -2167,6 +2286,7 @@ markCompareButtons();
             var buy = el("button", "compare-buy");
             buy.type = "button";
             buy.setAttribute("data-cart-add", item.id);
+            if (item.variant) buy.setAttribute("data-variant", item.variant);
             buy.setAttribute("aria-label", "Add " + item.name + " to cart");
             buy.disabled = item.stock <= 0;
             buy.innerHTML = "<strong>₼" + item.price.toFixed(2) + "</strong>" + bagIcon;

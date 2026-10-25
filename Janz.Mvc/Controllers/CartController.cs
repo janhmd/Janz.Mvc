@@ -64,9 +64,9 @@ namespace Janz.Mvc.Controllers
         [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Add(int productId, int quantity)
+        public async Task<IActionResult> Add(int productId, int quantity, int? variantId, string? grind)
         {
-            var (cart, errors, status) = await PostAsync<CartUIVM>("api/cart/items", new { productId, quantity });
+            var (cart, errors, status) = await PostAsync<CartUIVM>("api/cart/items", new { productId, quantity, variantId, grind });
             if (status == HttpStatusCode.Unauthorized) return await SessionExpiredAsync();
 
             if (IsAjax())

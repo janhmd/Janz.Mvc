@@ -90,6 +90,7 @@ namespace Janz.Mvc.Areas.Admin.Controllers
         public async Task<IActionResult> Create(ProductFormVM model)
         {
             model.Id = 0;
+            PrepareVariants(model);
             if (model.Image is null || model.Image.Length == 0)
             {
                 ModelState.AddModelError(nameof(model.Image), "Choose the main image.");
@@ -141,7 +142,19 @@ namespace Janz.Mvc.Areas.Admin.Controllers
                 Processing = product.Processing,
                 Caffeine = product.Caffeine,
                 Brewing = product.Brewing,
-                Storage = product.Storage
+                Storage = product.Storage,
+                BrewMethods = product.BrewMethods,
+                Variants = product.Variants.Select(m => new ProductVariantFormVM
+                {
+                    Id = m.Id,
+                    Format = m.Format,
+                    Size = m.Size,
+                    Price = m.Price,
+                    OldPrice = m.OldPrice,
+                    Stock = m.Stock,
+                    KeepImages = m.Images.ToList(),
+                    Images = m.Images
+                }).ToList()
             };
             await FillListsAsync(model, product);
             return View(model);
@@ -152,6 +165,7 @@ namespace Janz.Mvc.Areas.Admin.Controllers
         public async Task<IActionResult> Edit(int id, ProductFormVM model)
         {
             model.Id = id;
+            PrepareVariants(model);
             CheckFiles(model);
 
             if (ModelState.IsValid)
@@ -202,7 +216,66 @@ namespace Janz.Mvc.Areas.Admin.Controllers
             {
                 model.ImagePath = product.ImagePath;
                 model.Images = product.Images;
+
+                // Səhv olanda variantın köhnə şəkilləri yenidən göstərilir (silinməsi seçilənlər də, "Undo" üçün)
+                foreach (var variant in model.Variants.Where(m => m.Id is not null))
+                {
+                    variant.Images = product.Variants.FirstOrDefault(m => m.Id == variant.Id)?.Images ?? new List<string>();
+                }
             }
+        }
+
+        // Variantlar varsa məhsulun öz qiyməti və stoku istifadə olunmur: ən ucuz variant və stokların cəmi göndərilir
+        private void PrepareVariants(ProductFormVM model)
+        {
+            // Formatı və qiyməti boş qalan tam boş sətirlər nəzərə alınmır
+            model.Variants = model.Variants
+                .Where(m => !string.IsNullOrWhiteSpace(m.Format) || m.Price is not null || m.NewImages.Any(f => f.Length > 0) || m.Id is not null)
+                .ToList();
+
+            if (!model.HasVariants)
+            {
+                return;
+            }
+
+            ModelState.Remove(nameof(model.Price));
+            ModelState.Remove(nameof(model.Stock));
+            ModelState.Remove(nameof(model.OldPrice));
+
+            if (model.Variants.Count > AdminRules.MaxVariants)
+            {
+                ModelState.AddModelError(string.Empty, $"A product can have at most {AdminRules.MaxVariants} variants.");
+            }
+
+            for (var i = 0; i < model.Variants.Count; i++)
+            {
+                var variant = model.Variants[i];
+                var name = $"Variant {i + 1}";
+                variant.NewImages = variant.NewImages.Where(m => m.Length > 0).ToList();
+
+                if (string.IsNullOrWhiteSpace(variant.Format)) ModelState.AddModelError(string.Empty, $"{name}: choose the pack type.");
+                if (variant.Price is not decimal price || price <= 0) ModelState.AddModelError(string.Empty, $"{name}: the price must be more than 0.");
+                if (variant.OldPrice is decimal old && variant.Price is decimal p && old <= p) ModelState.AddModelError(string.Empty, $"{name}: the old price must be more than the price.");
+                if (variant.Stock is not int stock || stock < 0) ModelState.AddModelError(string.Empty, $"{name}: the stock can't be empty or negative.");
+                if (variant.KeepImages.Count + variant.NewImages.Count > AdminRules.MaxVariantImages)
+                {
+                    ModelState.AddModelError(string.Empty, $"{name}: at most {AdminRules.MaxVariantImages} images.");
+                }
+            }
+
+            var duplicates = model.Variants
+                .GroupBy(m => ((m.Format ?? "").Trim().ToLower(), (m.Size ?? "").Trim().ToLower()))
+                .Any(g => g.Count() > 1);
+            if (duplicates) ModelState.AddModelError(string.Empty, "Two variants have the same pack and size.");
+
+            var priced = model.Variants.Where(m => m.Price is decimal p && p > 0).ToList();
+            if (priced.Count > 0)
+            {
+                var cheapest = priced.OrderBy(m => m.Price).First();
+                model.Price = cheapest.Price!.Value;
+                model.OldPrice = cheapest.OldPrice;
+            }
+            model.Stock = model.Variants.Sum(m => Math.Max(m.Stock ?? 0, 0));
         }
 
         // Faylları API-yə göndərmədən yoxlayırıq: ölçü, tip və qalereyanın limiti
@@ -212,6 +285,7 @@ namespace Janz.Mvc.Areas.Admin.Controllers
 
             var files = model.Gallery.ToList();
             if (model.Image is not null && model.Image.Length > 0) files.Add(model.Image);
+            files.AddRange(model.Variants.SelectMany(m => m.NewImages));
 
             foreach (var file in files)
             {
@@ -273,6 +347,34 @@ namespace Janz.Mvc.Areas.Admin.Controllers
             AddText(form, "Caffeine", model.Caffeine);
             AddText(form, "Brewing", model.Brewing);
             AddText(form, "Storage", model.Storage);
+
+            foreach (var method in model.BrewMethods.Where(m => ProductOptions.BrewMethods.Contains(m)).Distinct())
+            {
+                form.Add(new StringContent(method), "BrewMethods");
+            }
+
+            // Variantlar: Variants[0].Format ... API-dəki ProductVariantFormDto
+            for (var i = 0; i < model.Variants.Count; i++)
+            {
+                var variant = model.Variants[i];
+                var prefix = $"Variants[{i}].";
+                AddText(form, prefix + "Id", variant.Id?.ToString(CultureInfo.InvariantCulture));
+                AddText(form, prefix + "Format", variant.Format);
+                AddText(form, prefix + "Size", variant.Size);
+                AddText(form, prefix + "Price", variant.Price?.ToString(CultureInfo.InvariantCulture));
+                AddText(form, prefix + "OldPrice", variant.OldPrice?.ToString(CultureInfo.InvariantCulture));
+                AddText(form, prefix + "Stock", (variant.Stock ?? 0).ToString(CultureInfo.InvariantCulture));
+
+                foreach (var path in variant.KeepImages.Distinct())
+                {
+                    form.Add(new StringContent(path), prefix + "KeepImages");
+                }
+
+                foreach (var file in variant.NewImages)
+                {
+                    AddFile(form, file, prefix + "NewImages");
+                }
+            }
 
             foreach (var tagId in model.TagIds.Distinct())
             {

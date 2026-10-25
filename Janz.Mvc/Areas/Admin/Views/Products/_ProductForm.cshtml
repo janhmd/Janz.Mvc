@@ -28,9 +28,22 @@
                         <textarea asp-for="Description" rows="5" required maxlength="500"></textarea>
                         <small>Shown on the product page. Up to 500 characters.</small>
                     </label>
+                    <div class="admin-field admin-field-wide admin-chips-field">
+                        <span>Brewing methods</span>
+                        <div class="admin-chips">
+                            @foreach (var method in ProductOptions.BrewMethods)
+                            {
+                                <label class="admin-chip">
+                                    <input type="checkbox" name="BrewMethods" value="@method" checked="@Model.BrewMethods.Contains(method)" />
+                                    <span>@method</span>
+                                </label>
+                            }
+                        </div>
+                        <small>Shown in the Brewing block on the product page.</small>
+                    </div>
                     <label class="admin-field admin-field-wide">
-                        <span>Brewing</span>
-                        <textarea asp-for="Brewing" rows="3" maxlength="1000" placeholder="Espresso: 18 g in, 36 g out, 27–30 s"></textarea>
+                        <span>Brewing note</span>
+                        <textarea asp-for="Brewing" rows="2" maxlength="1000" placeholder="Espresso: 18 g in, 36 g out, 27–30 s"></textarea>
                     </label>
                     <label class="admin-field admin-field-wide">
                         <span>Storage</span>
@@ -48,6 +61,27 @@
                     <label class="admin-field"><span>Caffeine</span><input asp-for="Caffeine" maxlength="20" placeholder="1.2%" /></label>
                 </div>
                 <p class="admin-note admin-note-top">Shown in the Details block on the product page. Empty fields are hidden.</p>
+            </div>
+
+            <div class="admin-card">
+                <h2>Variants <span class="admin-count" data-variant-count>@Model.Variants.Count / @AdminRules.MaxVariants</span></h2>
+                <p class="admin-note">Pack types and sizes with their own price, stock and images, for example "Pack · 250 g" or "Nespresso capsules 10 pcs". Without variants the product uses the price and stock on the right.</p>
+                <div class="admin-variants" data-variant-list data-max="@AdminRules.MaxVariants">
+                    @for (var i = 0; i < Model.Variants.Count; i++)
+                    {
+                        <partial name="_VariantRow" model="Model.Variants[i]" view-data="@(new ViewDataDictionary(ViewData) { { "Index", i } })" />
+                    }
+                </div>
+                <button type="button" class="admin-btn is-ghost" data-variant-add><i class="bi bi-plus"></i> Add variant</button>
+                <template data-variant-template>
+                    <partial name="_VariantRow" model="new ProductVariantFormVM()" view-data="@(new ViewDataDictionary(ViewData) { { "Index", "__i__" } })" />
+                </template>
+                <datalist id="variant-formats">
+                    @foreach (var format in ProductOptions.Formats)
+                    {
+                        <option value="@format"></option>
+                    }
+                </datalist>
             </div>
 
             <div class="admin-card">
@@ -101,18 +135,19 @@
         <div class="admin-stack">
             <div class="admin-card">
                 <h2>Price and stock</h2>
-                <div class="admin-form-grid">
+                <p class="admin-note" data-variant-note hidden="@(!Model.HasVariants)">The price and stock come from the variants.</p>
+                <div class="admin-form-grid" data-price-fields>
                     <label class="admin-field">
                         <span>Price, ₼</span>
-                        <input name="Price" type="number" step="0.01" min="0.01" max="100000" value="@price" required />
+                        <input name="Price" type="number" step="0.01" min="0.01" max="100000" value="@price" required disabled="@Model.HasVariants" />
                     </label>
                     <label class="admin-field">
                         <span>Old price, ₼</span>
-                        <input name="OldPrice" type="number" step="0.01" min="0.01" max="100000" value="@oldPrice" placeholder="for Sale" />
+                        <input name="OldPrice" type="number" step="0.01" min="0.01" max="100000" value="@oldPrice" placeholder="for Sale" disabled="@Model.HasVariants" />
                     </label>
                     <label class="admin-field admin-field-wide">
                         <span>Stock</span>
-                        <input name="Stock" type="number" min="0" max="100000" value="@stock" required />
+                        <input name="Stock" type="number" min="0" max="100000" value="@stock" required disabled="@Model.HasVariants" />
                     </label>
                 </div>
                 <p class="admin-note admin-note-top">A product that is in orders can't be deleted: set its stock to 0 instead.</p>

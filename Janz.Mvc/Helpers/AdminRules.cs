@@ -6,6 +6,8 @@ namespace Janz.Mvc.Helpers
     {
         public const int MaxImageBytes = 2 * 1024 * 1024; // 2 MB
         public const int MaxGallery = 6;
+        public const int MaxVariants = 8;
+        public const int MaxVariantImages = 6;
         public const int LowStock = 5;                     // bundan az olan stok "az qalıb" sayılır (dashboard ilə eyni)
 
         public static readonly string[] ImageTypes = { "image/png", "image/jpeg", "image/webp" };

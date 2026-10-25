@@ -7,8 +7,9 @@
         id = m.Id,
         name = m.Name,
         photo = m.ImagePath,
-        price = m.Price,
-        stock = m.Stock,
+        price = m.DefaultVariant?.Price ?? m.Price,
+        stock = m.DefaultVariant?.Stock ?? m.Stock,
+        variant = m.DefaultVariant?.Id,
         category = m.CategoryName,
         description = m.Description,
         tags = m.Tags.Select(t => t.Name)

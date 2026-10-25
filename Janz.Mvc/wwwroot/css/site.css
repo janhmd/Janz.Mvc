@@ -1644,7 +1644,7 @@ html.theme-day .theme-toggle { color: var(--ink); }
     gap: .75rem;
 }
 
-.brew-grid a {
+.brew-grid > div {
     display: block;
     padding: 1rem;
     border-radius: 16px;
@@ -1658,7 +1658,11 @@ html.theme-day .theme-toggle { color: var(--ink); }
 }
 
 .brew-grid span { display: block; font-weight: 700; }
-.brew-grid small { color: #8eb4ff; }
+.brew-grid + .coffee-copy { margin-top: 1rem; }
+
+.buy-sizes { display: contents; }
+.grind[hidden],
+.price [hidden] { display: none; }
 
 .store-grid,
 .promise-grid {
@@ -6305,7 +6309,7 @@ html.theme-day {
 .grind-list,
 .thumbs button,
 .facts,
-.brew-grid a,
+.brew-grid > div,
 .store-grid > div,
 .promise,
 .catalog-tags a,
@@ -8167,3 +8171,7 @@ html.theme-day .compare-cell .compare-tags span { background: var(--hover); }
 .product-actions .product-details:hover { border-color: var(--gold); color: var(--gold); }
 .product-actions .product-details svg { width: 17px; height: 17px; }
 html.theme-day .product-actions .product-details { background: var(--card); border-color: var(--line); color: var(--text); }
+
+.co-variant,
+.mini-cart-variant,
+.cart-line-variant { display: block; color: #d7c4a3; font-size: .78rem; }

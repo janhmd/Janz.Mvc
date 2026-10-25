@@ -53,6 +53,12 @@ namespace Janz.Mvc.ViewModels.Products
         [StringLength(500, ErrorMessage = "The storage text can be at most 500 characters.")]
         public string? Storage { get; set; }
 
+        public List<string> BrewMethods { get; set; } = new List<string>();
+
+        // Variantlar varsa qiymət və stok onlardandır (məhsulun öz qiymət sahələri istifadə olunmur)
+        public List<ProductVariantFormVM> Variants { get; set; } = new List<ProductVariantFormVM>();
+        public bool HasVariants => Variants.Count > 0;
+
         // Yeni əsas şəkil (yaradanda mütləqdir, dəyişəndə istəyə bağlı)
         public IFormFile? Image { get; set; }
 

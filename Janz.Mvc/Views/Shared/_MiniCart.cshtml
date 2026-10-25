@@ -24,6 +24,7 @@
                     </a>
                     <div class="mini-cart-info">
                         <a class="mini-cart-name" href="/Products/Detail/@item.ProductId">@item.ProductName</a>
+                        @if (!string.IsNullOrEmpty(item.VariantLabel) || !string.IsNullOrEmpty(item.Grind)){<span class="mini-cart-variant">@string.Join(" · ", new[] { item.VariantLabel, item.Grind }.Where(m => !string.IsNullOrEmpty(m)))</span>}
                         <span class="mini-cart-each">₼@item.Price.ToString("0.00") each</span>
                     </div>
                     <div class="mini-cart-qty">

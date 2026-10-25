@@ -3,6 +3,12 @@
 @inject IConfiguration Configuration
 @{
     var isSet = string.Equals(Model.CategorySlug, "sets", StringComparison.OrdinalIgnoreCase);
+    // Variantlı məhsulda kart düymənin səbətə atdığı variantın qiymətini göstərir
+    var variant = Model.DefaultVariant;
+    var price = variant?.Price ?? Model.Price;
+    var oldPrice = variant is null ? Model.OldPrice : variant.OldPrice;
+    var discount = variant?.DiscountPercent ?? Model.DiscountPercent;
+    var stock = variant?.Stock ?? Model.Stock;
 }
 <article>
     <div class="product@(isSet ? " set-card" : string.Empty)">
@@ -18,9 +24,9 @@
         <h3><a class="product-link" href="/Products/Detail/@Model.Id">@Model.Name</a></h3>
         <img class="product-photo" src="@ApiUrl.ToAbsolute(Configuration["ApiSettings:BaseUrl"], Model.ImagePath)" alt="@Model.Name" />
         <div class="taste">@Model.Description</div>
-        <div class="kind">@Model.Stock in stock</div>
+        <div class="kind">@(variant is null ? null : $"{variant.Label} · ")@stock in stock</div>
         <div class="price-row">
-            <button type="button" class="price" data-cart-add="@Model.Id" disabled="@(Model.Stock <= 0)">@if (Model.DiscountPercent > 0){<small>-@Model.DiscountPercent%</small><s>₼@Model.OldPrice!.Value.ToString("0.00")</s>}<strong>₼@Model.Price.ToString("0.00")</strong></button>
+            <button type="button" class="price" data-cart-add="@Model.Id" data-variant="@variant?.Id" disabled="@(stock <= 0)">@if (discount > 0){<small>-@discount%</small><s>₼@oldPrice!.Value.ToString("0.00")</s>}<strong>₼@price.ToString("0.00")</strong></button>
             @* Müqayisə brauzerdə saxlanılır (site.js: data-compare-toggle), ətraflı düyməsi məhsul səhifəsini açır *@
             <span class="product-actions">
                 <button type="button" aria-label="Compare" data-compare-toggle="@Model.Id"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v15M8 20h8M4.5 7h15" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M4.5 7l-2.2 4.2a2.6 2.6 0 0 0 4.4 0zM19.5 7l-2.2 4.2a2.6 2.6 0 0 0 4.4 0z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg></button>

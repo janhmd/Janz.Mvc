@@ -1,0 +1,63 @@
+@model ProductVariantFormVM
+@using System.Globalization
+@inject IConfiguration Configuration
+@{
+    // Index: sətrin nömrəsi; <template> üçün "__i__" (JS əlavə edəndə dəyişir)
+    var i = ViewData["Index"]?.ToString() ?? "__i__";
+    var prefix = $"Variants[{i}].";
+    var apiBase = Configuration["ApiSettings:BaseUrl"];
+    string? Num(decimal? value) => value?.ToString("0.00", CultureInfo.InvariantCulture);
+}
+<div class="admin-variant" data-variant-row>
+    <input type="hidden" name="@(prefix)Id" value="@Model.Id" />
+    <div class="admin-variant-head">
+        <strong data-variant-title>Variant</strong>
+        <button type="button" class="admin-btn-sm is-danger" data-variant-remove><i class="bi bi-trash" aria-hidden="true"></i> Remove</button>
+    </div>
+    <div class="admin-form-grid admin-variant-grid">
+        <label class="admin-field">
+            <span>Pack type</span>
+            <input name="@(prefix)Format" value="@Model.Format" list="variant-formats" maxlength="60" placeholder="Pack" required />
+        </label>
+        <label class="admin-field">
+            <span>Size</span>
+            <input name="@(prefix)Size" value="@Model.Size" maxlength="30" placeholder="250 g" />
+        </label>
+        <label class="admin-field">
+            <span>Price, ₼</span>
+            <input name="@(prefix)Price" value="@Num(Model.Price)" type="number" step="0.01" min="0.01" max="100000" required />
+        </label>
+        <label class="admin-field">
+            <span>Old price, ₼</span>
+            <input name="@(prefix)OldPrice" value="@Num(Model.OldPrice)" type="number" step="0.01" min="0.01" max="100000" placeholder="for Sale" />
+        </label>
+        <label class="admin-field">
+            <span>Stock</span>
+            <input name="@(prefix)Stock" value="@Model.Stock" type="number" min="0" max="100000" required />
+        </label>
+    </div>
+    <div class="admin-thumbs">
+        @foreach (var image in Model.Images)
+        {
+            var keep = Model.KeepImages.Contains(image);
+            <figure class="admin-thumb@(keep ? null : " is-removed")">
+                <img src="@ApiUrl.ToAbsolute(apiBase, image)" alt="" />
+                <figcaption>
+                    @* Seçili qalsa şəkil saxlanılır; "Remove" basılanda yadda saxlayanda silinir *@
+                    <label class="admin-btn-sm is-danger admin-thumb-remove">
+                        <input type="checkbox" name="@(prefix)KeepImages" value="@image" checked="@keep" data-keep-toggle />
+                        <i class="bi bi-trash" aria-hidden="true"></i>
+                        <span>@(keep ? "Remove" : "Undo")</span>
+                    </label>
+                </figcaption>
+            </figure>
+        }
+    </div>
+    <div class="admin-thumbs" data-variant-preview></div>
+    <label class="admin-drop admin-drop-sm">
+        <input type="file" name="@(prefix)NewImages" accept="@AdminRules.ImageAccept" multiple data-variant-input />
+        <i class="bi bi-images" aria-hidden="true"></i>
+        <span>Add images of this variant</span>
+        <small>The first image is shown when the variant is chosen. Up to @AdminRules.MaxVariantImages images.</small>
+    </label>
+</div>

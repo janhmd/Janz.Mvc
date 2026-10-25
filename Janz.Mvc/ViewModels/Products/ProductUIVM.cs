@@ -19,6 +19,11 @@ namespace Janz.Mvc.ViewModels.Products
         public string? Caffeine { get; set; }
         public string? Brewing { get; set; }
         public string? Storage { get; set; }
+        public List<string> BrewMethods { get; set; } = new List<string>();
+        public List<ProductVariantUIVM> Variants { get; set; } = new List<ProductVariantUIVM>();
+
+        // Səhifə açılanda və kartdan səbətə əlavə olunanda seçilən variant: admin sırasında stokda olan ilk variant
+        public ProductVariantUIVM? DefaultVariant => Variants.FirstOrDefault(m => m.Stock > 0) ?? Variants.FirstOrDefault();
 
         // Endirim faizi: köhnə qiymət yalnız indikindən böyük olanda
         public int DiscountPercent => OldPrice is decimal old && old > Price ? (int)Math.Round((old - Price) / old * 100) : 0;

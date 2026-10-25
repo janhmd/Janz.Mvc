@@ -1,4 +1,6 @@
 @model Janz.Mvc.ViewModels.Orders.OrderUIVM
+@using Janz.Mvc.Helpers
+@inject IConfiguration Configuration
 @{
     ViewData["Title"] = "Order";
 }
@@ -18,9 +20,10 @@
                 @foreach (var item in Model.Items)
                 {
                     <div class="cart-line">
-                        <a class="cart-line-photo" href="/Products/Detail/@item.ProductId"><img src="@item.ImagePath" alt="@item.ProductName" /></a>
+                        <a class="cart-line-photo" href="/Products/Detail/@item.ProductId"><img src="@ApiUrl.ToAbsolute(Configuration["ApiSettings:BaseUrl"], item.ImagePath)" alt="@item.ProductName" /></a>
                         <div class="cart-line-info">
                             <a href="/Products/Detail/@item.ProductId">@item.ProductName</a>
+                            @if (!string.IsNullOrEmpty(item.VariantLabel) || !string.IsNullOrEmpty(item.Grind)){<span class="cart-line-variant">@string.Join(" · ", new[] { item.VariantLabel, item.Grind }.Where(m => !string.IsNullOrEmpty(m)))</span>}
                             <div class="kind">₼@item.Price.ToString("0.00")</div>
                         </div>
                         <div class="cart-qty"><span>@item.Quantity</span></div>
