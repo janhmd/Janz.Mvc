@@ -1078,3 +1078,4 @@ html.theme-day .status-scheduled { color: #1f5fbf; }
 .admin-product small { display: block; color: var(--a-muted); font-size: .78rem; }
 .admin-muted { color: var(--a-muted); }
 .admin-product small { display: block; color: var(--a-muted); font-size: .78rem; }
+.admin-section-gap { margin-top: 1.6rem; }

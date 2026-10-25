@@ -34,8 +34,8 @@ namespace Janz.Mvc.Helpers
             new() { Group = "Content", Title = "Community", Icon = "bi-chat-square-text", Roles = Content },
             new() { Group = "Content", Title = "Pages", Icon = "bi-file-earmark-text", Roles = Content },
 
-            new() { Group = "Customers", Title = "Users", Icon = "bi-people", Roles = Orders },
-            new() { Group = "Customers", Title = "Roles", Icon = "bi-shield-lock", Roles = Super },
+            new() { Group = "Customers", Title = "Users", Icon = "bi-people", Controller = "Users", Roles = Orders },
+            new() { Group = "Customers", Title = "Roles", Icon = "bi-shield-lock", Controller = "Roles", Roles = Super },
             new() { Group = "Customers", Title = "Reviews", Icon = "bi-star", Roles = Content },
             new() { Group = "Customers", Title = "Notifications", Icon = "bi-bell", Roles = Orders },
 

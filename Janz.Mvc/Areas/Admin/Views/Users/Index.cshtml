@@ -1,0 +1,82 @@
+@model UserListVM
+@{
+    ViewData["Title"] = "Users";
+    var filtered = Model.Role is not null || Model.Blocked is not null || Model.Search is not null;
+}
+
+<div class="admin-head">
+    <div>
+        <p class="admin-eyebrow">Customers</p>
+        <h1>Users <span>@Model.Users.Count</span></h1>
+    </div>
+    <div class="admin-head-actions">
+        <form class="admin-search" method="get" asp-action="Index" role="search">
+            <i class="bi bi-search" aria-hidden="true"></i>
+            <input type="search" name="search" value="@Model.Search" placeholder="Name or email" aria-label="Search users" />
+            @if (Model.Role is not null)
+            {
+                <input type="hidden" name="role" value="@Model.Role" />
+            }
+        </form>
+    </div>
+</div>
+
+<nav aria-label="Filter users">
+    <div class="admin-filter">
+        <a class="@(!filtered || (Model.Role is null && Model.Blocked is null) ? "is-on" : null)" asp-action="Index" asp-route-search="@Model.Search">All</a>
+        @foreach (var role in Janz.Mvc.Areas.Admin.Controllers.UsersController.Roles)
+        {
+            <a class="@(Model.Role == role ? "is-on" : null)" asp-action="Index" asp-route-role="@role" asp-route-search="@Model.Search">@role</a>
+        }
+        <a class="@(Model.Blocked == true ? "is-on" : null)" asp-action="Index" asp-route-blocked="true">Blocked</a>
+    </div>
+</nav>
+
+@if (ViewBag.Error is string error)
+{
+    <div class="admin-flash admin-flash-error" role="alert">@error</div>
+}
+
+<div class="admin-card admin-card-flush">
+    @if (Model.Users.Count == 0)
+    {
+        <p class="admin-empty admin-card-pad">@(filtered ? "No users match this filter." : "No users yet.")</p>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>User</th>
+                        <th>Role</th>
+                        <th>Joined</th>
+                        <th class="num">Orders</th>
+                        <th class="num">Spent</th>
+                        <th class="actions">Operations</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var user in Model.Users)
+                    {
+                        <tr>
+                            <td>
+                                <a asp-action="Detail" asp-route-id="@user.Id">@user.FullName</a><br />
+                                <small class="admin-muted">@user.Email</small>
+                                @if (user.IsBlocked)
+                                {
+                                    <span class="admin-badge">Blocked</span>
+                                }
+                            </td>
+                            <td>@user.Role</td>
+                            <td>@user.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy")</td>
+                            <td class="num">@user.OrderCount</td>
+                            <td class="num">₼@user.TotalSpent.ToString("0.00")</td>
+                            <td class="actions"><a class="admin-btn-sm" asp-action="Detail" asp-route-id="@user.Id">Detail</a></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>

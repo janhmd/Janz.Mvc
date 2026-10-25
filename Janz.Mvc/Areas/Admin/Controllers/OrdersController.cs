@@ -9,7 +9,7 @@ namespace Janz.Mvc.Areas.Admin.Controllers
 {
     // Admin panel: sifarişlər (api/admin/orders). Support da görür və statusu dəyişir
     [Area("Admin")]
-    [Authorize(Roles = AppRoles.SuperAdmin + "," + AppRoles.Admin + "," + AppRoles.Support)]
+    [Authorize(Roles = AppRoles.OrderManagers)]
     public class OrdersController : ApiControllerBase
     {
         public OrdersController(IHttpClientFactory httpClientFactory, IConfiguration configuration)

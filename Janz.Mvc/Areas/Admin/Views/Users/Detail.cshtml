@@ -1,0 +1,96 @@
+@model UserAdminUIVM
+@{
+    ViewData["Title"] = Model.FullName;
+    var canBlock = User.IsInRole(AppRoles.SuperAdmin) || User.IsInRole(AppRoles.Admin);
+    var canChangeRole = User.IsInRole(AppRoles.SuperAdmin);
+}
+
+<div class="admin-head">
+    <div>
+        <p class="admin-eyebrow"><a asp-action="Index">Users</a> / @Model.Email</p>
+        <h1>@Model.FullName @if (Model.IsBlocked){<span class="admin-status status-cancelled">Blocked</span>}</h1>
+    </div>
+</div>
+
+<div class="admin-grid">
+    <div class="admin-card">
+        <dl class="admin-facts">
+            <dt>Email</dt><dd>@Model.Email</dd>
+            <dt>Role</dt><dd>@Model.Role</dd>
+            <dt>Joined</dt><dd>@Model.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</dd>
+            <dt>Orders</dt><dd>@Model.OrderCount</dd>
+            <dt>Spent</dt><dd>₼@Model.TotalSpent.ToString("0.00") <small class="admin-muted">(cancelled orders are not counted)</small></dd>
+        </dl>
+    </div>
+    @if (canBlock || canChangeRole)
+    {
+        <div class="admin-card">
+            @if (canChangeRole)
+            {
+                <h2>Role</h2>
+                <form class="admin-status-form" method="post" asp-action="Role" asp-route-id="@Model.Id">
+                    <select name="role" aria-label="Role">
+                        @foreach (var role in Janz.Mvc.Areas.Admin.Controllers.UsersController.Roles)
+                        {
+                            <option value="@role" selected="@(role == Model.Role)">@role</option>
+                        }
+                    </select>
+                    <button type="submit" class="admin-btn">Save</button>
+                </form>
+            }
+            @if (canBlock)
+            {
+                <h2 class="@(canChangeRole ? "admin-section-gap" : null)">Access</h2>
+                @if (Model.IsBlocked)
+                {
+                    <form method="post" asp-action="Unblock" asp-route-id="@Model.Id">
+                        <button type="submit" class="admin-btn">Unblock</button>
+                    </form>
+                }
+                else
+                {
+                    <form method="post" asp-action="Block" asp-route-id="@Model.Id" data-confirm="Block @Model.FullName? They won't be able to sign in.">
+                        <button type="submit" class="admin-btn is-danger-ghost">Block</button>
+                    </form>
+                }
+            }
+        </div>
+    }
+</div>
+
+<div class="admin-card admin-card-flush admin-card-gap">
+    @if (Model.Orders.Count == 0)
+    {
+        <p class="admin-empty admin-card-pad">No orders yet.</p>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>Order</th>
+                        <th>Date</th>
+                        <th>Status</th>
+                        <th class="num">Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var order in Model.Orders.OrderByDescending(m => m.CreatedAt))
+                    {
+                        <tr>
+                            <td><a asp-controller="Orders" asp-action="Detail" asp-route-id="@order.Id">#@order.Id</a></td>
+                            <td>@order.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</td>
+                            <td><span class="admin-status status-@order.Status.ToLowerInvariant()">@order.Status</span></td>
+                            <td class="num">₼@order.Total.ToString("0.00")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>
+
+<div class="admin-detail-foot">
+    <a class="admin-link" asp-action="Index"><i class="bi bi-arrow-left"></i> Back to users</a>
+</div>
