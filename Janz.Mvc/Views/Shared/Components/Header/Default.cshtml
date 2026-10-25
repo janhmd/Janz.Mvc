@@ -16,7 +16,7 @@
                     <a href="/Products/Sets">Sets</a>
                 </div>
             </div>
-            <a href="/Reviews">Reviews <span class="nav-count">44,828</span></a>
+            <a href="/Reviews">Reviews @if (Model.ReviewCount > 0){<span class="nav-count">@Model.ReviewCount.ToString("N0")</span>}</a>
             <a href="/Community">Community</a>
             <a href="/Journal">Journal</a>
             <div class="nav-drop">

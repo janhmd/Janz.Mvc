@@ -17,9 +17,11 @@ namespace Janz.Mvc.Controllers
         {
             var (coffee, _) = await GetAsync<List<ProductUIVM>>("api/products/category/coffee");
             var (sets, _) = await GetAsync<List<ProductUIVM>>("api/products/category/sets");
+            var (reviews, _) = await GetAsync<Janz.Mvc.ViewModels.Reviews.ShopReviewsUIVM>("api/reviews?skip=0&take=2");
 
             return View(new HomeIndexVM
             {
+                Reviews = reviews ?? new Janz.Mvc.ViewModels.Reviews.ShopReviewsUIVM(),
                 Coffee = coffee ?? new List<ProductUIVM>(),
                 Sets = sets ?? new List<ProductUIVM>()
             });

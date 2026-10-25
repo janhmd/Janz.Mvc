@@ -1,0 +1,30 @@
+@model Janz.Mvc.ViewModels.Reviews.ShopReviewUIVM
+<article>
+    <div class="review">
+        <div class="review-head">
+            <div class="reviewer">
+                <div class="avatar">@Model.AuthorName[..1]</div>
+                <div>
+                    <div class="reviewer-name">@Model.AuthorName</div>
+                    <div class="reviewer-level">@Model.AuthorLevel</div>
+                </div>
+            </div>
+            <div class="review-date">@Model.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy")</div>
+        </div>
+        <div class="review-label">Shop <span class="stars" aria-label="@Model.ShopRating stars">@(new string('★', Model.ShopRating))<span class="stars-off">@(new string('★', 5 - Model.ShopRating))</span></span></div>
+        @if (!string.IsNullOrWhiteSpace(Model.ShopText))
+        {
+            <p>@Model.ShopText</p>
+        }
+        <div class="review-label">Delivery <span class="stars" aria-label="@Model.DeliveryRating stars">@(new string('★', Model.DeliveryRating))<span class="stars-off">@(new string('★', 5 - Model.DeliveryRating))</span></span></div>
+        @if (!string.IsNullOrWhiteSpace(Model.DeliveryText))
+        {
+            <p>@Model.DeliveryText</p>
+        }
+        @if (!string.IsNullOrWhiteSpace(Model.Comment))
+        {
+            <div class="review-label">Comment</div>
+            <p>@Model.Comment</p>
+        }
+    </div>
+</article>

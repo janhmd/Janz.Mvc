@@ -1,15 +1,28 @@
+using Janz.Mvc.ViewModels.Reviews;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Janz.Mvc.Controllers
 {
-    // Rəylər səhifəsi (dizayn: Janz.Front/reviews.html).
-    // Hələlik yalnız görünüşdür: rəylər və ulduz reytinqi API-də yazılanda (F7) bura qoşulacaq
-    public class ReviewsController : Controller
+    // Reviews səhifəsi: mağaza və çatdırılma reytinqi, ulduzlar üzrə paylanma və rəylər (api/reviews)
+    public class ReviewsController : ApiControllerBase
     {
-        [HttpGet]
-        public IActionResult Index()
+        private const int PageSize = 12;
+
+        public ReviewsController(IHttpClientFactory httpClientFactory, IConfiguration configuration)
+            : base(httpClientFactory, configuration)
         {
-            return View();
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Index(int page = 1)
+        {
+            page = Math.Max(1, page);
+            // Əvvəlki səhifələr də göstərilir: "Show more" siyahını uzadır
+            var (reviews, _) = await GetAsync<ShopReviewsUIVM>($"api/reviews?skip=0&take={Math.Min(page * PageSize, 50)}");
+            var model = reviews ?? new ShopReviewsUIVM();
+            model.Page = page;
+            model.HasMore = model.Items.Count < model.Total && page * PageSize < 50;
+            return View(model);
         }
     }
 }

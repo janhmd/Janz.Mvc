@@ -1,4 +1,5 @@
 using Janz.Mvc.ViewModels.Orders;
+using Janz.Mvc.ViewModels.Reviews;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
@@ -44,7 +45,27 @@ namespace Janz.Mvc.Controllers
                 return NotFound();
             }
 
+            // Çatdırılmış sifarişdə mağaza və çatdırılma üçün rəy forması göstərilir
+            if (order.Status == "Delivered")
+            {
+                var (review, _) = await GetAsync<OrderReviewUIVM>($"api/reviews/order/{id}");
+                ViewBag.Review = review;
+            }
+
             return View(order);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Review(int id, int shopRating, string? shopText, int deliveryRating, string? deliveryText, string? comment)
+        {
+            var (success, errors, status) = await PutAsync($"api/reviews/order/{id}", new { shopRating, shopText, deliveryRating, deliveryText, comment });
+            if (status == HttpStatusCode.Unauthorized) return await SessionExpiredAsync();
+
+            if (success) TempData["Toast"] = "Thank you! Your review was saved.";
+            else TempData["ReviewError"] = string.Join(" ", errors);
+
+            return Redirect($"/Orders/Detail/{id}");
         }
     }
 }

@@ -1,6 +1,8 @@
 using Janz.Mvc.ViewModels.Cart;
 using Janz.Mvc.ViewModels.Header;
+using Janz.Mvc.ViewModels.Reviews;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace Janz.Mvc.ViewComponents
 {
@@ -8,10 +10,31 @@ namespace Janz.Mvc.ViewComponents
     public class HeaderViewComponent : ViewComponent
     {
         private readonly IHttpClientFactory _httpClientFactory;
+        private readonly IMemoryCache _cache;
 
-        public HeaderViewComponent(IHttpClientFactory httpClientFactory)
+        public HeaderViewComponent(IHttpClientFactory httpClientFactory, IMemoryCache cache)
         {
             _httpClientFactory = httpClientFactory;
+            _cache = cache;
+        }
+
+        // Menyudakı "Reviews" yanındakı say: hər səhifədə API-yə getməmək üçün 5 dəqiqə yadda saxlanılır
+        private async Task<int> ReviewCountAsync()
+        {
+            if (_cache.TryGetValue("review-count", out int count)) return count;
+            try
+            {
+                var reviews = await _httpClientFactory.CreateClient("JanzApi").GetFromJsonAsync<ShopReviewsUIVM>("api/reviews?skip=0&take=1");
+                count = reviews?.Total ?? 0;
+                _cache.Set("review-count", count, TimeSpan.FromMinutes(5));
+            }
+            catch (HttpRequestException)
+            {
+            }
+            catch (System.Text.Json.JsonException)
+            {
+            }
+            return count;
         }
 
         public async Task<IViewComponentResult> InvokeAsync()
@@ -44,6 +67,7 @@ namespace Janz.Mvc.ViewComponents
                 }
             }
 
+            model.ReviewCount = await ReviewCountAsync();
             return View(model);
         }
     }

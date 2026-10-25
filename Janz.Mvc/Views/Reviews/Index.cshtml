@@ -1,36 +1,55 @@
+@model Janz.Mvc.ViewModels.Reviews.ShopReviewsUIVM
 @{
     ViewData["Title"] = "Reviews";
 }
 
 <main>        <section id="feedback">
-            <h1>Reviews <span>44,828</span></h1>
+            <h1>Reviews <span>@Model.Total.ToString("N0")</span></h1>
             <div class="feedback-board">
                 <div class="score-groups">
                     <div class="score-block">
                         <p>With a shop rating</p>
                         <ul>
-                            <li><span class="score-stars" aria-label="5 stars"><span class="is-on">★</span><span class="is-on">★</span><span class="is-on">★</span><span class="is-on">★</span><span class="is-on">★</span></span><span class="score-count">0</span></li>
-                            <li><span class="score-stars" aria-label="4 stars"><span class="is-on">★</span><span class="is-on">★</span><span class="is-on">★</span><span class="is-on">★</span><span>★</span></span><span class="score-count">0</span></li>
-                            <li><span class="score-stars" aria-label="3 stars"><span class="is-on">★</span><span class="is-on">★</span><span class="is-on">★</span><span>★</span><span>★</span></span><span class="score-count">0</span></li>
-                            <li><span class="score-stars" aria-label="2 stars"><span class="is-on">★</span><span class="is-on">★</span><span>★</span><span>★</span><span>★</span></span><span class="score-count">0</span></li>
-                            <li><span class="score-stars" aria-label="1 stars"><span class="is-on">★</span><span>★</span><span>★</span><span>★</span><span>★</span></span><span class="score-count">0</span></li>
+                            <li><span class="score-stars" aria-label="5 stars"><span class="is-on">★</span><span class="is-on">★</span><span class="is-on">★</span><span class="is-on">★</span><span class="is-on">★</span></span><span class="score-count">@(Model.ShopCounts.ElementAtOrDefault(0))</span></li>
+                            <li><span class="score-stars" aria-label="4 stars"><span class="is-on">★</span><span class="is-on">★</span><span class="is-on">★</span><span class="is-on">★</span><span>★</span></span><span class="score-count">@(Model.ShopCounts.ElementAtOrDefault(1))</span></li>
+                            <li><span class="score-stars" aria-label="3 stars"><span class="is-on">★</span><span class="is-on">★</span><span class="is-on">★</span><span>★</span><span>★</span></span><span class="score-count">@(Model.ShopCounts.ElementAtOrDefault(2))</span></li>
+                            <li><span class="score-stars" aria-label="2 stars"><span class="is-on">★</span><span class="is-on">★</span><span>★</span><span>★</span><span>★</span></span><span class="score-count">@(Model.ShopCounts.ElementAtOrDefault(3))</span></li>
+                            <li><span class="score-stars" aria-label="1 stars"><span class="is-on">★</span><span>★</span><span>★</span><span>★</span><span>★</span></span><span class="score-count">@(Model.ShopCounts.ElementAtOrDefault(4))</span></li>
                         </ul>
                     </div>
                     <div class="score-block">
                         <p>With a delivery rating</p>
                         <ul>
-                            <li><span class="score-stars" aria-label="5 stars"><span class="is-on">★</span><span class="is-on">★</span><span class="is-on">★</span><span class="is-on">★</span><span class="is-on">★</span></span><span class="score-count">0</span></li>
-                            <li><span class="score-stars" aria-label="4 stars"><span class="is-on">★</span><span class="is-on">★</span><span class="is-on">★</span><span class="is-on">★</span><span>★</span></span><span class="score-count">0</span></li>
-                            <li><span class="score-stars" aria-label="3 stars"><span class="is-on">★</span><span class="is-on">★</span><span class="is-on">★</span><span>★</span><span>★</span></span><span class="score-count">0</span></li>
-                            <li><span class="score-stars" aria-label="2 stars"><span class="is-on">★</span><span class="is-on">★</span><span>★</span><span>★</span><span>★</span></span><span class="score-count">0</span></li>
-                            <li><span class="score-stars" aria-label="1 stars"><span class="is-on">★</span><span>★</span><span>★</span><span>★</span><span>★</span></span><span class="score-count">0</span></li>
+                            <li><span class="score-stars" aria-label="5 stars"><span class="is-on">★</span><span class="is-on">★</span><span class="is-on">★</span><span class="is-on">★</span><span class="is-on">★</span></span><span class="score-count">@(Model.DeliveryCounts.ElementAtOrDefault(0))</span></li>
+                            <li><span class="score-stars" aria-label="4 stars"><span class="is-on">★</span><span class="is-on">★</span><span class="is-on">★</span><span class="is-on">★</span><span>★</span></span><span class="score-count">@(Model.DeliveryCounts.ElementAtOrDefault(1))</span></li>
+                            <li><span class="score-stars" aria-label="3 stars"><span class="is-on">★</span><span class="is-on">★</span><span class="is-on">★</span><span>★</span><span>★</span></span><span class="score-count">@(Model.DeliveryCounts.ElementAtOrDefault(2))</span></li>
+                            <li><span class="score-stars" aria-label="2 stars"><span class="is-on">★</span><span class="is-on">★</span><span>★</span><span>★</span><span>★</span></span><span class="score-count">@(Model.DeliveryCounts.ElementAtOrDefault(3))</span></li>
+                            <li><span class="score-stars" aria-label="1 stars"><span class="is-on">★</span><span>★</span><span>★</span><span>★</span><span>★</span></span><span class="score-count">@(Model.DeliveryCounts.ElementAtOrDefault(4))</span></li>
                         </ul>
                     </div>
                 </div>
                 <div class="feedback-scores">
-                    <div class="stat"><div class="stat-value">4.9</div><div class="stat-star">★</div><div class="stat-label">Average<br>shop rating</div></div>
-                    <div class="stat"><div class="stat-value">4.7</div><div class="stat-star">★</div><div class="stat-label">Average<br>delivery rating</div></div>
+                    <div class="stat"><div class="stat-value">@(Model.ShopAverage?.ToString("0.0") ?? "—")</div><div class="stat-star">★</div><div class="stat-label">Average<br>shop rating</div></div>
+                    <div class="stat"><div class="stat-value">@(Model.DeliveryAverage?.ToString("0.0") ?? "—")</div><div class="stat-star">★</div><div class="stat-label">Average<br>delivery rating</div></div>
                 </div>
             </div>
-            <div class="opinion-list" aria-label="Customer comments"></div>
+            <div class="opinion-list" aria-label="Customer comments">
+                @if (Model.Items.Count == 0)
+                {
+                    <p class="comments-empty">No reviews yet. After your order is delivered, you can rate the shop and the delivery on the order page.</p>
+                }
+                else
+                {
+                    <div class="review-grid">
+                        @foreach (var review in Model.Items)
+                        {
+                            <partial name="_ShopReview" model="review" />
+                        }
+                    </div>
+                    @if (Model.HasMore)
+                    {
+                        <a class="section-more" href="/Reviews?page=@(Model.Page + 1)">Show more</a>
+                    }
+                }
+            </div>
         </section>    </main>

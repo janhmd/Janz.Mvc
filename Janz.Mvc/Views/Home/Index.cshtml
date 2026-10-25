@@ -125,61 +125,28 @@
             <h2><a class="section-link" href="/Reviews">Reviews</a></h2>
             <div class="review-stats">
                 <div class="stat">
-                    <div class="stat-value">44,828</div>
+                    <div class="stat-value">@Model.Reviews.Total.ToString("N0")</div>
                     <div class="stat-label">reviews</div>
                 </div>
                 <div class="stat">
-                    <div class="stat-value">4.9</div>
+                    <div class="stat-value">@(Model.Reviews.ShopAverage?.ToString("0.0") ?? "—")</div>
                     <div class="stat-star">★</div>
                     <div class="stat-label">Average<br>shop rating</div>
                 </div>
                 <div class="stat">
-                    <div class="stat-value">4.7</div>
+                    <div class="stat-value">@(Model.Reviews.DeliveryAverage?.ToString("0.0") ?? "—")</div>
                     <div class="stat-star">★</div>
                     <div class="stat-label">Average<br>delivery rating</div>
                 </div>
             </div>
-            <div class="review-grid">
-                <article>
-                    <div class="review">
-                        <div class="review-head">
-                            <div class="reviewer">
-                                <div class="avatar">B</div>
-                                <div>
-                                    <div class="reviewer-name">Bagdagul</div>
-                                    <div class="reviewer-level">Newcomer</div>
-                                </div>
-                            </div>
-                            <div class="review-date">14.08.2026</div>
-                        </div>
-                        <div class="review-label">Shop <span class="stars">★★★★★</span></div>
-                        <p>I'm happy with it</p>
-                        <div class="review-label">Delivery <span class="stars">★★★★★</span></div>
-                        <p>Fast</p>
-                        <div class="review-label">Comment</div>
-                        <p>Everything is as good as always, especially the coffee</p>
-                    </div>
-                </article>
-                <article>
-                    <div class="review">
-                        <div class="review-head">
-                            <div class="reviewer">
-                                <div class="avatar">C</div>
-                                <div>
-                                    <div class="reviewer-name">Cavanshir</div>
-                                    <div class="reviewer-level">Newcomer</div>
-                                </div>
-                            </div>
-                            <div class="review-date">13.07.2026</div>
-                        </div>
-                        <div class="review-label">Shop <span class="stars">★★★★★</span></div>
-                        <p>This was my first time at Janz. I liked everything. The welcome discount is nice too.</p>
-                        <div class="review-label">Delivery <span class="stars">★★★★★</span></div>
-                        <p>Delivery was fast. I'm happy.</p>
-                        <div class="review-label">Comment</div>
-                        <p>I liked the coffee. So far I'm happy with everything.</p>
-                    </div>
-                </article>
-            </div>
+            @if (Model.Reviews.Items.Count > 0)
+            {
+                <div class="review-grid">
+                    @foreach (var review in Model.Reviews.Items)
+                    {
+                        <partial name="_ShopReview" model="review" />
+                    }
+                </div>
+            }
         </section>
     </main>
