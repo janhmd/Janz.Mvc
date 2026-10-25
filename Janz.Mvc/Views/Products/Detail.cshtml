@@ -39,6 +39,7 @@
         images = m.Images.Select(i => ApiUrl.ToAbsolute(apiBase, i))
     }));
     var isCoffee = string.Equals(product.CategorySlug, "coffee", StringComparison.OrdinalIgnoreCase);
+    var commentsTab = string.Equals(Context.Request.Query["tab"], "comments", StringComparison.OrdinalIgnoreCase);
     // Boş sahələr göstərilmir
     var facts = new[] { ("Roast level", product.Roast), ("Region", product.Region), ("Processing", product.Processing), ("Caffeine", product.Caffeine) }
         .Where(m => !string.IsNullOrWhiteSpace(m.Item2)).ToList();
@@ -67,10 +68,13 @@
 
                 <div class="coffee-buy" data-product-buy>
                     <div class="coffee-meta">
-                        <div class="rating">
-                            <span class="rating-item"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.9l-5.2 2.7 1-5.8-4.3-4.1 5.9-.9z" /></svg>4.6</span>
-                            <span class="rating-item"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11.5a8 8 0 0 1-11.6 7.1L4 20l1.4-4.2A8 8 0 1 1 20 11.5z" /></svg>687</span>
-                        </div>
+                        @if (product.ReviewCount > 0)
+                        {
+                            <a class="rating" href="?tab=comments#comments">
+                                <span class="rating-item"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.9l-5.2 2.7 1-5.8-4.3-4.1 5.9-.9z" /></svg>@product.Rating?.ToString("0.0")</span>
+                                <span class="rating-item"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11.5a8 8 0 0 1-11.6 7.1L4 20l1.4-4.2A8 8 0 1 1 20 11.5z" /></svg>@product.ReviewCount</span>
+                            </a>
+                        }
                         @if (!string.IsNullOrEmpty(product.Badge))
                         {
                             <div class="badges"><span>@product.Badge</span></div>
@@ -161,12 +165,12 @@
                 </div>
             </div>
 
-            <div class="coffee-tabs">
-                <button type="button" class="is-on">Description</button>
-                <button type="button">Comments 688</button>
-                <button type="button">Recipes 46</button>
-                <button type="button">Where to try</button>
+            <div class="coffee-tabs" data-tabs>
+                <button type="button" class="@(commentsTab ? null : "is-on")" data-tab="description">Description</button>
+                <button type="button" class="@(commentsTab ? "is-on" : null)" data-tab="comments">Comments @Model.Reviews.Count</button>
             </div>
+
+            <div class="tab-panel" data-tab-panel="description" hidden="@commentsTab">
 
             @if (facts.Count > 0)
             {
@@ -232,6 +236,10 @@
                 </div>
                 }
             }
+
+            </div>
+
+            <partial name="_ProductReviews" model="Model" />
 
             <div class="promise-grid">
                 <div>

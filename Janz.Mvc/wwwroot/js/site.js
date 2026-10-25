@@ -2558,3 +2558,26 @@ markCompareButtons();
         if (typeof openShare === "function") openShare(window.location.href);
     });
 })();
+
+document.querySelectorAll("[data-tabs]").forEach(function (tabs) {
+    tabs.addEventListener("click", function (event) {
+        var tab = event.target.closest("[data-tab]");
+        if (!tab) return;
+        tabs.querySelectorAll("[data-tab]").forEach(function (item) {
+            item.classList.toggle("is-on", item === tab);
+        });
+        document.querySelectorAll("[data-tab-panel]").forEach(function (panel) {
+            panel.hidden = panel.getAttribute("data-tab-panel") !== tab.getAttribute("data-tab");
+        });
+    });
+});
+
+document.querySelectorAll('a[href^="?tab=comments"]').forEach(function (link) {
+    link.addEventListener("click", function (event) {
+        var tab = document.querySelector('[data-tab="comments"]');
+        if (!tab) return;
+        event.preventDefault();
+        tab.click();
+        document.getElementById("comments").scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+});

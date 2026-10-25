@@ -1,0 +1,92 @@
+@model ProductPageVM
+@{
+    var reviews = Model.Reviews;
+    var commentsTab = string.Equals(Context.Request.Query["tab"], "comments", StringComparison.OrdinalIgnoreCase);
+    var signedIn = User.Identity?.IsAuthenticated == true;
+    var mine = reviews.MyReview;
+}
+
+<section id="comments" data-tab-panel="comments" hidden="@(!commentsTab)">
+    <div class="comments-head">
+        @if (reviews.Count > 0)
+        {
+            <div class="stat">
+                <div class="stat-value">@reviews.Average?.ToString("0.0")</div>
+                <div class="stat-star">★</div>
+                <div class="stat-label">@reviews.Count @(reviews.Count == 1 ? "review" : "reviews")</div>
+            </div>
+        }
+        else
+        {
+            <p class="comments-empty">No reviews yet. Be the first to share how this coffee tastes.</p>
+        }
+    </div>
+
+    @if (TempData["ReviewError"] is string reviewError)
+    {
+        <p class="entry-error">@reviewError</p>
+    }
+
+    @if (reviews.CanReview)
+    {
+        <form class="review-form" method="post" asp-controller="Products" asp-action="Review" asp-route-id="@Model.Product.Id">
+            <h2>@(mine is null ? "Your review" : "Edit your review")</h2>
+            <div class="star-input" role="radiogroup" aria-label="Rating">
+                @for (var i = 5; i >= 1; i--)
+                {
+                    <input type="radio" name="rating" value="@i" id="rating-@i" checked="@((mine?.Rating ?? 5) == i)" />
+                    <label for="rating-@i" aria-label="@i stars">★</label>
+                }
+            </div>
+            <textarea name="text" rows="4" maxlength="1000" placeholder="How did you brew it and how did it taste?">@mine?.Text</textarea>
+            <div class="review-form-actions">
+                <button type="submit" class="account-signin">@(mine is null ? "Send the review" : "Save")</button>
+            </div>
+        </form>
+        @if (mine is not null)
+        {
+            <form method="post" asp-controller="Products" asp-action="DeleteReview" asp-route-id="@Model.Product.Id">
+                <button type="submit" class="review-delete">Delete my review</button>
+            </form>
+        }
+    }
+    else if (signedIn)
+    {
+        <p class="comments-note">You can leave a review after your order with this product is delivered.</p>
+    }
+    else
+    {
+        <p class="comments-note"><a href="/Account/Login?returnUrl=@Uri.EscapeDataString($"/Products/Detail/{Model.Product.Id}?tab=comments")">Sign in</a> to leave a review after your order is delivered.</p>
+    }
+
+    @if (reviews.Items.Count > 0)
+    {
+        <div class="review-grid">
+            @foreach (var review in reviews.Items)
+            {
+                <article>
+                    <div class="review">
+                        <div class="review-head">
+                            <div class="reviewer">
+                                <div class="avatar">@review.AuthorName[..1]</div>
+                                <div>
+                                    <div class="reviewer-name">@review.AuthorName</div>
+                                    @if (review.IsMine)
+                                    {
+                                        <div class="reviewer-level">Your review</div>
+                                    }
+                                </div>
+                            </div>
+                            <div class="review-date">@review.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy")</div>
+                        </div>
+                        <div class="review-label">Rating <span class="stars" aria-label="@review.Rating stars">@(new string('★', review.Rating))<span class="stars-off">@(new string('★', 5 - review.Rating))</span></span></div>
+                        @if (!string.IsNullOrWhiteSpace(review.Text))
+                        {
+                            <p>@review.Text</p>
+                        }
+                    </div>
+                </article>
+            }
+        </div>
+    }
+</section>

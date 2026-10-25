@@ -1,5 +1,8 @@
 using Janz.Mvc.ViewModels.Products;
+using Janz.Mvc.ViewModels.Reviews;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Net;
 
 namespace Janz.Mvc.Controllers
 {
@@ -61,9 +64,12 @@ namespace Janz.Mvc.Controllers
                 .Take(3)
                 .ToList();
 
+            var (reviews, _) = await GetAsync<ProductReviewsUIVM>($"api/products/{product.Id}/reviews");
+
             return View(new ProductPageVM
             {
                 Product = product,
+                Reviews = reviews ?? new ProductReviewsUIVM(),
                 Related = related
             });
         }
@@ -72,6 +78,35 @@ namespace Janz.Mvc.Controllers
         {
             var (products, _) = await GetAsync<List<ProductUIVM>>($"api/products/category/{slug}");
             return products ?? new List<ProductUIVM>();
+        }
+
+        // Rəyi yazmaq və ya dəyişmək (API yoxlayır: məhsul çatdırılmış sifarişdə olmalıdır)
+        [Authorize]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Review(int id, int rating, string? text)
+        {
+            var (success, errors, status) = await PutAsync($"api/products/{id}/reviews", new { rating, text });
+            if (status == HttpStatusCode.Unauthorized) return await SessionExpiredAsync();
+
+            if (success) TempData["Toast"] = "Thank you! Your review was saved.";
+            else TempData["ReviewError"] = string.Join(" ", errors);
+
+            return Redirect($"/Products/Detail/{id}?tab=comments#comments");
+        }
+
+        [Authorize]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteReview(int id)
+        {
+            var (success, errors, status) = await DeleteAsync($"api/products/{id}/reviews");
+            if (status == HttpStatusCode.Unauthorized) return await SessionExpiredAsync();
+
+            if (success) TempData["Toast"] = "Your review was deleted.";
+            else TempData["ReviewError"] = string.Join(" ", errors);
+
+            return Redirect($"/Products/Detail/{id}?tab=comments#comments");
         }
     }
 }

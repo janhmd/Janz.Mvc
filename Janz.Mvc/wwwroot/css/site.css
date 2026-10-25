@@ -8233,3 +8233,26 @@ html.theme-day .product-actions .product-details { background: var(--card); bord
 .entry-text strong { color: #fff; }
 .entry-done { margin: 0 0 .6rem; color: #8fd19e; font-size: .9rem; }
 .entry-link { display: inline-block; margin-top: 1rem; color: var(--gold); font-size: .88rem; }
+
+#comments { margin-top: 1rem; }
+.comments-head { display: flex; align-items: center; gap: 1.2rem; margin-bottom: 1.2rem; }
+.comments-head .stat { display: flex; align-items: baseline; gap: .4rem; }
+.comments-empty,
+.comments-note { margin: 0 0 1.2rem; color: #b5b5b5; }
+.comments-note a { color: var(--gold); }
+.review-form { display: grid; gap: .8rem; max-width: 640px; margin-bottom: 1rem; }
+.review-form h2 { margin: 0; }
+.review-form textarea { width: 100%; padding: .8rem 1rem; border: 1px solid #333; border-radius: 14px; background: #161616; color: #fff; font: inherit; resize: vertical; }
+.review-form-actions { display: flex; gap: .6rem; }
+.review-form-actions .account-signin { width: auto; padding: 0 1.4rem; }
+.star-input { display: inline-flex; flex-direction: row-reverse; justify-content: flex-end; gap: .2rem; }
+.star-input input { position: absolute; opacity: 0; pointer-events: none; }
+.star-input label { color: #444; font-size: 1.8rem; line-height: 1; cursor: pointer; transition: color .15s ease, transform .15s ease; }
+.star-input label:hover,
+.star-input label:hover ~ label,
+.star-input input:checked ~ label { color: var(--gold); }
+.star-input label:hover { transform: scale(1.1); }
+.star-input input:focus-visible + label { outline: 2px solid var(--gold); outline-offset: 2px; border-radius: 4px; }
+.review-delete { margin: 0 0 1.6rem; padding: 0; border: 0; background: none; color: #e07070; font: inherit; font-size: .85rem; cursor: pointer; }
+.stars-off { color: #444; }
+a.rating { color: inherit; text-decoration: none; }
