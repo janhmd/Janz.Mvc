@@ -12,16 +12,18 @@
                 <a class="catalog-tile" href="#"><video muted loop playsinline preload="metadata" src="/videos/choc-dry-syrup.mp4"></video><span>Dry syrups</span></a>
                 <a class="catalog-tile" href="#"><video muted loop playsinline preload="metadata" src="/videos/choc-dry-base.mp4"></video><span>Dry bases</span></a>
             </div>
+            <form class="listing-form" method="get" data-auto-submit>
             <label class="listing-sort">
-                <select aria-label="Sort">
-                    <option value="" selected>Sort</option>
-                    <option value="popular">Popular</option>
-                    <option value="new">New</option>
-                    <option value="price-asc">Price, low to high</option>
-                    <option value="price-desc">Price, high to low</option>
-                    <option value="rating">Rating</option>
+                <select name="sort" aria-label="Sort">
+                    <option value="" selected="@(Context.Request.Query["sort"].FirstOrDefault() == "" || string.IsNullOrEmpty(Context.Request.Query["sort"].FirstOrDefault()))">Sort</option>
+                    <option value="popular" selected="@(Context.Request.Query["sort"].FirstOrDefault() == "popular")">Popular</option>
+                    <option value="new" selected="@(Context.Request.Query["sort"].FirstOrDefault() == "new")">New</option>
+                    <option value="price-asc" selected="@(Context.Request.Query["sort"].FirstOrDefault() == "price-asc")">Price, low to high</option>
+                    <option value="price-desc" selected="@(Context.Request.Query["sort"].FirstOrDefault() == "price-desc")">Price, high to low</option>
+                    <option value="rating" selected="@(Context.Request.Query["sort"].FirstOrDefault() == "rating")">Rating</option>
                 </select>
             </label>
+            </form>
             <div class="card-grid">
                 @foreach (var product in Model)
                 {

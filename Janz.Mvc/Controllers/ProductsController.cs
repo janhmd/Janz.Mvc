@@ -19,25 +19,28 @@ namespace Janz.Mvc.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            return View(await SearchAsync("coffee"));
+            // Header-dəki axtarış (?q=) bütün kateqoriyalarda axtarır
+            var query = Request.Query["q"].FirstOrDefault();
+            ViewBag.Query = string.IsNullOrWhiteSpace(query) ? null : query.Trim();
+            return View(await SearchAsync(ViewBag.Query is null ? "coffee" : null));
         }
 
         [HttpGet]
         public async Task<IActionResult> Tea()
         {
-            return View(await GetCategoryAsync("tea"));
+            return View(await SearchAsync("tea"));
         }
 
         [HttpGet]
         public async Task<IActionResult> Chocolate()
         {
-            return View(await GetCategoryAsync("chocolate"));
+            return View(await SearchAsync("chocolate"));
         }
 
         [HttpGet]
         public async Task<IActionResult> Sets()
         {
-            return View(await GetCategoryAsync("sets"));
+            return View(await SearchAsync("sets"));
         }
 
         // Məhsulun səhifəsi. id yoxdursa (köhnə link) ilk qəhvə göstərilir

@@ -1,37 +1,37 @@
 @model List<ProductUIVM>
 @{
-    ViewData["Title"] = "Coffee catalog";
+    ViewData["Title"] = ViewBag.Query is string title ? $"Search: {title}" : "Coffee catalog";
 }
 
 <main>
         <section id="catalog">
-            <h1>Coffee catalog</h1>
+            <h1>@(ViewBag.Query is string heading ? $"Search: {heading}" : "Coffee catalog")</h1>
             <div class="catalog-row">
-                <a class="catalog-tile" href="#">
+                <a class="catalog-tile" href="?use=espresso">
                     <video muted loop playsinline preload="metadata" src="/videos/espresso.mp4"></video>
                     <span>Coffee for espresso</span>
                 </a>
-                <a class="catalog-tile" href="#">
+                <a class="catalog-tile" href="?use=filter">
                     <video muted loop playsinline preload="metadata" src="/videos/filter.mp4"></video>
                     <span>Coffee for filter</span>
                 </a>
-                <a class="catalog-tile" href="#">
+                <a class="catalog-tile" href="?format=capsules">
                     <video muted loop playsinline preload="metadata" src="/videos/capsules.mp4"></video>
                     <span>Capsules</span>
                 </a>
-                <a class="catalog-tile" href="#">
+                <a class="catalog-tile" href="?format=drip">
                     <video muted loop playsinline preload="metadata" src="/videos/drip.mp4"></video>
                     <span>Drip bags</span>
                 </a>
-                <a class="catalog-tile" href="#">
+                <a class="catalog-tile" href="?format=cans">
                     <video muted loop playsinline preload="metadata" src="/videos/cans.mp4"></video>
                     <span>Drinks in cans</span>
                 </a>
-                <a class="catalog-tile" href="#">
+                <a class="catalog-tile" href="?format=concentrate">
                     <video muted loop playsinline preload="metadata" src="/videos/concentrate.mp4"></video>
                     <span>Coffee concentrate</span>
                 </a>
-                <a class="catalog-tile" href="#">
+                <a class="catalog-tile" href="?format=instant">
                     <video muted loop playsinline preload="metadata" src="/videos/instant.mp4"></video>
                     <span>Instant specialty</span>
                 </a>
@@ -41,22 +41,26 @@
                     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l1.2 4.2L17.5 8.5 13.2 9.8 12 14l-1.2-4.2L6.5 8.5l4.3-1.3zM18 13l.6 2 2 .6-2 .6-.6 2-.6-2-2-.6 2-.6z" /></svg>
                     Choose coffee in a minute
                 </a>
-                <a href="#">For an espresso machine</a>
-                <a href="#">For Turkish coffee</a>
-                <a href="#">For milk drinks</a>
-                <a href="#">For a portafilter</a>
-                <a href="#">Ground coffee</a>
-                <a href="#">Coffee with low acidity</a>
-                <a href="#">For a cup</a>
-                <a href="#">Fermented coffee</a>
-                <a href="#">Limited edition</a>
-                <a href="#">Whole bean</a>
-                <a href="#">Whole bean 1 kg</a>
+                <a href="?tag=@CatalogQuery.Slug("For an espresso machine")" class="@(CatalogQuery.Has(Context.Request, "tag", CatalogQuery.Slug("For an espresso machine")) ? "is-on" : null)">For an espresso machine</a>
+                <a href="?tag=@CatalogQuery.Slug("For Turkish coffee")" class="@(CatalogQuery.Has(Context.Request, "tag", CatalogQuery.Slug("For Turkish coffee")) ? "is-on" : null)">For Turkish coffee</a>
+                <a href="?tag=@CatalogQuery.Slug("For milk drinks")" class="@(CatalogQuery.Has(Context.Request, "tag", CatalogQuery.Slug("For milk drinks")) ? "is-on" : null)">For milk drinks</a>
+                <a href="?tag=@CatalogQuery.Slug("For a portafilter")" class="@(CatalogQuery.Has(Context.Request, "tag", CatalogQuery.Slug("For a portafilter")) ? "is-on" : null)">For a portafilter</a>
+                <a href="?tag=@CatalogQuery.Slug("Ground coffee")" class="@(CatalogQuery.Has(Context.Request, "tag", CatalogQuery.Slug("Ground coffee")) ? "is-on" : null)">Ground coffee</a>
+                <a href="?tag=@CatalogQuery.Slug("Coffee with low acidity")" class="@(CatalogQuery.Has(Context.Request, "tag", CatalogQuery.Slug("Coffee with low acidity")) ? "is-on" : null)">Coffee with low acidity</a>
+                <a href="?tag=@CatalogQuery.Slug("For a cup")" class="@(CatalogQuery.Has(Context.Request, "tag", CatalogQuery.Slug("For a cup")) ? "is-on" : null)">For a cup</a>
+                <a href="?tag=@CatalogQuery.Slug("Fermented coffee")" class="@(CatalogQuery.Has(Context.Request, "tag", CatalogQuery.Slug("Fermented coffee")) ? "is-on" : null)">Fermented coffee</a>
+                <a href="?tag=@CatalogQuery.Slug("Limited edition")" class="@(CatalogQuery.Has(Context.Request, "tag", CatalogQuery.Slug("Limited edition")) ? "is-on" : null)">Limited edition</a>
+                <a href="?tag=@CatalogQuery.Slug("Whole bean")" class="@(CatalogQuery.Has(Context.Request, "tag", CatalogQuery.Slug("Whole bean")) ? "is-on" : null)">Whole bean</a>
+                <a href="?tag=@CatalogQuery.Slug("Whole bean 1 kg")" class="@(CatalogQuery.Has(Context.Request, "tag", CatalogQuery.Slug("Whole bean 1 kg")) ? "is-on" : null)">Whole bean 1 kg</a>
                 <button type="button" aria-expanded="false" aria-label="More filters">
                     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
                 </button>
             </div>
             <form class="catalog-board" method="get" data-auto-submit>
+                @if (ViewBag.Query is string searchQuery)
+                {
+                    <input type="hidden" name="q" value="@searchQuery" />
+                }
                 <div class="filter-col">
                     <div class="filter-group">
                         <h2><button type="button" aria-expanded="true">Price, ₼ <svg class="filter-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></h2>
@@ -150,22 +154,22 @@
                 </div>
                 <div class="listing-main">
                     <div class="listing-tabs">
-                        <button type="button" class="is-on" aria-pressed="true">All</button>
-                        <button type="button" aria-pressed="false">Recommended</button>
-                        <button type="button" aria-pressed="false">Popular</button>
-                        <button type="button" aria-pressed="false">New</button>
-                        <button type="button" aria-pressed="false">Coffee of the week</button>
-                        <button type="button" aria-pressed="false">Running out</button>
-                        <button type="button" aria-pressed="false">Microlot</button>
+                        <button type="submit" name="tab" value="@CatalogQuery.TabValue("All")" class="@(CatalogQuery.IsTab(Context.Request, "All") ? "is-on" : null)" aria-pressed="@(CatalogQuery.IsTab(Context.Request, "All") ? "true" : "false")">All</button>
+                        <button type="submit" name="tab" value="@CatalogQuery.TabValue("Recommended")" class="@(CatalogQuery.IsTab(Context.Request, "Recommended") ? "is-on" : null)" aria-pressed="@(CatalogQuery.IsTab(Context.Request, "Recommended") ? "true" : "false")">Recommended</button>
+                        <button type="submit" name="tab" value="@CatalogQuery.TabValue("Popular")" class="@(CatalogQuery.IsTab(Context.Request, "Popular") ? "is-on" : null)" aria-pressed="@(CatalogQuery.IsTab(Context.Request, "Popular") ? "true" : "false")">Popular</button>
+                        <button type="submit" name="tab" value="@CatalogQuery.TabValue("New")" class="@(CatalogQuery.IsTab(Context.Request, "New") ? "is-on" : null)" aria-pressed="@(CatalogQuery.IsTab(Context.Request, "New") ? "true" : "false")">New</button>
+                        <button type="submit" name="tab" value="@CatalogQuery.TabValue("Coffee of the week")" class="@(CatalogQuery.IsTab(Context.Request, "Coffee of the week") ? "is-on" : null)" aria-pressed="@(CatalogQuery.IsTab(Context.Request, "Coffee of the week") ? "true" : "false")">Coffee of the week</button>
+                        <button type="submit" name="tab" value="@CatalogQuery.TabValue("Running out")" class="@(CatalogQuery.IsTab(Context.Request, "Running out") ? "is-on" : null)" aria-pressed="@(CatalogQuery.IsTab(Context.Request, "Running out") ? "true" : "false")">Running out</button>
+                        <button type="submit" name="tab" value="@CatalogQuery.TabValue("Microlot")" class="@(CatalogQuery.IsTab(Context.Request, "Microlot") ? "is-on" : null)" aria-pressed="@(CatalogQuery.IsTab(Context.Request, "Microlot") ? "true" : "false")">Microlot</button>
                     </div>
                     <label class="listing-sort">
-                        <select aria-label="Sort">
-                            <option value="" selected>Sort</option>
-                            <option value="popular">Popular</option>
-                            <option value="new">New</option>
-                            <option value="price-asc">Price, low to high</option>
-                            <option value="price-desc">Price, high to low</option>
-                            <option value="rating">Rating</option>
+                        <select name="sort" aria-label="Sort">
+                            <option value="" selected="@(Context.Request.Query["sort"].FirstOrDefault() == "" || string.IsNullOrEmpty(Context.Request.Query["sort"].FirstOrDefault()))">Sort</option>
+                            <option value="popular" selected="@(Context.Request.Query["sort"].FirstOrDefault() == "popular")">Popular</option>
+                            <option value="new" selected="@(Context.Request.Query["sort"].FirstOrDefault() == "new")">New</option>
+                            <option value="price-asc" selected="@(Context.Request.Query["sort"].FirstOrDefault() == "price-asc")">Price, low to high</option>
+                            <option value="price-desc" selected="@(Context.Request.Query["sort"].FirstOrDefault() == "price-desc")">Price, high to low</option>
+                            <option value="rating" selected="@(Context.Request.Query["sort"].FirstOrDefault() == "rating")">Rating</option>
                         </select>
                     </label>
                     @if (Model.Count == 0)

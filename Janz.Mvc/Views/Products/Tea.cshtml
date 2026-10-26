@@ -12,22 +12,24 @@
                 <a class="catalog-tile" href="#"><video muted loop playsinline preload="metadata" src="/videos/tea-white.mp4"></video><span>White tea</span></a>
                 <a class="catalog-tile" href="#"><video muted loop playsinline preload="metadata" src="/videos/tea-puerh.mp4"></video><span>Pu-erh</span></a>
             </div>
+            <form class="listing-form" method="get" data-auto-submit>
             <div class="listing-tabs">
-                <button type="button" class="is-on" aria-pressed="true">All</button>
-                <button type="button" aria-pressed="false">Recommended</button>
-                <button type="button" aria-pressed="false">Popular</button>
-                <button type="button" aria-pressed="false">New</button>
+                <button type="submit" name="tab" value="@CatalogQuery.TabValue("All")" class="@(CatalogQuery.IsTab(Context.Request, "All") ? "is-on" : null)" aria-pressed="@(CatalogQuery.IsTab(Context.Request, "All") ? "true" : "false")">All</button>
+                <button type="submit" name="tab" value="@CatalogQuery.TabValue("Recommended")" class="@(CatalogQuery.IsTab(Context.Request, "Recommended") ? "is-on" : null)" aria-pressed="@(CatalogQuery.IsTab(Context.Request, "Recommended") ? "true" : "false")">Recommended</button>
+                <button type="submit" name="tab" value="@CatalogQuery.TabValue("Popular")" class="@(CatalogQuery.IsTab(Context.Request, "Popular") ? "is-on" : null)" aria-pressed="@(CatalogQuery.IsTab(Context.Request, "Popular") ? "true" : "false")">Popular</button>
+                <button type="submit" name="tab" value="@CatalogQuery.TabValue("New")" class="@(CatalogQuery.IsTab(Context.Request, "New") ? "is-on" : null)" aria-pressed="@(CatalogQuery.IsTab(Context.Request, "New") ? "true" : "false")">New</button>
             </div>
             <label class="listing-sort">
-                <select aria-label="Sort">
-                    <option value="" selected>Sort</option>
-                    <option value="popular">Popular</option>
-                    <option value="new">New</option>
-                    <option value="price-asc">Price, low to high</option>
-                    <option value="price-desc">Price, high to low</option>
-                    <option value="rating">Rating</option>
+                <select name="sort" aria-label="Sort">
+                    <option value="" selected="@(Context.Request.Query["sort"].FirstOrDefault() == "" || string.IsNullOrEmpty(Context.Request.Query["sort"].FirstOrDefault()))">Sort</option>
+                    <option value="popular" selected="@(Context.Request.Query["sort"].FirstOrDefault() == "popular")">Popular</option>
+                    <option value="new" selected="@(Context.Request.Query["sort"].FirstOrDefault() == "new")">New</option>
+                    <option value="price-asc" selected="@(Context.Request.Query["sort"].FirstOrDefault() == "price-asc")">Price, low to high</option>
+                    <option value="price-desc" selected="@(Context.Request.Query["sort"].FirstOrDefault() == "price-desc")">Price, high to low</option>
+                    <option value="rating" selected="@(Context.Request.Query["sort"].FirstOrDefault() == "rating")">Rating</option>
                 </select>
             </label>
+            </form>
             <div class="card-grid">
                 @foreach (var product in Model)
                 {
