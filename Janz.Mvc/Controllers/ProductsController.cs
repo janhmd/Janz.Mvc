@@ -1,3 +1,4 @@
+using Janz.Mvc.Helpers;
 using Janz.Mvc.ViewModels.Products;
 using Janz.Mvc.ViewModels.Reviews;
 using Microsoft.AspNetCore.Authorization;
@@ -18,7 +19,7 @@ namespace Janz.Mvc.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            return View(await GetCategoryAsync("coffee"));
+            return View(await SearchAsync("coffee"));
         }
 
         [HttpGet]
@@ -72,6 +73,12 @@ namespace Janz.Mvc.Controllers
                 Reviews = reviews ?? new ProductReviewsUIVM(),
                 Related = related
             });
+        }
+
+        private async Task<List<ProductUIVM>> SearchAsync(string? category)
+        {
+            var (products, _) = await GetAsync<List<ProductUIVM>>(CatalogQuery.ApiUrl(Request, category));
+            return products ?? new List<ProductUIVM>();
         }
 
         private async Task<List<ProductUIVM>> GetCategoryAsync(string slug)

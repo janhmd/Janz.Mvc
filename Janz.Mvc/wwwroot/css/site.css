@@ -8260,3 +8260,8 @@ a.rating { color: inherit; text-decoration: none; }
 .order-review .entry-caption { margin-top: .4rem; }
 .section-more { display: inline-flex; margin-top: 1.4rem; padding: .7rem 1.4rem; border: 1px solid #333; border-radius: 999px; color: #fff; font-size: .9rem; }
 .section-more:hover { border-color: var(--gold); }
+.filter-price { display: flex; gap: .5rem; }
+.filter-price input { width: 100%; min-width: 0; height: 36px; padding: 0 .7rem; border: 1px solid #333; border-radius: 10px; background: #161616; color: #fff; font: inherit; font-size: .85rem; }
+.catalog-empty { margin: 1rem 0; color: #b5b5b5; }
+.catalog-empty a { color: var(--gold); }
+.catalog-tags a.is-on { border-color: var(--gold); color: var(--gold); }

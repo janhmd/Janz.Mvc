@@ -2581,3 +2581,9 @@ document.querySelectorAll('a[href^="?tab=comments"]').forEach(function (link) {
         document.getElementById("comments").scrollIntoView({ behavior: "smooth", block: "start" });
     });
 });
+
+document.querySelectorAll("form[data-auto-submit]").forEach(function (form) {
+    form.addEventListener("change", function (event) {
+        if (event.target.matches("input[type=checkbox], input[type=radio], select, input[type=number]")) form.requestSubmit();
+    });
+});
