@@ -1,0 +1,103 @@
+@model AdminReviewListVM
+@{
+    ViewData["Title"] = "Reviews";
+    var filtered = Model.Type is not null || Model.Hidden is not null || Model.Search is not null;
+    var returnUrl = Context.Request.Path + Context.Request.QueryString;
+}
+
+<div class="admin-head">
+    <div>
+        <p class="admin-eyebrow">Customers</p>
+        <h1>Reviews <span>@Model.Reviews.Count</span></h1>
+    </div>
+    <div class="admin-head-actions">
+        <form class="admin-search" method="get" asp-action="Index" role="search">
+            <i class="bi bi-search" aria-hidden="true"></i>
+            <input type="search" name="search" value="@Model.Search" placeholder="Author, product or text" aria-label="Search reviews" />
+            @if (Model.Type is not null)
+            {
+                <input type="hidden" name="type" value="@Model.Type" />
+            }
+        </form>
+    </div>
+</div>
+
+<nav aria-label="Filter reviews">
+    <div class="admin-filter">
+        <a class="@(Model.Type is null && Model.Hidden is null ? "is-on" : null)" asp-action="Index" asp-route-search="@Model.Search">All</a>
+        <a class="@(Model.Type == "product" ? "is-on" : null)" asp-action="Index" asp-route-type="product" asp-route-search="@Model.Search">Products</a>
+        <a class="@(Model.Type == "shop" ? "is-on" : null)" asp-action="Index" asp-route-type="shop" asp-route-search="@Model.Search">Shop</a>
+        <a class="@(Model.Hidden == true ? "is-on" : null)" asp-action="Index" asp-route-hidden="true">Hidden</a>
+    </div>
+</nav>
+
+@if (ViewBag.Error is string error)
+{
+    <div class="admin-flash admin-flash-error" role="alert">@error</div>
+}
+
+<div class="admin-card admin-card-flush">
+    @if (Model.Reviews.Count == 0)
+    {
+        <p class="admin-empty admin-card-pad">@(filtered ? "No reviews match this filter." : "No reviews yet.")</p>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>Review</th>
+                        <th>About</th>
+                        <th>Author</th>
+                        <th>Date</th>
+                        <th class="actions">Operations</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var review in Model.Reviews)
+                    {
+                        <tr>
+                            <td>
+                                <span class="admin-stars">@(new string('★', review.Rating))<span>@(new string('★', 5 - review.Rating))</span></span>
+                                @if (review.DeliveryRating is int delivery)
+                                {
+                                    <small class="admin-muted"> delivery @delivery/5</small>
+                                }
+                                @if (review.IsHidden)
+                                {
+                                    <span class="admin-badge">Hidden</span>
+                                }
+                                <span class="admin-review-text">@(review.Text ?? "—")</span>
+                            </td>
+                            <td>
+                                @if (review.Type == "product")
+                                {
+                                    <a asp-controller="Products" asp-action="Detail" asp-route-id="@review.ProductId">@review.ProductName</a>
+                                }
+                                else
+                                {
+                                    <a asp-controller="Orders" asp-action="Detail" asp-route-id="@review.OrderId">Order #@review.OrderId</a>
+                                }
+                            </td>
+                            <td>@review.AuthorName<br /><small class="admin-muted">@review.AuthorEmail</small></td>
+                            <td>@review.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy")</td>
+                            <td class="actions">
+                                <span class="admin-actions">
+                                    <form method="post" asp-action="@(review.IsHidden ? "Show" : "Hide")" asp-route-type="@review.Type" asp-route-id="@review.Id">
+                                        <input type="hidden" name="returnUrl" value="@returnUrl" />
+                                        <button type="submit" class="admin-btn-sm">@(review.IsHidden ? "Show" : "Hide")</button>
+                                    </form>
+                                    <form method="post" asp-action="Delete" asp-route-type="@review.Type" asp-route-id="@review.Id" data-confirm="Delete this review?">
+                                        <input type="hidden" name="returnUrl" value="@returnUrl" />
+                                        <button type="submit" class="admin-btn-sm is-danger">Delete</button>
+                                    </form>
+                                </span>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>

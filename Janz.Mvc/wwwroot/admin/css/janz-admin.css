@@ -1079,3 +1079,6 @@ html.theme-day .status-scheduled { color: #1f5fbf; }
 .admin-muted { color: var(--a-muted); }
 .admin-product small { display: block; color: var(--a-muted); font-size: .78rem; }
 .admin-section-gap { margin-top: 1.6rem; }
+.admin-stars { color: #e3b23c; letter-spacing: .05em; }
+.admin-stars span { color: var(--a-line); }
+.admin-review-text { display: block; max-width: 34rem; margin-top: .3rem; color: var(--a-text); font-size: .85rem; white-space: normal; }
