@@ -1,4 +1,4 @@
-@model Janz.Mvc.ViewModels.Categories.CategoryFormVM
+@model Janz.Mvc.ViewModels.Categories.CategoryCreateVM
 @{
     ViewData["Title"] = "New category";
 }
@@ -10,4 +10,22 @@
     </div>
 </div>
 
-<partial name="_CategoryForm" model="Model" />
+<form class="admin-form admin-card admin-form-narrow" method="post"
+      asp-action="Create">
+    <div asp-validation-summary="All" class="admin-errors" role="alert"></div>
+    <div class="admin-form-grid">
+        <label class="admin-field admin-field-wide">
+            <span>Name</span>
+            <input asp-for="Name" required maxlength="100" />
+        </label>
+        <label class="admin-field admin-field-wide">
+            <span>Slug</span>
+            <input asp-for="Slug" maxlength="100" pattern="[a-z0-9-]+" placeholder="coffee" />
+            <small>Used in the address: /Products/... Only small letters, digits and "-". Leave it empty to make it from the name.</small>
+        </label>
+    </div>
+    <div class="admin-form-actions">
+        <button type="submit" class="admin-btn">Create</button>
+        <a class="admin-btn is-ghost" asp-action="Index">Cancel</a>
+    </div>
+</form>

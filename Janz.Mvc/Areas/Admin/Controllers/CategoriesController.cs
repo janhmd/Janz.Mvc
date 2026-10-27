@@ -30,17 +30,16 @@ namespace Janz.Mvc.Areas.Admin.Controllers
         [HttpGet]
         public IActionResult Create()
         {
-            return View(new CategoryFormVM());
+            return View(new CategoryCreateVM());
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(CategoryFormVM model)
+        public async Task<IActionResult> Create(CategoryCreateVM model)
         {
-            model.Id = 0;
             if (!ModelState.IsValid) return View(model);
 
-            var (created, errors, status) = await PostAsync<CategoryVM>("api/admin/categories", ToBody(model));
+            var (created, errors, status) = await PostAsync<CategoryVM>("api/admin/categories", ToBody(model.Name, model.Slug));
             if (status == HttpStatusCode.Unauthorized) return await SessionExpiredAsync();
 
             if (created is null)
@@ -60,17 +59,17 @@ namespace Janz.Mvc.Areas.Admin.Controllers
             if (status == HttpStatusCode.Unauthorized) return await SessionExpiredAsync();
             if (category is null) return NotFound();
 
-            return View(new CategoryFormVM { Id = category.Id, Name = category.Name, Slug = category.Slug });
+            return View(new CategoryEditVM { Id = category.Id, Name = category.Name, Slug = category.Slug });
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, CategoryFormVM model)
+        public async Task<IActionResult> Edit(int id, CategoryEditVM model)
         {
             model.Id = id;
             if (!ModelState.IsValid) return View(model);
 
-            var (success, errors, status) = await PutAsync($"api/admin/categories/{id}", ToBody(model));
+            var (success, errors, status) = await PutAsync($"api/admin/categories/{id}", ToBody(model.Name, model.Slug));
             if (status == HttpStatusCode.Unauthorized) return await SessionExpiredAsync();
             if (status == HttpStatusCode.NotFound) return NotFound();
 
@@ -99,9 +98,9 @@ namespace Janz.Mvc.Areas.Admin.Controllers
         }
 
         // Slug boş qalsa API onu addan düzəldir
-        private static object ToBody(CategoryFormVM model)
+        private static object ToBody(string? name, string? slug)
         {
-            return new { name = model.Name?.Trim(), slug = string.IsNullOrWhiteSpace(model.Slug) ? null : model.Slug.Trim() };
+            return new { name = name?.Trim(), slug = string.IsNullOrWhiteSpace(slug) ? null : slug.Trim() };
         }
 
         private void AddErrors(IEnumerable<string> errors)

@@ -2,8 +2,8 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Janz.Mvc.ViewModels.Categories
 {
-    // Admin: kateqoriya əlavə etmək və dəyişmək. Slug boş qalsa API addan düzəldir
-    public class CategoryFormVM
+    // Admin: kateqoriyanı dəyişmək. Slug boş qalsa API addan düzəldir
+    public class CategoryEditVM
     {
         public int Id { get; set; }
 
@@ -14,7 +14,5 @@ namespace Janz.Mvc.ViewModels.Categories
         [StringLength(100, ErrorMessage = "The slug can be at most 100 characters.")]
         [RegularExpression("^[a-z0-9-]+$", ErrorMessage = "The slug can have only small latin letters, numbers and hyphens.")]
         public string? Slug { get; set; }
-
-        public bool IsNew => Id == 0;
     }
 }
