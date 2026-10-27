@@ -75,7 +75,7 @@ namespace Janz.Mvc.ViewModels.Products
         public List<ProductVariantEditVM> Variants { get; set; } = new List<ProductVariantEditVM>();
         public bool HasVariants => Variants.Count > 0;
 
-        // Yeni əsas şəkil (yaradanda mütləqdir, dəyişəndə istəyə bağlı)
+        // Əsas şəkil (mütləqdir)
         public IFormFile? Image { get; set; }
 
         // Qalereyaya əlavə olunan şəkillər

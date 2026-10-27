@@ -81,7 +81,7 @@ namespace Janz.Mvc.Areas.Admin.Controllers
         public async Task<IActionResult> Create()
         {
             var model = new ProductCreateVM();
-            await FillListsAsync(model);
+            await FillCreateListsAsync(model);
             return View(model);
         }
 
@@ -89,27 +89,48 @@ namespace Janz.Mvc.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(ProductCreateVM model)
         {
-            PrepareVariants(model);
+            model.Variants = PrepareVariants(model.Variants);
+            model.Gallery = model.Gallery.Where(m => m.Length > 0).ToList();
+
+            // Variantlar varsa məhsulun öz qiyməti və stoku istifadə olunmur: ən ucuz variant və stokların cəmi göndərilir
+            if (model.HasVariants)
+            {
+                var cheapest = CheapestVariant(model.Variants);
+                if (cheapest is not null)
+                {
+                    model.Price = cheapest.Price!.Value;
+                    model.OldPrice = cheapest.OldPrice;
+                }
+                model.Stock = model.Variants.Sum(m => Math.Max(m.Stock ?? 0, 0));
+            }
+
             if (model.Image is null || model.Image.Length == 0)
             {
                 ModelState.AddModelError(nameof(model.Image), "Choose the main image.");
             }
-            CheckFiles(model);
+            CheckFiles(model.Image, model.Gallery, model.Variants);
+            CheckPriceAndBadge(model.Price, model.OldPrice, model.Badge);
 
             if (!ModelState.IsValid)
             {
-                await FillListsAsync(model);
+                await FillCreateListsAsync(model);
                 return View(model);
             }
 
-            using var form = ToForm(model);
+            using var form = new MultipartFormDataContent();
+            AddFields(form, model.Name, model.Description, model.Price, model.Stock, model.CategoryId, model.OldPrice, model.Badge, model.IsVisible);
+            AddDetails(form, model.Roast, model.Region, model.Processing, model.Caffeine, model.Brewing, model.Storage);
+            AddTaste(form, model.Use, model.Taste, model.Notes, model.Density, model.Acidity, model.TasteGroup);
+            AddLists(form, model.BrewMethods, model.TagIds, model.Variants);
+            AddImages(form, model.Image, model.Gallery);
+
             var (created, errors, status) = await PostFormAsync<ProductVM>("api/admin/products", form);
             if (status == HttpStatusCode.Unauthorized) return await SessionExpiredAsync();
 
             if (created is null)
             {
                 AddErrors(errors);
-                await FillListsAsync(model);
+                await FillCreateListsAsync(model);
                 return View(model);
             }
 
@@ -161,8 +182,7 @@ namespace Janz.Mvc.Areas.Admin.Controllers
                     Images = m.Images
                 }).ToList()
             };
-            await FillListsAsync(model);
-            FillImages(model, product);
+            await FillEditListsAsync(model, product);
             return View(model);
         }
 
@@ -171,12 +191,33 @@ namespace Janz.Mvc.Areas.Admin.Controllers
         public async Task<IActionResult> Edit(int id, ProductEditVM model)
         {
             model.Id = id;
-            PrepareVariants(model);
-            CheckFiles(model);
+            model.Variants = PrepareVariants(model.Variants);
+            model.Gallery = model.Gallery.Where(m => m.Length > 0).ToList();
+
+            // Variantlar varsa məhsulun öz qiyməti və stoku istifadə olunmur: ən ucuz variant və stokların cəmi göndərilir
+            if (model.HasVariants)
+            {
+                var cheapest = CheapestVariant(model.Variants);
+                if (cheapest is not null)
+                {
+                    model.Price = cheapest.Price!.Value;
+                    model.OldPrice = cheapest.OldPrice;
+                }
+                model.Stock = model.Variants.Sum(m => Math.Max(m.Stock ?? 0, 0));
+            }
+
+            CheckFiles(model.Image, model.Gallery, model.Variants);
+            CheckPriceAndBadge(model.Price, model.OldPrice, model.Badge);
 
             if (ModelState.IsValid)
             {
-                using var form = ToForm(model);
+                using var form = new MultipartFormDataContent();
+                AddFields(form, model.Name, model.Description, model.Price, model.Stock, model.CategoryId, model.OldPrice, model.Badge, model.IsVisible);
+                AddDetails(form, model.Roast, model.Region, model.Processing, model.Caffeine, model.Brewing, model.Storage);
+                AddTaste(form, model.Use, model.Taste, model.Notes, model.Density, model.Acidity, model.TasteGroup);
+                AddLists(form, model.BrewMethods, model.TagIds, model.Variants);
+                AddImages(form, model.Image, model.Gallery);
+
                 foreach (var path in model.RemoveImages.Distinct())
                 {
                     form.Add(new StringContent(path), "RemoveImages");
@@ -197,8 +238,7 @@ namespace Janz.Mvc.Areas.Admin.Controllers
 
             // Səhv olanda köhnə şəkilləri yenidən göstərmək üçün məhsulu API-dən alırıq (yazılan sahələr qalır)
             var (product, _) = await GetAsync<ProductVM>($"api/admin/products/{id}");
-            await FillListsAsync(model);
-            FillImages(model, product);
+            await FillEditListsAsync(model, product);
             return View(model);
         }
 
@@ -217,7 +257,7 @@ namespace Janz.Mvc.Areas.Admin.Controllers
         }
 
         // Kateqoriya və teq siyahıları
-        private async Task FillListsAsync(ProductCreateVM model)
+        private async Task FillCreateListsAsync(ProductCreateVM model)
         {
             var (categories, _) = await GetAsync<List<CategoryVM>>("api/admin/categories");
             var (tags, _) = await GetAsync<List<TagVM>>("api/admin/tags");
@@ -225,9 +265,14 @@ namespace Janz.Mvc.Areas.Admin.Controllers
             model.Tags = tags ?? new List<TagVM>();
         }
 
-        // Redaktədə hazırkı şəkillər
-        private static void FillImages(ProductEditVM model, ProductVM? product)
+        // Kateqoriya və teq siyahıları, üstəlik hazırkı şəkillər
+        private async Task FillEditListsAsync(ProductEditVM model, ProductVM? product)
         {
+            var (categories, _) = await GetAsync<List<CategoryVM>>("api/admin/categories");
+            var (tags, _) = await GetAsync<List<TagVM>>("api/admin/tags");
+            model.Categories = categories ?? new List<CategoryVM>();
+            model.Tags = tags ?? new List<TagVM>();
+
             if (product is null)
             {
                 return;
@@ -243,31 +288,30 @@ namespace Janz.Mvc.Areas.Admin.Controllers
             }
         }
 
-        // Variantlar varsa məhsulun öz qiyməti və stoku istifadə olunmur: ən ucuz variant və stokların cəmi göndərilir
-        private void PrepareVariants(ProductCreateVM model)
+        // Tam boş sətirlər atılır, qalanlar yoxlanılır. Variant varsa məhsulun öz qiymət sahələri yoxlanılmır
+        private List<ProductVariantEditVM> PrepareVariants(List<ProductVariantEditVM> list)
         {
-            // Formatı və qiyməti boş qalan tam boş sətirlər nəzərə alınmır
-            model.Variants = model.Variants
+            var variants = list
                 .Where(m => !string.IsNullOrWhiteSpace(m.Format) || m.Price is not null || m.NewImages.Any(f => f.Length > 0) || m.Id is not null)
                 .ToList();
 
-            if (!model.HasVariants)
+            if (variants.Count == 0)
             {
-                return;
+                return variants;
             }
 
-            ModelState.Remove(nameof(model.Price));
-            ModelState.Remove(nameof(model.Stock));
-            ModelState.Remove(nameof(model.OldPrice));
+            ModelState.Remove("Price");
+            ModelState.Remove("Stock");
+            ModelState.Remove("OldPrice");
 
-            if (model.Variants.Count > AdminRules.MaxVariants)
+            if (variants.Count > AdminRules.MaxVariants)
             {
                 ModelState.AddModelError(string.Empty, $"A product can have at most {AdminRules.MaxVariants} variants.");
             }
 
-            for (var i = 0; i < model.Variants.Count; i++)
+            for (var i = 0; i < variants.Count; i++)
             {
-                var variant = model.Variants[i];
+                var variant = variants[i];
                 var name = $"Variant {i + 1}";
                 variant.NewImages = variant.NewImages.Where(m => m.Length > 0).ToList();
 
@@ -281,29 +325,25 @@ namespace Janz.Mvc.Areas.Admin.Controllers
                 }
             }
 
-            var duplicates = model.Variants
+            var duplicates = variants
                 .GroupBy(m => ((m.Format ?? "").Trim().ToLower(), (m.Size ?? "").Trim().ToLower()))
                 .Any(g => g.Count() > 1);
             if (duplicates) ModelState.AddModelError(string.Empty, "Two variants have the same pack and size.");
 
-            var priced = model.Variants.Where(m => m.Price is decimal p && p > 0).ToList();
-            if (priced.Count > 0)
-            {
-                var cheapest = priced.OrderBy(m => m.Price).First();
-                model.Price = cheapest.Price!.Value;
-                model.OldPrice = cheapest.OldPrice;
-            }
-            model.Stock = model.Variants.Sum(m => Math.Max(m.Stock ?? 0, 0));
+            return variants;
+        }
+
+        private static ProductVariantEditVM? CheapestVariant(List<ProductVariantEditVM> variants)
+        {
+            return variants.Where(m => m.Price is decimal p && p > 0).OrderBy(m => m.Price).FirstOrDefault();
         }
 
         // Faylları API-yə göndərmədən yoxlayırıq: ölçü, tip və qalereyanın limiti
-        private void CheckFiles(ProductCreateVM model)
+        private void CheckFiles(IFormFile? image, List<IFormFile> gallery, List<ProductVariantEditVM> variants)
         {
-            model.Gallery = model.Gallery.Where(m => m.Length > 0).ToList();
-
-            var files = model.Gallery.ToList();
-            if (model.Image is not null && model.Image.Length > 0) files.Add(model.Image);
-            files.AddRange(model.Variants.SelectMany(m => m.NewImages));
+            var files = gallery.ToList();
+            if (image is not null && image.Length > 0) files.Add(image);
+            files.AddRange(variants.SelectMany(m => m.NewImages));
 
             foreach (var file in files)
             {
@@ -317,20 +357,23 @@ namespace Janz.Mvc.Areas.Admin.Controllers
                 }
             }
 
+            if (gallery.Count > AdminRules.MaxGallery)
+            {
+                ModelState.AddModelError("Gallery", $"The gallery can have at most {AdminRules.MaxGallery} images.");
+            }
+        }
+
+        private void CheckPriceAndBadge(decimal price, decimal? oldPrice, string? badge)
+        {
             // Köhnə qiymət yalnız endirim varsa: indiki qiymətdən böyük olmalıdır (API də yoxlayır)
-            if (model.OldPrice is decimal old && old <= model.Price)
+            if (oldPrice is decimal old && old <= price)
             {
-                ModelState.AddModelError(nameof(model.OldPrice), "The old price must be more than the price.");
+                ModelState.AddModelError("OldPrice", "The old price must be more than the price.");
             }
 
-            if (!string.IsNullOrEmpty(model.Badge) && !ProductBadges.All.Contains(model.Badge))
+            if (!string.IsNullOrEmpty(badge) && !ProductBadges.All.Contains(badge))
             {
-                ModelState.AddModelError(nameof(model.Badge), "Choose a badge from the list.");
-            }
-
-            if (model.Gallery.Count > AdminRules.MaxGallery)
-            {
-                ModelState.AddModelError(nameof(model.Gallery), $"The gallery can have at most {AdminRules.MaxGallery} images.");
+                ModelState.AddModelError("Badge", "Choose a badge from the list.");
             }
         }
 
@@ -343,44 +386,57 @@ namespace Janz.Mvc.Areas.Admin.Controllers
         }
 
         // API-nin gözlədiyi sahə adları: CreateProductDto / UpdateProductDto
-        private static MultipartFormDataContent ToForm(ProductCreateVM model)
+        private static void AddFields(MultipartFormDataContent form, string? name, string? description, decimal price, int stock, int categoryId, decimal? oldPrice, string? badge, bool isVisible)
         {
-            var form = new MultipartFormDataContent
-            {
-                { new StringContent(model.Name ?? string.Empty), "Name" },
-                { new StringContent(model.Description ?? string.Empty), "Description" },
-                // API InvariantCulture ilə oxuyur: 29.90 vergül yox, nöqtə ilə getməlidir
-                { new StringContent(model.Price.ToString(CultureInfo.InvariantCulture)), "Price" },
-                { new StringContent(model.Stock.ToString(CultureInfo.InvariantCulture)), "Stock" },
-                { new StringContent(model.CategoryId.ToString(CultureInfo.InvariantCulture)), "CategoryId" }
-            };
+            form.Add(new StringContent(name ?? string.Empty), "Name");
+            form.Add(new StringContent(description ?? string.Empty), "Description");
+            // API InvariantCulture ilə oxuyur: 29.90 vergül yox, nöqtə ilə getməlidir
+            form.Add(new StringContent(price.ToString(CultureInfo.InvariantCulture)), "Price");
+            form.Add(new StringContent(stock.ToString(CultureInfo.InvariantCulture)), "Stock");
+            form.Add(new StringContent(categoryId.ToString(CultureInfo.InvariantCulture)), "CategoryId");
 
             // Boş sahələr göndərilmir: API onları boş (null) saxlayır
-            AddText(form, "OldPrice", model.OldPrice?.ToString(CultureInfo.InvariantCulture));
-            AddText(form, "Badge", model.Badge);
-            AddText(form, "IsVisible", model.IsVisible ? "true" : "false");
-            AddText(form, "Roast", model.Roast);
-            AddText(form, "Region", model.Region);
-            AddText(form, "Processing", model.Processing);
-            AddText(form, "Caffeine", model.Caffeine);
-            AddText(form, "Brewing", model.Brewing);
-            AddText(form, "Storage", model.Storage);
-            AddText(form, "Use", model.Use);
-            AddText(form, "Taste", model.Taste);
-            AddText(form, "Notes", model.Notes);
-            AddText(form, "Density", model.Density?.ToString(CultureInfo.InvariantCulture));
-            AddText(form, "Acidity", model.Acidity?.ToString(CultureInfo.InvariantCulture));
-            AddText(form, "TasteGroup", model.TasteGroup);
+            AddText(form, "OldPrice", oldPrice?.ToString(CultureInfo.InvariantCulture));
+            AddText(form, "Badge", badge);
+            AddText(form, "IsVisible", isVisible ? "true" : "false");
+        }
 
-            foreach (var method in model.BrewMethods.Where(m => ProductOptions.BrewMethods.Contains(m)).Distinct())
+        private static void AddDetails(MultipartFormDataContent form, string? roast, string? region, string? processing, string? caffeine, string? brewing, string? storage)
+        {
+            AddText(form, "Roast", roast);
+            AddText(form, "Region", region);
+            AddText(form, "Processing", processing);
+            AddText(form, "Caffeine", caffeine);
+            AddText(form, "Brewing", brewing);
+            AddText(form, "Storage", storage);
+        }
+
+        private static void AddTaste(MultipartFormDataContent form, string? use, string? taste, string? notes, int? density, int? acidity, string? tasteGroup)
+        {
+            AddText(form, "Use", use);
+            AddText(form, "Taste", taste);
+            AddText(form, "Notes", notes);
+            AddText(form, "Density", density?.ToString(CultureInfo.InvariantCulture));
+            AddText(form, "Acidity", acidity?.ToString(CultureInfo.InvariantCulture));
+            AddText(form, "TasteGroup", tasteGroup);
+        }
+
+        private static void AddLists(MultipartFormDataContent form, List<string> brewMethods, List<int> tagIds, List<ProductVariantEditVM> variants)
+        {
+            foreach (var method in brewMethods.Where(m => ProductOptions.BrewMethods.Contains(m)).Distinct())
             {
                 form.Add(new StringContent(method), "BrewMethods");
             }
 
-            // Variantlar: Variants[0].Format ... API-dəki ProductVariantFormDto
-            for (var i = 0; i < model.Variants.Count; i++)
+            foreach (var tagId in tagIds.Distinct())
             {
-                var variant = model.Variants[i];
+                form.Add(new StringContent(tagId.ToString(CultureInfo.InvariantCulture)), "TagIds");
+            }
+
+            // Variantlar: Variants[0].Format ... API-dəki ProductVariantFormDto
+            for (var i = 0; i < variants.Count; i++)
+            {
+                var variant = variants[i];
                 var prefix = $"Variants[{i}].";
                 AddText(form, prefix + "Id", variant.Id?.ToString(CultureInfo.InvariantCulture));
                 AddText(form, prefix + "Format", variant.Format);
@@ -399,23 +455,19 @@ namespace Janz.Mvc.Areas.Admin.Controllers
                     AddFile(form, file, prefix + "NewImages");
                 }
             }
+        }
 
-            foreach (var tagId in model.TagIds.Distinct())
+        private static void AddImages(MultipartFormDataContent form, IFormFile? image, List<IFormFile> gallery)
+        {
+            if (image is not null && image.Length > 0)
             {
-                form.Add(new StringContent(tagId.ToString(CultureInfo.InvariantCulture)), "TagIds");
+                AddFile(form, image, "Image");
             }
 
-            if (model.Image is not null && model.Image.Length > 0)
-            {
-                AddFile(form, model.Image, "Image");
-            }
-
-            foreach (var file in model.Gallery)
+            foreach (var file in gallery)
             {
                 AddFile(form, file, "Gallery");
             }
-
-            return form;
         }
 
         private static void AddText(MultipartFormDataContent form, string name, string? value)
