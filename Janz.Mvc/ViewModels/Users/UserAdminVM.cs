@@ -3,7 +3,7 @@ using Janz.Mvc.ViewModels.Orders;
 namespace Janz.Mvc.ViewModels.Users
 {
     // Admin panel: istifadəçi (api/admin/users)
-    public class UserAdminUIVM
+    public class UserAdminVM
     {
         public string Id { get; set; } = string.Empty;
         public string FullName { get; set; } = string.Empty;
@@ -15,18 +15,18 @@ namespace Janz.Mvc.ViewModels.Users
         public decimal TotalSpent { get; set; }
 
         // Yalnız detal səhifəsində gəlir
-        public List<OrderUIVM> Orders { get; set; } = new List<OrderUIVM>();
+        public List<AdminOrderVM> Orders { get; set; } = new List<AdminOrderVM>();
     }
 
     public class UserListVM
     {
-        public List<UserAdminUIVM> Users { get; set; } = new List<UserAdminUIVM>();
+        public List<UserAdminVM> Users { get; set; } = new List<UserAdminVM>();
         public string? Role { get; set; }
         public bool? Blocked { get; set; }
         public string? Search { get; set; }
     }
 
-    public class RoleUIVM
+    public class RoleVM
     {
         public string Name { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;

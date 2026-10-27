@@ -25,13 +25,13 @@ namespace Janz.Mvc.Areas.Admin.Controllers
 
             var url = "api/admin/orders?status=" + Uri.EscapeDataString(status ?? string.Empty)
                 + "&search=" + Uri.EscapeDataString(search ?? string.Empty);
-            var (orders, code) = await GetAsync<List<AdminOrderUIVM>>(url);
+            var (orders, code) = await GetAsync<List<AdminOrderVM>>(url);
             if (code == HttpStatusCode.Unauthorized) return await SessionExpiredAsync();
             if (orders is null) ViewBag.Error = UnavailableMessage;
 
             return View(new AdminOrderListVM
             {
-                Orders = (orders ?? new List<AdminOrderUIVM>()).OrderByDescending(m => m.CreatedAt).ToList(),
+                Orders = (orders ?? new List<AdminOrderVM>()).OrderByDescending(m => m.CreatedAt).ToList(),
                 Status = status,
                 Search = search
             });
@@ -40,7 +40,7 @@ namespace Janz.Mvc.Areas.Admin.Controllers
         [HttpGet]
         public async Task<IActionResult> Detail(int id)
         {
-            var (order, code) = await GetAsync<AdminOrderUIVM>($"api/admin/orders/{id}");
+            var (order, code) = await GetAsync<AdminOrderVM>($"api/admin/orders/{id}");
             if (code == HttpStatusCode.Unauthorized) return await SessionExpiredAsync();
             if (order is null) return NotFound();
 

@@ -28,11 +28,11 @@ namespace Janz.Mvc.Areas.Admin.Controllers
             var url = "api/admin/reviews?type=" + Uri.EscapeDataString(type ?? string.Empty)
                 + "&search=" + Uri.EscapeDataString(search ?? string.Empty)
                 + (hidden is null ? string.Empty : "&hidden=" + (hidden.Value ? "true" : "false"));
-            var (reviews, status) = await GetAsync<List<AdminReviewUIVM>>(url);
+            var (reviews, status) = await GetAsync<List<AdminReviewVM>>(url);
             if (status == HttpStatusCode.Unauthorized) return await SessionExpiredAsync();
             if (reviews is null) ViewBag.Error = UnavailableMessage;
 
-            return View(new AdminReviewListVM { Reviews = reviews ?? new List<AdminReviewUIVM>(), Type = type, Hidden = hidden, Search = search });
+            return View(new AdminReviewListVM { Reviews = reviews ?? new List<AdminReviewVM>(), Type = type, Hidden = hidden, Search = search });
         }
 
         [HttpPost]

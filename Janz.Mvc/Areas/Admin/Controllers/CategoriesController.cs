@@ -20,11 +20,11 @@ namespace Janz.Mvc.Areas.Admin.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var (categories, status) = await GetAsync<List<CategoryUIVM>>("api/admin/categories");
+            var (categories, status) = await GetAsync<List<CategoryVM>>("api/admin/categories");
             if (status == HttpStatusCode.Unauthorized) return await SessionExpiredAsync();
             if (categories is null) ViewBag.Error = UnavailableMessage;
 
-            return View((categories ?? new List<CategoryUIVM>()).OrderBy(m => m.Id).ToList());
+            return View((categories ?? new List<CategoryVM>()).OrderBy(m => m.Id).ToList());
         }
 
         [HttpGet]
@@ -40,7 +40,7 @@ namespace Janz.Mvc.Areas.Admin.Controllers
             model.Id = 0;
             if (!ModelState.IsValid) return View(model);
 
-            var (created, errors, status) = await PostAsync<CategoryUIVM>("api/admin/categories", ToBody(model));
+            var (created, errors, status) = await PostAsync<CategoryVM>("api/admin/categories", ToBody(model));
             if (status == HttpStatusCode.Unauthorized) return await SessionExpiredAsync();
 
             if (created is null)
@@ -56,7 +56,7 @@ namespace Janz.Mvc.Areas.Admin.Controllers
         [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
-            var (category, status) = await GetAsync<CategoryUIVM>($"api/admin/categories/{id}");
+            var (category, status) = await GetAsync<CategoryVM>($"api/admin/categories/{id}");
             if (status == HttpStatusCode.Unauthorized) return await SessionExpiredAsync();
             if (category is null) return NotFound();
 

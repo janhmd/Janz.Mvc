@@ -24,14 +24,14 @@ namespace Janz.Mvc.Areas.Admin.Controllers
         [HttpGet]
         public async Task<IActionResult> Index(string? search, int? categoryId, bool lowStock = false)
         {
-            var (products, status) = await GetAsync<List<ProductUIVM>>("api/admin/products");
+            var (products, status) = await GetAsync<List<ProductVM>>("api/admin/products");
             if (status == HttpStatusCode.Unauthorized) return await SessionExpiredAsync();
             if (products is null) ViewBag.Error = UnavailableMessage;
 
-            var (categories, _) = await GetAsync<List<CategoryUIVM>>("api/admin/categories");
+            var (categories, _) = await GetAsync<List<CategoryVM>>("api/admin/categories");
 
-            var all = products ?? new List<ProductUIVM>();
-            IEnumerable<ProductUIVM> list = all;
+            var all = products ?? new List<ProductVM>();
+            IEnumerable<ProductVM> list = all;
 
             // "#12" id ilə, qalanı ada görə axtarır
             if (!string.IsNullOrWhiteSpace(search))
@@ -59,7 +59,7 @@ namespace Janz.Mvc.Areas.Admin.Controllers
             return View(new ProductListVM
             {
                 Products = list.ToList(),
-                Categories = categories ?? new List<CategoryUIVM>(),
+                Categories = categories ?? new List<CategoryVM>(),
                 Total = all.Count,
                 Search = search,
                 CategoryId = categoryId,
@@ -70,7 +70,7 @@ namespace Janz.Mvc.Areas.Admin.Controllers
         [HttpGet]
         public async Task<IActionResult> Detail(int id)
         {
-            var (product, status) = await GetAsync<ProductUIVM>($"api/admin/products/{id}");
+            var (product, status) = await GetAsync<ProductVM>($"api/admin/products/{id}");
             if (status == HttpStatusCode.Unauthorized) return await SessionExpiredAsync();
             if (product is null) return NotFound();
 
@@ -104,7 +104,7 @@ namespace Janz.Mvc.Areas.Admin.Controllers
             }
 
             using var form = ToForm(model);
-            var (created, errors, status) = await PostFormAsync<ProductUIVM>("api/admin/products", form);
+            var (created, errors, status) = await PostFormAsync<ProductVM>("api/admin/products", form);
             if (status == HttpStatusCode.Unauthorized) return await SessionExpiredAsync();
 
             if (created is null)
@@ -121,7 +121,7 @@ namespace Janz.Mvc.Areas.Admin.Controllers
         [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
-            var (product, status) = await GetAsync<ProductUIVM>($"api/admin/products/{id}");
+            var (product, status) = await GetAsync<ProductVM>($"api/admin/products/{id}");
             if (status == HttpStatusCode.Unauthorized) return await SessionExpiredAsync();
             if (product is null) return NotFound();
 
@@ -191,7 +191,7 @@ namespace Janz.Mvc.Areas.Admin.Controllers
             }
 
             // Səhv olanda köhnə şəkilləri yenidən göstərmək üçün məhsulu API-dən alırıq (yazılan sahələr qalır)
-            var (product, _) = await GetAsync<ProductUIVM>($"api/admin/products/{id}");
+            var (product, _) = await GetAsync<ProductVM>($"api/admin/products/{id}");
             await FillListsAsync(model, product);
             return View(model);
         }
@@ -211,12 +211,12 @@ namespace Janz.Mvc.Areas.Admin.Controllers
         }
 
         // Kateqoriya və teq siyahıları, redaktədə isə hazırkı şəkillər
-        private async Task FillListsAsync(ProductFormVM model, ProductUIVM? product = null)
+        private async Task FillListsAsync(ProductFormVM model, ProductVM? product = null)
         {
-            var (categories, _) = await GetAsync<List<CategoryUIVM>>("api/admin/categories");
-            var (tags, _) = await GetAsync<List<TagUIVM>>("api/admin/tags");
-            model.Categories = categories ?? new List<CategoryUIVM>();
-            model.Tags = tags ?? new List<TagUIVM>();
+            var (categories, _) = await GetAsync<List<CategoryVM>>("api/admin/categories");
+            var (tags, _) = await GetAsync<List<TagVM>>("api/admin/tags");
+            model.Categories = categories ?? new List<CategoryVM>();
+            model.Tags = tags ?? new List<TagVM>();
 
             if (product is not null)
             {

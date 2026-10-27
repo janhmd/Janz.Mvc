@@ -4,7 +4,7 @@ namespace Janz.Mvc.ViewModels.Orders
     {
         public static readonly string[] Statuses = { "Pending", "Processing", "Shipped", "Delivered", "Cancelled" };
 
-        public List<AdminOrderUIVM> Orders { get; set; } = new List<AdminOrderUIVM>();
+        public List<AdminOrderVM> Orders { get; set; } = new List<AdminOrderVM>();
         public string? Status { get; set; }
         public string? Search { get; set; }
     }

@@ -20,11 +20,11 @@ namespace Janz.Mvc.Areas.Admin.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var (roles, code) = await GetAsync<List<RoleUIVM>>("api/admin/roles");
+            var (roles, code) = await GetAsync<List<RoleVM>>("api/admin/roles");
             if (code == HttpStatusCode.Unauthorized) return await SessionExpiredAsync();
             if (roles is null) ViewBag.Error = UnavailableMessage;
 
-            return View(roles ?? new List<RoleUIVM>());
+            return View(roles ?? new List<RoleVM>());
         }
     }
 }

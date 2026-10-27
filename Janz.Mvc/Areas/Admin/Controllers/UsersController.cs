@@ -28,13 +28,13 @@ namespace Janz.Mvc.Areas.Admin.Controllers
             var url = "api/admin/users?role=" + Uri.EscapeDataString(role ?? string.Empty)
                 + "&search=" + Uri.EscapeDataString(search ?? string.Empty)
                 + (blocked is null ? string.Empty : "&blocked=" + (blocked.Value ? "true" : "false"));
-            var (users, code) = await GetAsync<List<UserAdminUIVM>>(url);
+            var (users, code) = await GetAsync<List<UserAdminVM>>(url);
             if (code == HttpStatusCode.Unauthorized) return await SessionExpiredAsync();
             if (users is null) ViewBag.Error = UnavailableMessage;
 
             return View(new UserListVM
             {
-                Users = (users ?? new List<UserAdminUIVM>()).OrderByDescending(m => m.CreatedAt).ToList(),
+                Users = (users ?? new List<UserAdminVM>()).OrderByDescending(m => m.CreatedAt).ToList(),
                 Role = role,
                 Blocked = blocked,
                 Search = search
@@ -44,7 +44,7 @@ namespace Janz.Mvc.Areas.Admin.Controllers
         [HttpGet]
         public async Task<IActionResult> Detail(string id)
         {
-            var (user, code) = await GetAsync<UserAdminUIVM>($"api/admin/users/{Uri.EscapeDataString(id)}");
+            var (user, code) = await GetAsync<UserAdminVM>($"api/admin/users/{Uri.EscapeDataString(id)}");
             if (code == HttpStatusCode.Unauthorized) return await SessionExpiredAsync();
             if (user is null) return NotFound();
 

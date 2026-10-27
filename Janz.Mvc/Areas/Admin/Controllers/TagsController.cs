@@ -33,7 +33,7 @@ namespace Janz.Mvc.Areas.Admin.Controllers
             var error = CheckName(name);
             if (error is null)
             {
-                var (created, errors, status) = await PostAsync<TagUIVM>("api/admin/tags", new { name = name!.Trim() });
+                var (created, errors, status) = await PostAsync<TagVM>("api/admin/tags", new { name = name!.Trim() });
                 if (status == HttpStatusCode.Unauthorized) return await SessionExpiredAsync();
 
                 if (created is not null)
@@ -97,11 +97,11 @@ namespace Janz.Mvc.Areas.Admin.Controllers
 
         private async Task<(TagListVM Model, IActionResult? Result)> LoadAsync()
         {
-            var (tags, status) = await GetAsync<List<TagUIVM>>("api/admin/tags");
+            var (tags, status) = await GetAsync<List<TagVM>>("api/admin/tags");
             if (status == HttpStatusCode.Unauthorized) return (new TagListVM(), await SessionExpiredAsync());
             if (tags is null) ViewBag.Error = UnavailableMessage;
 
-            return (new TagListVM { Tags = (tags ?? new List<TagUIVM>()).OrderBy(m => m.Id).ToList() }, null);
+            return (new TagListVM { Tags = (tags ?? new List<TagVM>()).OrderBy(m => m.Id).ToList() }, null);
         }
 
         private static string? CheckName(string? name)

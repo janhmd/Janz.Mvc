@@ -89,8 +89,8 @@ namespace Janz.Mvc.ViewModels.Products
         // Səhifədə göstərmək üçün (formadan gəlmir, API-dən doldurulur)
         public string ImagePath { get; set; } = string.Empty;
         public List<string> Images { get; set; } = new List<string>();
-        public List<CategoryUIVM> Categories { get; set; } = new List<CategoryUIVM>();
-        public List<TagUIVM> Tags { get; set; } = new List<TagUIVM>();
+        public List<CategoryVM> Categories { get; set; } = new List<CategoryVM>();
+        public List<TagVM> Tags { get; set; } = new List<TagVM>();
 
         public bool IsNew => Id == 0;
     }

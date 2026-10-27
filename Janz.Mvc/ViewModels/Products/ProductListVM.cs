@@ -5,8 +5,8 @@ namespace Janz.Mvc.ViewModels.Products
     // Admin: məhsulların siyahısı, axtarış və kateqoriya filtri
     public class ProductListVM
     {
-        public List<ProductUIVM> Products { get; set; } = new List<ProductUIVM>();
-        public List<CategoryUIVM> Categories { get; set; } = new List<CategoryUIVM>();
+        public List<ProductVM> Products { get; set; } = new List<ProductVM>();
+        public List<CategoryVM> Categories { get; set; } = new List<CategoryVM>();
         public int Total { get; set; }
         public string? Search { get; set; }
         public int? CategoryId { get; set; }

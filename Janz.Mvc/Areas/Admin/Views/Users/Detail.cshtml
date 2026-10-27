@@ -1,4 +1,4 @@
-@model UserAdminUIVM
+@model UserAdminVM
 @{
     ViewData["Title"] = Model.FullName;
     var canBlock = User.IsInRole(AppRoles.SuperAdmin) || User.IsInRole(AppRoles.Admin);
