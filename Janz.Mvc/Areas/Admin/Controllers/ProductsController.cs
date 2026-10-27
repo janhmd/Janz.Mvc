@@ -80,16 +80,15 @@ namespace Janz.Mvc.Areas.Admin.Controllers
         [HttpGet]
         public async Task<IActionResult> Create()
         {
-            var model = new ProductFormVM();
+            var model = new ProductCreateVM();
             await FillListsAsync(model);
             return View(model);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(ProductFormVM model)
+        public async Task<IActionResult> Create(ProductCreateVM model)
         {
-            model.Id = 0;
             PrepareVariants(model);
             if (model.Image is null || model.Image.Length == 0)
             {
@@ -125,7 +124,7 @@ namespace Janz.Mvc.Areas.Admin.Controllers
             if (status == HttpStatusCode.Unauthorized) return await SessionExpiredAsync();
             if (product is null) return NotFound();
 
-            var model = new ProductFormVM
+            var model = new ProductEditVM
             {
                 Id = product.Id,
                 Name = product.Name,
@@ -150,7 +149,7 @@ namespace Janz.Mvc.Areas.Admin.Controllers
                 Density = product.Density,
                 Acidity = product.Acidity,
                 TasteGroup = product.TasteGroup,
-                Variants = product.Variants.Select(m => new ProductVariantFormVM
+                Variants = product.Variants.Select(m => new ProductVariantEditVM
                 {
                     Id = m.Id,
                     Format = m.Format,
@@ -162,13 +161,14 @@ namespace Janz.Mvc.Areas.Admin.Controllers
                     Images = m.Images
                 }).ToList()
             };
-            await FillListsAsync(model, product);
+            await FillListsAsync(model);
+            FillImages(model, product);
             return View(model);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, ProductFormVM model)
+        public async Task<IActionResult> Edit(int id, ProductEditVM model)
         {
             model.Id = id;
             PrepareVariants(model);
@@ -177,6 +177,11 @@ namespace Janz.Mvc.Areas.Admin.Controllers
             if (ModelState.IsValid)
             {
                 using var form = ToForm(model);
+                foreach (var path in model.RemoveImages.Distinct())
+                {
+                    form.Add(new StringContent(path), "RemoveImages");
+                }
+
                 var (success, errors, status) = await PutFormAsync($"api/admin/products/{id}", form);
                 if (status == HttpStatusCode.Unauthorized) return await SessionExpiredAsync();
                 if (status == HttpStatusCode.NotFound) return NotFound();
@@ -192,7 +197,8 @@ namespace Janz.Mvc.Areas.Admin.Controllers
 
             // Səhv olanda köhnə şəkilləri yenidən göstərmək üçün məhsulu API-dən alırıq (yazılan sahələr qalır)
             var (product, _) = await GetAsync<ProductVM>($"api/admin/products/{id}");
-            await FillListsAsync(model, product);
+            await FillListsAsync(model);
+            FillImages(model, product);
             return View(model);
         }
 
@@ -210,29 +216,35 @@ namespace Janz.Mvc.Areas.Admin.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // Kateqoriya və teq siyahıları, redaktədə isə hazırkı şəkillər
-        private async Task FillListsAsync(ProductFormVM model, ProductVM? product = null)
+        // Kateqoriya və teq siyahıları
+        private async Task FillListsAsync(ProductCreateVM model)
         {
             var (categories, _) = await GetAsync<List<CategoryVM>>("api/admin/categories");
             var (tags, _) = await GetAsync<List<TagVM>>("api/admin/tags");
             model.Categories = categories ?? new List<CategoryVM>();
             model.Tags = tags ?? new List<TagVM>();
+        }
 
-            if (product is not null)
+        // Redaktədə hazırkı şəkillər
+        private static void FillImages(ProductEditVM model, ProductVM? product)
+        {
+            if (product is null)
             {
-                model.ImagePath = product.ImagePath;
-                model.Images = product.Images;
+                return;
+            }
 
-                // Səhv olanda variantın köhnə şəkilləri yenidən göstərilir (silinməsi seçilənlər də, "Undo" üçün)
-                foreach (var variant in model.Variants.Where(m => m.Id is not null))
-                {
-                    variant.Images = product.Variants.FirstOrDefault(m => m.Id == variant.Id)?.Images ?? new List<string>();
-                }
+            model.ImagePath = product.ImagePath;
+            model.Images = product.Images;
+
+            // Səhv olanda variantın köhnə şəkilləri yenidən göstərilir (silinməsi seçilənlər də, "Undo" üçün)
+            foreach (var variant in model.Variants.Where(m => m.Id is not null))
+            {
+                variant.Images = product.Variants.FirstOrDefault(m => m.Id == variant.Id)?.Images ?? new List<string>();
             }
         }
 
         // Variantlar varsa məhsulun öz qiyməti və stoku istifadə olunmur: ən ucuz variant və stokların cəmi göndərilir
-        private void PrepareVariants(ProductFormVM model)
+        private void PrepareVariants(ProductCreateVM model)
         {
             // Formatı və qiyməti boş qalan tam boş sətirlər nəzərə alınmır
             model.Variants = model.Variants
@@ -285,7 +297,7 @@ namespace Janz.Mvc.Areas.Admin.Controllers
         }
 
         // Faylları API-yə göndərmədən yoxlayırıq: ölçü, tip və qalereyanın limiti
-        private void CheckFiles(ProductFormVM model)
+        private void CheckFiles(ProductCreateVM model)
         {
             model.Gallery = model.Gallery.Where(m => m.Length > 0).ToList();
 
@@ -331,7 +343,7 @@ namespace Janz.Mvc.Areas.Admin.Controllers
         }
 
         // API-nin gözlədiyi sahə adları: CreateProductDto / UpdateProductDto
-        private static MultipartFormDataContent ToForm(ProductFormVM model)
+        private static MultipartFormDataContent ToForm(ProductCreateVM model)
         {
             var form = new MultipartFormDataContent
             {
@@ -401,11 +413,6 @@ namespace Janz.Mvc.Areas.Admin.Controllers
             foreach (var file in model.Gallery)
             {
                 AddFile(form, file, "Gallery");
-            }
-
-            foreach (var path in model.RemoveImages.Distinct())
-            {
-                form.Add(new StringContent(path), "RemoveImages");
             }
 
             return form;

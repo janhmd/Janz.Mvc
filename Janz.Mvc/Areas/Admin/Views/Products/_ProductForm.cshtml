@@ -1,17 +1,20 @@
-@model ProductFormVM
+@model ProductCreateVM
 @using System.Globalization
 @inject IConfiguration Configuration
 @{
     var apiBase = Configuration["ApiSettings:BaseUrl"];
-    var hasMain = !string.IsNullOrEmpty(Model.ImagePath);
+    // Redaktədə model ProductEditVM-dir: köhnə şəkillər və Id ondan gəlir
+    var edit = Model as ProductEditVM;
+    var images = edit?.Images ?? new List<string>();
+    var hasMain = !string.IsNullOrEmpty(edit?.ImagePath);
     // Rəqəmlər həmişə nöqtə ilə (input type="number" vergülü qəbul etmir)
     var price = Model.Price > 0 ? Model.Price.ToString("0.00", CultureInfo.InvariantCulture) : string.Empty;
-    var stock = Model.IsNew && Model.Stock == 0 ? string.Empty : Model.Stock.ToString(CultureInfo.InvariantCulture);
+    var stock = edit is null && Model.Stock == 0 ? string.Empty : Model.Stock.ToString(CultureInfo.InvariantCulture);
     var oldPrice = Model.OldPrice?.ToString("0.00", CultureInfo.InvariantCulture);
 }
 
 <form class="admin-form" method="post" enctype="multipart/form-data"
-      asp-action="@(Model.IsNew ? "Create" : "Edit")" asp-route-id="@(Model.IsNew ? null : Model.Id)">
+      asp-action="@(edit is null ? "Create" : "Edit")" asp-route-id="@edit?.Id">
     <div asp-validation-summary="All" class="admin-errors" role="alert"></div>
 
     <div class="admin-grid">
@@ -102,7 +105,7 @@
                 </div>
                 <button type="button" class="admin-btn is-ghost" data-variant-add><i class="bi bi-plus"></i> Add variant</button>
                 <template data-variant-template>
-                    <partial name="_VariantRow" model="new ProductVariantFormVM()" view-data="@(new ViewDataDictionary(ViewData) { { "Index", "__i__" } })" />
+                    <partial name="_VariantRow" model="new ProductVariantEditVM()" view-data="@(new ViewDataDictionary(ViewData) { { "Index", "__i__" } })" />
                 </template>
                 <datalist id="variant-formats">
                     @foreach (var format in ProductOptions.Formats)
@@ -118,7 +121,7 @@
                     @if (hasMain)
                     {
                         <figure class="admin-thumb is-main">
-                            <img src="@ApiUrl.ToAbsolute(apiBase, Model.ImagePath)" alt="" />
+                            <img src="@ApiUrl.ToAbsolute(apiBase, edit!.ImagePath)" alt="" />
                             <figcaption><span class="admin-thumb-label">Main</span></figcaption>
                         </figure>
                     }
@@ -132,11 +135,11 @@
             </div>
 
             <div class="admin-card">
-                <h2>Gallery <span class="admin-count">@Model.Images.Count / @AdminRules.MaxGallery</span></h2>
+                <h2>Gallery <span class="admin-count">@images.Count / @AdminRules.MaxGallery</span></h2>
                 <div class="admin-thumbs">
-                    @foreach (var image in Model.Images)
+                    @foreach (var image in images)
                     {
-                        var remove = Model.RemoveImages.Contains(image);
+                        var remove = edit!.RemoveImages.Contains(image);
                         <figure class="admin-thumb@(remove ? " is-removed" : null)">
                             <img src="@ApiUrl.ToAbsolute(apiBase, image)" alt="" />
                             <figcaption>
@@ -234,8 +237,8 @@
                     <span>Visible in the shop</span>
                 </label>
                 <div class="admin-form-actions">
-                    <button type="submit" class="admin-btn">@(Model.IsNew ? "Create" : "Save")</button>
-                    <a class="admin-btn is-ghost" asp-action="@(Model.IsNew ? "Index" : "Detail")" asp-route-id="@(Model.IsNew ? null : Model.Id)">Cancel</a>
+                    <button type="submit" class="admin-btn">@(edit is null ? "Create" : "Save")</button>
+                    <a class="admin-btn is-ghost" asp-action="@(edit is null ? "Index" : "Detail")" asp-route-id="@edit?.Id">Cancel</a>
                 </div>
             </div>
         </div>

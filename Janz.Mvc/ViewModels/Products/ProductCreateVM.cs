@@ -4,11 +4,9 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Janz.Mvc.ViewModels.Products
 {
-    // Admin: məhsul əlavə etmək və dəyişmək üçün forma (API-yə multipart/form-data kimi gedir)
-    public class ProductFormVM
+    // Admin: yeni məhsul formu (API-yə multipart/form-data kimi gedir)
+    public class ProductCreateVM
     {
-        public int Id { get; set; }
-
         [Required(ErrorMessage = "Enter the name.")]
         [StringLength(150, ErrorMessage = "The name can be at most 150 characters.")]
         public string? Name { get; set; }
@@ -74,7 +72,7 @@ namespace Janz.Mvc.ViewModels.Products
         public string? TasteGroup { get; set; }
 
         // Variantlar varsa qiymət və stok onlardandır (məhsulun öz qiymət sahələri istifadə olunmur)
-        public List<ProductVariantFormVM> Variants { get; set; } = new List<ProductVariantFormVM>();
+        public List<ProductVariantEditVM> Variants { get; set; } = new List<ProductVariantEditVM>();
         public bool HasVariants => Variants.Count > 0;
 
         // Yeni əsas şəkil (yaradanda mütləqdir, dəyişəndə istəyə bağlı)
@@ -83,15 +81,8 @@ namespace Janz.Mvc.ViewModels.Products
         // Qalereyaya əlavə olunan şəkillər
         public List<IFormFile> Gallery { get; set; } = new List<IFormFile>();
 
-        // Qalereyadan silinəcək köhnə şəkillər
-        public List<string> RemoveImages { get; set; } = new List<string>();
-
         // Səhifədə göstərmək üçün (formadan gəlmir, API-dən doldurulur)
-        public string ImagePath { get; set; } = string.Empty;
-        public List<string> Images { get; set; } = new List<string>();
         public List<CategoryVM> Categories { get; set; } = new List<CategoryVM>();
         public List<TagVM> Tags { get; set; } = new List<TagVM>();
-
-        public bool IsNew => Id == 0;
     }
 }

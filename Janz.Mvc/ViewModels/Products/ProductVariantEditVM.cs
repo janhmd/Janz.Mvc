@@ -1,7 +1,7 @@
 namespace Janz.Mvc.ViewModels.Products
 {
     // Admin formasında bir variant sətri (Variants[0].Format, Variants[0].NewImages ...)
-    public class ProductVariantFormVM
+    public class ProductVariantEditVM
     {
         public int? Id { get; set; }
         public string? Format { get; set; }
