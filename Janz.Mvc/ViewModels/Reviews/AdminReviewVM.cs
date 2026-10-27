@@ -15,12 +15,4 @@ namespace Janz.Mvc.ViewModels.Reviews
         public bool IsHidden { get; set; }
         public DateTime CreatedAt { get; set; }
     }
-
-    public class AdminReviewListVM
-    {
-        public List<AdminReviewVM> Reviews { get; set; } = new List<AdminReviewVM>();
-        public string? Type { get; set; }
-        public bool? Hidden { get; set; }
-        public string? Search { get; set; }
-    }
 }

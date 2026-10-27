@@ -17,19 +17,4 @@ namespace Janz.Mvc.ViewModels.Users
         // Yalnız detal səhifəsində gəlir
         public List<AdminOrderVM> Orders { get; set; } = new List<AdminOrderVM>();
     }
-
-    public class UserListVM
-    {
-        public List<UserAdminVM> Users { get; set; } = new List<UserAdminVM>();
-        public string? Role { get; set; }
-        public bool? Blocked { get; set; }
-        public string? Search { get; set; }
-    }
-
-    public class RoleVM
-    {
-        public string Name { get; set; } = string.Empty;
-        public string Description { get; set; } = string.Empty;
-        public int UserCount { get; set; }
-    }
 }

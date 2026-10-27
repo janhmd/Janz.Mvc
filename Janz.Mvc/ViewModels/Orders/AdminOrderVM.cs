@@ -20,17 +20,4 @@ namespace Janz.Mvc.ViewModels.Orders
         public int ItemCount { get; set; }
         public List<string> NextStatuses { get; set; } = new List<string>();
     }
-
-    public class AdminOrderItemVM
-    {
-        public int Id { get; set; }
-        public int ProductId { get; set; }
-        public string ProductName { get; set; } = string.Empty;
-        public string ImagePath { get; set; } = string.Empty;
-        public decimal Price { get; set; }
-        public int Quantity { get; set; }
-        public decimal Total { get; set; }
-        public string? VariantLabel { get; set; }
-        public string? Grind { get; set; }
-    }
 }
