@@ -1,0 +1,60 @@
+@model Janz.Mvc.ViewModels.Coupons.CouponCreateVM
+@{
+    ViewData["Title"] = "New coupon";
+}
+
+<div class="admin-head">
+    <div>
+        <p class="admin-eyebrow"><a asp-action="Index">Coupons</a> / New</p>
+        <h1>New coupon</h1>
+    </div>
+</div>
+
+<form class="admin-form admin-card admin-form-narrow" method="post" asp-action="Create">
+    <div asp-validation-summary="All" class="admin-errors" role="alert"></div>
+    <div class="admin-form-grid">
+        <label class="admin-field admin-field-wide">
+            <span>Code</span>
+            <div class="admin-input-row">
+                <input asp-for="Code" required maxlength="20" pattern="[A-Za-z0-9]+" placeholder="WELCOME10" data-upper />
+                <button type="button" class="admin-btn is-ghost" data-generate>Generate</button>
+            </div>
+            <small>Capital letters and digits only.</small>
+        </label>
+        <label class="admin-field">
+            <span>Type</span>
+            <select asp-for="Type">
+                <option value="Percent">Percent, %</option>
+                <option value="Fixed">Fixed, ₼</option>
+            </select>
+        </label>
+        <label class="admin-field">
+            <span>Value</span>
+            <input asp-for="Value" type="number" min="0.01" max="10000" step="0.01" required />
+        </label>
+        <label class="admin-field">
+            <span>Min order, ₼</span>
+            <input asp-for="MinOrder" type="number" min="0" step="0.01" />
+        </label>
+        <label class="admin-field">
+            <span>Usage limit</span>
+            <input asp-for="UsageLimit" type="number" min="1" placeholder="No limit" />
+        </label>
+        <label class="admin-field">
+            <span>Starts</span>
+            <input asp-for="StartsAt" />
+        </label>
+        <label class="admin-field">
+            <span>Ends</span>
+            <input asp-for="EndsAt" />
+        </label>
+        <label class="admin-check admin-field-wide">
+            <input asp-for="IsActive" type="checkbox" />
+            <span>Active</span>
+        </label>
+    </div>
+    <div class="admin-form-actions">
+        <button type="submit" class="admin-btn">Create</button>
+        <a class="admin-btn is-ghost" asp-action="Index">Cancel</a>
+    </div>
+</form>

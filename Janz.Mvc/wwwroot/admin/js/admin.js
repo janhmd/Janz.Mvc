@@ -122,3 +122,18 @@ document.querySelectorAll("[data-remove-toggle]").forEach(function (box) {
 
     refresh();
 })();
+
+document.querySelectorAll("input[data-upper]").forEach(function (input) {
+    input.addEventListener("input", function () {
+        input.value = input.value.toUpperCase().replace(/[^A-Z0-9]/g, "");
+    });
+});
+
+document.querySelectorAll("[data-generate]").forEach(function (button) {
+    button.addEventListener("click", function () {
+        var letters = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+        var code = "JANZ";
+        for (var i = 0; i < 6; i += 1) code += letters[Math.floor(Math.random() * letters.length)];
+        button.parentNode.querySelector("input").value = code;
+    });
+});
