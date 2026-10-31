@@ -1,0 +1,39 @@
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using System.ComponentModel.DataAnnotations;
+
+namespace Janz.Mvc.ViewModels.Coupons
+{
+    // Admin: kuponu dəyişmək. Type: Percent və ya Fixed
+    public class CouponEditVM
+    {
+        public int Id { get; set; }
+
+        [Required(ErrorMessage = "Enter the code.")]
+        [StringLength(20, ErrorMessage = "The code can be at most 20 characters.")]
+        [RegularExpression("^[A-Za-z0-9]+$", ErrorMessage = "The code can have only latin letters and digits.")]
+        public string? Code { get; set; }
+
+        public string Type { get; set; } = "Percent";
+
+        [Range(0.01, 10000, ErrorMessage = "The value must be between 0.01 and 10 000.")]
+        public decimal Value { get; set; }
+
+        [Range(0, 100000, ErrorMessage = "The min order must be between 0 and 100 000.")]
+        public decimal MinOrder { get; set; }
+
+        [Range(1, int.MaxValue, ErrorMessage = "The usage limit must be at least 1.")]
+        public int? UsageLimit { get; set; }
+
+        [DataType(DataType.Date)]
+        public DateTime? StartsAt { get; set; }
+
+        [DataType(DataType.Date)]
+        public DateTime? EndsAt { get; set; }
+
+        public bool IsActive { get; set; } = true;
+
+        // Yalnız göstərmək üçündür, formadan oxunmur
+        [BindNever]
+        public int UsedCount { get; set; }
+    }
+}
