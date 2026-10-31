@@ -58,7 +58,7 @@
                             _ => "status-expired"
                         };
                         <tr>
-                            <td><code class="admin-code">@coupon.Code</code></td>
+                            <td><code class="admin-code">@coupon.Code</code>@if (coupon.IsFirstOrder){<small class="admin-usage-text"> First order</small>}</td>
                             <td><strong>@(coupon.Type == "Percent" ? coupon.Value.ToString("0.##") + "%" : "₼" + coupon.Value.ToString("0.00"))</strong></td>
                             <td class="num">@(coupon.MinOrder > 0 ? "₼" + coupon.MinOrder.ToString("0.00") : "—")</td>
                             <td>

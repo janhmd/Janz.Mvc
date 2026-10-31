@@ -12,6 +12,7 @@ namespace Janz.Mvc.ViewModels.Coupons
         public DateTime? StartsAt { get; set; }
         public DateTime? EndsAt { get; set; }
         public bool IsActive { get; set; }
+        public bool IsFirstOrder { get; set; }
         public string Status { get; set; } = string.Empty;
     }
 }

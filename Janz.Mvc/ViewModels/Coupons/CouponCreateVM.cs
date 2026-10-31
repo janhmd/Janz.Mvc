@@ -28,5 +28,8 @@ namespace Janz.Mvc.ViewModels.Coupons
         public DateTime? EndsAt { get; set; }
 
         public bool IsActive { get; set; } = true;
+
+        // Saytda kupon kartında yalnız sifarişi olmayan müştəriyə göstərilir
+        public bool IsFirstOrder { get; set; }
     }
 }

@@ -43,7 +43,7 @@ namespace Janz.Mvc.Areas.Admin.Controllers
             CheckForm(model.Type, model.Value, model.StartsAt, model.EndsAt);
             if (!ModelState.IsValid) return View(model);
 
-            var body = ToBody(model.Code, model.Type, model.Value, model.MinOrder, model.UsageLimit, model.StartsAt, model.EndsAt, model.IsActive);
+            var body = ToBody(model.Code, model.Type, model.Value, model.MinOrder, model.UsageLimit, model.StartsAt, model.EndsAt, model.IsActive, model.IsFirstOrder);
             var (created, errors, status) = await PostAsync<CouponVM>("api/admin/coupons", body);
             if (status == HttpStatusCode.Unauthorized) return await SessionExpiredAsync();
 
@@ -75,6 +75,7 @@ namespace Janz.Mvc.Areas.Admin.Controllers
                 StartsAt = coupon.StartsAt,
                 EndsAt = coupon.EndsAt,
                 IsActive = coupon.IsActive,
+                IsFirstOrder = coupon.IsFirstOrder,
                 UsedCount = coupon.UsedCount
             });
         }
@@ -87,7 +88,7 @@ namespace Janz.Mvc.Areas.Admin.Controllers
             CheckForm(model.Type, model.Value, model.StartsAt, model.EndsAt);
             if (!ModelState.IsValid) return await EditViewAsync(model);
 
-            var body = ToBody(model.Code, model.Type, model.Value, model.MinOrder, model.UsageLimit, model.StartsAt, model.EndsAt, model.IsActive);
+            var body = ToBody(model.Code, model.Type, model.Value, model.MinOrder, model.UsageLimit, model.StartsAt, model.EndsAt, model.IsActive, model.IsFirstOrder);
             var (success, errors, status) = await PutAsync($"api/admin/coupons/{id}", body);
             if (status == HttpStatusCode.Unauthorized) return await SessionExpiredAsync();
             if (status == HttpStatusCode.NotFound) return NotFound();
@@ -142,7 +143,7 @@ namespace Janz.Mvc.Areas.Admin.Controllers
             }
         }
 
-        private static object ToBody(string? code, string type, decimal value, decimal minOrder, int? usageLimit, DateTime? startsAt, DateTime? endsAt, bool isActive)
+        private static object ToBody(string? code, string type, decimal value, decimal minOrder, int? usageLimit, DateTime? startsAt, DateTime? endsAt, bool isActive, bool isFirstOrder)
         {
             return new
             {
@@ -153,7 +154,8 @@ namespace Janz.Mvc.Areas.Admin.Controllers
                 usageLimit,
                 startsAt,
                 endsAt,
-                isActive
+                isActive,
+                isFirstOrder
             };
         }
 

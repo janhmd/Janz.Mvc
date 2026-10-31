@@ -32,6 +32,9 @@ namespace Janz.Mvc.ViewModels.Coupons
 
         public bool IsActive { get; set; } = true;
 
+        // Saytda kupon kartında yalnız sifarişi olmayan müştəriyə göstərilir
+        public bool IsFirstOrder { get; set; }
+
         // Yalnız göstərmək üçündür, formadan oxunmur
         [BindNever]
         public int UsedCount { get; set; }
