@@ -130,9 +130,9 @@
                                 <small>All over Baku; regions by Azerpost</small>
                             </div>
                             <div>
-                                <b>Payment on delivery</b>
-                                <span>Cash or card to the courier</span>
-                                <small>You pay only when you get the order</small>
+                                <b>Card or on delivery</b>
+                                <span>Pay by card after placing the order</span>
+                                <small>Or pay cash or card to the courier</small>
                             </div>
                         </div>
                     </div>
@@ -166,7 +166,7 @@
                         {
                             <p class="co-code-note">@Model.PromoError</p>
                         }
-                        <p class="co-pay-line"><span>Payment: on delivery</span></p>
+                        <p class="co-pay-line"><span>Payment: by card or on delivery</span></p>
                         <button type="submit" class="co-submit" disabled="@(Model.Addresses.Count == 0)">Place an order</button>
                         <label class="co-check co-agree">
                             <input type="checkbox" name="agree" value="true" required checked />

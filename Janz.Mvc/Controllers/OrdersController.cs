@@ -33,6 +33,36 @@ namespace Janz.Mvc.Controllers
             return RedirectToAction(nameof(Detail), new { id = order.Id });
         }
 
+        // Kartla ödəniş: API Stripe sessiyası yaradır, müştəri Stripe-ın səhifəsinə gedir
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Pay(int id)
+        {
+            var (session, errors, status) = await PostAsync<PaymentSessionUIVM>($"api/orders/{id}/checkout", new { });
+            if (status == HttpStatusCode.Unauthorized) return await SessionExpiredAsync();
+
+            if (session is null || string.IsNullOrEmpty(session.Url))
+            {
+                TempData["PayError"] = errors.Length > 0 ? string.Join(" ", errors) : "The payment could not be started.";
+                return RedirectToAction(nameof(Detail), new { id });
+            }
+
+            return Redirect(session.Url);
+        }
+
+        // Stripe ödənişdən sonra bura qaytarır (session_id ünvanda gəlir), ödəniş API-də Stripe-dan yoxlanılır
+        [HttpGet]
+        public async Task<IActionResult> Paid(int id, [FromQuery(Name = "session_id")] string? sessionId)
+        {
+            var (paid, errors, status) = await PostAsync<PaymentResultUIVM>($"api/orders/{id}/confirm-payment", new { sessionId });
+            if (status == HttpStatusCode.Unauthorized) return await SessionExpiredAsync();
+
+            if (paid is null) TempData["PayError"] = string.Join(" ", errors);
+            else TempData["Toast"] = paid.IsPaid ? "Thank you! The order is paid." : "The payment is not finished yet.";
+
+            return RedirectToAction(nameof(Detail), new { id });
+        }
+
         // Başqasının sifarişi API-də 404 qaytarır: xəta səhifəsi göstərilir
         [HttpGet]
         public async Task<IActionResult> Detail(int id)
