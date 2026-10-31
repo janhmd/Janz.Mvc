@@ -31,6 +31,13 @@
                     </div>
                 }
             </div>
+            @if (Model.CouponCode is not null)
+            {
+                <div class="cart-sum">
+                    <span>Promo code @Model.CouponCode</span>
+                    <strong>−₼@Model.Discount.ToString("0.00")</strong>
+                </div>
+            }
             <div class="cart-sum">
                 <span>Total</span>
                 <strong>₼@Model.Total.ToString("0.00")</strong>

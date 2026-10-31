@@ -19,6 +19,10 @@
             <dt>Recipient</dt><dd>@(string.IsNullOrEmpty(Model.DeliveryFullName) ? "—" : Model.DeliveryFullName)</dd>
             <dt>Phone</dt><dd>@(string.IsNullOrEmpty(Model.DeliveryPhone) ? "—" : Model.DeliveryPhone)</dd>
             <dt>Address</dt><dd>@(string.IsNullOrEmpty(Model.DeliveryLine) ? "—" : $"{Model.DeliveryLine}, {Model.DeliveryCity} {Model.DeliveryPostalCode}")</dd>
+            @if (Model.CouponCode is not null)
+            {
+                <dt>Promo code</dt><dd><code class="admin-code">@Model.CouponCode</code> −₼@Model.Discount.ToString("0.00")</dd>
+            }
             <dt>Total</dt><dd>₼@Model.Total.ToString("0.00")</dd>
         </dl>
     </div>
