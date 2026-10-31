@@ -116,13 +116,26 @@
                             }
                         </div>
                     }
-                    <div class="cheaper">
-                        <div>
-                            <div class="cheaper-title">Sign in, and it gets cheaper</div>
-                            <div class="cheaper-note">More discounts in your account</div>
+                    @if (User.Identity?.IsAuthenticated != true)
+                    {
+                        <div class="cheaper">
+                            <div>
+                                <div class="cheaper-title">Sign in, and it gets cheaper</div>
+                                <div class="cheaper-note">More discounts in your account</div>
+                            </div>
+                            <a href="/Account/Login" aria-label="Sign in">→</a>
                         </div>
-                        <a href="/Account/Login" aria-label="Sign in">→</a>
-                    </div>
+                    }
+                    else if (Model.Coupon is not null)
+                    {
+                        <div class="cheaper">
+                            <div>
+                                <div class="cheaper-title">Discount @Model.Coupon.Discount on the first order</div>
+                                <div class="cheaper-note">Promo code @Model.Coupon.Code</div>
+                            </div>
+                            <a href="/Cart?promo=@Model.Coupon.Code" aria-label="Apply the promo code">→</a>
+                        </div>
+                    }
                     @if (variant is not null)
                     {
                         <div class="buy-row">

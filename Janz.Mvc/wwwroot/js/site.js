@@ -2587,3 +2587,14 @@ document.querySelectorAll("form[data-auto-submit]").forEach(function (form) {
         if (event.target.matches("input[type=checkbox], input[type=radio], select, input[type=number]")) form.requestSubmit();
     });
 });
+
+document.querySelectorAll("[data-copy]").forEach(function (button) {
+    button.addEventListener("click", function () {
+        var text = button.getAttribute("data-copy");
+        if (navigator.clipboard) {
+            navigator.clipboard.writeText(text).then(function () {
+                showToast("Copied: " + text);
+            });
+        }
+    });
+});

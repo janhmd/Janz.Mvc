@@ -69,9 +69,13 @@ namespace Janz.Mvc.Controllers
                 .ToList();
 
             var (reviews, _) = await GetAsync<ProductReviewsUIVM>($"api/products/{product.Id}/reviews");
+            var (coupon, _) = User.Identity?.IsAuthenticated == true
+                ? await GetAsync<Janz.Mvc.ViewModels.Cart.FirstOrderCouponUIVM>("api/coupons/first-order")
+                : (null, null);
 
             return View(new ProductPageVM
             {
+                Coupon = coupon,
                 Product = product,
                 Reviews = reviews ?? new ProductReviewsUIVM(),
                 Related = related

@@ -5,5 +5,8 @@ namespace Janz.Mvc.ViewModels.Products
         public Janz.Mvc.ViewModels.Reviews.ShopReviewsUIVM Reviews { get; set; } = new Janz.Mvc.ViewModels.Reviews.ShopReviewsUIVM();
         public List<ProductUIVM> Coffee { get; set; } = new List<ProductUIVM>();
         public List<ProductUIVM> Sets { get; set; } = new List<ProductUIVM>();
+
+        // Daxil olmuş, hələ sifarişi olmayan müştəriyə ilk sifariş kuponu
+        public Janz.Mvc.ViewModels.Cart.FirstOrderCouponUIVM? Coupon { get; set; }
     }
 }

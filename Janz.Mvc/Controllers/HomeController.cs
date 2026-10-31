@@ -18,9 +18,13 @@ namespace Janz.Mvc.Controllers
             var (coffee, _) = await GetAsync<List<ProductUIVM>>("api/products/category/coffee");
             var (sets, _) = await GetAsync<List<ProductUIVM>>("api/products/category/sets");
             var (reviews, _) = await GetAsync<Janz.Mvc.ViewModels.Reviews.ShopReviewsUIVM>("api/reviews?skip=0&take=2");
+            var (coupon, _) = User.Identity?.IsAuthenticated == true
+                ? await GetAsync<Janz.Mvc.ViewModels.Cart.FirstOrderCouponUIVM>("api/coupons/first-order")
+                : (null, null);
 
             return View(new HomeIndexVM
             {
+                Coupon = coupon,
                 Reviews = reviews ?? new Janz.Mvc.ViewModels.Reviews.ShopReviewsUIVM(),
                 Coffee = coffee ?? new List<ProductUIVM>(),
                 Sets = sets ?? new List<ProductUIVM>()

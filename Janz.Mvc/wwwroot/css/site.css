@@ -8265,3 +8265,34 @@ a.rating { color: inherit; text-decoration: none; }
 .catalog-empty { margin: 1rem 0; color: #b5b5b5; }
 .catalog-empty a { color: var(--gold); }
 .catalog-tags a.is-on { border-color: var(--gold); color: var(--gold); }
+
+.account-code {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 46px;
+    padding: 0 .4rem 0 1rem;
+    border-radius: 12px;
+    background: #1c1c1c;
+    border: 1px solid #333;
+    font-weight: 700;
+    letter-spacing: .06em;
+}
+
+.account-code button {
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    border: 0;
+    border-radius: 10px;
+    background: none;
+    color: inherit;
+    cursor: pointer;
+}
+
+.account-code button:hover { color: var(--gold); }
+.account-code svg { width: 20px; height: 20px; }
+
+html.theme-day .account-code { background: var(--hover); border-color: var(--line); }
+html.theme-day .account-code button:hover { color: var(--ink); }
