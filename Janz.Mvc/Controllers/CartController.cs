@@ -3,6 +3,7 @@ using Janz.Mvc.ViewModels.Cart;
 using Janz.Mvc.ViewModels.Products;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Globalization;
 using System.Net;
 using System.Security.Claims;
 
@@ -18,9 +19,9 @@ namespace Janz.Mvc.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string? promo, int? addressId)
         {
-            var model = new CartPageVM();
+            var model = new CartPageVM { Promo = promo?.Trim().ToUpperInvariant() };
 
             if (User.Identity?.IsAuthenticated == true)
             {
@@ -33,13 +34,22 @@ namespace Janz.Mvc.Controllers
                 model.Addresses = addresses ?? new List<AddressUIVM>();
 
                 // Yeni əlavə olunan ünvan seçili gəlir, yoxsa birincisi
-                var picked = TempData["SelectedAddressId"] as int?;
+                var picked = TempData["SelectedAddressId"] as int? ?? addressId;
                 model.SelectedAddressId = model.Addresses.Any(m => m.Id == picked)
                     ? picked
                     : model.Addresses.FirstOrDefault()?.Id;
 
                 model.UserName = User.Identity?.Name ?? string.Empty;
                 model.Email = User.FindFirstValue(ClaimTypes.Email) ?? string.Empty;
+
+                // Promo kod səbətin cəminə görə API-də yoxlanılır; sifariş verəndə API onu yenidən yoxlayır
+                if (!string.IsNullOrEmpty(model.Promo) && model.Cart.Items.Count > 0)
+                {
+                    var url = $"api/coupons/check?code={Uri.EscapeDataString(model.Promo)}&total={model.Cart.Total.ToString(CultureInfo.InvariantCulture)}";
+                    var (coupon, _) = await GetAsync<CouponCheckUIVM>(url);
+                    model.Coupon = coupon;
+                    if (coupon is null) model.PromoError = "This promo code is not valid for this cart.";
+                }
             }
 
             // Səbətdə olmayan 3 məhsul: "You might like"

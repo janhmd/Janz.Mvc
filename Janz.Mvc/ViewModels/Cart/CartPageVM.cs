@@ -17,5 +17,12 @@ namespace Janz.Mvc.ViewModels.Cart
         // Alıcı bölməsi: hesabın adı və emaili
         public string UserName { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;
+
+        // Promo kod: yazılan kod, tətbiq olunubsa endirimi, olmayıbsa xəta
+        public string? Promo { get; set; }
+        public CouponCheckUIVM? Coupon { get; set; }
+        public string? PromoError { get; set; }
+
+        public decimal PayTotal => Cart.Total - (Coupon?.Discount ?? 0);
     }
 }

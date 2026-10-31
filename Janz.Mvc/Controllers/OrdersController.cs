@@ -19,9 +19,9 @@ namespace Janz.Mvc.Controllers
         // Səbətdəki hər şey seçilən ünvana sifariş olunur; alınmasa (stok, boş səbət) xəta səbətdə göstərilir
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(int addressId)
+        public async Task<IActionResult> Create(int addressId, string? couponCode)
         {
-            var (order, errors, status) = await PostAsync<OrderUIVM>("api/orders", new { addressId });
+            var (order, errors, status) = await PostAsync<OrderUIVM>("api/orders", new { addressId, couponCode });
             if (status == HttpStatusCode.Unauthorized) return await SessionExpiredAsync();
 
             if (order is null)

@@ -142,12 +142,30 @@
                     <div class="co-total">
                         <div class="co-total-head">
                             <h2>To pay</h2>
-                            <strong class="co-sum">₼@Model.Cart.Total.ToString("0.00")</strong>
+                            <strong class="co-sum">₼@Model.PayTotal.ToString("0.00")</strong>
                         </div>
                         <dl class="co-rows">
                             <div><dt>Items (@Model.Cart.Count)</dt><dd>₼@Model.Cart.Total.ToString("0.00")</dd></div>
+                            @if (Model.Coupon is not null)
+                            {
+                                <div class="co-row-promo"><dt>Promo code</dt><dd>−₼@Model.Coupon.Discount.ToString("0.00")</dd></div>
+                            }
                             <div><dt>Delivery</dt><dd>free</dd></div>
                         </dl>
+                        @* Kod GET ilə səbət səhifəsinə gedir və orada yoxlanılır; sifarişə yalnız tətbiq olunmuş kod gedir *@
+                        <div class="co-code">
+                            <input name="promo" value="@Model.Promo" placeholder="Promo code" aria-label="Promo code" maxlength="20" autocomplete="off" />
+                            <button type="submit" class="co-code-btn" formaction="/Cart" formmethod="get" formnovalidate>Apply</button>
+                        </div>
+                        @if (Model.Coupon is not null)
+                        {
+                            <input type="hidden" name="couponCode" value="@Model.Coupon.Code" />
+                            <p class="co-code-note is-ok">@Model.Coupon.Code applied. <a href="/Cart">Remove</a></p>
+                        }
+                        else if (Model.PromoError is not null)
+                        {
+                            <p class="co-code-note">@Model.PromoError</p>
+                        }
                         <p class="co-pay-line"><span>Payment: on delivery</span></p>
                         <button type="submit" class="co-submit" disabled="@(Model.Addresses.Count == 0)">Place an order</button>
                         <label class="co-check co-agree">
