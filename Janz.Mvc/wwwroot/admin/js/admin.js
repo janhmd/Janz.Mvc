@@ -137,3 +137,30 @@ document.querySelectorAll("[data-generate]").forEach(function (button) {
         button.parentNode.querySelector("input").value = code;
     });
 });
+
+(function () {
+    var body = document.querySelector("[data-level-rows]");
+    if (!body) return;
+    var template = document.querySelector("[data-level-template]");
+
+    function renumber() {
+        body.querySelectorAll("[data-level-row]").forEach(function (row, index) {
+            row.querySelectorAll("[name]").forEach(function (input) {
+                input.name = input.name.replace(/Levels\[[^\]]*\]/, "Levels[" + index + "]");
+            });
+        });
+    }
+
+    body.addEventListener("click", function (event) {
+        var button = event.target.closest("[data-level-remove]");
+        if (!button) return;
+        button.closest("[data-level-row]").remove();
+        renumber();
+    });
+
+    document.querySelector("[data-add-level]").addEventListener("click", function () {
+        body.insertAdjacentHTML("beforeend", template.innerHTML);
+        renumber();
+        body.lastElementChild.querySelector("input:not([type=hidden])").focus();
+    });
+})();

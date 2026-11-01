@@ -1,0 +1,68 @@
+@model Janz.Mvc.ViewModels.DiscountLevels.DiscountLevelListVM
+@{
+    ViewData["Title"] = "Discount levels";
+}
+
+<div class="admin-head">
+    <div>
+        <p class="admin-eyebrow">Shop</p>
+        <h1>Discount levels <span>@Model.Levels.Count</span></h1>
+    </div>
+</div>
+
+@if (ViewBag.Error is string error)
+{
+    <div class="admin-flash admin-flash-error" role="alert">@error</div>
+}
+
+@* Bütün cədvəl bir formadır: silinən sətir saxlayanda silinir *@
+<form class="admin-card admin-card-flush" method="post" asp-action="Index">
+    <div class="admin-card-head admin-card-pad">
+        <h2>Levels</h2>
+        <button type="submit" class="admin-btn">Save levels</button>
+    </div>
+    <div asp-validation-summary="All" class="admin-errors admin-card-pad" role="alert"></div>
+    <div class="table-responsive">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>Level</th>
+                    <th class="num">Spent from</th>
+                    <th class="num">Discount</th>
+                    <th>Perks</th>
+                    <th class="num">Customers</th>
+                    <th class="actions">Operations</th>
+                </tr>
+            </thead>
+            <tbody data-level-rows>
+                @for (var i = 0; i < Model.Levels.Count; i++)
+                {
+                    <partial name="_LevelRow" model="Model.Levels[i]" view-data="@(new ViewDataDictionary(ViewData) { { "Index", i } })" />
+                }
+            </tbody>
+        </table>
+    </div>
+    <template data-level-template>
+        <partial name="_LevelRow" model="new Janz.Mvc.ViewModels.DiscountLevels.DiscountLevelVM()" view-data="@(new ViewDataDictionary(ViewData) { { "Index", "__i__" } })" />
+    </template>
+    <div class="admin-card-pad admin-card-foot">
+        <button type="button" class="admin-btn is-ghost" data-add-level><i class="bi bi-plus"></i> Add level</button>
+    </div>
+</form>
+
+<div class="admin-grid admin-grid-even">
+    <div class="admin-card">
+        <h2>Welcome discount</h2>
+        <p class="admin-note">The discount on a new customer's first order is a coupon marked "For the first order". It is shown on the site instead of "Sign in, and it gets cheaper".</p>
+        <a class="admin-btn is-ghost" asp-controller="Coupons" asp-action="Index">Open coupons</a>
+    </div>
+    <div class="admin-card">
+        <h2>How it works</h2>
+        <ul class="admin-steps">
+            <li>The level depends on what the customer has spent on delivered orders.</li>
+            <li>The level's discount is applied to every order automatically.</li>
+            <li>A coupon and the level discount do not add up: the bigger one is used.</li>
+            <li>The level name is shown next to the customer's reviews.</li>
+        </ul>
+    </div>
+</div>
