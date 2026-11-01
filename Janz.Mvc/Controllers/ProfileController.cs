@@ -3,9 +3,12 @@ using Janz.Mvc.ViewModels.Cart;
 using Janz.Mvc.ViewModels.Products;
 using Janz.Mvc.ViewModels.Profile;
 using Janz.Mvc.ViewModels.Orders;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
+using System.Security.Claims;
 
 namespace Janz.Mvc.Controllers
 {
@@ -28,6 +31,8 @@ namespace Janz.Mvc.Controllers
             var (orders, orderStatus) = await GetAsync<List<OrderUIVM>>("api/orders");
             if (orderStatus == HttpStatusCode.Unauthorized) return await SessionExpiredAsync();
 
+            var (profile, _) = await GetAsync<ProfileUIVM>("api/profile");
+
             // Biri alınmasa səhifə yenə də açılır, yuxarıda xəbərdarlıq görünür
             if (addresses is null || orders is null)
             {
@@ -39,6 +44,7 @@ namespace Janz.Mvc.Controllers
                 Addresses = addresses ?? new List<AddressUIVM>(),
                 Orders = orders ?? new List<OrderUIVM>(),
                 EditId = edit,
+                Profile = profile ?? new ProfileUIVM { FullName = User.Identity?.Name ?? string.Empty },
                 Statistics = await StatisticsAsync(orders ?? new List<OrderUIVM>())
             });
         }
@@ -70,6 +76,91 @@ namespace Janz.Mvc.Controllers
             var byId = (products ?? new List<ProductUIVM>()).ToDictionary(m => m.Id);
             model.TopProducts = topIds.Where(byId.ContainsKey).Select(id => byId[id]).ToList();
             return model;
+        }
+
+        // "Edit details" pəncərəsi: məlumatlar, istəyə görə şifrə dəyişmə
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UpdateDetails(string? fullName, string? phoneCode, string? phone, string? nickname,
+                                                       string? org, string? orgAddress, string? voen, string? tax,
+                                                       string? currentPassword, string? newPassword)
+        {
+            var number = phone?.Trim();
+            var (success, errors, status) = await PutAsync("api/profile", new
+            {
+                fullName = fullName?.Trim() ?? string.Empty,
+                phone = string.IsNullOrEmpty(number) ? null : $"{phoneCode} {number}",
+                nickname = nickname?.Trim(),
+                organizationName = org?.Trim(),
+                organizationAddress = orgAddress?.Trim(),
+                voen = voen?.Trim(),
+                taxNumber = tax?.Trim()
+            });
+            if (status == HttpStatusCode.Unauthorized) return await SessionExpiredAsync();
+            if (!success) return DetailsError(errors);
+
+            await RefreshNameAsync(fullName!.Trim());
+
+            if (!string.IsNullOrEmpty(newPassword))
+            {
+                var (changed, passwordErrors, _) = await PutAsync("api/profile/password", new
+                {
+                    currentPassword = currentPassword ?? string.Empty,
+                    newPassword
+                });
+                if (!changed) return DetailsError(passwordErrors);
+            }
+
+            TempData["Toast"] = "Details saved";
+            return Redirect(Url.Action(nameof(Index)) + "#details");
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Avatar(IFormFile? image)
+        {
+            if (image is null || image.Length == 0) return DetailsError(new[] { "Choose an image." });
+
+            using var form = new MultipartFormDataContent();
+            var content = new StreamContent(image.OpenReadStream());
+            content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(image.ContentType);
+            form.Add(content, "Image", image.FileName);
+
+            var (_, errors, status) = await PostFormAsync<ProfileUIVM>("api/profile/avatar", form);
+            if (status == HttpStatusCode.Unauthorized) return await SessionExpiredAsync();
+            if (errors.Length > 0) return DetailsError(errors);
+
+            return Redirect(Url.Action(nameof(Index)) + "#details");
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RemoveAvatar()
+        {
+            var (success, errors, status) = await DeleteAsync("api/profile/avatar");
+            if (status == HttpStatusCode.Unauthorized) return await SessionExpiredAsync();
+            if (!success) return DetailsError(errors);
+
+            return Redirect(Url.Action(nameof(Index)) + "#details");
+        }
+
+        private IActionResult DetailsError(string[] errors)
+        {
+            TempData["AccountError"] = string.Join(" ", errors);
+            return Redirect(Url.Action(nameof(Index)) + "#details");
+        }
+
+        // Header-də ad cookie-dəki claim-dən oxunur: ad dəyişəndə cookie yeni adla yenidən yazılır (token eyni qalır)
+        private async Task RefreshNameAsync(string fullName)
+        {
+            var auth = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            if (!auth.Succeeded || auth.Principal is null || auth.Properties is null) return;
+
+            var claims = auth.Principal.Claims.Where(m => m.Type != ClaimTypes.Name).ToList();
+            claims.Add(new Claim(ClaimTypes.Name, fullName));
+            var principal = new ClaimsPrincipal(new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme));
+
+            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal, auth.Properties);
         }
 
         [HttpPost]

@@ -536,20 +536,6 @@ function closeEdit() {
 
 function openEdit() {
     if (!editOverlay || !editForm) return;
-    var name = document.querySelector(".details-name");
-    var phone = document.querySelector(".details-phone");
-    var email = document.querySelector(".details-email");
-    if (name) editForm.fullname.value = name.textContent.trim();
-    if (email) editForm.email.value = email.textContent.trim();
-    if (phone) {
-        var raw = phone.textContent.trim();
-        var code = editForm.phoneCode.value;
-        if (raw.indexOf("+994") === 0) code = "+994";
-        else if (raw.indexOf("+90") === 0) code = "+90";
-        else if (raw.indexOf("+7") === 0) code = "+7";
-        editForm.phoneCode.value = code;
-        editForm.phone.value = raw.replace(code, "").trim();
-    }
     editOverlay.classList.add("is-on");
 }
 
@@ -566,9 +552,11 @@ if (editOverlay && editForm) {
         editForm.phone.focus();
     });
     editForm.querySelector(".edit-pass-change").addEventListener("click", function () {
-        var field = editForm.password;
+        var field = editForm.currentPassword;
         field.readOnly = false;
-        field.value = "";
+        field.required = true;
+        editForm.newPassword.required = true;
+        editForm.querySelector(".edit-pass-new").hidden = false;
         field.focus();
     });
     editForm.querySelectorAll(".edit-fold-toggle").forEach(function (button) {
@@ -578,19 +566,6 @@ if (editOverlay && editForm) {
             var open = fold.classList.toggle("is-on");
             body.hidden = !open;
         });
-    });
-    editForm.addEventListener("submit", function (event) {
-        event.preventDefault();
-        var name = document.querySelector(".details-name");
-        var phone = document.querySelector(".details-phone");
-        var email = document.querySelector(".details-email");
-        if (name) name.textContent = editForm.fullname.value.trim() || name.textContent;
-        if (phone) {
-            var number = editForm.phone.value.trim();
-            phone.textContent = number ? editForm.phoneCode.value + " " + number : editForm.phoneCode.value;
-        }
-        if (email) email.textContent = editForm.email.value.trim() || email.textContent;
-        closeEdit();
     });
 }
 
@@ -613,7 +588,7 @@ function openAddress() {
 }
 
 if (addressOverlay && addressForm) {
-    document.querySelectorAll(".details-add:not(.details-add-card)").forEach(function (button) {
+    document.querySelectorAll(".details-add").forEach(function (button) {
         button.addEventListener("click", openAddress);
     });
     addressOverlay.addEventListener("click", function (event) {
@@ -648,70 +623,6 @@ if (addressOverlay && addressForm) {
         }
         if (addressList) addressList.appendChild(card);
         closeAddress();
-    });
-}
-
-var cardOverlay = document.querySelector(".card-overlay");
-var cardForm = cardOverlay ? cardOverlay.querySelector(".edit-modal") : null;
-var cardList = document.querySelector(".details-card-list");
-
-function closeCard() {
-    if (!cardOverlay) return;
-    cardOverlay.classList.remove("is-on");
-    if (cardForm) cardForm.reset();
-}
-
-function openCard() {
-    if (!cardOverlay) return;
-    if (cardForm) cardForm.reset();
-    cardOverlay.classList.add("is-on");
-    if (cardForm && cardForm.holder) cardForm.holder.focus();
-}
-
-if (cardOverlay && cardForm) {
-    document.querySelectorAll(".details-add-card").forEach(function (button) {
-        button.addEventListener("click", openCard);
-    });
-    cardOverlay.addEventListener("click", function (event) {
-        if (event.target === cardOverlay) closeCard();
-    });
-    cardForm.querySelector(".edit-cancel").addEventListener("click", closeCard);
-    cardForm.number.addEventListener("input", function () {
-        var digits = cardForm.number.value.replace(/\D/g, "").slice(0, 16);
-        cardForm.number.value = digits.replace(/(\d{4})(?=\d)/g, "$1 ").trim();
-    });
-    cardForm.expiry.addEventListener("input", function () {
-        var digits = cardForm.expiry.value.replace(/\D/g, "").slice(0, 4);
-        cardForm.expiry.value = digits.length > 2 ? digits.slice(0, 2) + " / " + digits.slice(2) : digits;
-    });
-    cardForm.cvc.addEventListener("input", function () {
-        cardForm.cvc.value = cardForm.cvc.value.replace(/\D/g, "").slice(0, 4);
-    });
-    cardForm.addEventListener("submit", function (event) {
-        event.preventDefault();
-        var digits = cardForm.number.value.replace(/\D/g, "");
-        if (digits.length < 16) return;
-        var last = digits.slice(-4);
-        var holder = cardForm.holder.value.trim() || "Card";
-        var expiry = cardForm.expiry.value.trim();
-        if (cardForm.primary.checked && cardList) {
-            cardList.querySelectorAll("em").forEach(function (mark) { mark.remove(); });
-        }
-        var item = document.createElement("div");
-        item.className = "details-card-item";
-        var num = document.createElement("strong");
-        num.textContent = "•••• " + last;
-        var who = document.createElement("p");
-        who.textContent = expiry ? holder + " · " + expiry : holder;
-        item.appendChild(num);
-        item.appendChild(who);
-        if (cardForm.primary.checked) {
-            var mark = document.createElement("em");
-            mark.textContent = "Primary";
-            item.appendChild(mark);
-        }
-        if (cardList) cardList.appendChild(item);
-        closeCard();
     });
 }
 
@@ -1275,24 +1186,11 @@ document.querySelectorAll(".profile-tag-pick").forEach(function (pick) {
     });
 });
 
-document.querySelectorAll(".details-avatar").forEach(function (box) {
-    var field = box.querySelector('input[type="file"]');
-    var photo = box.querySelector(".details-avatar-photo");
-    var letter = box.querySelector(".details-avatar-letter");
-    if (!field || !photo) return;
+document.querySelectorAll("[data-autosubmit]").forEach(function (field) {
     field.addEventListener("change", function () {
-        var file = field.files && field.files[0];
-        if (!file) return;
-        var reader = new FileReader();
-        reader.onload = function () {
-            photo.src = reader.result;
-            photo.hidden = false;
-            if (letter) letter.hidden = true;
-        };
-        reader.readAsDataURL(file);
+        if (field.files && field.files.length) field.form.submit();
     });
 });
-
 
 var readingKey = "janz-reading";
 var readingEmptyCopy = {

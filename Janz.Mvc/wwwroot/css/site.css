@@ -5662,6 +5662,14 @@ a.journal-card:hover { transform: translateY(-3px); }
     cursor: pointer;
 }
 
+.details-avatar label {
+    display: grid;
+    place-items: center;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+}
+
 .details-avatar-photo {
     position: absolute;
     inset: 0;
@@ -5761,51 +5769,6 @@ a.journal-card:hover { transform: translateY(-3px); }
 .details-add span {
     font-size: 1.35rem;
     line-height: 1;
-}
-
-.details-card-row {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: stretch;
-    gap: .7rem;
-    width: 100%;
-}
-
-.details-card-list { display: contents; }
-
-.details-add-card,
-.details-card-item {
-    width: 10.5rem;
-    min-height: 8.6rem;
-    margin: 0;
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: space-between;
-    padding: 1.1rem 1.15rem 1.15rem;
-}
-
-.details-card-item {
-    display: flex;
-    border-radius: 18px;
-    background: #141414;
-    box-sizing: border-box;
-}
-
-.details-card-item strong {
-    font-size: .95rem;
-    letter-spacing: .06em;
-}
-
-.details-card-item p {
-    margin: 0;
-    color: #8d8d8d;
-    font-size: .82rem;
-}
-
-.details-card-item em {
-    color: #8d8d8d;
-    font-size: .75rem;
-    font-style: normal;
 }
 
 @keyframes cabinet-pane-in {
@@ -6953,8 +6916,7 @@ html.theme-day {
 }
 
 .details-add,
-.details-address-card,
-.details-card-item {
+.details-address-card {
     background: #fff;
     box-shadow: 0 8px 24px rgba(0, 0, 0, .06);
 }

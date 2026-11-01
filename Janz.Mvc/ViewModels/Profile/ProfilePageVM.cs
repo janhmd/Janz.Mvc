@@ -8,6 +8,7 @@ namespace Janz.Mvc.ViewModels.Profile
         public List<AddressUIVM> Addresses { get; set; } = new List<AddressUIVM>();
         public List<OrderUIVM> Orders { get; set; } = new List<OrderUIVM>();
         public int? EditId { get; set; }
+        public ProfileUIVM Profile { get; set; } = new ProfileUIVM();
         public StatisticsUIVM Statistics { get; set; } = new StatisticsUIVM();
     }
 }
