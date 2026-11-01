@@ -24,7 +24,7 @@ function isSignedIn() {
 
 function needsAuth(target) {
     return target.closest(
-        'a[href="/Wishlist"], [aria-label="Add to wishlist"], [aria-label="Likes"], [aria-label="Save"], .article-comment-votes button, [data-cart-add]'
+        'a[href="/Wishlist"], [data-wish], [aria-label="Likes"], [aria-label="Save"], .article-comment-votes button, [data-cart-add]'
     );
 }
 document.body.appendChild(authOverlay);
@@ -162,6 +162,48 @@ document.addEventListener("click", function (event) {
         });
     }).catch(function () {
         alert("The API is not running.");
+    }).finally(function () {
+        button.disabled = false;
+    });
+});
+
+document.addEventListener("click", function (event) {
+    var button = event.target.closest("[data-wish]");
+    if (!button || !isSignedIn() || button.disabled) return;
+    var add = !button.classList.contains("is-on");
+    var body = new URLSearchParams();
+    body.set("productId", button.getAttribute("data-wish"));
+    body.set("add", add ? "true" : "false");
+    body.set("__RequestVerificationToken", document.documentElement.getAttribute("data-csrf") || "");
+    button.disabled = true;
+    fetch("/Wishlist/Toggle", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+            "X-Requested-With": "XMLHttpRequest"
+        },
+        body: body.toString()
+    }).then(function (response) {
+        if (response.status === 401) {
+            document.documentElement.setAttribute("data-auth", "0");
+            openAuth();
+            return;
+        }
+        if (!response.ok) {
+            showToast("Could not update favorites");
+            return;
+        }
+        return response.json().then(function (payload) {
+            button.classList.toggle("is-on", add);
+            button.setAttribute("aria-label", add ? "Remove from wishlist" : "Add to wishlist");
+            document.querySelectorAll("[data-wish-count]").forEach(function (badge) {
+                badge.textContent = payload.count;
+                badge.hidden = payload.count === 0;
+            });
+            showToast(add ? "Added to favorites" : "Removed from favorites");
+        });
+    }).catch(function () {
+        showToast("The API is not running.");
     }).finally(function () {
         button.disabled = false;
     });

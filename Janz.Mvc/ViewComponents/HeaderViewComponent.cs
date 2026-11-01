@@ -57,6 +57,13 @@ namespace Janz.Mvc.ViewComponents
                         model.Cart = cart ?? new CartUIVM();
                         model.CartCount = model.Cart.Count;
                     }
+
+                    var wish = await client.GetAsync("api/wishlist");
+                    if (wish.IsSuccessStatusCode)
+                    {
+                        var ids = await wish.Content.ReadFromJsonAsync<List<int>>();
+                        model.WishCount = ids?.Count ?? 0;
+                    }
                 }
                 catch (HttpRequestException)
                 {

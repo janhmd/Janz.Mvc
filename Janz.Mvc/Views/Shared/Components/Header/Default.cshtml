@@ -99,8 +99,9 @@
                     }
                 </div>
             </details>
-            <a class="icon-btn" href="/Wishlist" aria-label="Wishlist">
+            <a class="icon-btn has-count" href="/Wishlist" aria-label="Wishlist">
                 <svg viewBox="0 0 24 24"><path d="M12 19s-7-4.4-7-9a4 4 0 0 1 7-2 4 4 0 0 1 7 2c0 4.6-7 9-7 9z" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
+                <b class="icon-count" data-wish-count @(Model.WishCount == 0 ? "hidden" : "")>@Model.WishCount</b>
             </a>
             <a class="icon-btn has-count" href="/Compare" aria-label="Compare">
                 <svg viewBox="0 0 24 24"><path d="M12 3v15M8 20h8M4.5 7h15" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M4.5 7l-2.2 4.2a2.6 2.6 0 0 0 4.4 0zM19.5 7l-2.2 4.2a2.6 2.6 0 0 0 4.4 0z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>

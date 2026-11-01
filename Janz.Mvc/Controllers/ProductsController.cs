@@ -72,10 +72,14 @@ namespace Janz.Mvc.Controllers
             var (coupon, _) = User.Identity?.IsAuthenticated == true
                 ? await GetAsync<Janz.Mvc.ViewModels.Cart.FirstOrderCouponUIVM>("api/coupons/first-order")
                 : (null, null);
+            var (wishlist, _) = User.Identity?.IsAuthenticated == true
+                ? await GetAsync<List<int>>("api/wishlist")
+                : (null, null);
 
             return View(new ProductPageVM
             {
                 Coupon = coupon,
+                InWishlist = wishlist?.Contains(product.Id) == true,
                 Product = product,
                 Reviews = reviews ?? new ProductReviewsUIVM(),
                 Related = related

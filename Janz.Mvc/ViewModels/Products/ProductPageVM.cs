@@ -8,5 +8,8 @@ namespace Janz.Mvc.ViewModels.Products
 
         // Daxil olmuş, hələ sifarişi olmayan müştəriyə ilk sifariş kuponu
         public Janz.Mvc.ViewModels.Cart.FirstOrderCouponUIVM? Coupon { get; set; }
+
+        // Məhsul seçilmişlərdədirsə ürək dolu görünür
+        public bool InWishlist { get; set; }
     }
 }

@@ -1,21 +1,33 @@
+@model Janz.Mvc.ViewModels.Products.WishlistPageVM
 @{
     ViewData["Title"] = "Favorites";
 }
 
 <main>
-        <!-- Favorites and notes come from the database for a signed-in user. Empty state until then. -->
         <section id="wishlist">
             <h1>Favorites</h1>
             <div class="wish-tabs">
-                <button type="button" class="is-on" data-pane="fav" aria-pressed="true">Favorites 0</button>
+                <button type="button" class="is-on" data-pane="fav" aria-pressed="true">Favorites @Model.Products.Count</button>
                 <button type="button" data-pane="notes" aria-pressed="false">Notes 0</button>
             </div>
             <div class="wish-pane" data-pane="fav">
-                <div class="wish-empty">
-                    <h2>There is nothing in favorites</h2>
-                    <p>Let’s pick something in the catalog</p>
-                    <a href="/Products">To catalog</a>
-                </div>
+                @if (Model.Products.Count == 0)
+                {
+                    <div class="wish-empty">
+                        <h2>There is nothing in favorites</h2>
+                        <p>Let’s pick something in the catalog</p>
+                        <a href="/Products">To catalog</a>
+                    </div>
+                }
+                else
+                {
+                    <div class="card-grid">
+                        @foreach (var product in Model.Products)
+                        {
+                            <partial name="_ProductCard" model="product" />
+                        }
+                    </div>
+                }
             </div>
             <div class="wish-pane" data-pane="notes" hidden>
                 <div class="wish-empty">
