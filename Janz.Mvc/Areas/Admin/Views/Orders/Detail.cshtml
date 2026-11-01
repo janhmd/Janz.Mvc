@@ -23,6 +23,10 @@
             {
                 <dt>Promo code</dt><dd><code class="admin-code">@Model.CouponCode</code> −₼@Model.Discount.ToString("0.00")</dd>
             }
+            else if (Model.LevelName is not null)
+            {
+                <dt>Level discount</dt><dd>@Model.LevelName −₼@Model.Discount.ToString("0.00")</dd>
+            }
             <dt>Total</dt><dd>₼@Model.Total.ToString("0.00")</dd>
             <dt>Payment</dt><dd>@(Model.IsPaid ? $"Paid by card {Model.PaidAt?.ToLocalTime():dd.MM.yyyy HH:mm}" : "On delivery")</dd>
         </dl>

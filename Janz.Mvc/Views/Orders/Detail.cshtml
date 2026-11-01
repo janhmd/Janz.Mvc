@@ -31,10 +31,10 @@
                     </div>
                 }
             </div>
-            @if (Model.CouponCode is not null)
+            @if (Model.CouponCode is not null || Model.LevelName is not null)
             {
                 <div class="cart-sum">
-                    <span>Promo code @Model.CouponCode</span>
+                    <span>@(Model.CouponCode is not null ? $"Promo code {Model.CouponCode}" : $"Discount {Model.LevelName}")</span>
                     <strong>−₼@Model.Discount.ToString("0.00")</strong>
                 </div>
             }

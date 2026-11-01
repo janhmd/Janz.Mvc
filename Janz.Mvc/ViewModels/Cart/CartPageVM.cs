@@ -23,6 +23,12 @@ namespace Janz.Mvc.ViewModels.Cart
         public CouponCheckUIVM? Coupon { get; set; }
         public string? PromoError { get; set; }
 
-        public decimal PayTotal => Cart.Total - (Coupon?.Discount ?? 0);
+        // Endirim səviyyəsi: kupon və səviyyə toplanmır, böyüyü tətbiq olunur (API də belə hesablayır)
+        public DiscountLevelUIVM? Level { get; set; }
+        public decimal LevelDiscount => Level is null ? 0 : Math.Round(Cart.Total * Level.Percent / 100, 2);
+        public bool UsesCoupon => Coupon is not null && Coupon.Discount > LevelDiscount;
+        public bool UsesLevel => !UsesCoupon && LevelDiscount > 0;
+
+        public decimal PayTotal => Cart.Total - (UsesCoupon ? Coupon!.Discount : UsesLevel ? LevelDiscount : 0);
     }
 }

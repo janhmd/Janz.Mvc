@@ -42,6 +42,9 @@ namespace Janz.Mvc.Controllers
                 model.UserName = User.Identity?.Name ?? string.Empty;
                 model.Email = User.FindFirstValue(ClaimTypes.Email) ?? string.Empty;
 
+                var (level, _) = await GetAsync<DiscountLevelUIVM>("api/discount-levels/me");
+                model.Level = level;
+
                 // Promo kod səbətin cəminə görə API-də yoxlanılır; sifariş verəndə API onu yenidən yoxlayır
                 if (!string.IsNullOrEmpty(model.Promo) && model.Cart.Items.Count > 0)
                 {
