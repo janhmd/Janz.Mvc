@@ -28,6 +28,7 @@ namespace Janz.Mvc.Helpers
             new() { Group = "Shop", Title = "Tags", Icon = "bi-tags", Controller = "Tags", Roles = Shop },
             new() { Group = "Shop", Title = "Orders", Icon = "bi-bag-check", Controller = "Orders", Roles = Orders },
             new() { Group = "Shop", Title = "Coupons", Icon = "bi-percent", Controller = "Coupons", Roles = Shop },
+            new() { Group = "Shop", Title = "Gift certificates", Icon = "bi-gift", Controller = "GiftCertificates", Roles = Shop },
             new() { Group = "Shop", Title = "Discount levels", Icon = "bi-trophy", Controller = "DiscountLevels", Roles = Shop },
 
             new() { Group = "Content", Title = "Journal", Icon = "bi-journal-text", Roles = Content },

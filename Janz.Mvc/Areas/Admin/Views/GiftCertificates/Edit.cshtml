@@ -1,0 +1,45 @@
+@model Janz.Mvc.ViewModels.GiftCertificates.GiftCertificateEditVM
+@{
+    ViewData["Title"] = "Edit certificate";
+}
+
+<div class="admin-head">
+    <div>
+        <p class="admin-eyebrow"><a asp-action="Index">Gift certificates</a> / @Model.Code</p>
+        <h1>Edit certificate</h1>
+    </div>
+</div>
+
+<form class="admin-form admin-card admin-form-narrow" method="post" asp-action="Edit" asp-route-id="@Model.Id">
+    <div asp-validation-summary="All" class="admin-errors" role="alert"></div>
+    <div class="admin-form-grid">
+        <label class="admin-field admin-field-wide">
+            <span>Code</span>
+            <div class="admin-input-row">
+                <input asp-for="Code" required maxlength="20" pattern="[A-Za-z0-9]+" placeholder="GIFT50" data-upper />
+                <button type="button" class="admin-btn is-ghost" data-generate>Generate</button>
+            </div>
+            <small>Capital letters and digits only. The customer enters it in the account.</small>
+        </label>
+        <label class="admin-field">
+            <span>Amount, ₼</span>
+            <input asp-for="Amount" type="number" min="0.01" max="5000" step="0.01" required />
+        </label>
+        <label class="admin-field">
+            <span>Valid until</span>
+            <input asp-for="ExpiresAt" />
+        </label>
+        <label class="admin-check admin-field-wide">
+            <input asp-for="IsActive" type="checkbox" />
+            <span>Active</span>
+        </label>
+        @if (Model.UsedAt is DateTime usedAt)
+        {
+            <p class="admin-note admin-field-wide">Used by @(Model.UsedByEmail ?? "a deleted user") on @usedAt.ToLocalTime().ToString("dd.MM.yyyy HH:mm"). The code and amount can't be changed.</p>
+        }
+    </div>
+    <div class="admin-form-actions">
+        <button type="submit" class="admin-btn">Save</button>
+        <a class="admin-btn is-ghost" asp-action="Index">Cancel</a>
+    </div>
+</form>
