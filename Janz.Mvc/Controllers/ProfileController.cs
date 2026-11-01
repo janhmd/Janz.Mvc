@@ -1,4 +1,5 @@
 using Janz.Mvc.ViewModels.Addresses;
+using Janz.Mvc.ViewModels.Balance;
 using Janz.Mvc.ViewModels.Cart;
 using Janz.Mvc.ViewModels.Products;
 using Janz.Mvc.ViewModels.Profile;
@@ -32,6 +33,7 @@ namespace Janz.Mvc.Controllers
             if (orderStatus == HttpStatusCode.Unauthorized) return await SessionExpiredAsync();
 
             var (profile, _) = await GetAsync<ProfileUIVM>("api/profile");
+            var (balance, _) = await GetAsync<BalanceUIVM>("api/balance");
 
             // Biri alınmasa səhifə yenə də açılır, yuxarıda xəbərdarlıq görünür
             if (addresses is null || orders is null)
@@ -44,6 +46,7 @@ namespace Janz.Mvc.Controllers
                 Addresses = addresses ?? new List<AddressUIVM>(),
                 Orders = orders ?? new List<OrderUIVM>(),
                 EditId = edit,
+                Balance = balance ?? new BalanceUIVM(),
                 Profile = profile ?? new ProfileUIVM { FullName = User.Identity?.Name ?? string.Empty },
                 Statistics = await StatisticsAsync(orders ?? new List<OrderUIVM>())
             });
@@ -142,6 +145,49 @@ namespace Janz.Mvc.Controllers
             if (!success) return DetailsError(errors);
 
             return Redirect(Url.Action(nameof(Index)) + "#details");
+        }
+
+        // "Top up balance" pəncərəsi: kartla (Stripe-a yönləndirilir) və ya sertifikat kodu ilə
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> TopUp(string? kind, decimal? amount, string? code)
+        {
+            if (kind == "certificate")
+            {
+                var (_, certificateErrors, certificateStatus) = await PostAsync<BalanceUIVM>("api/balance/certificate", new { code = code?.Trim() ?? string.Empty });
+                if (certificateStatus == HttpStatusCode.Unauthorized) return await SessionExpiredAsync();
+                if (certificateErrors.Length > 0) return LedgerError(certificateErrors);
+
+                TempData["Toast"] = "The certificate is added to your balance";
+                return Redirect(Url.Action(nameof(Index)) + "#ledger");
+            }
+
+            var (session, errors, status) = await PostAsync<PaymentSessionUIVM>("api/balance/top-up", new { amount = amount ?? 0 });
+            if (status == HttpStatusCode.Unauthorized) return await SessionExpiredAsync();
+            if (session is null || string.IsNullOrEmpty(session.Url))
+            {
+                return LedgerError(errors.Length > 0 ? errors : new[] { "The payment could not be started." });
+            }
+
+            return Redirect(session.Url);
+        }
+
+        // Stripe ödənişdən sonra bura qaytarır, ödəniş API-də yoxlanılır
+        [HttpGet]
+        public async Task<IActionResult> TopUpPaid([FromQuery(Name = "session_id")] string? sessionId)
+        {
+            var (result, errors, status) = await PostAsync<TopUpResultUIVM>("api/balance/top-up/confirm", new { sessionId });
+            if (status == HttpStatusCode.Unauthorized) return await SessionExpiredAsync();
+            if (result is null) return LedgerError(errors.Length > 0 ? errors : new[] { "The payment could not be checked." });
+
+            TempData["Toast"] = result.IsPaid ? $"₼{result.Amount:0.00} is added to your balance" : "The payment is not finished yet.";
+            return Redirect(Url.Action(nameof(Index)) + "#ledger");
+        }
+
+        private IActionResult LedgerError(string[] errors)
+        {
+            TempData["AccountError"] = string.Join(" ", errors);
+            return Redirect(Url.Action(nameof(Index)) + "#ledger");
         }
 
         private IActionResult DetailsError(string[] errors)

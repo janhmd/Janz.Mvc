@@ -658,18 +658,6 @@ function openTopup() {
     if (topupForm.amount) topupForm.amount.focus();
 }
 
-function setBalance(value) {
-    var sum = document.querySelector(".cabinet-balance-sum strong");
-    if (sum) sum.textContent = "Balance " + value + "₼";
-}
-
-function readBalance() {
-    var sum = document.querySelector(".cabinet-balance-sum strong");
-    if (!sum) return 0;
-    var n = parseFloat(sum.textContent.replace(/[^\d.]/g, ""));
-    return isNaN(n) ? 0 : n;
-}
-
 if (topupOverlay && topupForm) {
     document.querySelectorAll(".cabinet-replenish").forEach(function (link) {
         link.addEventListener("click", function (event) {
@@ -698,17 +686,14 @@ if (topupOverlay && topupForm) {
         syncTopupLabel();
     });
     topupForm.addEventListener("submit", function (event) {
-        event.preventDefault();
-        if (!topupForm.agree.checked) return;
-        if (topupKind === "certificate") {
-            if (!topupForm.code.value.trim()) return;
-            closeTopup();
-            return;
+        topupForm.kind.value = topupKind;
+        var ready = topupKind === "certificate"
+            ? topupForm.code.value.trim() !== ""
+            : parseFloat(topupForm.amount.value) >= 1;
+        if (!ready || !topupForm.agree.checked) {
+            event.preventDefault();
+            showToast(topupKind === "certificate" ? "Enter the certificate code" : "The amount must be at least 1 ₼");
         }
-        var add = parseFloat(topupForm.amount.value);
-        if (!add || add <= 0) return;
-        setBalance(Math.round((readBalance() + add) * 100) / 100);
-        closeTopup();
     });
 }
 
@@ -1957,7 +1942,6 @@ document.addEventListener("keydown", function (event) {
     closeFollow();
     closeEdit();
     closeAddress();
-    closeCard();
     closeCook();
     closeAbout();
     closeTopup();

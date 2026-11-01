@@ -3993,6 +3993,49 @@ a.journal-card:hover { transform: translateY(-3px); }
     text-transform: uppercase;
 }
 
+.ledger-board {
+    width: 100%;
+    align-self: flex-start;
+}
+
+.ledger-list {
+    display: flex;
+    flex-direction: column;
+    gap: .6rem;
+    max-width: 40rem;
+}
+
+.ledger-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 1.15rem;
+    border-radius: 18px;
+    background: #141414;
+}
+
+.ledger-row div {
+    flex: 1;
+}
+
+.ledger-row strong {
+    display: block;
+    font-size: .95rem;
+}
+
+.ledger-row time,
+.ledger-row a {
+    color: #8d8d8d;
+    font-size: .82rem;
+}
+
+.ledger-row b {
+    font-size: 1rem;
+    white-space: nowrap;
+}
+
+.ledger-row b.is-plus { color: #2e9e5b; }
+
 .stats-grid {
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -6916,7 +6959,8 @@ html.theme-day {
 }
 
 .details-add,
-.details-address-card {
+.details-address-card,
+.ledger-row {
     background: #fff;
     box-shadow: 0 8px 24px rgba(0, 0, 0, .06);
 }

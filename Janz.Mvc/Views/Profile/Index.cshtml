@@ -20,7 +20,7 @@
                 <h1>Personal account</h1>
                 <div class="cabinet-balance">
                     <a class="cabinet-replenish" href="#ledger">Replenish</a>
-                    <a class="cabinet-balance-sum" href="#ledger"><strong>Balance 0₼</strong></a>
+                    <a class="cabinet-balance-sum" href="#ledger"><strong>Balance @Model.Balance.Balance.ToString("0.##")₼</strong></a>
                 </div>
             </div>
             @if (!string.IsNullOrEmpty(error))
@@ -425,10 +425,35 @@
                         </div>
                     </div>
                     <div class="cabinet-pane" data-pane="ledger" hidden>
-                        <div class="cabinet-empty">
-                            <h2>You haven't topped up your account yet</h2>
-                            <p>This page stores records of all top-ups and write-offs of your account</p>
-                        </div>
+                        @if (Model.Balance.Transactions.Count == 0)
+                        {
+                            <div class="cabinet-empty">
+                                <h2>You haven't topped up your account yet</h2>
+                                <p>This page stores records of all top-ups and write-offs of your account</p>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="ledger-board">
+                                <h2 class="cabinet-pane-title">Internal account</h2>
+                                <div class="ledger-list">
+                                    @foreach (var entry in Model.Balance.Transactions)
+                                    {
+                                        <div class="ledger-row">
+                                            <div>
+                                                <strong>@(entry.Note ?? entry.Type)</strong>
+                                                <time datetime="@entry.CreatedAt.ToString("s")">@entry.CreatedAt.ToLocalTime().ToString("d MMMM yyyy, HH:mm")</time>
+                                            </div>
+                                            @if (entry.OrderId is int orderId)
+                                            {
+                                                <a href="/Orders/Detail/@orderId">Order #@orderId</a>
+                                            }
+                                            <b class="@(entry.Amount < 0 ? "is-minus" : "is-plus")">@(entry.Amount < 0 ? "−" : "+")₼@Math.Abs(entry.Amount).ToString("0.00")</b>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        }
                     </div>
                     <div class="cabinet-pane" data-pane="journal" hidden>
                         <div class="reading-board is-empty">
@@ -673,7 +698,8 @@
         </form>
     </div>
     <div class="edit-overlay topup-overlay">
-        <form class="edit-modal topup-modal" role="dialog" aria-modal="true" aria-labelledby="topup-title">
+        <form class="edit-modal topup-modal" asp-controller="Profile" asp-action="TopUp" method="post" role="dialog" aria-modal="true" aria-labelledby="topup-title">
+            <input type="hidden" name="kind" value="money" />
             <h2 id="topup-title">Top up balance</h2>
             <div class="topup-tabs">
                 <button type="button" class="is-on" data-topup="money">Money</button>
@@ -681,7 +707,7 @@
             </div>
             <div class="topup-money">
                 <label class="topup-amount">
-                    <input type="text" name="amount" inputmode="decimal" placeholder="Amount" autocomplete="off" />
+                    <input type="text" name="amount" inputmode="decimal" placeholder="Amount" autocomplete="off" maxlength="7" />
                     <span>₼</span>
                 </label>
                 <button type="button" class="topup-pay is-on" aria-pressed="true">
@@ -697,7 +723,7 @@
             </div>
             <button type="submit" class="edit-save topup-submit">Top up <span class="topup-submit-sum"></span></button>
             <label class="edit-check topup-agree">
-                <input type="checkbox" name="agree" checked />
+                <input type="checkbox" name="agree" checked required />
                 I agree to the terms of data processing, the user agreement and the offer
             </label>
         </form>
