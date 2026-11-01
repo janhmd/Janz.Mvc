@@ -1,4 +1,6 @@
 using Janz.Mvc.ViewModels.Addresses;
+using Janz.Mvc.ViewModels.Cart;
+using Janz.Mvc.ViewModels.Products;
 using Janz.Mvc.ViewModels.Profile;
 using Janz.Mvc.ViewModels.Orders;
 using Microsoft.AspNetCore.Authorization;
@@ -36,8 +38,38 @@ namespace Janz.Mvc.Controllers
             {
                 Addresses = addresses ?? new List<AddressUIVM>(),
                 Orders = orders ?? new List<OrderUIVM>(),
-                EditId = edit
+                EditId = edit,
+                Statistics = await StatisticsAsync(orders ?? new List<OrderUIVM>())
             });
+        }
+
+        // Statistika ləğv olunmamış sifarişlərdən hesablanır, xərclənən məbləğ çatdırılmışlardandır (səviyyə də belə sayılır)
+        private async Task<StatisticsUIVM> StatisticsAsync(List<OrderUIVM> orders)
+        {
+            var placed = orders.Where(m => m.Status != "Cancelled").ToList();
+            var model = new StatisticsUIVM
+            {
+                OrderCount = placed.Count,
+                ItemCount = placed.SelectMany(m => m.Items).Sum(m => m.Quantity),
+                Spent = placed.Where(m => m.Status == "Delivered").Sum(m => m.Total),
+                AverageOrder = placed.Count == 0 ? 0 : Math.Round(placed.Sum(m => m.Total) / placed.Count, 2),
+                Saved = placed.Sum(m => m.Discount)
+            };
+            if (placed.Count == 0) return model;
+
+            var (level, _) = await GetAsync<DiscountLevelUIVM>("api/discount-levels/me");
+            model.Level = level;
+
+            var topIds = placed.SelectMany(m => m.Items)
+                .GroupBy(m => m.ProductId)
+                .OrderByDescending(m => m.Sum(x => x.Quantity))
+                .Select(m => m.Key)
+                .Take(3)
+                .ToList();
+            var (products, _) = await GetAsync<List<ProductUIVM>>("api/products");
+            var byId = (products ?? new List<ProductUIVM>()).ToDictionary(m => m.Id);
+            model.TopProducts = topIds.Where(byId.ContainsKey).Select(id => byId[id]).ToList();
+            return model;
         }
 
         [HttpPost]

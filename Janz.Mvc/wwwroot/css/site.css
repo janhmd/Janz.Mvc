@@ -3993,6 +3993,68 @@ a.journal-card:hover { transform: translateY(-3px); }
     text-transform: uppercase;
 }
 
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: .8rem;
+    margin-bottom: 1rem;
+}
+
+.stats-card,
+.stats-level {
+    padding: 1.1rem 1.2rem;
+    border-radius: 14px;
+    background: #f4f1ec;
+    color: #111;
+}
+
+.stats-card span,
+.stats-level-head span {
+    display: block;
+    margin-bottom: .35rem;
+    color: #6b6660;
+    font-size: .85rem;
+}
+
+.stats-card strong {
+    font-size: 1.5rem;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+}
+
+.stats-level {
+    margin-bottom: 2rem;
+}
+
+.stats-level-head strong {
+    font-size: 1.2rem;
+    font-weight: 800;
+}
+
+.stats-level p {
+    margin: .5rem 0 0;
+    font-size: .9rem;
+}
+
+.stats-level-bar {
+    height: 8px;
+    margin-top: .8rem;
+    border-radius: 999px;
+    background: #e2ddd5;
+    overflow: hidden;
+}
+
+.stats-level-bar b {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    background: #111;
+}
+
+@media (max-width: 720px) {
+    .stats-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
 .cabinet-stats {
     position: relative;
     min-height: 14rem;
