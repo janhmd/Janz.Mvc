@@ -142,7 +142,13 @@
                     <div class="co-total">
                         <div class="co-total-head">
                             <h2>To pay</h2>
-                            <strong class="co-sum">₼@Model.PayTotal.ToString("0.00")</strong>
+                            <strong class="co-sum">
+                                @if (Model.BalancePart > 0)
+                                {
+                                    <span class="co-sum-balance">₼@((Model.PayTotal - Model.BalancePart).ToString("0.00"))</span>
+                                }
+                                <span class="co-sum-full">₼@Model.PayTotal.ToString("0.00")</span>
+                            </strong>
                         </div>
                         <dl class="co-rows">
                             <div><dt>Items (@Model.Cart.Count)</dt><dd>₼@Model.Cart.Total.ToString("0.00")</dd></div>
@@ -154,8 +160,19 @@
                             {
                                 <div class="co-row-promo"><dt>Promo code</dt><dd>−₼@Model.Coupon!.Discount.ToString("0.00")</dd></div>
                             }
+                            @if (Model.BalancePart > 0)
+                            {
+                                <div class="co-row-balance"><dt>From Janz balance</dt><dd>−₼@Model.BalancePart.ToString("0.00")</dd></div>
+                            }
                             <div><dt>Delivery</dt><dd>free</dd></div>
                         </dl>
+                        @if (Model.BalancePart > 0)
+                        {
+                            <label class="co-check co-balance">
+                                <input type="checkbox" name="useBalance" value="true" checked />
+                                <span>Pay ₼@Model.BalancePart.ToString("0.00") from the balance (₼@Model.Balance.ToString("0.00") available)</span>
+                            </label>
+                        }
                         @* Kod GET ilə səbət səhifəsinə gedir və orada yoxlanılır; sifarişə yalnız tətbiq olunmuş kod gedir *@
                         <div class="co-code">
                             <input name="promo" value="@Model.Promo" placeholder="Promo code" aria-label="Promo code" maxlength="20" autocomplete="off" />

@@ -45,6 +45,9 @@ namespace Janz.Mvc.Controllers
                 var (level, _) = await GetAsync<DiscountLevelUIVM>("api/discount-levels/me");
                 model.Level = level;
 
+                var (balance, _) = await GetAsync<Janz.Mvc.ViewModels.Balance.BalanceUIVM>("api/balance");
+                model.Balance = Math.Max(balance?.Balance ?? 0, 0);
+
                 // Promo kod səbətin cəminə görə API-də yoxlanılır; sifariş verəndə API onu yenidən yoxlayır
                 if (!string.IsNullOrEmpty(model.Promo) && model.Cart.Items.Count > 0)
                 {

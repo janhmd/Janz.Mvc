@@ -7658,6 +7658,11 @@ html.theme-day .mini-cart-order { background: var(--ink); color: #fff; }
 .co-code-btn:hover { border-color: var(--gold); color: var(--gold); }
 .co-code-note { margin: -.2rem 0 .7rem; color: #ff8a8a; font-size: .85rem; }
 .co-code-note.is-ok { color: #8be0a8; }
+.co-balance { margin-bottom: .7rem; }
+.co-sum-balance { display: none; }
+.co-total:has(input[name="useBalance"]:checked) .co-sum-balance { display: inline; }
+.co-total:has(input[name="useBalance"]:checked) .co-sum-full { display: none; }
+.co-total:has(input[name="useBalance"]:not(:checked)) .co-row-balance { display: none; }
 
 .co-pay-line { margin: 1rem 0; color: #bdbdbd; }
 .co-pay-line span { border-bottom: 1px dotted #6d6d6d; }

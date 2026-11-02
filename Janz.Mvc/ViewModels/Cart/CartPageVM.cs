@@ -29,6 +29,10 @@ namespace Janz.Mvc.ViewModels.Cart
         public bool UsesCoupon => Coupon is not null && Coupon.Discount > LevelDiscount;
         public bool UsesLevel => !UsesCoupon && LevelDiscount > 0;
 
+        // Daxili hesab: sifarişdə istifadə olunarsa ödəniləcək məbləğdən çıxılır (çatmazsa qalanı kartla və ya çatdırılmada)
+        public decimal Balance { get; set; }
+        public decimal BalancePart => Math.Min(Balance, PayTotal);
+
         public decimal PayTotal => Cart.Total - (UsesCoupon ? Coupon!.Discount : UsesLevel ? LevelDiscount : 0);
     }
 }
