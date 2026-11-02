@@ -1775,6 +1775,8 @@ html.theme-day .theme-toggle { color: var(--ink); }
 }
 
 .catalog-tile:hover { transform: translateY(-4px); }
+.catalog-tile.is-on { box-shadow: inset 0 0 0 2px #fff; }
+.catalog-tile.is-on span { z-index: 2; }
 .catalog-tile:active { transform: translateY(-1px); }
 
 .catalog-tile video {
