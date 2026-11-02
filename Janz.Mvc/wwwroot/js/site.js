@@ -277,16 +277,36 @@ document.querySelectorAll(".wish-tabs").forEach(function (tabs) {
     });
 });
 
-document.querySelectorAll(".shot").forEach(function (card) {
+document.querySelectorAll(".shot, .catalog-tile").forEach(function (card) {
     var video = card.querySelector("video");
     if (!video) return;
     card.addEventListener("mouseenter", function () {
-        video.play();
+        var playing = video.play();
+        if (playing) playing.catch(function () {});
     });
     card.addEventListener("mouseleave", function () {
         video.pause();
         video.currentTime = 0;
     });
+});
+
+document.querySelectorAll(".catalog-tags").forEach(function (tags) {
+    var more = tags.querySelector(":scope > button");
+    if (!more) return;
+    function fitTags() {
+        if (tags.classList.contains("is-open")) return;
+        tags.classList.remove("has-more");
+        tags.classList.toggle("has-more", tags.scrollHeight > tags.clientHeight + 1);
+    }
+    more.addEventListener("click", function () {
+        var open = tags.classList.toggle("is-open");
+        more.setAttribute("aria-expanded", open ? "true" : "false");
+    });
+    tags.addEventListener("transitionend", function (event) {
+        if (event.propertyName === "max-height" && !tags.classList.contains("is-open")) fitTags();
+    });
+    fitTags();
+    window.addEventListener("resize", fitTags);
 });
 
 document.querySelectorAll(".grind").forEach(function (menu) {
