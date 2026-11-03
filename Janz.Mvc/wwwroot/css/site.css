@@ -3542,6 +3542,40 @@ a.journal-card:hover { transform: translateY(-3px); }
 
 .article-comment-note a { color: #8eb4ff; }
 
+.article-comment-form {
+    display: grid;
+    gap: .6rem;
+    margin: 0 0 1.4rem;
+}
+
+.article-comment-form textarea {
+    width: 100%;
+    padding: .8rem 1rem;
+    border: 1px solid #333;
+    border-radius: 14px;
+    background: #161616;
+    color: inherit;
+    font: inherit;
+    resize: vertical;
+}
+
+.article-comment-form button {
+    justify-self: end;
+    height: 40px;
+    padding: 0 1.4rem;
+    border: 0;
+    border-radius: 999px;
+    background: #fff;
+    color: #111;
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+img.article-avatar { object-fit: cover; }
+.article-bar .is-chip.is-on,
+.article-comment-votes button.is-on { color: #8eb4ff; }
+
 .article-comment {
     padding: 1.1rem 0 1rem;
     border-top: 1px solid #2a2a2a;

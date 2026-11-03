@@ -456,6 +456,23 @@
                         }
                     </div>
                     <div class="cabinet-pane" data-pane="journal" hidden>
+                        @{
+                            var savedJson = System.Text.Json.JsonSerializer.Serialize(Model.SavedArticles.Select(m => new
+                            {
+                                id = m.Id.ToString(),
+                                title = m.Title,
+                                topic = m.Topic,
+                                date = m.PublishedAt.ToLocalTime().ToString("d MMMM yyyy"),
+                                lead = m.Lead,
+                                image = m.CoverPath,
+                                href = "/Journal/Article/" + m.Slug,
+                                likes = m.Likes.ToString(),
+                                comments = m.Comments.ToString(),
+                                views = m.Views.ToString(),
+                                mins = m.Minutes + "'"
+                            }));
+                        }
+                        <script type="application/json" id="saved-articles">@Html.Raw(savedJson)</script>
                         <div class="reading-board is-empty">
                             <div class="reading-tabs">
                                 <button type="button" class="is-on" data-read="progress">In progress <span>0</span></button>

@@ -8,7 +8,7 @@
             <h1>Favorites</h1>
             <div class="wish-tabs">
                 <button type="button" class="is-on" data-pane="fav" aria-pressed="true">Favorites @Model.Products.Count</button>
-                <button type="button" data-pane="notes" aria-pressed="false">Notes 0</button>
+                <button type="button" data-pane="notes" aria-pressed="false">Notes @Model.Notes.Count</button>
             </div>
             <div class="wish-pane" data-pane="fav">
                 @if (Model.Products.Count == 0)
@@ -30,11 +30,23 @@
                 }
             </div>
             <div class="wish-pane" data-pane="notes" hidden>
-                <div class="wish-empty">
-                    <h2>There is nothing in notes</h2>
-                    <p>Let’s pick something in the catalog</p>
-                    <a href="/Products">To catalog</a>
-                </div>
+                @if (Model.Notes.Count == 0)
+                {
+                    <div class="wish-empty">
+                        <h2>There is nothing in notes</h2>
+                        <p>Save an article in the journal to read it later</p>
+                        <a href="/Journal">To journal</a>
+                    </div>
+                }
+                else
+                {
+                    <div class="journal-grid">
+                        @foreach (var article in Model.Notes)
+                        {
+                            <partial name="~/Views/Journal/_ArticleCard.cshtml" model="article" />
+                        }
+                    </div>
+                }
             </div>
         </section>
     </main>

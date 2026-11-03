@@ -29,6 +29,9 @@ namespace Janz.Mvc.Controllers
                 model.Products = ids.Where(byId.ContainsKey).Select(id => byId[id]).ToList();
             }
 
+            var (notes, _) = await GetAsync<List<Janz.Mvc.ViewModels.Journal.ArticleCardUIVM>>("api/articles/saved");
+            model.Notes = notes ?? new List<Janz.Mvc.ViewModels.Journal.ArticleCardUIVM>();
+
             return View(model);
         }
 

@@ -24,7 +24,7 @@ function isSignedIn() {
 
 function needsAuth(target) {
     return target.closest(
-        'a[href="/Wishlist"], [data-wish], [aria-label="Likes"], [aria-label="Save"], .article-comment-votes button, [data-cart-add]'
+        'a[href="/Wishlist"], [data-wish], [aria-label="Likes"], [aria-label="Save"], [data-article-like], [data-article-save], .article-comment-votes button, [data-cart-add]'
     );
 }
 document.body.appendChild(authOverlay);
@@ -1249,11 +1249,6 @@ function rememberArticle(root, patch) {
 
 var articleRoot = document.getElementById("article");
 if (articleRoot && articleRoot.getAttribute("data-id")) {
-    var bookmarkBtn = articleRoot.querySelector(".article-bookmark");
-    var storedArticle = loadReading()[articleRoot.getAttribute("data-id")];
-    if (bookmarkBtn && storedArticle && storedArticle.bookmarked) {
-        bookmarkBtn.classList.add("is-on");
-    }
 
     function pageProgress() {
         var max = document.documentElement.scrollHeight - window.innerHeight;
@@ -1273,16 +1268,86 @@ if (articleRoot && articleRoot.getAttribute("data-id")) {
     window.addEventListener("scroll", trackArticle, { passive: true });
 
     rememberArticle(articleRoot, { seenAt: Date.now() });
+}
 
-    if (bookmarkBtn) {
-        bookmarkBtn.addEventListener("click", function () {
-            var id = articleRoot.getAttribute("data-id");
-            var on = !(loadReading()[id] && loadReading()[id].bookmarked);
-            bookmarkBtn.classList.toggle("is-on", on);
-            rememberArticle(articleRoot, { bookmarked: on });
+function postArticle(url, data) {
+    var body = new URLSearchParams(data);
+    body.set("__RequestVerificationToken", document.documentElement.getAttribute("data-csrf") || "");
+    return fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded", "X-Requested-With": "XMLHttpRequest" },
+        body: body.toString()
+    }).then(function (response) {
+        if (response.status === 401) {
+            document.documentElement.setAttribute("data-auth", "0");
+            openAuth();
+            return null;
+        }
+        if (!response.ok) {
+            showToast("Something went wrong. Please try again.");
+            return null;
+        }
+        return response.json();
+    }).catch(function () {
+        showToast("The API is not running.");
+        return null;
+    });
+}
+
+document.addEventListener("click", function (event) {
+    var like = event.target.closest("[data-article-like]");
+    if (like && isSignedIn() && !like.disabled) {
+        var id = like.getAttribute("data-article-like");
+        var on = !like.classList.contains("is-on");
+        like.disabled = true;
+        postArticle("/Journal/Like", { id: id, on: on }).then(function (result) {
+            like.disabled = false;
+            if (!result) return;
+            document.querySelectorAll('[data-article-like="' + id + '"]').forEach(function (button) {
+                var count = button.querySelector("span");
+                var was = button.classList.contains("is-on");
+                button.classList.toggle("is-on", on);
+                button.setAttribute("aria-pressed", on ? "true" : "false");
+                if (count && was !== on) count.textContent = Math.max(0, (parseInt(count.textContent, 10) || 0) + (on ? 1 : -1));
+            });
+        });
+        return;
+    }
+    var save = event.target.closest("[data-article-save]");
+    if (save && isSignedIn() && !save.disabled) {
+        var saveId = save.getAttribute("data-article-save");
+        var saveOn = !save.classList.contains("is-on");
+        save.disabled = true;
+        postArticle("/Journal/Save", { id: saveId, on: saveOn }).then(function (result) {
+            save.disabled = false;
+            if (!result) return;
+            document.querySelectorAll('[data-article-save="' + saveId + '"]').forEach(function (button) {
+                button.classList.toggle("is-on", saveOn);
+                button.setAttribute("aria-pressed", saveOn ? "true" : "false");
+            });
+            showToast(saveOn ? "Saved to notes" : "Removed from notes");
+        });
+        return;
+    }
+    var vote = event.target.closest("[data-comment-vote]");
+    if (vote && isSignedIn() && !vote.disabled) {
+        var box = vote.closest(".article-comment-votes");
+        var value = parseInt(vote.getAttribute("data-comment-vote"), 10);
+        if (vote.classList.contains("is-on")) value = 0;
+        vote.disabled = true;
+        postArticle("/Journal/Vote", { commentId: box.getAttribute("data-comment"), value: value }).then(function (result) {
+            vote.disabled = false;
+            if (!result) return;
+            box.querySelectorAll("[data-comment-vote]").forEach(function (button) {
+                var mine = parseInt(button.getAttribute("data-comment-vote"), 10) === result.myVote;
+                button.classList.toggle("is-on", mine);
+                button.setAttribute("aria-pressed", mine ? "true" : "false");
+                var count = button.querySelector("span");
+                if (count) count.textContent = button.getAttribute("data-comment-vote") === "1" ? result.likes : result.dislikes;
+            });
         });
     }
-}
+});
 
 var readingBoard = document.querySelector(".reading-board");
 if (readingBoard) {
@@ -1290,6 +1355,9 @@ if (readingBoard) {
     var readingList = readingBoard.querySelector(".reading-list");
     var readingEmpty = readingBoard.querySelector(".reading-empty");
     var readingFilter = "progress";
+    var savedSource = document.getElementById("saved-articles");
+    var savedArticles = [];
+    try { savedArticles = JSON.parse(savedSource ? savedSource.textContent : "[]"); } catch (error) { savedArticles = []; }
 
     function readingItems() {
         var map = loadReading();
@@ -1300,11 +1368,10 @@ if (readingBoard) {
 
     function renderReading() {
         var items = readingItems();
-        var counts = { progress: 0, read: 0, saved: 0 };
+        var counts = { progress: 0, read: 0, saved: savedArticles.length };
         items.forEach(function (item) {
             if (item.status === "read") counts.read += 1;
             else if (item.status === "progress") counts.progress += 1;
-            if (item.bookmarked) counts.saved += 1;
         });
         readingTabs.forEach(function (tab) {
             var key = tab.getAttribute("data-read");
@@ -1312,8 +1379,7 @@ if (readingBoard) {
             var count = tab.querySelector("span");
             if (count) count.textContent = counts[key] || 0;
         });
-        var shown = items.filter(function (item) {
-            if (readingFilter === "saved") return item.bookmarked;
+        var shown = readingFilter === "saved" ? savedArticles : items.filter(function (item) {
             return item.status === readingFilter;
         });
         readingList.innerHTML = "";
@@ -1322,11 +1388,11 @@ if (readingBoard) {
             card.className = "journal-card";
             card.href = item.href || "/Journal/Article";
             card.innerHTML =
-                '<img src="' + (item.image || "/images/aroma-kit.png") + '" alt="" />' +
+                '<img src="' + escapeHtml(item.image || "/images/aroma-kit.png") + '" alt="" />' +
                 '<div class="body">' +
-                    '<div class="meta">' + (item.topic || "") + "<br>" + (item.date || "") + "</div>" +
-                    "<h3>" + (item.title || "Article") + "</h3>" +
-                    "<p>" + (item.lead || "") + "</p>" +
+                    '<div class="meta">' + escapeHtml(item.topic || "") + "<br>" + escapeHtml(item.date || "") + "</div>" +
+                    "<h3>" + escapeHtml(item.title || "Article") + "</h3>" +
+                    "<p>" + escapeHtml(item.lead || "") + "</p>" +
                     '<div class="journal-stats">' +
                         '<span><svg viewBox="0 0 24 24"><path d="M8 11v9H5.2A1.2 1.2 0 0 1 4 18.8v-6.6A1.2 1.2 0 0 1 5.2 11H8zm0 0l3.2-6.1A2.2 2.2 0 0 1 13.2 4h.3A2.5 2.5 0 0 1 16 6.5V11h3.7a1.8 1.8 0 0 1 1.8 2.1l-1.2 6.2A1.8 1.8 0 0 1 18.5 21H8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>' + (item.likes || "0") + "</span>" +
                         '<span><svg viewBox="0 0 24 24"><path d="M5 6.5h14v9.2H9.2L5 19.2V6.5z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>' + (item.comments || "0") + "</span>" +
@@ -1783,8 +1849,9 @@ if (journalGrid && journalGrid.querySelector(".article-card")) {
     var journalSort = document.querySelector(".journal-toolbar select");
     var journalRecent = document.querySelector(".journal-recent");
     var journalRecentRow = journalRecent ? journalRecent.querySelector(".journal-recent-row") : null;
-    var journalTopic = "";
-    var journalTag = "";
+    var journalSection = document.getElementById("journal");
+    var journalTopic = journalSection ? journalSection.getAttribute("data-topic") || "" : "";
+    var journalTag = journalSection ? journalSection.getAttribute("data-tag") || "" : "";
 
     function cardTopics(card) {
         return (card.getAttribute("data-topic") || "").split(",").map(function (item) {
@@ -1863,20 +1930,7 @@ if (journalGrid && journalGrid.querySelector(".article-card")) {
 
     function syncArticle(card) {
         var item = loadReading()[card.getAttribute("data-id")] || {};
-        var like = card.querySelector(".article-like");
-        var save = card.querySelector(".article-save");
         var bar = card.querySelector(".article-progress i");
-        var base = parseInt(card.getAttribute("data-likes"), 10) || 0;
-
-        if (like) {
-            like.classList.toggle("is-on", !!item.liked);
-            like.setAttribute("aria-pressed", item.liked ? "true" : "false");
-            like.querySelector("span").textContent = base + (item.liked ? 1 : 0);
-        }
-        if (save) {
-            save.classList.toggle("is-on", !!item.bookmarked);
-            save.setAttribute("aria-pressed", item.bookmarked ? "true" : "false");
-        }
         if (bar) {
             var progress = item.status === "read" ? 1 : (item.progress || 0);
             bar.style.width = Math.round(progress * 100) + "%";
@@ -1889,22 +1943,6 @@ if (journalGrid && journalGrid.querySelector(".article-card")) {
     }
 
     function bindArticle(card) {
-        var like = card.querySelector(".article-like");
-        var save = card.querySelector(".article-save");
-        if (like) {
-            like.addEventListener("click", function () {
-                var item = loadReading()[card.getAttribute("data-id")] || {};
-                rememberArticle(card, { liked: !item.liked });
-                syncAll();
-            });
-        }
-        if (save) {
-            save.addEventListener("click", function () {
-                var item = loadReading()[card.getAttribute("data-id")] || {};
-                rememberArticle(card, { bookmarked: !item.bookmarked });
-                syncAll();
-            });
-        }
         card.querySelectorAll("a[href^='/Journal/Article']").forEach(function (link) {
             link.addEventListener("click", function () {
                 rememberArticle(card, { seenAt: Date.now() });

@@ -1,0 +1,15 @@
+@model Janz.Mvc.ViewModels.Journal.ArticleCardUIVM
+@{
+    var href = $"/Journal/Article/{Model.Slug}";
+}
+<div class="article-stats">
+    <button type="button" class="article-like@(Model.IsLiked ? " is-on" : null)" aria-label="Like" aria-pressed="@(Model.IsLiked ? "true" : "false")" data-article-like="@Model.Id"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 11v9H5.2A1.2 1.2 0 0 1 4 18.8v-6.6A1.2 1.2 0 0 1 5.2 11H8zm0 0l3.2-6.1A2.2 2.2 0 0 1 13.2 4h.3A2.5 2.5 0 0 1 16 6.5V11h3.7a1.8 1.8 0 0 1 1.8 2.1l-1.2 6.2A1.8 1.8 0 0 1 18.5 21H8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg><span>@Model.Likes</span></button>
+    <a class="article-discuss" href="@href#comments" aria-label="Comments"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4.5c4.4 0 8 2.9 8 6.6s-3.6 6.6-8 6.6c-.9 0-1.8-.1-2.6-.3L5 19.5l1.2-3.6C4.8 14.7 4 13 4 11.1 4 7.4 7.6 4.5 12 4.5z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg><span>@Model.Comments</span></a>
+    <button type="button" class="article-save@(Model.IsSaved ? " is-on" : null)" aria-label="Bookmark" aria-pressed="@(Model.IsSaved ? "true" : "false")" data-article-save="@Model.Id"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5h10v15l-5-3.4-5 3.4z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg></button>
+    <span class="article-stat" title="Views"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.8 12s3.4-6 9.2-6 9.2 6 9.2 6-3.4 6-9.2 6-9.2-6-9.2-6z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><circle cx="12" cy="12" r="2.8" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>@ArticleBody.Short(Model.Views)</span>
+    <span class="article-stat" title="Reading time"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="13" r="7.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 9.5V13l2.2 1.6M10 3.5h4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>@Model.Minutes&prime;</span>
+    @if (Model.IsLearning)
+    {
+        <span class="article-stat" title="Learning material"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 9.5L12 5l9.5 4.5L12 14z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M6.5 11.5v4.2c1.4 1.4 3.4 2.1 5.5 2.1s4.1-.7 5.5-2.1v-4.2M21.5 9.5v5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    }
+</div>

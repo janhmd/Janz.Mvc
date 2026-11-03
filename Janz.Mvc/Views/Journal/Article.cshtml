@@ -1,154 +1,175 @@
+@model Janz.Mvc.ViewModels.Journal.ArticlePageVM
 @{
-    ViewData["Title"] = "Article";
+    var article = Model.Article;
+    ViewData["Title"] = article.Title;
+    var date = article.PublishedAt.ToLocalTime().ToString("d MMMM yyyy");
+    var signedIn = User.Identity?.IsAuthenticated == true;
+    var isStaff = User.IsInRole(AppRoles.Editor) || User.IsInRole(AppRoles.Admin) || User.IsInRole(AppRoles.SuperAdmin);
+    var authorLetter = string.IsNullOrWhiteSpace(article.AuthorName) ? "J" : article.AuthorName.Trim().Substring(0, 1).ToUpperInvariant();
 }
 
 <main>
-        <!-- Article from DB: title, stats, blocks, tags, comments. Redactor adds blocks/tags. Signed-in users add comments. -->
         <section id="article"
-            data-id="aroma-kit"
-            data-title="Aroma kit: a tool for developing sensory skills"
-            data-topic="Industry"
-            data-date="21 September 2026"
-            data-lead="We figure out what the first molecular coffee aroma kit is"
-            data-image="/images/aroma-kit.png"
-            data-href="/Journal/Article"
-            data-likes="0"
-            data-comments="0"
-            data-views="0"
-            data-mins="0'">
+            data-id="@article.Id"
+            data-title="@article.Title"
+            data-topic="@article.Topic"
+            data-date="@date"
+            data-lead="@article.Lead"
+            data-image="@article.CoverPath"
+            data-href="/Journal/Article/@article.Slug"
+            data-likes="@article.Likes"
+            data-comments="@article.Comments"
+            data-views="@article.Views"
+            data-mins="@(article.Minutes)'">
             <div class="article-wrap">
-                <h1>Article title</h1>
+                <h1>@article.Title</h1>
                 <div class="article-bar">
-                    <button type="button" class="is-chip" aria-label="Likes">
+                    <button type="button" class="is-chip@(article.IsLiked ? " is-on" : null)" aria-label="Likes" aria-pressed="@(article.IsLiked ? "true" : "false")" data-article-like="@article.Id">
                         <svg viewBox="0 0 24 24"><path d="M8 11v9H5.2A1.2 1.2 0 0 1 4 18.8v-6.6A1.2 1.2 0 0 1 5.2 11H8zm0 0l3.2-6.1A2.2 2.2 0 0 1 13.2 4h.3A2.5 2.5 0 0 1 16 6.5V11h3.7a1.8 1.8 0 0 1 1.8 2.1l-1.2 6.2A1.8 1.8 0 0 1 18.5 21H8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
-                        0
+                        <span>@article.Likes</span>
                     </button>
-                    <button type="button" class="is-chip" aria-label="Comments">
+                    <a class="is-chip" href="#comments" aria-label="Comments">
                         <svg viewBox="0 0 24 24"><path d="M5 6.5h14v9.2H9.2L5 19.2V6.5z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
-                        0
-                    </button>
-                    <button type="button" class="article-bookmark" aria-label="Bookmark">
+                        @Model.Comments.Count
+                    </a>
+                    <button type="button" class="article-bookmark@(article.IsSaved ? " is-on" : null)" aria-label="Bookmark" aria-pressed="@(article.IsSaved ? "true" : "false")" data-article-save="@article.Id">
                         <svg viewBox="0 0 24 24"><path d="M7 5.5h10v14l-5-3.2-5 3.2z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
                     </button>
-                    <span>
+                    <span title="Views">
                         <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="7.2" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="12" r="2.2" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
-                        0
+                        @ArticleBody.Short(article.Views)
                     </span>
-                    <span>
+                    <span title="Reading time">
                         <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="7.2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 8v4.2l2.6 1.6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
-                        0'
+                        @(article.Minutes)'
                     </span>
-                    <span aria-label="In series">
-                        <svg viewBox="0 0 24 24"><path d="M3 10.2l9-4.7 9 4.7-9 4.7z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M7.2 12.4v4.2c0 1.2 2.1 2.2 4.8 2.2s4.8-1 4.8-2.2v-4.2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M20.4 10.6v5.2" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
-                    </span>
+                    @if (article.IsLearning)
+                    {
+                        <span aria-label="@(string.IsNullOrEmpty(article.Series) ? "Learning material" : $"In series {article.Series}")" title="@(article.Series ?? "Learning material")">
+                            <svg viewBox="0 0 24 24"><path d="M3 10.2l9-4.7 9 4.7-9 4.7z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M7.2 12.4v4.2c0 1.2 2.1 2.2 4.8 2.2s4.8-1 4.8-2.2v-4.2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M20.4 10.6v5.2" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+                        </span>
+                    }
                 </div>
 
                 <figure class="article-shot">
-                    <img src="/images/journal.png" alt="" />
-                </figure>
-
-                <figure class="article-shot">
-                    <img src="/images/floral-beans.jpg" alt="" />
+                    <img src="@article.CoverPath" alt="" />
                 </figure>
 
                 <div class="article-split">
-                    <h2 class="article-sub">Section heading</h2>
-                    <div class="article-author">
-                        <span class="article-avatar" aria-hidden="true">A</span>
-                        <div>
-                            <strong>Author name</strong>
-                            <span>Article author</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="article-block">
-                    <p>Lead text. A redactor will fill this from the database. Linked words can sit <a href="#">inside</a> the paragraph.</p>
-                    <p>Another paragraph in the same block. More text can be added here without changing the layout.</p>
-                </div>
-
-                <h2 class="article-heading">Section heading</h2>
-                <div class="article-block">
-                    <p>Section text. This heading is one of several in the article. A redactor can add more headings later.</p>
-                    <p>Forecast and detail text. Key terms can be <a href="#">linked</a> like this.</p>
-                </div>
-
-                <figure class="article-shot">
-                    <img src="/images/roast.png" alt="" />
-                    <figcaption>Image caption</figcaption>
-                </figure>
-
-                <div class="article-block">
-                    <p>Caption sits under the image. Then the article continues with more text.</p>
-                </div>
-
-                <h2 class="article-heading">Another section heading</h2>
-                <div class="article-block">
-                    <p>Third heading in this sample. The same block types repeat: heading, text, image.</p>
-                    <p>Coffee, harvest and roast notes will come from the redactor later.</p>
-                </div>
-
-                <figure class="article-shot">
-                    <img src="/images/floral.png" alt="" />
-                </figure>
-
-                <h2 class="article-heading">One more heading</h2>
-                <div class="article-block">
-                    <p>Fourth heading to show an article is not limited to three. Extra blocks can follow the same pattern.</p>
-                </div>
-
-                <div class="article-tags" aria-label="Tags">
-                    <h2>Tags <span>1</span></h2>
-                    <div class="article-tag-list">
-                        <a href="#"># Tag</a>
-                    </div>
-                </div>
-
-                <div class="article-comments" aria-label="Comments">
-                    <h2>Comments <span>2</span></h2>
-                    <p class="article-comment-note">To leave a comment, <a href="/Account/Login">sign in</a> to your account or <a href="/Account/Register">register</a>.</p>
-                    <div class="article-comment">
-                        <div class="article-comment-head">
-                            <span class="article-avatar" aria-hidden="true">A</span>
-                            <div class="article-comment-who">
-                                <strong>Author name</strong>
-                                <span>Role, City</span>
+                    <h2 class="article-sub">@article.Lead</h2>
+                    @if (!string.IsNullOrWhiteSpace(article.AuthorName))
+                    {
+                        <div class="article-author">
+                            <span class="article-avatar" aria-hidden="true">@authorLetter</span>
+                            <div>
+                                <strong>@article.AuthorName</strong>
+                                <span>@(article.AuthorRole ?? "Article author")</span>
                             </div>
-                            <time datetime="2026-09-20">20.09.2026</time>
-                            <button type="button" class="article-comment-more" aria-label="More">···</button>
                         </div>
-                        <p>Comment text. Comments for this article will come from the database.</p>
-                        <div class="article-comment-votes">
-                            <button type="button" aria-label="Like">
-                                <svg viewBox="0 0 24 24"><path d="M8 11v9H5.2A1.2 1.2 0 0 1 4 18.8v-6.6A1.2 1.2 0 0 1 5.2 11H8zm0 0l3.2-6.1A2.2 2.2 0 0 1 13.2 4h.3A2.5 2.5 0 0 1 16 6.5V11h3.7a1.8 1.8 0 0 1 1.8 2.1l-1.2 6.2A1.8 1.8 0 0 1 18.5 21H8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
-                                0
-                            </button>
-                            <button type="button" aria-label="Dislike">
-                                <svg viewBox="0 0 24 24"><path d="M16 13V4h2.8A1.2 1.2 0 0 1 20 5.2v6.6A1.2 1.2 0 0 1 18.8 13H16zm0 0l-3.2 6.1A2.2 2.2 0 0 1 10.8 20h-.3A2.5 2.5 0 0 1 8 17.5V13H4.3a1.8 1.8 0 0 1-1.8-2.1l1.2-6.2A1.8 1.8 0 0 1 5.5 3H16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
-                            </button>
+                    }
+                </div>
+
+                @foreach (var block in Model.Blocks)
+                {
+                    if (block.Kind == "Heading")
+                    {
+                        <h2 class="article-heading">@block.Heading</h2>
+                    }
+                    else if (block.Kind == "Photo")
+                    {
+                        <figure class="article-shot">
+                            <img src="@block.Image" alt="@block.Caption" />
+                            @if (block.Caption is not null)
+                            {
+                                <figcaption>@block.Caption</figcaption>
+                            }
+                        </figure>
+                    }
+                    else
+                    {
+                        <div class="article-block">
+                            @foreach (var paragraph in block.Paragraphs)
+                            {
+                                <p>@paragraph</p>
+                            }
+                        </div>
+                    }
+                }
+
+                @if (article.Tags.Count > 0)
+                {
+                    <div class="article-tags" aria-label="Tags">
+                        <h2>Tags <span>@article.Tags.Count</span></h2>
+                        <div class="article-tag-list">
+                            @foreach (var tag in article.Tags)
+                            {
+                                <a href="/Journal?tag=@Uri.EscapeDataString(tag)"># @tag</a>
+                            }
                         </div>
                     </div>
-                    <div class="article-comment">
-                        <div class="article-comment-head">
-                            <span class="article-avatar" aria-hidden="true">B</span>
-                            <div class="article-comment-who">
-                                <strong>Author name</strong>
-                                <span>Role, City</span>
+                }
+
+                <div class="article-comments" id="comments" aria-label="Comments">
+                    <h2>Comments <span>@Model.Comments.Count</span></h2>
+                    @if (TempData["CommentError"] is string commentError)
+                    {
+                        <p class="entry-error">@commentError</p>
+                    }
+                    @if (signedIn)
+                    {
+                        <form class="article-comment-form" method="post" asp-controller="Journal" asp-action="Comment">
+                            <input type="hidden" name="id" value="@article.Id" />
+                            <input type="hidden" name="slug" value="@article.Slug" />
+                            <textarea name="text" rows="3" maxlength="1000" required placeholder="Write a comment" aria-label="Comment"></textarea>
+                            <button type="submit">Send</button>
+                        </form>
+                    }
+                    else
+                    {
+                        <p class="article-comment-note">To leave a comment, <a href="/Account/Login">sign in</a> to your account or <a href="/Account/Register">register</a>.</p>
+                    }
+                    @foreach (var comment in Model.Comments)
+                    {
+                        <div class="article-comment">
+                            <div class="article-comment-head">
+                                @if (string.IsNullOrEmpty(comment.AuthorAvatar))
+                                {
+                                    <span class="article-avatar" aria-hidden="true">@comment.AuthorName.Substring(0, 1).ToUpperInvariant()</span>
+                                }
+                                else
+                                {
+                                    <img class="article-avatar" src="@comment.AuthorAvatar" alt="" />
+                                }
+                                <div class="article-comment-who">
+                                    <strong>@comment.AuthorName</strong>
+                                </div>
+                                <time datetime="@comment.CreatedAt.ToString("s")">@comment.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy")</time>
+                                @if (comment.IsMine || isStaff)
+                                {
+                                    <form method="post" asp-controller="Journal" asp-action="DeleteComment" data-confirm="Delete this comment?">
+                                        <input type="hidden" name="commentId" value="@comment.Id" />
+                                        <input type="hidden" name="slug" value="@article.Slug" />
+                                        <button type="submit" class="article-comment-more" aria-label="Delete comment">Delete</button>
+                                    </form>
+                                }
+                                else
+                                {
+                                    <span></span>
+                                }
                             </div>
-                            <time datetime="2026-09-14">14.09.2026</time>
-                            <button type="button" class="article-comment-more" aria-label="More">···</button>
+                            <p>@comment.Text</p>
+                            <div class="article-comment-votes" data-comment="@comment.Id">
+                                <button type="button" class="@(comment.MyVote == 1 ? "is-on" : null)" aria-label="Like" aria-pressed="@(comment.MyVote == 1 ? "true" : "false")" data-comment-vote="1">
+                                    <svg viewBox="0 0 24 24"><path d="M8 11v9H5.2A1.2 1.2 0 0 1 4 18.8v-6.6A1.2 1.2 0 0 1 5.2 11H8zm0 0l3.2-6.1A2.2 2.2 0 0 1 13.2 4h.3A2.5 2.5 0 0 1 16 6.5V11h3.7a1.8 1.8 0 0 1 1.8 2.1l-1.2 6.2A1.8 1.8 0 0 1 18.5 21H8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+                                    <span>@comment.Likes</span>
+                                </button>
+                                <button type="button" class="@(comment.MyVote == -1 ? "is-on" : null)" aria-label="Dislike" aria-pressed="@(comment.MyVote == -1 ? "true" : "false")" data-comment-vote="-1">
+                                    <svg viewBox="0 0 24 24"><path d="M16 13V4h2.8A1.2 1.2 0 0 1 20 5.2v6.6A1.2 1.2 0 0 1 18.8 13H16zm0 0l-3.2 6.1A2.2 2.2 0 0 1 10.8 20h-.3A2.5 2.5 0 0 1 8 17.5V13H4.3a1.8 1.8 0 0 1-1.8-2.1l1.2-6.2A1.8 1.8 0 0 1 5.5 3H16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+                                    <span>@comment.Dislikes</span>
+                                </button>
+                            </div>
                         </div>
-                        <p>Another comment. A signed-in user can add more comments later.</p>
-                        <div class="article-comment-votes">
-                            <button type="button" aria-label="Like">
-                                <svg viewBox="0 0 24 24"><path d="M8 11v9H5.2A1.2 1.2 0 0 1 4 18.8v-6.6A1.2 1.2 0 0 1 5.2 11H8zm0 0l3.2-6.1A2.2 2.2 0 0 1 13.2 4h.3A2.5 2.5 0 0 1 16 6.5V11h3.7a1.8 1.8 0 0 1 1.8 2.1l-1.2 6.2A1.8 1.8 0 0 1 18.5 21H8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
-                                0
-                            </button>
-                            <button type="button" aria-label="Dislike">
-                                <svg viewBox="0 0 24 24"><path d="M16 13V4h2.8A1.2 1.2 0 0 1 20 5.2v6.6A1.2 1.2 0 0 1 18.8 13H16zm0 0l-3.2 6.1A2.2 2.2 0 0 1 10.8 20h-.3A2.5 2.5 0 0 1 8 17.5V13H4.3a1.8 1.8 0 0 1-1.8-2.1l1.2-6.2A1.8 1.8 0 0 1 5.5 3H16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
-                            </button>
-                        </div>
-                    </div>
+                    }
                 </div>
             </div>
         </section>
