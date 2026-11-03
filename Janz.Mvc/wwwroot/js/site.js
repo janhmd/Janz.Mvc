@@ -309,7 +309,8 @@ document.querySelectorAll(".catalog-tags").forEach(function (tags) {
     window.addEventListener("resize", fitTags);
 });
 
-document.querySelectorAll(".grind").forEach(function (menu) {
+function bindGrind(root) {
+root.querySelectorAll(".grind").forEach(function (menu) {
     var label = menu.querySelector("summary span");
     menu.querySelectorAll(".grind-list button").forEach(function (option) {
         option.addEventListener("click", function () {
@@ -324,6 +325,9 @@ document.querySelectorAll(".grind").forEach(function (menu) {
         });
     });
 });
+}
+
+bindGrind(document);
 
 document.querySelectorAll(".gallery").forEach(function (gallery) {
     if (gallery.closest(".coffee-layout") && gallery.closest(".coffee-layout").querySelector("[data-variants]")) return;
@@ -471,17 +475,21 @@ document.addEventListener("click", function (event) {
     if (weight.getAttribute("data-image")) card.querySelector(".product-photo").src = weight.getAttribute("data-image");
 });
 
-document.querySelectorAll(".buy-row").forEach(function (row) {
-    if (row.closest("[data-product-buy]") || row.querySelector("[data-card-variant]")) return;
-    var weights = row.querySelectorAll(".weight");
-    weights.forEach(function (weight) {
-        weight.addEventListener("click", function () {
-            weights.forEach(function (item) {
-                item.classList.toggle("is-on", item === weight);
+function bindBuyRows(root) {
+    root.querySelectorAll(".buy-row").forEach(function (row) {
+        if (row.closest("[data-product-buy]") || row.querySelector("[data-card-variant]")) return;
+        var weights = row.querySelectorAll(".weight");
+        weights.forEach(function (weight) {
+            weight.addEventListener("click", function () {
+                weights.forEach(function (item) {
+                    item.classList.toggle("is-on", item === weight);
+                });
             });
         });
     });
-});
+}
+
+bindBuyRows(document);
 
 var promo = document.querySelector(".roast-card");
 if (promo) {
@@ -2585,6 +2593,87 @@ document.querySelectorAll("form[data-auto-submit]").forEach(function (form) {
         if (event.target.matches("input[type=checkbox], input[type=radio], select, input[type=number]")) form.requestSubmit();
     });
 });
+
+var catalogSection = document.querySelector("#catalog, #tea, #chocolate, #bundles");
+var catalogBoard = catalogSection ? catalogSection.querySelector(".catalog-board") : null;
+var catalogTicket = 0;
+
+function catalogUrl(form, submitter) {
+    var params = new URLSearchParams();
+    new FormData(form).forEach(function (value, name) {
+        if (value !== "") params.append(name, value);
+    });
+    if (submitter && submitter.name) params.set(submitter.name, submitter.value);
+    var text = params.toString();
+    return location.pathname + (text ? "?" + text : "");
+}
+
+function syncCatalog(fresh) {
+    var inputs = catalogBoard.querySelectorAll(".filter-col input");
+    fresh.querySelectorAll(".filter-col input").forEach(function (item, index) {
+        var current = inputs[index];
+        if (!current) return;
+        if (current.type === "checkbox" || current.type === "radio") current.checked = item.checked;
+        else current.value = item.value;
+    });
+    catalogBoard.querySelectorAll(":scope > input[type=hidden]").forEach(function (item) {
+        item.remove();
+    });
+    fresh.querySelectorAll(":scope > input[type=hidden]").forEach(function (item) {
+        catalogBoard.insertBefore(item, catalogBoard.firstChild);
+    });
+    var links = catalogSection.querySelectorAll(".catalog-tile, .catalog-tags a");
+    fresh.ownerDocument.querySelectorAll("#" + catalogSection.id + " .catalog-tile, #" + catalogSection.id + " .catalog-tags a").forEach(function (item, index) {
+        if (links[index]) links[index].classList.toggle("is-on", item.classList.contains("is-on"));
+    });
+}
+
+function loadCatalog(url, push) {
+    var ticket = ++catalogTicket;
+    catalogBoard.classList.add("is-loading");
+    fetch(url, { headers: { "X-Requested-With": "XMLHttpRequest" } })
+        .then(function (response) { return response.text(); })
+        .then(function (html) {
+            if (ticket !== catalogTicket) return;
+            var doc = new DOMParser().parseFromString(html, "text/html");
+            var fresh = doc.querySelector("#" + catalogSection.id + " .catalog-board");
+            if (!fresh) {
+                location.href = url;
+                return;
+            }
+            var main = fresh.querySelector(".listing-main");
+            catalogBoard.querySelector(".listing-main").replaceWith(main);
+            syncCatalog(fresh);
+            if (push) history.pushState(null, "", url);
+            bindGrind(main);
+            bindBuyRows(main);
+            markCompareButtons();
+            catalogBoard.classList.remove("is-loading");
+        })
+        .catch(function () {
+            location.href = url;
+        });
+}
+
+if (catalogBoard) {
+    catalogBoard.addEventListener("submit", function (event) {
+        event.preventDefault();
+        loadCatalog(catalogUrl(catalogBoard, event.submitter), true);
+    });
+
+    catalogSection.addEventListener("click", function (event) {
+        var link = event.target.closest(".catalog-tile, .catalog-tags a, .catalog-empty a");
+        if (!link || event.metaKey || event.ctrlKey || event.shiftKey || event.button !== 0) return;
+        var href = link.getAttribute("href");
+        if (!href || href === "#") return;
+        event.preventDefault();
+        loadCatalog(href.charAt(0) === "?" ? location.pathname + href : href, true);
+    });
+
+    window.addEventListener("popstate", function () {
+        loadCatalog(location.pathname + location.search, false);
+    });
+}
 
 document.querySelectorAll("[data-copy]").forEach(function (button) {
     button.addEventListener("click", function () {
