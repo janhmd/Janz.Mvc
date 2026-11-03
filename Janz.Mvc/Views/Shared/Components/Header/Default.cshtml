@@ -49,26 +49,31 @@
                     </details>
                 </form>
             </details>
-            @* Bildirişlər: hələlik sabit nümunədir (oxunanlar brauzerdə yadda qalır). Bildiriş sistemi gələndə API-dən dolacaq *@
+            @* Bildirişlər: API-dən gəlir (api/notifications). Oxundu işarəsi NotificationsController ilə yazılır *@
+            @{
+                var unread = Model.Notifications.Unread;
+                var recent = Model.Notifications.Items.Take(8).ToList();
+            }
             <div class="notify">
-                <a class="icon-btn notify-btn" href="/Profile#notifications" aria-label="Notifications, 3 new">
+                <a class="icon-btn notify-btn" href="/Profile#notifications" aria-label="@(unread > 0 ? $"Notifications, {unread} new" : "Notifications")">
                     <svg viewBox="0 0 24 24"><path d="M6.5 16.5V11a5.5 5.5 0 0 1 11 0v5.5l1.5 1.8H5z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M10 20.2a2.2 2.2 0 0 0 4 0" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
-                    <span class="notify-count">3</span>
+                    <span class="notify-count" hidden="@(unread == 0)">@unread</span>
                 </a>
                 <div class="notify-panel" role="dialog" aria-label="Notifications">
                     <div class="notify-title">Notifications</div>
                     <div class="notify-tabs">
-                        <button type="button" class="is-on" data-kind="all">All <span>3</span></button>
+                        <button type="button" class="is-on" data-kind="all">All <span>@(unread > 0 ? unread.ToString() : string.Empty)</span></button>
                         <button type="button" data-kind="shop">Shop</button>
                         <button type="button" data-kind="journal">Journal</button>
                         <button type="button" data-kind="community">Community</button>
                     </div>
                     <div class="notify-list">
-                        <a class="notify-item is-new" href="/Journal/Article" data-kind="journal"><strong>New article in the journal:</strong><span>How to dial in espresso at home</span><time datetime="2026-10-19T23:49">19 October 2026 at 23:49</time></a>
-                        <a class="notify-item is-new" href="/Products" data-kind="shop"><strong>New in the catalog:</strong><span>Floral, Guatemala Santiago and Aroma kit</span><time datetime="2026-10-17T00:34">17 October 2026 at 00:34</time></a>
-                        <a class="notify-item is-new" href="/Community" data-kind="community"><strong>@@Our news published a new post:</strong><span>This is true — we have our own coffee community</span><time datetime="2026-10-17T04:33">17 October 2026 at 04:33</time></a>
+                        @foreach (var notice in recent)
+                        {
+                            <a class="notify-item@(notice.IsRead ? string.Empty : " is-new")" href="@(notice.Link ?? "/Profile#notifications")" data-id="@notice.Id" data-kind="@notice.Kind.ToLowerInvariant()"><strong>@notice.Title</strong><span>@notice.Text</span><time datetime="@notice.CreatedAt.ToLocalTime().ToString("yyyy-MM-ddTHH:mm")">@notice.CreatedAt.ToLocalTime().ToString("d MMMM yyyy 'at' HH:mm")</time></a>
+                        }
                     </div>
-                    <p class="notify-empty" hidden>No new notifications</p>
+                    <p class="notify-empty" hidden="@(recent.Count > 0)">No new notifications</p>
                     <div class="notify-actions">
                         <a class="notify-all" href="/Profile#notifications">Show all</a>
                         <button type="button" class="notify-clear">Clear</button>

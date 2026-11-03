@@ -64,6 +64,12 @@ namespace Janz.Mvc.ViewComponents
                         var ids = await wish.Content.ReadFromJsonAsync<List<int>>();
                         model.WishCount = ids?.Count ?? 0;
                     }
+
+                    var notices = await client.GetAsync("api/notifications");
+                    if (notices.IsSuccessStatusCode)
+                    {
+                        model.Notifications = await notices.Content.ReadFromJsonAsync<Janz.Mvc.ViewModels.Notifications.NotificationListUIVM>() ?? new Janz.Mvc.ViewModels.Notifications.NotificationListUIVM();
+                    }
                 }
                 catch (HttpRequestException)
                 {

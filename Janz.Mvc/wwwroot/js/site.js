@@ -2020,22 +2020,14 @@ document.addEventListener("keydown", function (event) {
     var count = box.querySelector(".notify-count");
     var allTab = box.querySelector('.notify-tabs [data-kind="all"] span');
     var empty = box.querySelector(".notify-empty");
-    var state = {};
-    try { state = JSON.parse(localStorage.getItem("janz-notify") || "{}"); } catch (e) { state = {}; }
-
-    function save() {
-        try { localStorage.setItem("janz-notify", JSON.stringify(state)); } catch (e) { }
-    }
+    var kind = "all";
 
     function refresh() {
-        var fresh = 0;
+        var fresh = box.querySelectorAll(".notify-item.is-new").length;
         var visible = 0;
         items.forEach(function (item) {
-            var key = item.getAttribute("href") + item.querySelector("time").getAttribute("datetime");
-            item.hidden = item.hidden || !!state.cleared;
-            if (state.read && state.read[key]) item.classList.remove("is-new");
+            item.hidden = kind !== "all" && item.getAttribute("data-kind") !== kind;
             if (!item.hidden) visible += 1;
-            if (!state.cleared && item.classList.contains("is-new")) fresh += 1;
         });
         count.textContent = fresh;
         count.hidden = fresh === 0;
@@ -2046,12 +2038,9 @@ document.addEventListener("keydown", function (event) {
 
     box.querySelectorAll(".notify-tabs button").forEach(function (button) {
         button.addEventListener("click", function () {
-            var kind = button.getAttribute("data-kind");
+            kind = button.getAttribute("data-kind");
             box.querySelectorAll(".notify-tabs button").forEach(function (other) {
                 other.classList.toggle("is-on", other === button);
-            });
-            items.forEach(function (item) {
-                item.hidden = !!state.cleared || (kind !== "all" && item.getAttribute("data-kind") !== kind);
             });
             refresh();
         });
@@ -2059,20 +2048,47 @@ document.addEventListener("keydown", function (event) {
 
     items.forEach(function (item) {
         item.addEventListener("click", function () {
-            state.read = state.read || {};
-            state.read[item.getAttribute("href") + item.querySelector("time").getAttribute("datetime")] = true;
-            save();
+            if (!item.classList.contains("is-new")) return;
+            item.classList.remove("is-new");
+            var body = new URLSearchParams({ id: item.getAttribute("data-id"), __RequestVerificationToken: document.documentElement.getAttribute("data-csrf") || "" });
+            fetch("/Notifications/Read", {
+                method: "POST",
+                keepalive: true,
+                headers: { "Content-Type": "application/x-www-form-urlencoded", "X-Requested-With": "XMLHttpRequest" },
+                body: body.toString()
+            });
         });
     });
 
     box.querySelector(".notify-clear").addEventListener("click", function () {
-        state.cleared = true;
-        save();
-        refresh();
+        postArticle("/Notifications/ReadAll", {}).then(function (done) {
+            if (done === null) return;
+            box.querySelectorAll(".notify-item.is-new").forEach(function (item) {
+                item.classList.remove("is-new");
+            });
+            document.querySelectorAll(".notice.is-new").forEach(function (item) {
+                item.classList.remove("is-new");
+            });
+            refresh();
+        });
     });
 
     refresh();
 })();
+
+document.querySelectorAll(".notice-read-all").forEach(function (button) {
+    button.addEventListener("click", function () {
+        postArticle("/Notifications/ReadAll", {}).then(function (done) {
+            if (done === null) return;
+            document.querySelectorAll(".notice.is-new, .notify-item.is-new").forEach(function (item) {
+                item.classList.remove("is-new");
+            });
+            var count = document.querySelector(".notify-count");
+            if (count) count.hidden = true;
+            button.hidden = true;
+        });
+    });
+});
 
 function setCartCount(count) {
     var link = document.querySelector(".cart-link");
