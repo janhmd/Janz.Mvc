@@ -77,69 +77,39 @@
                                 <button type="button" data-kind="community" aria-pressed="false">Community</button>
                                 <button type="button" data-kind="subscription" aria-pressed="false">Subscription</button>
                             </div>
+                            @if (Model.Notifications.Unread > 0)
+                            {
+                                <button type="button" class="notice-read-all">Mark all as read</button>
+                            }
                         </div>
                         <div class="notice-list">
-                            <div class="notice" data-kind="community">
-                                <div class="notice-head">
-                                    <span class="notice-source">
-                                        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="10" r="2.1" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="15.4" cy="10.6" r="1.7" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M5.6 16.4a3.6 3.6 0 0 1 6.8 0M13.2 16.6a3 3 0 0 1 5.2 0" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
-                                        Community
-                                    </span>
-                                    <time datetime="2026-10-17T04:33">17 October 2026, 04:33</time>
+                            @foreach (var notice in Model.Notifications.Items)
+                            {
+                                var kind = notice.Kind.ToLowerInvariant();
+                                <div class="notice@(notice.IsRead ? string.Empty : " is-new")" data-id="@notice.Id" data-kind="@kind">
+                                    <div class="notice-head">
+                                        <span class="notice-source">
+                                            <svg viewBox="0 0 24 24" aria-hidden="true">@Html.Raw(kind switch
+                                            {
+                                                "shop" => "<path d=\"M4 8h16l-1.2 11H5.2z\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linejoin=\"round\"/><path d=\"M8 8V6.4A4 4 0 0 1 16 6.4V8\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\"/>",
+                                                "journal" => "<path d=\"M6 4.5h9.5A2.5 2.5 0 0 1 18 7v12.5H8.5A2.5 2.5 0 0 1 6 17z\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linejoin=\"round\"/><path d=\"M9.5 9h5M9.5 12h5\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linecap=\"round\"/>",
+                                                "community" => "<circle cx=\"9\" cy=\"10\" r=\"2.1\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\"/><circle cx=\"15.4\" cy=\"10.6\" r=\"1.7\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\"/><path d=\"M5.6 16.4a3.6 3.6 0 0 1 6.8 0M13.2 16.6a3 3 0 0 1 5.2 0\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linecap=\"round\"/>",
+                                                "subscription" => "<path d=\"M5 12a7 7 0 0 1 12-4.9L19 9M19 12a7 7 0 0 1-12 4.9L5 15\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linecap=\"round\"/><path d=\"M19 5v4h-4M5 19v-4h4\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>",
+                                                _ => string.Empty
+                                            })</svg>
+                                            @notice.Kind
+                                        </span>
+                                        <time datetime="@notice.CreatedAt.ToLocalTime().ToString("yyyy-MM-ddTHH:mm")">@notice.CreatedAt.ToLocalTime().ToString("d MMMM yyyy, HH:mm")</time>
+                                    </div>
+                                    <p><strong>@notice.Title</strong> @notice.Text</p>
+                                    @if (!string.IsNullOrEmpty(notice.Link))
+                                    {
+                                        <a class="notice-open" href="@notice.Link">Open</a>
+                                    }
                                 </div>
-                                <p>@@Our news recently published a new post.</p>
-                                <a class="notice-post" href="/Community">
-                                    <img src="/images/roast.png" alt="" />
-                                    <strong>This is true — we have our own coffee community</strong>
-                                </a>
-                            </div>
-                            <div class="notice" data-kind="shop">
-                                <div class="notice-head">
-                                    <span class="notice-source">
-                                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h16l-1.2 11H5.2z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M8 8V6.4A4 4 0 0 1 16 6.4V8" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
-                                        Shop
-                                    </span>
-                                    <time datetime="2026-10-17T00:34">17 October 2026, 00:34</time>
-                                </div>
-                                <p>New coffees are in the catalog this week — Floral, Guatemala Santiago and Aroma kit.</p>
-                                <div class="notice-products">
-                                    <article>
-                                        <div class="product">
-                                            <div class="product-top"><p>For espresso</p></div>
-                                            <h3><a class="product-link" href="/Products/Detail">Floral</a></h3>
-                                            <div class="kind">Blend</div>
-                                            <img class="product-photo" src="/images/floral.png" alt="Floral espresso coffee" />
-                                            <div class="price-row">
-                                                <button type="button" class="price"><strong>₼29.90</strong></button>
-                                            </div>
-                                        </div>
-                                    </article>
-                                    <article>
-                                        <div class="product">
-                                            <div class="product-top"><p>For filter</p></div>
-                                            <h3><a class="product-link" href="/Products">Guatemala Santiago</a></h3>
-                                            <div class="kind">Washed</div>
-                                            <img class="product-photo" src="/images/guatemala.png" alt="Guatemala Santiago filter coffee" />
-                                            <div class="price-row">
-                                                <button type="button" class="price"><strong>₼27.50</strong></button>
-                                            </div>
-                                        </div>
-                                    </article>
-                                    <article>
-                                        <div class="product">
-                                            <div class="product-top"><p>Set</p></div>
-                                            <h3><a class="product-link" href="/Products/Sets">Aroma kit</a></h3>
-                                            <div class="kind">Gift</div>
-                                            <img class="product-photo" src="/images/aroma-kit.png" alt="Aroma kit" />
-                                            <div class="price-row">
-                                                <button type="button" class="price"><strong>₼45.00</strong></button>
-                                            </div>
-                                        </div>
-                                    </article>
-                                </div>
-                            </div>
+                            }
                         </div>
-                        <div class="cabinet-empty notice-empty" hidden>
+                        <div class="cabinet-empty notice-empty" hidden="@(Model.Notifications.Items.Count > 0)">
                             <h2>No notifications yet</h2>
                             <p>News from the shop, journal and community will appear here</p>
                         </div>

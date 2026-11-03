@@ -35,6 +35,7 @@ namespace Janz.Mvc.Controllers
             var (profile, _) = await GetAsync<ProfileUIVM>("api/profile");
             var (balance, _) = await GetAsync<BalanceUIVM>("api/balance");
             var (saved, _) = await GetAsync<List<Janz.Mvc.ViewModels.Journal.ArticleCardUIVM>>("api/articles/saved");
+            var (notifications, _) = await GetAsync<Janz.Mvc.ViewModels.Notifications.NotificationListUIVM>("api/notifications");
 
             // Biri alınmasa səhifə yenə də açılır, yuxarıda xəbərdarlıq görünür
             if (addresses is null || orders is null)
@@ -50,7 +51,8 @@ namespace Janz.Mvc.Controllers
                 Balance = balance ?? new BalanceUIVM(),
                 SavedArticles = saved ?? new List<Janz.Mvc.ViewModels.Journal.ArticleCardUIVM>(),
                 Profile = profile ?? new ProfileUIVM { FullName = User.Identity?.Name ?? string.Empty },
-                Statistics = await StatisticsAsync(orders ?? new List<OrderUIVM>())
+                Statistics = await StatisticsAsync(orders ?? new List<OrderUIVM>()),
+                Notifications = notifications ?? new Janz.Mvc.ViewModels.Notifications.NotificationListUIVM()
             });
         }
 

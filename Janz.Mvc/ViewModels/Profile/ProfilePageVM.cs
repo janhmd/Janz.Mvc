@@ -13,5 +13,6 @@ namespace Janz.Mvc.ViewModels.Profile
         public List<Janz.Mvc.ViewModels.Journal.ArticleCardUIVM> SavedArticles { get; set; } = new List<Janz.Mvc.ViewModels.Journal.ArticleCardUIVM>();
         public ProfileUIVM Profile { get; set; } = new ProfileUIVM();
         public StatisticsUIVM Statistics { get; set; } = new StatisticsUIVM();
+        public Janz.Mvc.ViewModels.Notifications.NotificationListUIVM Notifications { get; set; } = new Janz.Mvc.ViewModels.Notifications.NotificationListUIVM();
     }
 }

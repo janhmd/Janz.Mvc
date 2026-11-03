@@ -8412,3 +8412,35 @@ html.theme-day .account-code button:hover { color: var(--ink); }
 
 .catalog-board .listing-main { transition: opacity .2s ease; }
 .catalog-board.is-loading .listing-main { opacity: .45; pointer-events: none; }
+
+.notice { position: relative; }
+.notice.is-new { padding-left: 1.1rem; }
+.notice.is-new::before {
+    content: "";
+    position: absolute;
+    top: .45rem;
+    left: 0;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #b08cff;
+}
+
+.notice[hidden] { display: none; }
+.notice-open { color: var(--gold); font-size: .9rem; font-weight: 700; }
+.notice-read-all {
+    height: 36px;
+    padding: 0 .9rem;
+    border: 0;
+    border-radius: 999px;
+    background: #1c1c1c;
+    color: #8d8d8d;
+    font: inherit;
+    font-size: .74rem;
+    font-weight: 700;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    cursor: pointer;
+}
+
+.notice-read-all:hover { color: #fff; }
