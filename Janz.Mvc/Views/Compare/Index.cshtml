@@ -12,6 +12,14 @@
         variant = m.DefaultVariant?.Id,
         category = m.CategoryName,
         description = m.Description,
+        roast = m.Roast,
+        processing = m.Processing,
+        region = m.Region,
+        acidity = m.Acidity,
+        density = m.Density,
+        notes = m.Notes,
+        rating = m.Rating,
+        reviews = m.ReviewCount,
         tags = m.Tags.Select(t => t.Name)
     }));
 }

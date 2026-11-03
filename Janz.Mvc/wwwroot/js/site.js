@@ -2201,6 +2201,13 @@ markCompareButtons();
         { label: "Category", value: function (item) { return item.category; } },
         { label: "Price", value: function (item) { return "₼" + item.price.toFixed(2); } },
         { label: "Availability", value: function (item) { return item.stock > 0 ? item.stock + " in stock" : "Out of stock"; } },
+        { label: "Rating", value: function (item) { return item.rating ? item.rating.toFixed(1) + " (" + item.reviews + ")" : "-"; } },
+        { label: "Roast", value: function (item) { return item.roast || "-"; } },
+        { label: "Processing", value: function (item) { return item.processing || "-"; } },
+        { label: "Region", value: function (item) { return item.region || "-"; } },
+        { label: "Taste notes", value: function (item) { return (item.notes || []).join(", ") || "-"; } },
+        { label: "Acidity", value: function (item) { return item.acidity != null ? item.acidity + "%" : "-"; } },
+        { label: "Density", value: function (item) { return item.density != null ? item.density + "%" : "-"; } },
         { label: "Tags", value: function (item) { return item.tags.join(", ") || "-"; }, tags: true },
         { label: "Description", value: function (item) { return item.description || "-"; } }
     ];
@@ -2513,6 +2520,15 @@ document.querySelectorAll("[data-tabs]").forEach(function (tabs) {
         document.querySelectorAll("[data-tab-panel]").forEach(function (panel) {
             panel.hidden = panel.getAttribute("data-tab-panel") !== tab.getAttribute("data-tab");
         });
+    });
+});
+
+document.querySelectorAll("[data-show-tab]").forEach(function (button) {
+    button.addEventListener("click", function () {
+        var tab = document.querySelector('[data-tab="' + button.getAttribute("data-show-tab") + '"]');
+        if (!tab) return;
+        tab.click();
+        tab.scrollIntoView({ behavior: "smooth", block: "start" });
     });
 });
 
