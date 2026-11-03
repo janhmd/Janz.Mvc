@@ -453,6 +453,8 @@ html.theme-day .theme-toggle { color: var(--ink); }
     padding: 1.3rem 1rem 1rem;
     border-radius: 22px;
     overflow: hidden;
+    isolation: isolate;
+    clip-path: inset(0 round 22px);
     color: #fff;
     text-align: center;
     transition: transform .25s ease;
@@ -1769,6 +1771,8 @@ html.theme-day .theme-toggle { color: var(--ink); }
     padding: 1rem .55rem;
     border-radius: 18px;
     overflow: hidden;
+    isolation: isolate;
+    clip-path: inset(0 round 18px);
     color: #fff;
     text-align: center;
     transition: transform .25s ease;
