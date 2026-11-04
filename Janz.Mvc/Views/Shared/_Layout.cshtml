@@ -59,6 +59,32 @@
             </div>
         </div>
     </footer>
+    <div class="assistant" data-catalog="/Products">
+        <button type="button" class="assistant-toggle" aria-label="Janz assistant" aria-expanded="false">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 6.5A2.5 2.5 0 0 1 7 4h10a2.5 2.5 0 0 1 2.5 2.5v7A2.5 2.5 0 0 1 17 16h-5.5L7 19.8V16a2.5 2.5 0 0 1-2.5-2.5z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><circle cx="9" cy="10" r="1" fill="currentColor"/><circle cx="12" cy="10" r="1" fill="currentColor"/><circle cx="15" cy="10" r="1" fill="currentColor"/></svg>
+        </button>
+        <div class="assistant-panel" role="dialog" aria-labelledby="assistant-title" hidden>
+            <div class="assistant-head">
+                <span class="assistant-avatar" aria-hidden="true">J</span>
+                <div class="assistant-name">
+                    <h2 id="assistant-title">Janz assistant</h2>
+                    <p>Picks a coffee and answers questions</p>
+                </div>
+                <button type="button" class="assistant-close" aria-label="Close">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+                </button>
+            </div>
+            <div class="assistant-log" aria-live="polite"></div>
+            <div class="assistant-chips"></div>
+            <form class="assistant-form">
+                <input name="question" placeholder="Ask about coffee, delivery or payment" aria-label="Your question" maxlength="200" autocomplete="off" />
+                <button type="submit" aria-label="Send">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </button>
+            </form>
+        </div>
+    </div>
+
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
