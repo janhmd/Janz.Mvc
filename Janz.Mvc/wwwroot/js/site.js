@@ -2637,11 +2637,14 @@ markCompareButtons();
     var follow = page.querySelector(".up-follow");
     var followers = page.querySelector("[data-followers]");
     var postFollows = page.querySelectorAll(".feed-follow");
+    var profileId = page.getAttribute("data-user-id");
 
     function setFollow(on) {
-        follow.classList.toggle("is-on", on);
-        follow.setAttribute("aria-pressed", on ? "true" : "false");
-        follow.textContent = on ? "Following" : "Follow";
+        if (follow) {
+            follow.classList.toggle("is-on", on);
+            follow.setAttribute("aria-pressed", on ? "true" : "false");
+            follow.textContent = on ? "Following" : "Follow";
+        }
         postFollows.forEach(function (button) {
             button.classList.toggle("is-on", on);
             button.setAttribute("aria-pressed", on ? "true" : "false");
@@ -2649,21 +2652,29 @@ markCompareButtons();
         });
     }
 
-    follow.addEventListener("click", function () {
-        var on = !follow.classList.contains("is-on");
-        followers.textContent = String((parseInt(followers.textContent, 10) || 0) + (on ? 1 : -1));
-        setFollow(on);
-    });
-
-    postFollows.forEach(function (button) {
-        button.addEventListener("click", function () {
-            var on = button.classList.contains("is-on");
-            if (on !== follow.classList.contains("is-on")) {
-                followers.textContent = String((parseInt(followers.textContent, 10) || 0) + (on ? 1 : -1));
-                setFollow(on);
+    if (follow) {
+        follow.addEventListener("click", function () {
+            if (!isSignedIn()) {
+                openAuth();
+                return;
             }
+            var on = !follow.classList.contains("is-on");
+            postArticle("/Community/Follow", { userId: profileId, on: on }).then(function (result) {
+                if (!result) return;
+                followers.textContent = String(Math.max(0, (parseInt(followers.textContent, 10) || 0) + (on ? 1 : -1)));
+                setFollow(on);
+            });
         });
-    });
+    }
+
+    if (follow && postFollows.length) {
+        new MutationObserver(function () {
+            var on = postFollows[0].classList.contains("is-on");
+            if (on === follow.classList.contains("is-on")) return;
+            followers.textContent = String(Math.max(0, (parseInt(followers.textContent, 10) || 0) + (on ? 1 : -1)));
+            setFollow(on);
+        }).observe(postFollows[0], { attributes: true, attributeFilter: ["class"] });
+    }
 
     page.querySelector(".up-share").addEventListener("click", function () {
         if (typeof openShare === "function") openShare(window.location.href);
