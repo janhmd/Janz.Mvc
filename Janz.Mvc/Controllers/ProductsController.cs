@@ -86,6 +86,17 @@ namespace Janz.Mvc.Controllers
             });
         }
 
+        // Hesab başlığındakı canlı axtarış: yazdıqca ən çox 5 uyğun məhsul (fetch, hazır HTML)
+        [HttpGet]
+        public async Task<IActionResult> Suggest(string? q)
+        {
+            if (string.IsNullOrWhiteSpace(q) || q.Trim().Length < 2) return Content(string.Empty);
+
+            var (products, _) = await GetAsync<List<ProductUIVM>>($"api/products?q={Uri.EscapeDataString(q.Trim())}");
+
+            return PartialView("_SearchSuggest", (products ?? new List<ProductUIVM>()).Take(5).ToList());
+        }
+
         private async Task<List<ProductUIVM>> SearchAsync(string? category)
         {
             var (products, _) = await GetAsync<List<ProductUIVM>>(CatalogQuery.ApiUrl(Request, category));

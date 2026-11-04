@@ -252,6 +252,30 @@ document.querySelectorAll(".search").forEach(function (search) {
             search.querySelector(".search-where").removeAttribute("open");
         });
     });
+    var suggest = form.querySelector(".search-suggest");
+    var timer = null;
+    input.addEventListener("input", function () {
+        clearTimeout(timer);
+        var query = input.value.trim();
+        if (query.length < 2 || form.getAttribute("data-where") !== "/Products") {
+            suggest.hidden = true;
+            return;
+        }
+        timer = setTimeout(function () {
+            fetch("/Products/Suggest?q=" + encodeURIComponent(query)).then(function (response) {
+                return response.text();
+            }).then(function (html) {
+                if (input.value.trim() !== query) return;
+                suggest.innerHTML = html;
+                suggest.hidden = html.trim() === "";
+            }).catch(function () {
+                suggest.hidden = true;
+            });
+        }, 250);
+    });
+    search.addEventListener("toggle", function () {
+        if (!search.open) suggest.hidden = true;
+    });
     form.addEventListener("submit", function (event) {
         event.preventDefault();
         var where = form.getAttribute("data-where") || "/Products";

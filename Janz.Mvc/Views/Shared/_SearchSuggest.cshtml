@@ -1,0 +1,15 @@
+@using Janz.Mvc.Helpers
+@model List<Janz.Mvc.ViewModels.Products.ProductUIVM>
+
+@foreach (var product in Model)
+{
+    <a class="search-suggest-item" href="/Products/Detail/@product.Id">
+        <img src="@ApiUrl.ToAbsolute(null, product.ImagePath)" alt="" />
+        <span>@product.Name</span>
+        <strong>₼@product.Price.ToString("0.00")</strong>
+    </a>
+}
+@if (Model.Count == 0)
+{
+    <p class="search-suggest-none">Nothing found</p>
+}
