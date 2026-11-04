@@ -281,10 +281,12 @@ document.querySelectorAll(".shot, .catalog-tile").forEach(function (card) {
     var video = card.querySelector("video");
     if (!video) return;
     card.addEventListener("mouseenter", function () {
+        card.classList.add("is-playing");
         var playing = video.play();
         if (playing) playing.catch(function () {});
     });
     card.addEventListener("mouseleave", function () {
+        card.classList.remove("is-playing");
         video.pause();
         video.currentTime = 0;
     });

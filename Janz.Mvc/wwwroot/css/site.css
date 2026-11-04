@@ -463,16 +463,17 @@ html.theme-day .theme-toggle { color: var(--ink); }
 .shot:hover { transform: translateY(-4px); }
 .shot:active { transform: translateY(-1px); }
 
+.shot img,
 .shot video {
     position: absolute;
     inset: 0;
     width: 100%;
     height: 100%;
-    border-radius: 22px;
-    clip-path: inset(0 round 22px);
-    transform: translateZ(0);
     object-fit: cover;
 }
+
+.shot video { visibility: hidden; }
+.shot.is-playing video { visibility: visible; }
 
 .shot::after {
     content: "";
@@ -1786,16 +1787,17 @@ html.theme-day .theme-toggle { color: var(--ink); }
 .catalog-tile.is-on span { z-index: 2; }
 .catalog-tile:active { transform: translateY(-1px); }
 
+.catalog-tile img,
 .catalog-tile video {
     position: absolute;
     inset: 0;
     width: 100%;
     height: 100%;
-    border-radius: 18px;
-    clip-path: inset(0 round 18px);
-    transform: translateZ(0);
     object-fit: cover;
 }
+
+.catalog-tile video { visibility: hidden; }
+.catalog-tile.is-playing video { visibility: visible; }
 
 .catalog-tile::after {
     content: "";
