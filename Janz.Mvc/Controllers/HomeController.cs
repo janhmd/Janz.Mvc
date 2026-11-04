@@ -17,6 +17,7 @@ namespace Janz.Mvc.Controllers
         {
             var (coffee, _) = await GetAsync<List<ProductUIVM>>("api/products/category/coffee");
             var (sets, _) = await GetAsync<List<ProductUIVM>>("api/products/category/sets");
+            var (articles, _) = await GetAsync<List<Janz.Mvc.ViewModels.Journal.ArticleCardUIVM>>("api/articles?sort=new");
             var (reviews, _) = await GetAsync<Janz.Mvc.ViewModels.Reviews.ShopReviewsUIVM>("api/reviews?skip=0&take=2");
             var (coupon, _) = User.Identity?.IsAuthenticated == true
                 ? await GetAsync<Janz.Mvc.ViewModels.Cart.FirstOrderCouponUIVM>("api/coupons/first-order")
@@ -27,7 +28,8 @@ namespace Janz.Mvc.Controllers
                 Coupon = coupon,
                 Reviews = reviews ?? new Janz.Mvc.ViewModels.Reviews.ShopReviewsUIVM(),
                 Coffee = coffee ?? new List<ProductUIVM>(),
-                Sets = sets ?? new List<ProductUIVM>()
+                Sets = sets ?? new List<ProductUIVM>(),
+                LatestArticles = (articles ?? new List<Janz.Mvc.ViewModels.Journal.ArticleCardUIVM>()).OrderByDescending(m => m.PublishedAt).Take(2).ToList()
             });
         }
 

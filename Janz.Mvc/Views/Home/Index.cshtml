@@ -82,25 +82,20 @@
                                     <div class="line-light">if you don't like the coffee</div>
                                 </div>
                             </div>
-                            <div class="roast-slide">
-                                <img src="/images/journal.png" alt="Barista pouring coffee" />
-                                <div class="roast-copy">
-                                    <div class="line-light">Coffee journal</div>
-                                    <div class="line-bold">What's in plant milk: what can be a red flag for a barista and guests</div>
-                                    <a class="read-article" href="#">Read the article</a>
+                            @foreach (var article in Model.LatestArticles)
+                            {
+                                <div class="roast-slide is-article">
+                                    <img src="@article.CoverPath" alt="@article.Title" />
+                                    <div class="roast-copy">
+                                        <div class="line-light">Coffee journal</div>
+                                        <div class="line-bold">@article.Title</div>
+                                        <a class="read-article" href="/Journal/Article/@article.Slug">Read the article</a>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="roast-slide">
-                                <img src="/images/aroma-kit.png" alt="Coffee aroma kit" />
-                                <div class="roast-copy">
-                                    <div class="line-light">Aroma kit</div>
-                                    <div class="line-bold">Coffee aroma<br>molecules</div>
-                                    <a class="read-article" href="#">Read the article</a>
-                                </div>
-                            </div>
+                            }
                         </div>
                         <div class="roast-nav">
-                            <span class="dots"><i class="is-on"></i><i></i><i></i></span>
+                            <span class="dots"><i class="is-on"></i>@foreach (var article in Model.LatestArticles){<i></i>}</span>
                             <span class="arrows"><button type="button" aria-label="Previous">←</button><button type="button" aria-label="Next">→</button></span>
                         </div>
                     </div>

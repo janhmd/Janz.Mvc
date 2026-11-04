@@ -1213,7 +1213,7 @@ html.theme-day .theme-toggle { color: var(--ink); }
     font-weight: 800;
 }
 
-.roast-slide:nth-child(2) .line-bold {
+.roast-slide.is-article .line-bold {
     font-size: 1.35rem;
     line-height: 1.05;
 }
