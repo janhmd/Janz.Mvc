@@ -29,7 +29,7 @@ namespace Janz.Mvc.Controllers
                 Reviews = reviews ?? new Janz.Mvc.ViewModels.Reviews.ShopReviewsUIVM(),
                 Coffee = coffee ?? new List<ProductUIVM>(),
                 Sets = sets ?? new List<ProductUIVM>(),
-                LatestArticles = (articles ?? new List<Janz.Mvc.ViewModels.Journal.ArticleCardUIVM>()).OrderByDescending(m => m.PublishedAt).Take(2).ToList()
+                LatestArticles = (articles ?? new List<Janz.Mvc.ViewModels.Journal.ArticleCardUIVM>()).OrderByDescending(m => m.PublishedAt).Take(3).ToList()
             });
         }
 

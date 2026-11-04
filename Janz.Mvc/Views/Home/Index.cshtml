@@ -68,20 +68,11 @@
                 {
                     <partial name="_ProductCard" model="product" />
                 }
+                @if (Model.LatestArticles.Count > 0)
+                {
                 <aside>
                     <div class="roast-card">
                         <div class="roast-track">
-                            <div class="roast-slide">
-                                <img src="/images/roast.png" alt="Coffee beans in the roaster" />
-                                <div class="roast-copy">
-                                    <div class="line-light">Until the next roast</div>
-                                    <div class="line-bold">1 day 15 hours</div>
-                                    <div class="line-bold">We deliver</div>
-                                    <div class="line-light">for free</div>
-                                    <div class="line-bold">We'll refund the money,</div>
-                                    <div class="line-light">if you don't like the coffee</div>
-                                </div>
-                            </div>
                             @foreach (var article in Model.LatestArticles)
                             {
                                 <div class="roast-slide is-article">
@@ -95,11 +86,12 @@
                             }
                         </div>
                         <div class="roast-nav">
-                            <span class="dots"><i class="is-on"></i>@foreach (var article in Model.LatestArticles){<i></i>}</span>
+                            <span class="dots">@for (var i = 0; i < Model.LatestArticles.Count; i++){<i class="@(i == 0 ? "is-on" : "")"></i>}</span>
                             <span class="arrows"><button type="button" aria-label="Previous">←</button><button type="button" aria-label="Next">→</button></span>
                         </div>
                     </div>
                 </aside>
+                }
             </div>
         </section>
 
