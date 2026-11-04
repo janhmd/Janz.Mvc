@@ -457,11 +457,12 @@ html.theme-day .theme-toggle { color: var(--ink); }
     clip-path: inset(0 round 22px);
     color: #fff;
     text-align: center;
-    transition: transform .25s ease;
+    top: 0;
+    transition: top .25s ease;
 }
 
-.shot:hover { transform: translateY(-4px); }
-.shot:active { transform: translateY(-1px); }
+.shot:hover { top: -4px; }
+.shot:active { top: -1px; }
 
 .shot img,
 .shot video {
@@ -1779,13 +1780,14 @@ html.theme-day .theme-toggle { color: var(--ink); }
     clip-path: inset(0 round 18px);
     color: #fff;
     text-align: center;
-    transition: transform .25s ease;
+    top: 0;
+    transition: top .25s ease;
 }
 
-.catalog-tile:hover { transform: translateY(-4px); }
+.catalog-tile:hover { top: -4px; }
 .catalog-tile.is-on { box-shadow: inset 0 0 0 2px #fff; }
 .catalog-tile.is-on span { z-index: 2; }
-.catalog-tile:active { transform: translateY(-1px); }
+.catalog-tile:active { top: -1px; }
 
 .catalog-tile img,
 .catalog-tile video {
