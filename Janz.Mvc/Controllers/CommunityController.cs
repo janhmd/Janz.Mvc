@@ -2,6 +2,7 @@ using Janz.Mvc.ViewModels.Community;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
+using System.Security.Claims;
 
 namespace Janz.Mvc.Controllers
 {
@@ -161,7 +162,7 @@ namespace Janz.Mvc.Controllers
         [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CreatePost(string? text, int? productId, int? rating, string? brew, string? recipe, string? dose, string? water, string? grind, string? time, string[]? tags, List<IFormFile>? images)
+        public async Task<IActionResult> CreatePost(string? text, int? productId, int? rating, string? brew, string? recipe, string? dose, string? water, string? grind, string? time, string? tags, List<IFormFile>? images)
         {
             using var form = new MultipartFormDataContent();
             form.Add(new StringContent(text ?? string.Empty), "Text");
@@ -172,7 +173,7 @@ namespace Janz.Mvc.Controllers
                 if (!string.IsNullOrWhiteSpace(value)) form.Add(new StringContent(value), name);
             }
 
-            foreach (var tag in tags ?? Array.Empty<string>()) form.Add(new StringContent(tag), "Tags");
+            foreach (var tag in (tags ?? string.Empty).Split('|', StringSplitOptions.RemoveEmptyEntries)) form.Add(new StringContent(tag), "Tags");
             foreach (var image in images ?? new List<IFormFile>())
             {
                 if (image.Length == 0) continue;
@@ -192,17 +193,30 @@ namespace Janz.Mvc.Controllers
             return Redirect("/Community?tab=new");
         }
 
-        // Bio və "How I cook"
+        // Bio və "How I cook" (fetch)
         [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> UpdateProfile(string? bio, string[]? cookMethods)
         {
             var (success, errors, status) = await PutAsync("api/community/me", new { bio, cookMethods = cookMethods ?? Array.Empty<string>() });
-            if (status == HttpStatusCode.Unauthorized) return await SessionExpiredAsync();
-            if (!success) TempData["CommunityError"] = string.Join(" ", errors);
+            if (status == HttpStatusCode.Unauthorized) return Unauthorized();
+            if (!success) return BadRequest(new { errors });
 
-            return Redirect("/Profile#community");
+            return Ok(new { saved = true });
+        }
+
+        // Abunəçilər və abunəliklər siyahısı (kabinetdəki pəncərə üçün hazır HTML)
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> People(string kind)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? string.Empty;
+            var path = kind == "subscriptions" ? "following" : "followers";
+            var (people, status) = await GetAsync<List<CommunityPersonUIVM>>($"api/community/profiles/{Uri.EscapeDataString(userId)}/{path}");
+            if (status == HttpStatusCode.Unauthorized) return Unauthorized();
+
+            return PartialView("_People", people ?? new List<CommunityPersonUIVM>());
         }
     }
 }

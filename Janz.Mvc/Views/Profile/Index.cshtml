@@ -12,6 +12,10 @@
     var stats = Model.Statistics;
     var phoneCode = new[] { "+994", "+90", "+7" }.FirstOrDefault(code => me.Phone?.StartsWith(code) == true) ?? "+994";
     var phoneNumber = me.Phone is null ? string.Empty : me.Phone.Substring(me.Phone.StartsWith(phoneCode) ? phoneCode.Length : 0).Trim();
+    var Initial = string.IsNullOrWhiteSpace(Model.Community.Author.Name) ? letter : Model.Community.Author.Name.Substring(0, 1).ToUpperInvariant();
+    var memberDays = Model.Community.Stats.MemberSince == default ? 0 : (DateTime.UtcNow - Model.Community.Stats.MemberSince.ToUniversalTime()).TotalDays;
+    var memberMonths = Math.Max(0, (int)(memberDays / 30.4));
+    var OnSite = Model.Community.Stats.MemberSince == default ? "-" : memberMonths >= 12 ? $"{memberMonths / 12} {(memberMonths / 12 == 1 ? "year" : "years")} {memberMonths % 12} {(memberMonths % 12 == 1 ? "month" : "months")}" : $"{memberMonths} {(memberMonths == 1 ? "month" : "months")}";
 }
 
 <main>
@@ -117,17 +121,21 @@
                     <div class="cabinet-pane" data-pane="community" hidden>
                         <div class="profile-board">
                             <div class="profile-feed">
+                                @if (TempData["CommunityError"] is string communityError)
+                                {
+                                    <p class="profile-post-error">@communityError</p>
+                                }
                                 <div class="profile-composer">
                                     <button type="button" class="profile-compose">
                                         <span class="profile-compose-mark" aria-hidden="true">J</span>
                                         Write a post
                                     </button>
-                                    <form class="profile-post" hidden>
+                                    <form class="profile-post" asp-controller="Community" asp-action="CreatePost" method="post" enctype="multipart/form-data" hidden>
                                         <div class="profile-post-head">
                                             <div class="profile-who">
-                                                <span class="profile-avatar" aria-hidden="true">J</span>
+                                                <span class="profile-avatar" aria-hidden="true">@Initial</span>
                                                 <div>
-                                                    <strong>Newcomer</strong>
+                                                    <strong>@Model.Community.Author.Name</strong>
                                                 </div>
                                             </div>
                                             <button type="button" class="profile-post-close" aria-label="Close">
@@ -137,45 +145,25 @@
                                         <label class="profile-post-field">
                                             <input type="text" name="text" placeholder="Write a post" />
                                             <label class="profile-post-photo">
-                                                <input type="file" accept="image/*" hidden />
+                                                <input type="file" name="images" accept="image/*" multiple hidden />
                                                 <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.8 7.2h3.1l1.3-2h5.6l1.3 2h3.1v11.2H4.8z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><circle cx="12" cy="13" r="3.1" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
                                             </label>
                                         </label>
                                         <div class="profile-pick">
                                             <input type="hidden" name="product" value="" />
+                                            <input type="hidden" name="productId" value="" />
                                             <label class="profile-pick-toggle">
                                                 <input type="search" class="profile-pick-search" placeholder="Choose coffee / product" autocomplete="off" />
                                             </label>
                                             <div class="profile-pick-drop" hidden>
                                                 <div class="profile-pick-list">
-                                                    <button type="button" data-name="Floral" data-img="images/floral.png">
-                                                        <img src="/images/floral.png" alt="" />
-                                                        Floral
-                                                    </button>
-                                                    <button type="button" data-name="Guatemala Santiago" data-img="images/guatemala.png">
-                                                        <img src="/images/guatemala.png" alt="" />
-                                                        Guatemala Santiago
-                                                    </button>
-                                                    <button type="button" data-name="Candy" data-img="images/candy.png">
-                                                        <img src="/images/candy.png" alt="" />
-                                                        Candy
-                                                    </button>
-                                                    <button type="button" data-name="Aroma kit" data-img="images/aroma-kit.png">
-                                                        <img src="/images/aroma-kit.png" alt="" />
-                                                        Aroma kit
-                                                    </button>
-                                                    <button type="button" data-name="Set for espresso" data-img="images/set-box.png">
-                                                        <img src="/images/set-box.png" alt="" />
-                                                        Set for espresso
-                                                    </button>
-                                                    <button type="button" data-name="Set with drip bags" data-img="images/set-drip.png">
-                                                        <img src="/images/set-drip.png" alt="" />
-                                                        Set with drip bags
-                                                    </button>
-                                                    <button type="button" data-name="Set with a French press" data-img="images/set-french.png">
-                                                        <img src="/images/set-french.png" alt="" />
-                                                        Set with a French press
-                                                    </button>
+                                                    @foreach (var product in Model.Products)
+                                                    {
+                                                        <button type="button" data-id="@product.Id" data-name="@product.Name" data-img="@product.ImagePath">
+                                                            <img src="@product.ImagePath" alt="" />
+                                                            @product.Name
+                                                        </button>
+                                                    }
                                                 </div>
                                             </div>
                                         </div>
@@ -255,11 +243,23 @@
                                         <button type="submit" class="profile-post-publish">Publish</button>
                                     </form>
                                 </div>
-                                <div class="cabinet-empty">
-                                    <h2>No posts</h2>
-                                    <p>There are no added posts on the site yet</p>
-                                    <a href="/Community">Go to community</a>
-                                </div>
+                                @if (Model.Community.Posts.Count == 0)
+                                {
+                                    <div class="cabinet-empty">
+                                        <h2>No posts</h2>
+                                        <p>You haven't written anything yet</p>
+                                        <a href="/Community">Go to community</a>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="feed">
+                                        @foreach (var post in Model.Community.Posts)
+                                        {
+                                            <partial name="_FeedCard" model="post" />
+                                        }
+                                    </div>
+                                }
                             </div>
                             <div class="profile-card">
                                 <div class="profile-card-top">
@@ -269,17 +269,17 @@
                                     </button>
                                 </div>
                                 <div class="profile-who">
-                                    <span class="profile-avatar" aria-hidden="true">J</span>
+                                    <span class="profile-avatar" aria-hidden="true">@Initial</span>
                                     <div>
-                                        <strong>Newcomer</strong>
+                                        <strong>@Model.Community.Author.Name</strong>
                                     </div>
                                 </div>
                                 <div class="profile-follow">
-                                    <button type="button" data-follow="subscribers"><b>0</b><span>subscribers</span></button>
-                                    <button type="button" data-follow="subscriptions"><b>0</b><span>subscriptions</span></button>
+                                    <button type="button" data-follow="subscribers"><b>@Model.Community.Followers</b><span>subscribers</span></button>
+                                    <button type="button" data-follow="subscriptions"><b>@Model.Community.Following</b><span>subscriptions</span></button>
                                 </div>
                                 <div class="profile-about">
-                                    <p class="profile-bio">Tell about yourself</p>
+                                    <p class="profile-bio">@(string.IsNullOrWhiteSpace(Model.Community.Bio) ? "Tell about yourself" : Model.Community.Bio)</p>
                                     <button type="button" class="profile-edit">Edit</button>
                                     <form class="profile-bio-form" hidden>
                                         <input type="text" name="bio" placeholder="Tell about yourself" maxlength="180" autocomplete="off" />
@@ -289,31 +289,27 @@
                                 <ul class="profile-stats">
                                     <li>
                                         <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="7.2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 8.2V12l2.4 1.6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
-                                        Time on the site —
+                                        Time on the site @OnSite
                                     </li>
                                     <li>
                                         <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="7.2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M8.6 12.2l2.2 2.2 4.6-5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                                        Orders placed 0
+                                        Orders placed @Model.Community.Stats.Orders
                                     </li>
                                     <li>
                                         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 16.5c1.4 1.4 3.1 2.1 5 2.1s3.6-.7 5-2.1" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M8 8.2h8l-.6 5.2H8.6z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M10 8.2V6.8a2 2 0 0 1 4 0v1.4" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
-                                        Tried 0 different coffees
+                                        Tried @Model.Community.Stats.TriedCoffees @(Model.Community.Stats.TriedCoffees == 1 ? "coffee" : "different coffees")
                                     </li>
                                     <li>
                                         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4.6l2.1 4.3 4.7.7-3.4 3.3.8 4.7L12 15.4 7.8 17.6l.8-4.7-3.4-3.3 4.7-.7z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
-                                        Average coffee rating 0
+                                        Average coffee rating @(Model.Community.Stats.AverageRating > 0 ? Model.Community.Stats.AverageRating.ToString("0.0") : "0")
                                     </li>
                                     <li>
                                         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5.5 6.5h13v9.2H9.2L5.5 18.8z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
-                                        Comments 0
+                                        Comments @Model.Community.Stats.Comments
                                     </li>
                                     <li>
                                         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 15.2l5-9.4 5 9.4z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
-                                        Likes received 0
-                                    </li>
-                                    <li>
-                                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.8h7l4 4V19.2H7z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M14 4.8v4h4" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
-                                        Articles read 0
+                                        Likes received @Model.Community.Stats.LikesReceived
                                     </li>
                                 </ul>
                                 <div class="profile-cook">
@@ -323,7 +319,7 @@
                                             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.6 5.6l3.8 3.8-9.4 9.4H5.2v-3.8z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M13.2 7l3.8 3.8" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
                                         </button>
                                     </div>
-                                    <div class="profile-cook-list"></div>
+                                    <div class="profile-cook-list" data-cook="@string.Join("|", Model.Community.CookMethods)"></div>
                                 </div>
                             </div>
                         </div>
@@ -465,27 +461,16 @@
                                 <input type="search" placeholder="Search the list" autocomplete="off" />
                             </label>
                             <div class="blacklist-list">
-                                <div class="blacklist-item" data-user-id="11">
-                                    <div class="blacklist-avatar">K</div>
-                                    <div class="blacklist-who">
-                                        <div class="blacklist-name"><strong>Kamran</strong><button type="button" class="blacklist-remove">Remove</button></div>
-                                        <p>Expert, Lankaran</p>
+                                @foreach (var person in Model.Blocked)
+                                {
+                                    <div class="blacklist-item" data-user-id="@person.Author.UserId">
+                                        <div class="blacklist-avatar">@(string.IsNullOrWhiteSpace(person.Author.Name) ? "C" : person.Author.Name.Substring(0, 1).ToUpper())</div>
+                                        <div class="blacklist-who">
+                                            <div class="blacklist-name"><strong>@person.Author.Name</strong><button type="button" class="blacklist-remove">Remove</button></div>
+                                            <p>@person.Author.Role</p>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="blacklist-item" data-user-id="12">
-                                    <div class="blacklist-avatar">R</div>
-                                    <div class="blacklist-who">
-                                        <div class="blacklist-name"><strong>Rashad</strong><button type="button" class="blacklist-remove">Remove</button></div>
-                                        <p>Coffee lover, Ganja</p>
-                                    </div>
-                                </div>
-                                <div class="blacklist-item" data-user-id="13">
-                                    <div class="blacklist-avatar">E</div>
-                                    <div class="blacklist-who">
-                                        <div class="blacklist-name"><strong>Elvin</strong><button type="button" class="blacklist-remove">Remove</button></div>
-                                        <p>Ambassador, Sheki</p>
-                                    </div>
-                                </div>
+                                }
                             </div>
                             <p class="blacklist-none" hidden>Nobody found</p>
                         </div>
@@ -785,6 +770,7 @@
                 <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M16 16l4.5 4.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
                 <input type="search" placeholder="Search subscribers" autocomplete="off" />
             </label>
+            <div class="follow-list"></div>
         </div>
     </div>
     <div class="unblock-overlay">

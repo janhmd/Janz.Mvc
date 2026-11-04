@@ -541,6 +541,15 @@ function openFollow(kind) {
         followSearch.value = "";
     }
     followOverlay.classList.add("is-on");
+    var followList = followOverlay.querySelector(".follow-list");
+    if (followList) {
+        followList.innerHTML = "";
+        fetch("/Community/People?kind=" + encodeURIComponent(kind), { headers: { "X-Requested-With": "XMLHttpRequest" } }).then(function (response) {
+            return response.ok ? response.text() : "";
+        }).then(function (html) {
+            followList.innerHTML = html;
+        }).catch(function () {});
+    }
     if (followSearch) followSearch.focus();
 }
 
@@ -552,6 +561,14 @@ if (followOverlay) {
     followOverlay.addEventListener("click", function (event) {
         if (event.target === followOverlay) closeFollow();
     });
+    if (followSearch) {
+        followSearch.addEventListener("input", function () {
+            var query = followSearch.value.trim().toLowerCase();
+            followOverlay.querySelectorAll(".follow-item").forEach(function (item) {
+                item.hidden = item.textContent.toLowerCase().indexOf(query) === -1;
+            });
+        });
+    }
 }
 
 document.querySelectorAll("[data-follow]").forEach(function (button) {
@@ -743,6 +760,36 @@ var cookOther = cookForm ? cookForm.querySelector(".cook-other") : null;
 var cookSaved = [];
 var cookOtherText = "";
 
+function saveCommunityProfile() {
+    var body = new URLSearchParams();
+    var bio = document.querySelector(".profile-bio");
+    var text = bio ? bio.textContent.trim() : "";
+    body.set("bio", text === "Tell about yourself" ? "" : text);
+    cookSaved.forEach(function (name) {
+        body.append("cookMethods", name === "Other" && cookOtherText ? cookOtherText : name);
+    });
+    body.set("__RequestVerificationToken", document.documentElement.getAttribute("data-csrf") || "");
+    return fetch("/Community/UpdateProfile", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded", "X-Requested-With": "XMLHttpRequest" },
+        body: body.toString()
+    }).then(function (response) {
+        if (!response.ok) {
+            return response.json().then(function (result) {
+                showToast(result && result.errors && result.errors.length ? result.errors[0] : "Something went wrong. Please try again.");
+                return false;
+            }).catch(function () {
+                showToast("Something went wrong. Please try again.");
+                return false;
+            });
+        }
+        return true;
+    }).catch(function () {
+        showToast("The API is not running.");
+        return false;
+    });
+}
+
 function cookOptionOn(button) {
     return button.classList.contains("is-on");
 }
@@ -812,6 +859,23 @@ function openCook() {
     cookOverlay.classList.add("is-on");
 }
 
+if (cookOverlay && cookForm && cookList) {
+    var cookKnown = [];
+    cookForm.querySelectorAll(".cook-option").forEach(function (button) {
+        cookKnown.push(button.getAttribute("data-name"));
+    });
+    (cookList.getAttribute("data-cook") || "").split("|").forEach(function (name) {
+        if (!name) return;
+        if (cookKnown.indexOf(name) !== -1) {
+            cookSaved.push(name);
+        } else if (cookSaved.indexOf("Other") === -1) {
+            cookSaved.push("Other");
+            cookOtherText = name;
+        }
+    });
+    renderCookList();
+}
+
 if (cookOverlay && cookForm) {
     document.querySelectorAll(".profile-cook-edit").forEach(function (button) {
         button.addEventListener("click", openCook);
@@ -835,6 +899,7 @@ if (cookOverlay && cookForm) {
         cookOtherText = cookForm.other ? cookForm.other.value.trim() : "";
         renderCookList();
         closeCook();
+        saveCommunityProfile();
     });
 }
 
@@ -866,6 +931,7 @@ if (aboutBox && aboutForm && aboutEdit) {
         var text = aboutForm.bio.value.trim();
         if (aboutBio) aboutBio.textContent = text || aboutEmpty;
         closeAbout();
+        saveCommunityProfile();
     });
 }
 
@@ -978,8 +1044,11 @@ document.querySelectorAll(".profile-composer").forEach(function (box) {
     openBtn.addEventListener("click", open);
     closeBtn.addEventListener("click", close);
     form.addEventListener("submit", function (event) {
-        event.preventDefault();
-        close();
+        var value = text ? text.value.trim() : "";
+        if (!value) {
+            event.preventDefault();
+            if (text) text.focus();
+        }
     });
 });
 
@@ -988,6 +1057,7 @@ document.querySelectorAll(".profile-pick").forEach(function (pick) {
     var search = pick.querySelector(".profile-pick-search");
     var drop = pick.querySelector(".profile-pick-drop");
     var hidden = pick.querySelector('input[name="product"]');
+    var hiddenId = pick.querySelector('input[name="productId"]');
     var items = pick.querySelectorAll(".profile-pick-list button");
     var review = form ? form.querySelector(".profile-review") : null;
     var reviewImg = review ? review.querySelector(".profile-review-img") : null;
@@ -1017,6 +1087,7 @@ document.querySelectorAll(".profile-pick").forEach(function (pick) {
     }
     function clearProduct() {
         hidden.value = "";
+        if (hiddenId) hiddenId.value = "";
         search.value = "";
         items.forEach(function (item) { item.hidden = false; });
         if (form) form.classList.remove("has-product");
@@ -1052,6 +1123,7 @@ document.querySelectorAll(".profile-pick").forEach(function (pick) {
     });
     search.addEventListener("input", function () {
         hidden.value = "";
+        if (hiddenId) hiddenId.value = "";
         openPick();
         filter();
     });
@@ -1063,6 +1135,7 @@ document.querySelectorAll(".profile-pick").forEach(function (pick) {
             var name = item.getAttribute("data-name") || "";
             var src = item.getAttribute("data-img") || "";
             hidden.value = name;
+            if (hiddenId) hiddenId.value = item.getAttribute("data-id") || "";
             search.value = name;
             items.forEach(function (row) { row.hidden = false; });
             if (reviewImg) reviewImg.src = src;
@@ -1927,9 +2000,15 @@ if (blacklistPane && unblockOverlay) {
     });
 
     unblockOverlay.querySelector(".unblock-yes").addEventListener("click", function () {
-        if (unblockTarget) unblockTarget.remove();
+        var target = unblockTarget;
         closeUnblock();
-        syncBlacklist();
+        if (!target) return;
+        postArticle("/Community/Block", { userId: target.getAttribute("data-user-id"), on: false }).then(function (result) {
+            if (!result) return;
+            target.remove();
+            syncBlacklist();
+            showToast("The user was removed from the blacklist");
+        });
     });
 
     unblockOverlay.querySelector(".unblock-no").addEventListener("click", closeUnblock);
