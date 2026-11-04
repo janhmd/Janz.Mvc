@@ -2242,7 +2242,10 @@ html.theme-day .theme-toggle { color: var(--ink); }
     background: #161616;
 }
 
+.community-tabs a,
 .community-tabs button {
+    display: inline-flex;
+    align-items: center;
     height: 34px;
     padding: 0 .85rem;
     border: 0;
@@ -2257,6 +2260,7 @@ html.theme-day .theme-toggle { color: var(--ink); }
     cursor: pointer;
 }
 
+.community-tabs a.is-on,
 .community-tabs button.is-on {
     background: #fff;
     color: #111;
@@ -2506,6 +2510,54 @@ html.theme-day .theme-toggle { color: var(--ink); }
 }
 
 .feed-product:hover { color: #fff; }
+
+.community-channels {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .4rem;
+    margin-bottom: .9rem;
+}
+
+.community-channels[hidden] { display: none; }
+
+.community-channels a {
+    padding: .35rem .7rem;
+    border: 1px solid rgba(128, 128, 128, .35);
+    border-radius: 999px;
+    font-size: .8rem;
+    font-weight: 600;
+}
+
+.community-channels a.is-on {
+    background: #fff;
+    color: #111;
+}
+
+.feed-empty {
+    padding: 2rem 0;
+    color: #8d8d8d;
+    text-align: center;
+}
+
+.feed-recipe {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .35rem .9rem;
+    margin: .6rem 0 0;
+    font-size: .82rem;
+}
+
+.feed-recipe > div { display: flex; gap: .35rem; }
+.feed-recipe .is-wide { flex-basis: 100%; }
+.feed-recipe dt { color: #8d8d8d; }
+.feed-recipe dd { margin: 0; font-weight: 600; }
+
+.feed-note-image {
+    display: block;
+    max-width: 220px;
+    margin-top: .5rem;
+    border-radius: 12px;
+}
 
 .feed-tags {
     display: flex;
@@ -6568,6 +6620,7 @@ html.theme-day {
 .formats button.is-on,
 #catalog .listing-tabs button.is-on,
 #tea .listing-tabs button.is-on,
+.community-tabs a.is-on,
 .community-tabs button.is-on {
     border-color: var(--ink);
     background: var(--ink);
@@ -6642,6 +6695,7 @@ html.theme-day {
 .journal-tags a:hover { color: var(--text); }
 
 .community-tabs { background: var(--hover); }
+.community-tabs a,
 .community-tabs button { color: #4a4a4a; }
 .community-search input,
 .community-search select { color: var(--text); }

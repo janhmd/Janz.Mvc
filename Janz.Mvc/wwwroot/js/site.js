@@ -493,6 +493,15 @@ function bindBuyRows(root) {
 
 bindBuyRows(document);
 
+var channelsButton = document.querySelector("[data-channels]");
+if (channelsButton) {
+    channelsButton.addEventListener("click", function () {
+        var panel = document.querySelector(".community-channels");
+        panel.hidden = !panel.hidden;
+        channelsButton.setAttribute("aria-pressed", panel.hidden ? "false" : "true");
+    });
+}
+
 var promo = document.querySelector(".roast-card");
 if (promo) {
     var track = promo.querySelector(".roast-track");
@@ -1437,21 +1446,31 @@ function bindVotes(box) {
     var dislike = box.querySelector(":scope > .feed-dislike");
     var score = box.querySelector(":scope > .feed-score");
     if (!like || !dislike || !score) return;
-    var baseScore = parseInt(score.textContent, 10) || 0;
+    var note = box.closest(".feed-note");
+    var card = box.closest(".feed-card");
+    var kind = note ? "comment" : "post";
+    var id = note ? note.getAttribute("data-comment-id") : card.getAttribute("data-post-id");
 
-    function setVote(likeOn, dislikeOn) {
-        like.classList.toggle("is-on", likeOn);
-        like.setAttribute("aria-pressed", likeOn ? "true" : "false");
-        dislike.classList.toggle("is-on", dislikeOn);
-        dislike.setAttribute("aria-pressed", dislikeOn ? "true" : "false");
-        score.textContent = baseScore + (likeOn ? 1 : 0);
+    function send(value) {
+        if (!isSignedIn()) {
+            openAuth();
+            return;
+        }
+        postArticle("/Community/Vote", { kind: kind, id: id, value: value }).then(function (result) {
+            if (!result) return;
+            score.textContent = result.score;
+            like.classList.toggle("is-on", result.myVote === 1);
+            like.setAttribute("aria-pressed", result.myVote === 1 ? "true" : "false");
+            dislike.classList.toggle("is-on", result.myVote === -1);
+            dislike.setAttribute("aria-pressed", result.myVote === -1 ? "true" : "false");
+        });
     }
 
     like.addEventListener("click", function () {
-        setVote(!like.classList.contains("is-on"), false);
+        send(like.classList.contains("is-on") ? 0 : 1);
     });
     dislike.addEventListener("click", function () {
-        setVote(false, !dislike.classList.contains("is-on"));
+        send(dislike.classList.contains("is-on") ? 0 : -1);
     });
 }
 
@@ -1465,6 +1484,7 @@ function bindNote(note, card) {
         reply.addEventListener("click", function () {
             var name = note.querySelector(".feed-name a").textContent.trim();
             input.value = "@" + name + ", ";
+            input.setAttribute("data-parent", note.getAttribute("data-comment-id"));
             input.focus();
             input.setSelectionRange(input.value.length, input.value.length);
         });
@@ -1492,9 +1512,7 @@ var toastBox = null;
 var toastTimer = null;
 
 function postLink(card, note) {
-    var link = location.href.split(/[?#]/)[0] + "?post=" + card.getAttribute("data-post-id");
-    if (note) link += "&comment=" + note.getAttribute("data-comment-id");
-    return link;
+    return location.origin + "/Community#post-" + card.getAttribute("data-post-id");
 }
 
 function openShare(link) {
@@ -1598,21 +1616,59 @@ if (document.querySelector(".feed-card")) {
         if (!menu) {
             var card = more.closest(".feed-card");
             var note = more.closest(".feed-note");
+            var mine = (note || card).getAttribute("data-mine") === "1";
+            var userId = (note || card).getAttribute("data-user-id");
             menu = document.createElement("div");
             menu.className = "feed-menu";
             menu.hidden = true;
-            menu.innerHTML =
-                '<button type="button" data-menu="block">Block</button>' +
-                '<button type="button" data-menu="share">Share</button>';
+            menu.innerHTML = mine
+                ? '<button type="button" data-menu="delete">Delete</button><button type="button" data-menu="share">Share</button>'
+                : '<button type="button" data-menu="report">Report</button><button type="button" data-menu="block">Block</button><button type="button" data-menu="share">Share</button>';
             head.appendChild(menu);
 
-            menu.querySelector("[data-menu='block']").addEventListener("click", function () {
+            menu.addEventListener("click", function (menuEvent) {
+                var item = menuEvent.target.closest("[data-menu]");
+                if (!item) return;
                 menu.hidden = true;
-                showToast("You blocked the user");
-            });
-            menu.querySelector("[data-menu='share']").addEventListener("click", function () {
-                menu.hidden = true;
-                openShare(postLink(card, note));
+                var action = item.getAttribute("data-menu");
+                var kind = note ? "comment" : "post";
+                var id = note ? note.getAttribute("data-comment-id") : card.getAttribute("data-post-id");
+
+                if (action === "share") {
+                    openShare(postLink(card, note));
+                    return;
+                }
+
+                if (!isSignedIn()) {
+                    openAuth();
+                    return;
+                }
+
+                if (action === "report") {
+                    var reason = window.prompt("Why are you reporting this?");
+                    if (!reason || !reason.trim()) return;
+                    postArticle("/Community/Report", { kind: kind, id: id, reason: reason.trim() }).then(function (result) {
+                        if (result) showToast("Thanks, we will look into it");
+                    });
+                } else if (action === "block") {
+                    if (!window.confirm("Block this user? You will no longer see their posts and comments.")) return;
+                    postArticle("/Community/Block", { userId: userId, on: true }).then(function (result) {
+                        if (!result) return;
+                        document.querySelectorAll('.feed-card[data-user-id="' + userId + '"], .feed-note[data-user-id="' + userId + '"]').forEach(function (item) {
+                            item.remove();
+                        });
+                        showToast("You blocked the user");
+                    });
+                } else if (action === "delete") {
+                    if (!window.confirm("Delete this " + kind + "?")) return;
+                    postArticle(kind === "comment" ? "/Community/DeleteComment" : "/Community/DeletePost", { id: id }).then(function (result) {
+                        if (!result) return;
+                        var target = note || card;
+                        var count = card.querySelector(".feed-comments span");
+                        if (note && count) count.textContent = Math.max(0, (parseInt(count.textContent, 10) || 0) - 1 - note.querySelectorAll(".feed-replies .feed-note").length);
+                        target.remove();
+                    });
+                }
             });
         }
 
@@ -1685,19 +1741,33 @@ document.querySelectorAll(".feed-card").forEach(function (card) {
     var save = card.querySelector(".feed-save");
     if (save) {
         save.addEventListener("click", function () {
+            if (!isSignedIn()) return;
             var on = !save.classList.contains("is-on");
-            save.classList.toggle("is-on", on);
-            save.setAttribute("aria-pressed", on ? "true" : "false");
+            postArticle("/Community/Save", { id: card.getAttribute("data-post-id"), on: on }).then(function (result) {
+                if (!result) return;
+                save.classList.toggle("is-on", on);
+                save.setAttribute("aria-pressed", on ? "true" : "false");
+            });
         });
     }
 
     var follow = card.querySelector(".feed-follow");
     if (follow) {
         follow.addEventListener("click", function () {
+            if (!isSignedIn()) {
+                openAuth();
+                return;
+            }
             var on = !follow.classList.contains("is-on");
-            follow.classList.toggle("is-on", on);
-            follow.setAttribute("aria-pressed", on ? "true" : "false");
-            follow.textContent = on ? "Following" : "Follow";
+            var userId = card.getAttribute("data-user-id");
+            postArticle("/Community/Follow", { userId: userId, on: on }).then(function (result) {
+                if (!result) return;
+                document.querySelectorAll('.feed-card[data-user-id="' + userId + '"] .feed-follow').forEach(function (button) {
+                    button.classList.toggle("is-on", on);
+                    button.setAttribute("aria-pressed", on ? "true" : "false");
+                    button.textContent = on ? "Following" : "Follow";
+                });
+            });
         });
     }
 
@@ -1748,41 +1818,67 @@ document.querySelectorAll(".feed-card").forEach(function (card) {
                 text.focus();
                 return;
             }
+            if (!isSignedIn()) {
+                openAuth();
+                return;
+            }
 
-            if (thread) {
-                var today = new Date();
-                var date = ("0" + today.getDate()).slice(-2) + "." + ("0" + (today.getMonth() + 1)).slice(-2) + "." + today.getFullYear();
-                var template = thread.querySelector(".feed-note");
-                var note = document.createElement("div");
-                note.className = "feed-note";
-                note.innerHTML =
-                    '<div class="feed-note-head">' +
-                        '<div class="feed-note-avatar">Y</div>' +
-                        '<div class="feed-who"><div class="feed-name"><a href="/Profile">You</a></div><div class="feed-role">Coffee lover</div></div>' +
-                        '<time class="feed-date">' + date + "</time>" +
-                    "</div>" +
-                    '<p class="feed-note-text">' + (value ? escapeHtml(value) : "Photo") + "</p>" +
-                    '<div class="feed-note-actions">' +
-                        (template ? template.querySelector(".feed-like").outerHTML : '<button type="button" class="feed-like">+</button>') +
-                        '<span class="feed-score">0</span>' +
-                        (template ? template.querySelector(".feed-dislike").outerHTML : '<button type="button" class="feed-dislike">-</button>') +
-                        '<button type="button" class="feed-reply">Reply</button>' +
-                    "</div>";
-                note.querySelectorAll("[aria-pressed]").forEach(function (item) {
-                    item.classList.remove("is-on");
-                    item.setAttribute("aria-pressed", "false");
-                });
+            var parent = text.getAttribute("data-parent");
+            var form = new FormData();
+            form.append("postId", card.getAttribute("data-post-id"));
+            form.append("text", value);
+            if (parent) form.append("parentId", parent);
+            if (hasPhoto) form.append("image", file.files[0]);
+            form.append("__RequestVerificationToken", document.documentElement.getAttribute("data-csrf") || "");
+
+            fetch("/Community/Comment", { method: "POST", headers: { "X-Requested-With": "XMLHttpRequest" }, body: form }).then(function (response) {
+                if (response.status === 401) {
+                    document.documentElement.setAttribute("data-auth", "0");
+                    openAuth();
+                    return null;
+                }
+                if (!response.ok) {
+                    return response.json().then(function (body) {
+                        showToast(body && body.errors && body.errors.length ? body.errors[0] : "Something went wrong. Please try again.");
+                        return null;
+                    }).catch(function () {
+                        showToast("Something went wrong. Please try again.");
+                        return null;
+                    });
+                }
+                return response.text();
+            }).then(function (html) {
+                if (!html) return;
+                if (parent) {
+                    sessionStorage.setItem("community-open", card.getAttribute("data-post-id"));
+                    location.reload();
+                    return;
+                }
+                var holder = document.createElement("div");
+                holder.innerHTML = html.trim();
+                var note = holder.firstElementChild;
                 var empty = thread.querySelector(".feed-thread-empty");
                 thread.insertBefore(note, empty);
                 if (empty) empty.hidden = true;
                 bindNote(note, card);
                 setThread(true);
-            }
-
-            if (commentsCount) commentsCount.textContent = (parseInt(commentsCount.textContent, 10) || 0) + 1;
-            comment.reset();
-            if (photoBtn) photoBtn.classList.remove("is-on");
+                if (commentsCount) commentsCount.textContent = (parseInt(commentsCount.textContent, 10) || 0) + 1;
+                comment.reset();
+                text.removeAttribute("data-parent");
+                if (photoBtn) photoBtn.classList.remove("is-on");
+            }).catch(function () {
+                showToast("The API is not running.");
+            });
         });
+    }
+
+    var openId = sessionStorage.getItem("community-open");
+    if (openId && openId === card.getAttribute("data-post-id")) {
+        sessionStorage.removeItem("community-open");
+        setThread(true);
+        card.scrollIntoView({ block: "center" });
+    } else if (location.hash === "#post-" + card.getAttribute("data-post-id")) {
+        setThread(true);
     }
 });
 

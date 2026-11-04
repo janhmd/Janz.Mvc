@@ -1,0 +1,42 @@
+@model Janz.Mvc.ViewModels.Community.PostCommentUIVM
+@{
+    var author = Model.Author;
+    var slug = string.IsNullOrWhiteSpace(author.Nickname) ? author.UserId : author.Nickname;
+    var initial = string.IsNullOrWhiteSpace(author.Name) ? "C" : author.Name.Substring(0, 1).ToUpper();
+}
+<div class="feed-note" data-comment-id="@Model.Id" data-user-id="@author.UserId" data-mine="@(Model.IsMine ? "1" : "0")">
+    <div class="feed-note-head">
+        <div class="feed-note-avatar">@if (!string.IsNullOrEmpty(author.AvatarPath)){<img src="@author.AvatarPath" alt="" />}else{@initial}</div>
+        <div class="feed-who">
+            <div class="feed-name"><a href="/Community/Profile/@Uri.EscapeDataString(slug)">@author.Name</a></div>
+            <div class="feed-role">@author.Role</div>
+        </div>
+        <time class="feed-date">@Model.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy")</time>
+        <button type="button" class="feed-more" aria-label="More"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="5.5" r="1.6" fill="currentColor"/><circle cx="12" cy="12" r="1.6" fill="currentColor"/><circle cx="12" cy="18.5" r="1.6" fill="currentColor"/></svg></button>
+    </div>
+    @if (!string.IsNullOrWhiteSpace(Model.Text))
+    {
+        <p class="feed-note-text">@Model.Text</p>
+    }
+    @if (!string.IsNullOrEmpty(Model.ImagePath))
+    {
+        <img class="feed-note-image" src="@Model.ImagePath" alt="" />
+    }
+    <div class="feed-note-actions">
+        <button type="button" class="feed-like@(Model.MyVote == 1 ? " is-on" : "")" aria-label="Like" aria-pressed="@(Model.MyVote == 1 ? "true" : "false")"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 11v9H5.2A1.2 1.2 0 0 1 4 18.8v-6.6A1.2 1.2 0 0 1 5.2 11H8zm0 0l3.2-6.1A2.2 2.2 0 0 1 13.2 4h.3A2.5 2.5 0 0 1 16 6.5V11h3.7a1.8 1.8 0 0 1 1.8 2.1l-1.2 6.2A1.8 1.8 0 0 1 18.5 21H8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg></button>
+        <span class="feed-score">@Model.Score</span>
+        <button type="button" class="feed-dislike@(Model.MyVote == -1 ? " is-on" : "")" aria-label="Dislike" aria-pressed="@(Model.MyVote == -1 ? "true" : "false")"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 13V4h2.8A1.2 1.2 0 0 1 20 5.2v6.6A1.2 1.2 0 0 1 18.8 13H16zm0 0l-3.2 6.1a2.2 2.2 0 0 1-2 1.2h-.3A2.5 2.5 0 0 1 8 17.8V13H4.3a1.8 1.8 0 0 1-1.8-2.1l1.2-6.2A1.8 1.8 0 0 1 5.5 3H16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg></button>
+        <button type="button" class="feed-reply">Reply</button>
+    </div>
+    @if (Model.Replies.Count > 0)
+    {
+        var first = Model.Replies[0].Author;
+        <button type="button" class="feed-replies-toggle" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 5v6.5a2.5 2.5 0 0 0 2.5 2.5H18m0 0l-3.2-3.2M18 14l-3.2 3.2" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="feed-note-avatar is-mini">@(string.IsNullOrWhiteSpace(first.Name) ? "C" : first.Name.Substring(0, 1).ToUpper())</span><span>@Model.Replies.Count @(Model.Replies.Count == 1 ? "reply" : "replies")</span></button>
+        <div class="feed-replies" hidden>
+            @foreach (var reply in Model.Replies)
+            {
+                <partial name="_FeedNote" model="reply" />
+            }
+        </div>
+    }
+</div>
