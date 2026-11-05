@@ -1,0 +1,30 @@
+@model Janz.Mvc.ViewModels.Pages.SitePageUIVM
+@{
+    ViewData["Title"] = Model.Title;
+    var blocks = (List<Janz.Mvc.ViewModels.Journal.ArticleBlockVM>)ViewBag.Blocks;
+}
+
+<main>
+    <section id="text-page">
+        <div class="text-page-wrap">
+            <h1>@Model.Title</h1>
+            @foreach (var block in blocks)
+            {
+                if (block.Kind == "Heading")
+                {
+                    <h2 class="article-heading">@block.Heading</h2>
+                }
+                else if (block.Kind == "Text")
+                {
+                    <div class="article-block">
+                        @foreach (var paragraph in block.Paragraphs)
+                        {
+                            <p>@paragraph</p>
+                        }
+                    </div>
+                }
+            }
+            <p class="text-page-date">Updated @Model.UpdatedAt.ToLocalTime().ToString("dd.MM.yyyy")</p>
+        </div>
+    </section>
+</main>

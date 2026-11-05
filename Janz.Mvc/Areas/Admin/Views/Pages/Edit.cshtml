@@ -1,0 +1,47 @@
+@model PageEditVM
+@{
+    ViewData["Title"] = "Edit page";
+}
+
+<div class="admin-head">
+    <div>
+        <p class="admin-eyebrow"><a asp-action="Index">Pages</a> / @Model.Title</p>
+        <h1>Edit page</h1>
+    </div>
+</div>
+
+<form class="admin-form" method="post" asp-action="Edit" asp-route-id="@Model.Id">
+    <div asp-validation-summary="All" class="admin-errors" role="alert"></div>
+    <div class="admin-grid">
+        <div class="admin-card">
+            <div class="admin-form-grid">
+                <label class="admin-field admin-field-wide">
+                    <span>Title</span>
+                    <input asp-for="Title" required maxlength="80" />
+                </label>
+                <label class="admin-field admin-field-wide">
+                    <span>Text</span>
+                    <textarea class="admin-editor" asp-for="Body" rows="18"></textarea>
+                    <small>## for a section heading, an empty line between paragraphs.</small>
+                </label>
+            </div>
+        </div>
+        <div class="admin-stack">
+            <div class="admin-card">
+                <h2>Page</h2>
+                <dl class="admin-facts">
+                    <dt>Address</dt><dd><code>/Pages/@Model.Slug</code></dd>
+                    <dt>Updated</dt><dd>@Model.UpdatedAt.ToLocalTime().ToString("dd.MM.yyyy")</dd>
+                </dl>
+                <div class="admin-checks">
+                    <label class="admin-check"><input asp-for="InTerms" type="checkbox" /><span>In the Terms menu</span></label>
+                    <label class="admin-check"><input asp-for="InFooter" type="checkbox" /><span>In the footer</span></label>
+                </div>
+                <div class="admin-form-actions">
+                    <button type="submit" class="admin-btn">Save</button>
+                    <a class="admin-btn is-ghost" asp-action="Index">Cancel</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>

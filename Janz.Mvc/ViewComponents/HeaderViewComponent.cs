@@ -11,11 +11,13 @@ namespace Janz.Mvc.ViewComponents
     {
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly IMemoryCache _cache;
+        private readonly Janz.Mvc.Helpers.SiteContent _siteContent;
 
-        public HeaderViewComponent(IHttpClientFactory httpClientFactory, IMemoryCache cache)
+        public HeaderViewComponent(IHttpClientFactory httpClientFactory, IMemoryCache cache, Janz.Mvc.Helpers.SiteContent siteContent)
         {
             _httpClientFactory = httpClientFactory;
             _cache = cache;
+            _siteContent = siteContent;
         }
 
         // Menyudakı "Reviews" yanındakı say: hər səhifədə API-yə getməmək üçün 5 dəqiqə yadda saxlanılır
@@ -81,6 +83,7 @@ namespace Janz.Mvc.ViewComponents
             }
 
             model.ReviewCount = await ReviewCountAsync();
+            model.Pages = await _siteContent.PagesAsync();
             return View(model);
         }
     }

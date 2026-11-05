@@ -33,14 +33,14 @@ namespace Janz.Mvc.Helpers
 
             new() { Group = "Content", Title = "Journal", Icon = "bi-journal-text", Controller = "Articles", Roles = Content },
             new() { Group = "Content", Title = "Community", Icon = "bi-chat-square-text", Controller = "Community", Roles = Content },
-            new() { Group = "Content", Title = "Pages", Icon = "bi-file-earmark-text", Roles = Content },
+            new() { Group = "Content", Title = "Pages", Icon = "bi-file-earmark-text", Controller = "Pages", Roles = Content },
 
             new() { Group = "Customers", Title = "Users", Icon = "bi-people", Controller = "Users", Roles = Orders },
             new() { Group = "Customers", Title = "Roles", Icon = "bi-shield-lock", Controller = "Roles", Roles = Super },
             new() { Group = "Customers", Title = "Reviews", Icon = "bi-star", Controller = "Reviews", Roles = Content },
             new() { Group = "Customers", Title = "Notifications", Icon = "bi-bell", Roles = Orders },
 
-            new() { Group = "System", Title = "Settings", Icon = "bi-gear", Roles = Super }
+            new() { Group = "System", Title = "Settings", Icon = "bi-gear", Controller = "Settings", Roles = Super }
         };
 
         // İstifadəçinin görə biləcəyi bölmələr (qrup sırası ilə)

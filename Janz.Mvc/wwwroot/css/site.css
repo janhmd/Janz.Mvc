@@ -8753,3 +8753,20 @@ html.theme-day .assistant-name p { color: var(--muted); }
 .search-suggest-item span { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .search-suggest-item strong { font-weight: 800; }
 .search-suggest-none { margin: 0; padding: .6rem; color: #6a6a6a; font-size: .9rem; }
+
+.text-page-wrap {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 3rem 1.4rem 4rem;
+}
+
+.text-page-wrap h1 {
+    margin: 0 0 1.6rem;
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 800;
+    text-transform: uppercase;
+}
+
+.text-page-wrap .article-heading { margin: 2rem 0 .7rem; }
+.text-page-wrap .article-block p { margin: 0 0 1rem; line-height: 1.65; }
+.text-page-date { margin-top: 2rem; color: #8a8a8a; font-size: .85rem; }

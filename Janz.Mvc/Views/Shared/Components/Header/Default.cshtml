@@ -22,10 +22,10 @@
             <div class="nav-drop">
                 <a href="#">Terms</a>
                 <div class="menu-panel">
-                    <a href="#">Delivery and payment</a>
-                    <a href="#">Discount system</a>
-                    <a href="#">Refunds</a>
-                    <a href="#">FAQ</a>
+                    @foreach (var link in Model.Pages.Where(m => m.InTerms))
+                    {
+                        <a href="/Pages/@link.Slug">@link.Title</a>
+                    }
                 </div>
             </div>
         </nav>
