@@ -32,8 +32,18 @@ namespace Janz.Mvc.Controllers
         [HttpGet("/Journal/Article/{slug}")]
         public async Task<IActionResult> Article(string slug)
         {
-            var (article, _) = await GetAsync<ArticleUIVM>($"api/articles/{Uri.EscapeDataString(slug)}");
+            var seen = (Request.Cookies["janz_read"] ?? "").Split(',', StringSplitOptions.RemoveEmptyEntries).ToList();
+            var firstVisit = !seen.Contains(slug);
+
+            var (article, _) = await GetAsync<ArticleUIVM>($"api/articles/{Uri.EscapeDataString(slug)}?view={firstVisit.ToString().ToLower()}");
             if (article is null) return NotFound();
+
+            if (firstVisit)
+            {
+                seen.Add(slug);
+                var value = string.Join(",", seen.TakeLast(30));
+                Response.Cookies.Append("janz_read", value, new CookieOptions { Expires = DateTimeOffset.UtcNow.AddHours(12), HttpOnly = true, SameSite = SameSiteMode.Lax, IsEssential = true });
+            }
 
             var (comments, _) = await GetAsync<List<ArticleCommentUIVM>>($"api/articles/{article.Id}/comments");
 
