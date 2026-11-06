@@ -288,7 +288,35 @@ document.querySelectorAll("[data-generate]").forEach(function (button) {
         var parts = [];
         if (guide) parts.push(guide.text);
         if (found.length) parts.push("Go to: " + found.slice(0, 4).map(linkHtml).join(", "));
-        say(parts.length ? parts.join("<br>") : "I did not find that. Try a section name like Orders or Coupons, or ask how to add a product, change stock or edit a page.");
+        var fallback = parts.length ? parts.join("<br>") : "I did not find that. Try a section name like Orders or Coupons, or ask how to add a product, change stock or edit a page.";
+
+        var wait = document.createElement("div");
+        wait.textContent = "...";
+        log.appendChild(wait);
+        log.scrollTop = log.scrollHeight;
+
+        var body = new URLSearchParams({ question: question, __RequestVerificationToken: box.getAttribute("data-csrf") || "" });
+        fetch(box.getAttribute("data-ask"), {
+            method: "POST",
+            credentials: "same-origin",
+            headers: { "Content-Type": "application/x-www-form-urlencoded", "X-Requested-With": "XMLHttpRequest" },
+            body: body.toString()
+        })
+            .then(function (response) { return response.ok ? response.json() : null; })
+            .then(function (data) {
+                wait.remove();
+                if (data && data.answer) {
+                    var html = escape(data.answer).replace(/\n/g, "<br>");
+                    if (found.length) html += "<br>Go to: " + found.slice(0, 4).map(linkHtml).join(", ");
+                    say(html);
+                } else {
+                    say(fallback);
+                }
+            })
+            .catch(function () {
+                wait.remove();
+                say(fallback);
+            });
     }
 
     function open() {
