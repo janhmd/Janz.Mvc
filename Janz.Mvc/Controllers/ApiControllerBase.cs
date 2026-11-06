@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
+using System.Security.Claims;
+using System.Text;
 using System.Text.Json;
 
 namespace Janz.Mvc.Controllers
@@ -21,6 +23,29 @@ namespace Janz.Mvc.Controllers
         }
 
         protected HttpClient Api => _httpClientFactory.CreateClient("JanzApi");
+
+        // Kukidə id yoxdursa (köhnə giriş) JWT-nin "sub" sahəsindən oxunur
+        protected async Task<string> CurrentUserIdAsync()
+        {
+            var id = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (!string.IsNullOrEmpty(id)) return id;
+
+            var token = await HttpContext.GetTokenAsync("access_token");
+            var parts = (token ?? string.Empty).Split('.');
+            if (parts.Length < 2) return string.Empty;
+
+            try
+            {
+                var payload = parts[1].Replace('-', '+').Replace('_', '/');
+                payload = payload.PadRight(payload.Length + (4 - payload.Length % 4) % 4, '=');
+                using var json = JsonDocument.Parse(Encoding.UTF8.GetString(Convert.FromBase64String(payload)));
+                return json.RootElement.TryGetProperty("sub", out var sub) ? sub.GetString() ?? string.Empty : string.Empty;
+            }
+            catch (Exception)
+            {
+                return string.Empty;
+            }
+        }
 
         // GET: nəticə yoxdursa (API işləmir və ya xəta) Data = null qayıdır
         protected async Task<(T? Data, HttpStatusCode? Status)> GetAsync<T>(string url) where T : class

@@ -211,7 +211,7 @@ namespace Janz.Mvc.Controllers
         [HttpGet]
         public async Task<IActionResult> People(string kind)
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? string.Empty;
+            var userId = await CurrentUserIdAsync();
             var path = kind == "subscriptions" ? "following" : "followers";
             var (people, status) = await GetAsync<List<CommunityPersonUIVM>>($"api/community/profiles/{Uri.EscapeDataString(userId)}/{path}");
             if (status == HttpStatusCode.Unauthorized) return Unauthorized();

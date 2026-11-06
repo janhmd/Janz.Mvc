@@ -36,7 +36,7 @@ namespace Janz.Mvc.Controllers
             var (balance, _) = await GetAsync<BalanceUIVM>("api/balance");
             var (saved, _) = await GetAsync<List<Janz.Mvc.ViewModels.Journal.ArticleCardUIVM>>("api/articles/saved");
             var (notifications, _) = await GetAsync<Janz.Mvc.ViewModels.Notifications.NotificationListUIVM>("api/notifications");
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? string.Empty;
+            var userId = await CurrentUserIdAsync();
             var (community, _) = await GetAsync<Janz.Mvc.ViewModels.Community.CommunityProfileUIVM>($"api/community/profiles/{Uri.EscapeDataString(userId)}");
             var (blocked, _) = await GetAsync<List<Janz.Mvc.ViewModels.Community.CommunityPersonUIVM>>("api/community/blocked");
             var (products, _) = await GetAsync<List<ProductUIVM>>("api/products");
