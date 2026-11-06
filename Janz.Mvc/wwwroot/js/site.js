@@ -839,6 +839,21 @@ function fillCookOptions() {
     showCookOther();
 }
 
+var cookGuides = {
+    "Espresso machine": "/Journal/Article/inside-an-espresso-machine-pressure-heat-and-a-few-seconds",
+    "Moka pot": "/Journal/Article/moka-pot-strong-stovetop-coffee-without-a-machine",
+    "AeroPress": "/Journal/Article/aeropress-the-traveller-s-favourite-brewer",
+    "Drip coffee maker": "/Journal/Article/drip-coffee-maker-how-to-get-a-better-pot-every-morning",
+    "Pour over": "/Journal/Article/pour-over-at-home-a-simple-start",
+    "Capsules": "/Journal/Article/coffee-capsules-fast-consistent-and-how-to-do-it-well",
+    "Cezve": "/Journal/Article/turkish-coffee-how-to-make-it-in-a-cezve",
+    "Immersion dripper": "/Journal/Article/immersion-dripper-easy-sweet-coffee-with-no-skills-needed",
+    "Drip bags": "/Journal/Article/drip-bags-good-coffee-when-you-are-on-the-move",
+    "French press": "/Journal/Article/french-press-a-simple-method-for-a-full-bodied-cup",
+    "In a cup": "/Journal/Article/coffee-in-a-cup-brewing-without-any-equipment",
+    "Other": "/Journal?topic=Brewing%20guides"
+};
+
 function renderCookList() {
     if (!cookList || !cookForm) return;
     cookList.innerHTML = "";
@@ -860,11 +875,8 @@ function renderCookList() {
         var strong = document.createElement("strong");
         strong.textContent = title;
         var link = document.createElement("a");
-        link.href = "#";
+        link.href = cookGuides[name] || cookGuides.Other;
         link.textContent = "Open the guide";
-        link.addEventListener("click", function (event) {
-            event.preventDefault();
-        });
         body.appendChild(strong);
         body.appendChild(link);
         card.appendChild(body);
