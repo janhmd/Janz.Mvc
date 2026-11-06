@@ -1,0 +1,43 @@
+@model ProductVM
+@inject IConfiguration Configuration
+@{
+    var apiBase = Configuration["ApiSettings:BaseUrl"];
+    var stockClass = Model.Stock == 0 ? " is-out" : Model.Stock < AdminRules.LowStock ? " is-low" : null;
+}
+
+@if (Model.Variants.Count > 0)
+{
+    <div class="admin-card admin-card-flush admin-card-gap">
+        <div class="table-responsive">
+            <table class="admin-table admin-variant-table">
+                <thead>
+                    <tr>
+                        <th>Variant</th>
+                        <th class="num">Price</th>
+                        <th class="num">Stock</th>
+                        <th>Images</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var variant in Model.Variants)
+                    {
+                        var variantStock = variant.Stock == 0 ? " is-out" : variant.Stock < AdminRules.LowStock ? " is-low" : null;
+                        <tr>
+                            <td>@variant.Format<small>@variant.Size</small></td>
+                            <td class="num">₼@variant.Price.ToString("0.00")@if (variant.OldPrice is decimal was){<small>was ₼@was.ToString("0.00")</small>}</td>
+                            <td class="num"><span class="admin-stock@(variantStock)">@variant.Stock</span></td>
+                            <td>
+                                <span class="admin-variant-images">
+                                    @foreach (var image in variant.Images)
+                                    {
+                                        <img src="@ApiUrl.ToAbsolute(apiBase, image)" alt="" />
+                                    }
+                                </span>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}

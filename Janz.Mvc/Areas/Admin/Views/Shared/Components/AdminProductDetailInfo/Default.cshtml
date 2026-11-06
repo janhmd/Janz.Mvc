@@ -1,0 +1,43 @@
+@model ProductVM
+@inject IConfiguration Configuration
+@{
+    var apiBase = Configuration["ApiSettings:BaseUrl"];
+    var stockClass = Model.Stock == 0 ? " is-out" : Model.Stock < AdminRules.LowStock ? " is-low" : null;
+}
+
+<div class="admin-grid">
+    <div class="admin-card">
+        <dl class="admin-facts">
+            <dt>Category</dt><dd>@Model.CategoryName</dd>
+            <dt>Price</dt><dd>₼@Model.Price.ToString("0.00")@(Model.OldPrice is decimal old ? $" (was ₼{old:0.00})" : null)</dd>
+            <dt>Stock</dt><dd><span class="admin-stock@(stockClass)">@Model.Stock</span></dd>
+            <dt>Use</dt><dd>@(Model.Use ?? "—")</dd>
+            <dt>Taste</dt><dd>@(Model.Taste ?? "—")@(Model.Notes.Count > 0 ? " with notes of " + string.Join(", ", Model.Notes) : null)</dd>
+            <dt>Density / acidity</dt><dd>@(Model.Density?.ToString() ?? "—") / @(Model.Acidity?.ToString() ?? "—")</dd>
+            <dt>Taste group</dt><dd>@(Model.TasteGroup ?? "—")</dd>
+            <dt>Brewing methods</dt><dd>@(Model.BrewMethods.Count == 0 ? "—" : string.Join(", ", Model.BrewMethods))</dd>
+            <dt>Tags</dt><dd>@(Model.Tags.Count == 0 ? "—" : string.Join(", ", Model.Tags.Select(m => m.Name)))</dd>
+            <dt>Badge</dt><dd>@(Model.Badge ?? "—")</dd>
+            <dt>In the shop</dt><dd>@(Model.IsVisible ? "Visible" : "Hidden")</dd>
+            <dt>Description</dt><dd>@Model.Description</dd>
+            @* Boş sahələr göstərilmir, məhsul səhifəsində olduğu kimi *@
+            @foreach (var (label, value) in new[] { ("Roast level", Model.Roast), ("Region", Model.Region), ("Processing", Model.Processing), ("Caffeine", Model.Caffeine), ("Brewing", Model.Brewing), ("Storage", Model.Storage) })
+            {
+                if (!string.IsNullOrWhiteSpace(value))
+                {
+                    <dt>@label</dt><dd>@value</dd>
+                }
+            }
+        </dl>
+    </div>
+    <div class="admin-card">
+        <div class="admin-gallery">
+            <img class="is-main" src="@ApiUrl.ToAbsolute(apiBase, Model.ImagePath)" alt="@Model.Name" />
+            @foreach (var image in Model.Images)
+            {
+                <img src="@ApiUrl.ToAbsolute(apiBase, image)" alt="" />
+            }
+        </div>
+        <p class="admin-note admin-note-top">The gold frame is the main image shown in the catalog.</p>
+    </div>
+</div>

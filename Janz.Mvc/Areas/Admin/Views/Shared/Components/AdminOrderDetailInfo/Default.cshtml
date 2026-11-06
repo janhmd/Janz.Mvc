@@ -1,0 +1,46 @@
+@model AdminOrderVM
+@{
+}
+
+<div class="admin-grid">
+    <div class="admin-card">
+        <h2>Customer and delivery</h2>
+        <dl class="admin-facts">
+            <dt>Customer</dt><dd>@Model.CustomerName<br /><small class="admin-muted">@Model.CustomerEmail</small></dd>
+            <dt>Date</dt><dd>@Model.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</dd>
+            <dt>Recipient</dt><dd>@(string.IsNullOrEmpty(Model.DeliveryFullName) ? "—" : Model.DeliveryFullName)</dd>
+            <dt>Phone</dt><dd>@(string.IsNullOrEmpty(Model.DeliveryPhone) ? "—" : Model.DeliveryPhone)</dd>
+            <dt>Address</dt><dd>@(string.IsNullOrEmpty(Model.DeliveryLine) ? "—" : $"{Model.DeliveryLine}, {Model.DeliveryCity} {Model.DeliveryPostalCode}")</dd>
+            @if (Model.CouponCode is not null)
+            {
+                <dt>Promo code</dt><dd><code class="admin-code">@Model.CouponCode</code> −₼@Model.Discount.ToString("0.00")</dd>
+            }
+            else if (Model.LevelName is not null)
+            {
+                <dt>Level discount</dt><dd>@Model.LevelName −₼@Model.Discount.ToString("0.00")</dd>
+            }
+            <dt>Total</dt><dd>₼@Model.Total.ToString("0.00")</dd>
+            <dt>Payment</dt><dd>@(Model.IsPaid ? $"Paid by card {Model.PaidAt?.ToLocalTime():dd.MM.yyyy HH:mm}" : "On delivery")</dd>
+        </dl>
+    </div>
+    <div class="admin-card">
+        <h2>Status</h2>
+        @if (Model.NextStatuses.Count == 0)
+        {
+            <p class="admin-note">This order is @Model.Status.ToLowerInvariant(): its status can't change any more.</p>
+        }
+        else
+        {
+            <form class="admin-status-form" method="post" asp-action="Status" asp-route-id="@Model.Id">
+                <select name="status" aria-label="New status">
+                    @foreach (var status in Model.NextStatuses)
+                    {
+                        <option value="@status">@status</option>
+                    }
+                </select>
+                <button type="submit" class="admin-btn">Save</button>
+            </form>
+            <p class="admin-note admin-note-top">Cancelling an order returns its items to stock.</p>
+        }
+    </div>
+</div>

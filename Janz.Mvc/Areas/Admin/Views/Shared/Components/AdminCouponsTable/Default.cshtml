@@ -1,0 +1,60 @@
+@model Janz.Mvc.ViewModels.Coupons.CouponListVM
+@{
+}
+
+<div class="admin-card admin-card-flush">
+    @if (Model.Coupons.Count == 0)
+    {
+        <p class="admin-empty">No coupons yet.</p>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>Code</th>
+                        <th>Discount</th>
+                        <th class="num">Min order</th>
+                        <th>Used</th>
+                        <th>Valid until</th>
+                        <th>Status</th>
+                        <th class="actions">Operations</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var coupon in Model.Coupons)
+                    {
+                        var width = coupon.UsageLimit is int limit && limit > 0 ? Math.Min(100, coupon.UsedCount * 100 / limit) : 0;
+                        var statusClass = coupon.Status switch
+                        {
+                            "Active" => "status-active",
+                            "Scheduled" => "status-scheduled",
+                            "Disabled" => "status-disabled",
+                            _ => "status-expired"
+                        };
+                        <tr>
+                            <td><code class="admin-code">@coupon.Code</code>@if (coupon.IsFirstOrder){<small class="admin-usage-text"> First order</small>}</td>
+                            <td><strong>@(coupon.Type == "Percent" ? coupon.Value.ToString("0.##") + "%" : "₼" + coupon.Value.ToString("0.00"))</strong></td>
+                            <td class="num">@(coupon.MinOrder > 0 ? "₼" + coupon.MinOrder.ToString("0.00") : "—")</td>
+                            <td>
+                                <span class="admin-usage"><b style="--w:@(width)%"></b></span>
+                                <small class="admin-usage-text">@coupon.UsedCount / @(coupon.UsageLimit?.ToString() ?? "∞")</small>
+                            </td>
+                            <td>@(coupon.EndsAt?.ToString("dd.MM.yyyy") ?? "—")</td>
+                            <td><span class="admin-status @statusClass">@coupon.Status</span></td>
+                            <td class="actions">
+                                <span class="admin-actions">
+                                    <a class="admin-btn-sm" asp-action="Edit" asp-route-id="@coupon.Id">Edit</a>
+                                    <form method="post" asp-action="Delete" asp-route-id="@coupon.Id" data-confirm="Delete @coupon.Code?">
+                                        <button type="submit" class="admin-btn-sm is-danger">Delete</button>
+                                    </form>
+                                </span>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>

@@ -1,0 +1,38 @@
+@model UserAdminVM
+@{
+    var canBlock = User.IsInRole(AppRoles.SuperAdmin) || User.IsInRole(AppRoles.Admin);
+    var canChangeRole = User.IsInRole(AppRoles.SuperAdmin);
+}
+
+<div class="admin-card admin-card-flush admin-card-gap">
+    @if (Model.Orders.Count == 0)
+    {
+        <p class="admin-empty admin-card-pad">No orders yet.</p>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>Order</th>
+                        <th>Date</th>
+                        <th>Status</th>
+                        <th class="num">Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var order in Model.Orders.OrderByDescending(m => m.CreatedAt))
+                    {
+                        <tr>
+                            <td><a asp-controller="Orders" asp-action="Detail" asp-route-id="@order.Id">#@order.Id</a></td>
+                            <td>@order.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</td>
+                            <td><span class="admin-status status-@order.Status.ToLowerInvariant()">@order.Status</span></td>
+                            <td class="num">₼@order.Total.ToString("0.00")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>

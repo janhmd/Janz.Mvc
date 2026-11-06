@@ -37,46 +37,4 @@
     <div class="admin-flash admin-flash-error" role="alert">@error</div>
 }
 
-<div class="admin-card admin-card-flush">
-    @if (Model.Users.Count == 0)
-    {
-        <p class="admin-empty admin-card-pad">@(filtered ? "No users match this filter." : "No users yet.")</p>
-    }
-    else
-    {
-        <div class="table-responsive">
-            <table class="admin-table">
-                <thead>
-                    <tr>
-                        <th>User</th>
-                        <th>Role</th>
-                        <th>Joined</th>
-                        <th class="num">Orders</th>
-                        <th class="num">Spent</th>
-                        <th class="actions">Operations</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var user in Model.Users)
-                    {
-                        <tr>
-                            <td>
-                                <a asp-action="Detail" asp-route-id="@user.Id">@user.FullName</a><br />
-                                <small class="admin-muted">@user.Email</small>
-                                @if (user.IsBlocked)
-                                {
-                                    <span class="admin-badge">Blocked</span>
-                                }
-                            </td>
-                            <td>@user.Role</td>
-                            <td>@user.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy")</td>
-                            <td class="num">@user.OrderCount</td>
-                            <td class="num">₼@user.TotalSpent.ToString("0.00")</td>
-                            <td class="actions"><a class="admin-btn-sm" asp-action="Detail" asp-route-id="@user.Id">Detail</a></td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
-    }
-</div>
+@await Component.InvokeAsync("AdminUsersTable", Model)

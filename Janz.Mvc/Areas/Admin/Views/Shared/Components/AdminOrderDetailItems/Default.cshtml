@@ -1,0 +1,40 @@
+@model AdminOrderVM
+@{
+}
+
+<div class="admin-card admin-card-flush admin-card-gap">
+    <div class="table-responsive">
+        <table class="admin-table admin-variant-table">
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th class="num">Price</th>
+                    <th class="num">Quantity</th>
+                    <th class="num">Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Items)
+                {
+                    <tr>
+                        <td>
+                            <span class="admin-product">
+                                <img src="@ApiUrl.ToAbsolute(null, item.ImagePath)" alt="" />
+                                <span>
+                                    <a asp-controller="Products" asp-action="Detail" asp-route-id="@item.ProductId">@item.ProductName</a>
+                                    @if (!string.IsNullOrEmpty(item.VariantLabel) || !string.IsNullOrEmpty(item.Grind))
+                                    {
+                                        <small>@string.Join(" · ", new[] { item.VariantLabel, item.Grind }.Where(m => !string.IsNullOrEmpty(m)))</small>
+                                    }
+                                </span>
+                            </span>
+                        </td>
+                        <td class="num">₼@item.Price.ToString("0.00")</td>
+                        <td class="num">@item.Quantity</td>
+                        <td class="num">₼@item.Total.ToString("0.00")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
