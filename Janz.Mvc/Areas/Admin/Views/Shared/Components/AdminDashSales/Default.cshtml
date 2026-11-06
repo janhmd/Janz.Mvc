@@ -1,0 +1,67 @@
+@using System.Globalization
+@model DashboardVM
+@{
+    var en = CultureInfo.GetCultureInfo("en-US");
+    var maxDay = Model.SalesLast7Days.Count == 0 ? 0 : Model.SalesLast7Days.Max(m => m.Total);
+    var canShop = User.IsInRole(AppRoles.SuperAdmin) || User.IsInRole(AppRoles.Admin);
+}
+
+<div class="admin-stack">
+    <div class="admin-card">
+        <div class="admin-card-head">
+            <h2>Sales, last 7 days</h2>
+            <span class="admin-count">₼@Model.SalesLast7Days.Sum(m => m.Total).ToString("0.00")</span>
+        </div>
+        @* Sütunun hündürlüyü həmin günün satışının həftənin ən çox satışına nisbətidir *@
+        <div class="admin-week">
+            @foreach (var day in Model.SalesLast7Days)
+            {
+                var height = maxDay == 0 ? 0 : (int)Math.Round(day.Total / maxDay * 100);
+                <div class="admin-week-day@(day.Total == 0 ? " is-zero" : null)" title="@day.Orders orders, ₼@day.Total.ToString("0.00")">
+                    <span>@(day.Total == 0 ? "" : "₼" + day.Total.ToString("0"))</span>
+                    <b style="--h: @(height)%"></b>
+                    <small>@day.Date.ToString("ddd d", en)</small>
+                </div>
+            }
+        </div>
+    </div>
+
+    <div class="admin-card admin-card-flush">
+        <div class="admin-card-head admin-card-pad">
+            <h2>Recent orders</h2>
+            <span class="admin-count">@Model.OrderCount</span>
+        </div>
+        @if (Model.RecentOrders.Count == 0)
+        {
+            <p class="admin-empty admin-card-pad">No orders yet.</p>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Order</th>
+                            <th>Customer</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                            <th class="num">Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var order in Model.RecentOrders)
+                        {
+                            <tr>
+                                <td>#@order.Id</td>
+                                <td>@order.CustomerName<br /><small class="admin-muted">@order.CustomerEmail</small></td>
+                                <td>@order.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</td>
+                                <td><span class="admin-status status-@order.Status.ToLowerInvariant()">@order.Status</span></td>
+                                <td class="num">₼@order.Total.ToString("0.00")</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>

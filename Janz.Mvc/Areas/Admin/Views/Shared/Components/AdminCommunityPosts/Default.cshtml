@@ -1,0 +1,59 @@
+@model AdminCommunityVM
+@{
+    var returnUrl = Context.Request.Path + Context.Request.QueryString;
+    var count = Model.Tab == "comments" ? Model.Comments.Count : Model.Tab == "reports" ? Model.Reports.Count : Model.Posts.Count;
+}
+
+@if (Model.Posts.Count == 0)
+{
+    <p class="admin-empty admin-card-pad">No posts yet.</p>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>Post</th>
+                    <th>Author</th>
+                    <th>Score</th>
+                    <th>Comments</th>
+                    <th>Reports</th>
+                    <th>Date</th>
+                    <th class="actions">Operations</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var post in Model.Posts)
+                {
+                    <tr>
+                        <td>
+                            @if (post.IsHidden)
+                            {
+                                <span class="admin-badge">Hidden</span>
+                            }
+                            <span class="admin-review-text">@post.Text</span>
+                        </td>
+                        <td>@post.Author.Name</td>
+                        <td>@post.Score</td>
+                        <td>@post.CommentCount</td>
+                        <td>@post.Reports</td>
+                        <td>@post.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy")</td>
+                        <td class="actions">
+                            <span class="admin-actions">
+                                <form method="post" asp-action="@(post.IsHidden ? "ShowPost" : "HidePost")" asp-route-id="@post.Id">
+                                    <input type="hidden" name="returnUrl" value="@returnUrl" />
+                                    <button type="submit" class="admin-btn-sm">@(post.IsHidden ? "Show" : "Hide")</button>
+                                </form>
+                                <form method="post" asp-action="DeletePost" asp-route-id="@post.Id" data-confirm="Delete this post with its comments?">
+                                    <input type="hidden" name="returnUrl" value="@returnUrl" />
+                                    <button type="submit" class="admin-btn-sm is-danger">Delete</button>
+                                </form>
+                            </span>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

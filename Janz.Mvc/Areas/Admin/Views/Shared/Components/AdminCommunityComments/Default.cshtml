@@ -1,0 +1,55 @@
+@model AdminCommunityVM
+@{
+    var returnUrl = Context.Request.Path + Context.Request.QueryString;
+    var count = Model.Tab == "comments" ? Model.Comments.Count : Model.Tab == "reports" ? Model.Reports.Count : Model.Posts.Count;
+}
+
+@if (Model.Comments.Count == 0)
+{
+    <p class="admin-empty admin-card-pad">No comments yet.</p>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>Comment</th>
+                    <th>On post</th>
+                    <th>Author</th>
+                    <th>Date</th>
+                    <th class="actions">Operations</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var comment in Model.Comments)
+                {
+                    <tr>
+                        <td>
+                            @if (comment.IsHidden)
+                            {
+                                <span class="admin-badge">Hidden</span>
+                            }
+                            <span class="admin-review-text">@comment.Text</span>
+                        </td>
+                        <td>@comment.PostText</td>
+                        <td>@comment.Author.Name</td>
+                        <td>@comment.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy")</td>
+                        <td class="actions">
+                            <span class="admin-actions">
+                                <form method="post" asp-action="@(comment.IsHidden ? "ShowComment" : "HideComment")" asp-route-id="@comment.Id">
+                                    <input type="hidden" name="returnUrl" value="@returnUrl" />
+                                    <button type="submit" class="admin-btn-sm">@(comment.IsHidden ? "Show" : "Hide")</button>
+                                </form>
+                                <form method="post" asp-action="DeleteComment" asp-route-id="@comment.Id" data-confirm="Delete this comment?">
+                                    <input type="hidden" name="returnUrl" value="@returnUrl" />
+                                    <button type="submit" class="admin-btn-sm is-danger">Delete</button>
+                                </form>
+                            </span>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

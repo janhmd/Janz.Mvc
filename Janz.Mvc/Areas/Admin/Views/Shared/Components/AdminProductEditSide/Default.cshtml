@@ -1,0 +1,91 @@
+@model ProductEditVM
+@using System.Globalization
+@inject IConfiguration Configuration
+@{
+    var apiBase = Configuration["ApiSettings:BaseUrl"];
+    var hasMain = !string.IsNullOrEmpty(Model.ImagePath);
+    // Rəqəmlər həmişə nöqtə ilə (input type="number" vergülü qəbul etmir)
+    var price = Model.Price > 0 ? Model.Price.ToString("0.00", CultureInfo.InvariantCulture) : string.Empty;
+    var stock = Model.Stock.ToString(CultureInfo.InvariantCulture);
+    var oldPrice = Model.OldPrice?.ToString("0.00", CultureInfo.InvariantCulture);
+}
+
+<div class="admin-stack">
+    <div class="admin-card">
+        <h2>Price and stock</h2>
+        <p class="admin-note" data-variant-note hidden="@(!Model.HasVariants)">The price and stock come from the variants.</p>
+        <div class="admin-form-grid" data-price-fields>
+            <label class="admin-field">
+                <span>Price, ₼</span>
+                <input name="Price" type="number" step="0.01" min="0.01" max="100000" value="@price" required disabled="@Model.HasVariants" />
+            </label>
+            <label class="admin-field">
+                <span>Old price, ₼</span>
+                <input name="OldPrice" type="number" step="0.01" min="0.01" max="100000" value="@oldPrice" placeholder="for Sale" disabled="@Model.HasVariants" />
+            </label>
+            <label class="admin-field admin-field-wide">
+                <span>Stock</span>
+                <input name="Stock" type="number" min="0" max="100000" value="@stock" required disabled="@Model.HasVariants" />
+            </label>
+        </div>
+        <p class="admin-note admin-note-top">A product that is in orders can't be deleted: set its stock to 0 instead.</p>
+    </div>
+
+    <div class="admin-card">
+        <h2>Catalog</h2>
+        <div class="admin-form-grid">
+            <label class="admin-field admin-field-wide">
+                <span>Category</span>
+                <select name="CategoryId" required>
+                    <option value="">Choose a category</option>
+                    @foreach (var category in Model.Categories)
+                    {
+                        <option value="@category.Id" selected="@(category.Id == Model.CategoryId)">@category.Name</option>
+                    }
+                </select>
+            </label>
+            <label class="admin-field admin-field-wide">
+                <span>Badge</span>
+                <select name="Badge">
+                    <option value="">None</option>
+                    @foreach (var badge in ProductBadges.All)
+                    {
+                        <option value="@badge" selected="@(badge == Model.Badge)">@badge</option>
+                    }
+                </select>
+                <small>"Coffee of the week" puts the product in that block on the home page.</small>
+            </label>
+        </div>
+        <div class="admin-field admin-field-wide admin-chips-field">
+            <span>Tags</span>
+            @if (Model.Tags.Count == 0)
+            {
+                <small>No tags yet.</small>
+            }
+            else
+            {
+                <div class="admin-chips">
+                    @foreach (var tag in Model.Tags)
+                    {
+                        <label class="admin-chip">
+                            <input type="checkbox" name="TagIds" value="@tag.Id" checked="@Model.TagIds.Contains(tag.Id)" />
+                            <span>@tag.Name</span>
+                        </label>
+                    }
+                </div>
+            }
+            <small><a class="admin-link" asp-controller="Tags" asp-action="Index">Manage tags</a></small>
+        </div>
+    </div>
+
+    <div class="admin-card">
+        <label class="admin-check">
+            <input asp-for="IsVisible" type="checkbox" />
+            <span>Visible in the shop</span>
+        </label>
+        <div class="admin-form-actions">
+            <button type="submit" class="admin-btn">Save</button>
+            <a class="admin-btn is-ghost" asp-action="Detail" asp-route-id="@Model.Id">Cancel</a>
+        </div>
+    </div>
+</div>

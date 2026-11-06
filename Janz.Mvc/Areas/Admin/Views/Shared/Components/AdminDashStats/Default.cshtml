@@ -1,0 +1,56 @@
+@using System.Globalization
+@model DashboardVM
+@{
+    var en = CultureInfo.GetCultureInfo("en-US");
+    var maxDay = Model.SalesLast7Days.Count == 0 ? 0 : Model.SalesLast7Days.Max(m => m.Total);
+    var canShop = User.IsInRole(AppRoles.SuperAdmin) || User.IsInRole(AppRoles.Admin);
+}
+
+<div class="admin-stats">
+    <div class="admin-stat is-gold">
+        <i class="bi bi-cash-stack"></i>
+        <span class="admin-stat-label">Revenue</span>
+        <strong>₼@Model.TotalRevenue.ToString("0.00")</strong>
+    </div>
+    <div class="admin-stat">
+        <i class="bi bi-calendar3"></i>
+        <span class="admin-stat-label">This month</span>
+        <strong>₼@Model.RevenueThisMonth.ToString("0.00")</strong>
+    </div>
+    <div class="admin-stat">
+        <i class="bi bi-bag-check"></i>
+        <span class="admin-stat-label">Orders · @Model.OrdersToday today</span>
+        <strong>@Model.OrderCount</strong>
+    </div>
+    <div class="admin-stat">
+        <i class="bi bi-hourglass-split"></i>
+        <span class="admin-stat-label">Waiting to start</span>
+        <strong>@Model.PendingOrders</strong>
+    </div>
+    <div class="admin-stat">
+        <i class="bi bi-receipt"></i>
+        <span class="admin-stat-label">Average order</span>
+        <strong>₼@Model.AverageOrder.ToString("0.00")</strong>
+    </div>
+    <div class="admin-stat">
+        <i class="bi bi-people"></i>
+        <span class="admin-stat-label">Customers · @Model.NewCustomersThisMonth new</span>
+        <strong>@Model.CustomerCount</strong>
+    </div>
+    @if (canShop)
+    {
+        <a class="admin-stat" asp-controller="Products" asp-action="Index">
+            <i class="bi bi-box-seam"></i>
+            <span class="admin-stat-label">Products</span>
+            <strong>@Model.ProductCount</strong>
+        </a>
+    }
+    else
+    {
+        <div class="admin-stat">
+            <i class="bi bi-box-seam"></i>
+            <span class="admin-stat-label">Products</span>
+            <strong>@Model.ProductCount</strong>
+        </div>
+    }
+</div>

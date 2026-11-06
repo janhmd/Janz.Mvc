@@ -1,0 +1,84 @@
+@using System.Globalization
+@model DashboardVM
+@{
+    var en = CultureInfo.GetCultureInfo("en-US");
+    var maxDay = Model.SalesLast7Days.Count == 0 ? 0 : Model.SalesLast7Days.Max(m => m.Total);
+    var canShop = User.IsInRole(AppRoles.SuperAdmin) || User.IsInRole(AppRoles.Admin);
+}
+
+<div class="admin-stack">
+    <div class="admin-card">
+        <div class="admin-card-head">
+            <h2>Orders by status</h2>
+        </div>
+        <div class="admin-status-row">
+            @foreach (var pair in Model.OrdersByStatus)
+            {
+                <span class="admin-status status-@pair.Key.ToLowerInvariant()">@pair.Key · @pair.Value</span>
+            }
+        </div>
+    </div>
+
+    <div class="admin-card">
+        <div class="admin-card-head">
+            <h2>Low stock <span class="admin-count">@Model.LowStock.Count</span></h2>
+            @if (canShop && Model.LowStock.Count > 0)
+            {
+                <a class="admin-link" asp-controller="Products" asp-action="Index" asp-route-lowStock="true">All</a>
+            }
+        </div>
+        @if (Model.LowStock.Count == 0)
+        {
+            <p class="admin-empty">Every product has enough stock.</p>
+        }
+        else
+        {
+            <ul class="admin-list">
+                @foreach (var product in Model.LowStock)
+                {
+                    <li>
+                        @* Admin birbaşa redaktəyə keçib stoku artıra bilir *@
+                        @if (canShop)
+                        {
+                            <a asp-controller="Products" asp-action="Edit" asp-route-id="@product.ProductId">@product.Name</a>
+                        }
+                        else
+                        {
+                            <span>@product.Name</span>
+                        }
+                        <span class="admin-stock@(product.Stock == 0 ? " is-out" : null)">@product.Stock left</span>
+                    </li>
+                }
+            </ul>
+        }
+    </div>
+
+    <div class="admin-card">
+        <div class="admin-card-head">
+            <h2>Best sellers</h2>
+        </div>
+        @if (Model.TopProducts.Count == 0)
+        {
+            <p class="admin-empty">No sales yet.</p>
+        }
+        else
+        {
+            <ul class="admin-list">
+                @foreach (var product in Model.TopProducts)
+                {
+                    <li>
+                        @if (canShop)
+                        {
+                            <a asp-controller="Products" asp-action="Detail" asp-route-id="@product.ProductId">@product.Name</a>
+                        }
+                        else
+                        {
+                            <span>@product.Name</span>
+                        }
+                        <span class="admin-muted">@product.Sold sold · ₼@product.Revenue.ToString("0.00")</span>
+                    </li>
+                }
+            </ul>
+        }
+    </div>
+</div>

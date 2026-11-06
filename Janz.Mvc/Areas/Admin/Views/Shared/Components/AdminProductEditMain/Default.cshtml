@@ -1,0 +1,156 @@
+@model ProductEditVM
+@using System.Globalization
+@inject IConfiguration Configuration
+@{
+    var apiBase = Configuration["ApiSettings:BaseUrl"];
+    var hasMain = !string.IsNullOrEmpty(Model.ImagePath);
+    // Rəqəmlər həmişə nöqtə ilə (input type="number" vergülü qəbul etmir)
+    var price = Model.Price > 0 ? Model.Price.ToString("0.00", CultureInfo.InvariantCulture) : string.Empty;
+    var stock = Model.Stock.ToString(CultureInfo.InvariantCulture);
+    var oldPrice = Model.OldPrice?.ToString("0.00", CultureInfo.InvariantCulture);
+}
+
+<div class="admin-stack">
+    <div class="admin-card">
+        <h2>Main</h2>
+        <div class="admin-form-grid">
+            <label class="admin-field admin-field-wide">
+                <span>Name</span>
+                <input asp-for="Name" required maxlength="150" />
+            </label>
+            <label class="admin-field admin-field-wide">
+                <span>Description</span>
+                <textarea asp-for="Description" rows="5" required maxlength="500"></textarea>
+                <small>Shown on the product page. Up to 500 characters.</small>
+            </label>
+            <div class="admin-field admin-field-wide admin-chips-field">
+                <span>Brewing methods</span>
+                <div class="admin-chips">
+                    @foreach (var method in ProductOptions.BrewMethods)
+                    {
+                        <label class="admin-chip">
+                            <input type="checkbox" name="BrewMethods" value="@method" checked="@Model.BrewMethods.Contains(method)" />
+                            <span>@method</span>
+                        </label>
+                    }
+                </div>
+                <small>Shown in the Brewing block on the product page.</small>
+            </div>
+            <label class="admin-field admin-field-wide">
+                <span>Brewing note</span>
+                <textarea asp-for="Brewing" rows="2" maxlength="1000" placeholder="Espresso: 18 g in, 36 g out, 27–30 s"></textarea>
+            </label>
+            <label class="admin-field admin-field-wide">
+                <span>Storage</span>
+                <textarea asp-for="Storage" rows="2" maxlength="500" placeholder="Keep closed, away from light and heat"></textarea>
+            </label>
+        </div>
+    </div>
+
+    <div class="admin-card">
+        <h2>Taste</h2>
+        <div class="admin-form-grid">
+            <label class="admin-field"><span>Use</span><input asp-for="Use" maxlength="50" list="product-uses" placeholder="For espresso" /></label>
+            <label class="admin-field"><span>Taste</span><input asp-for="Taste" maxlength="60" placeholder="Dense coffee" /></label>
+            <label class="admin-field admin-field-wide"><span>Notes</span><input asp-for="Notes" maxlength="150" placeholder="roasted nuts, chocolate, caramel" /></label>
+            <label class="admin-field"><span>Density, 0–100</span><input asp-for="Density" type="number" min="0" max="100" step="5" placeholder="60" /></label>
+            <label class="admin-field"><span>Acidity, 0–100</span><input asp-for="Acidity" type="number" min="0" max="100" step="5" placeholder="40" /></label>
+            <label class="admin-field">
+                <span>Taste group</span>
+                <select name="TasteGroup">
+                    <option value="">None</option>
+                    @foreach (var group in ProductOptions.TasteGroups)
+                    {
+                        <option value="@group" selected="@(group == Model.TasteGroup)">@group</option>
+                    }
+                </select>
+            </label>
+        </div>
+        <datalist id="product-uses">
+            @foreach (var use in ProductOptions.Uses)
+            {
+                <option value="@use"></option>
+            }
+        </datalist>
+        <p class="admin-note admin-note-top">Shown on the product card: "Dense coffee with notes of roasted nuts, chocolate and caramel". Notes are separated by commas. Density, acidity and the taste group are also used in the catalog filters.</p>
+    </div>
+
+    <div class="admin-card">
+        <h2>Details</h2>
+        <div class="admin-form-grid">
+            <label class="admin-field"><span>Roast level</span><input asp-for="Roast" maxlength="50" placeholder="Espresso" /></label>
+            <label class="admin-field"><span>Region</span><input asp-for="Region" maxlength="50" placeholder="Ethiopia" /></label>
+            <label class="admin-field"><span>Processing</span><input asp-for="Processing" maxlength="50" placeholder="Washed" /></label>
+            <label class="admin-field"><span>Caffeine</span><input asp-for="Caffeine" maxlength="20" placeholder="1.2%" /></label>
+        </div>
+        <p class="admin-note admin-note-top">Shown in the Details block on the product page. Empty fields are hidden.</p>
+    </div>
+
+    <div class="admin-card">
+        <h2>Variants <span class="admin-count" data-variant-count>@Model.Variants.Count / @AdminRules.MaxVariants</span></h2>
+        <p class="admin-note">Pack types and sizes with their own price, stock and images, for example "Pack · 250 g" or "Nespresso capsules 10 pcs". Without variants the product uses the price and stock on the right.</p>
+        <div class="admin-variants" data-variant-list data-max="@AdminRules.MaxVariants">
+            @for (var i = 0; i < Model.Variants.Count; i++)
+            {
+                <partial name="_VariantRow" model="Model.Variants[i]" view-data="@(new ViewDataDictionary(ViewData) { { "Index", i } })" />
+            }
+        </div>
+        <button type="button" class="admin-btn is-ghost" data-variant-add><i class="bi bi-plus"></i> Add variant</button>
+        <template data-variant-template>
+            <partial name="_VariantRow" model="new ProductVariantEditVM()" view-data="@(new ViewDataDictionary(ViewData) { { "Index", "__i__" } })" />
+        </template>
+        <datalist id="variant-formats">
+            @foreach (var format in ProductOptions.Formats)
+            {
+                <option value="@format"></option>
+            }
+        </datalist>
+    </div>
+
+    <div class="admin-card">
+        <h2>Main image</h2>
+        <div class="admin-thumbs" data-preview="main">
+            @if (hasMain)
+            {
+                <figure class="admin-thumb is-main">
+                    <img src="@ApiUrl.ToAbsolute(apiBase, Model.ImagePath)" alt="" />
+                    <figcaption><span class="admin-thumb-label">Main</span></figcaption>
+                </figure>
+            }
+        </div>
+        <label class="admin-drop">
+            <input type="file" name="Image" accept="@AdminRules.ImageAccept" data-preview-input="main" />
+            <i class="bi bi-image" aria-hidden="true"></i>
+            <span>@(hasMain ? "Replace the main image" : "Choose the main image")</span>
+            <small>Shown in the catalog. PNG, JPG or WEBP, up to 2 MB.</small>
+        </label>
+    </div>
+
+    <div class="admin-card">
+        <h2>Gallery <span class="admin-count">@Model.Images.Count / @AdminRules.MaxGallery</span></h2>
+        <div class="admin-thumbs">
+            @foreach (var image in Model.Images)
+            {
+                var remove = Model.RemoveImages.Contains(image);
+                <figure class="admin-thumb@(remove ? " is-removed" : null)">
+                    <img src="@ApiUrl.ToAbsolute(apiBase, image)" alt="" />
+                    <figcaption>
+                        @* Checkbox seçiləndə yadda saxlayanda şəkil silinir; o vaxta qədər geri qaytarmaq olar *@
+                        <label class="admin-btn-sm is-danger admin-thumb-remove">
+                            <input type="checkbox" name="RemoveImages" value="@image" checked="@remove" data-remove-toggle />
+                            <i class="bi bi-trash" aria-hidden="true"></i>
+                            <span>@(remove ? "Undo" : "Remove")</span>
+                        </label>
+                    </figcaption>
+                </figure>
+            }
+        </div>
+        <div class="admin-thumbs" data-preview="gallery"></div>
+        <label class="admin-drop">
+            <input type="file" name="Gallery" accept="@AdminRules.ImageAccept" multiple data-preview-input="gallery" />
+            <i class="bi bi-images" aria-hidden="true"></i>
+            <span>Add images to the gallery</span>
+            <small>Shown on the product page. Up to @AdminRules.MaxGallery images, 2 MB each.</small>
+        </label>
+    </div>
+</div>

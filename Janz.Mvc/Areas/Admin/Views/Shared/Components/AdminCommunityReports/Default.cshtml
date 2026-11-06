@@ -1,0 +1,70 @@
+@model AdminCommunityVM
+@{
+    var returnUrl = Context.Request.Path + Context.Request.QueryString;
+    var count = Model.Tab == "comments" ? Model.Comments.Count : Model.Tab == "reports" ? Model.Reports.Count : Model.Posts.Count;
+}
+
+@if (Model.Reports.Count == 0)
+{
+    <p class="admin-empty admin-card-pad">No reports yet.</p>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>Reported</th>
+                    <th>Reason</th>
+                    <th>Reporter</th>
+                    <th>Date</th>
+                    <th class="actions">Operations</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var report in Model.Reports)
+                {
+                    <tr>
+                        <td>
+                            <span class="admin-badge">@report.Target</span>
+                            @if (report.IsResolved)
+                            {
+                                <span class="admin-badge">Resolved</span>
+                            }
+                            <span class="admin-review-text">@report.TargetText</span>
+                            <small class="admin-muted">by @report.TargetAuthor</small>
+                        </td>
+                        <td>@report.Reason</td>
+                        <td>@report.Reporter</td>
+                        <td>@report.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy")</td>
+                        <td class="actions">
+                            <span class="admin-actions">
+                                @if (!report.IsResolved)
+                                {
+                                    <form method="post" asp-action="Resolve" asp-route-id="@report.Id">
+                                        <input type="hidden" name="returnUrl" value="@returnUrl" />
+                                        <button type="submit" class="admin-btn-sm">Resolve</button>
+                                    </form>
+                                }
+                                @if (report.PostId is int postId)
+                                {
+                                    <form method="post" asp-action="HidePost" asp-route-id="@postId">
+                                        <input type="hidden" name="returnUrl" value="@returnUrl" />
+                                        <button type="submit" class="admin-btn-sm">Hide post</button>
+                                    </form>
+                                }
+                                @if (report.CommentId is int commentId)
+                                {
+                                    <form method="post" asp-action="HideComment" asp-route-id="@commentId">
+                                        <input type="hidden" name="returnUrl" value="@returnUrl" />
+                                        <button type="submit" class="admin-btn-sm">Hide comment</button>
+                                    </form>
+                                }
+                            </span>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

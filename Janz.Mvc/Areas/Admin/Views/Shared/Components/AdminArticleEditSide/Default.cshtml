@@ -1,0 +1,82 @@
+@model Janz.Mvc.ViewModels.Articles.ArticleEditVM
+@using Janz.Mvc.ViewModels.Journal
+@{
+}
+
+<div class="admin-stack">
+    <div class="admin-card">
+        <h2>Journal</h2>
+        <div class="admin-form-grid">
+            <label class="admin-field admin-field-wide">
+                <span>Topic</span>
+                <select asp-for="Topic" required>
+                    <option value="">Choose a topic</option>
+                    @foreach (var topic in JournalPageVM.Topics)
+                    {
+                        <option value="@topic">@topic</option>
+                    }
+                </select>
+            </label>
+            <label class="admin-field admin-field-wide">
+                <span>Slug</span>
+                <input asp-for="Slug" maxlength="200" pattern="[a-z0-9]+(-[a-z0-9]+)*" placeholder="Made from the title if empty" />
+                <small>Part of the page address: /Journal/Article/slug</small>
+            </label>
+        </div>
+        <div class="admin-field admin-field-wide admin-chips-field">
+            <span>Tags</span>
+            <div class="admin-chips">
+                @foreach (var tag in JournalPageVM.Tags)
+                {
+                    <label class="admin-chip">
+                        <input type="checkbox" name="Tags" value="@tag" checked="@Model.Tags.Contains(tag)" />
+                        <span>@tag</span>
+                    </label>
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="admin-card">
+        <h2>Author</h2>
+        <div class="admin-form-grid">
+            <label class="admin-field admin-field-wide">
+                <span>Name</span>
+                <input asp-for="AuthorName" maxlength="100" placeholder="Aysel Karimova" />
+            </label>
+            <label class="admin-field admin-field-wide">
+                <span>Role</span>
+                <input asp-for="AuthorRole" maxlength="100" placeholder="Head barista" />
+            </label>
+        </div>
+    </div>
+
+    <div class="admin-card">
+        <h2>Learning</h2>
+        <label class="admin-check">
+            <input asp-for="IsLearning" type="checkbox" />
+            <span>Learning material</span>
+        </label>
+        <label class="admin-field admin-field-wide">
+            <span>Series</span>
+            <input asp-for="Series" maxlength="100" placeholder="Brewing espresso" />
+            <small>Articles with the same series are shown together on the journal page.</small>
+        </label>
+    </div>
+
+    <div class="admin-card">
+        <label class="admin-field">
+            <span>Published date</span>
+            <input asp-for="PublishedAt" type="date" />
+            <small>Leave empty to use the moment of publishing.</small>
+        </label>
+        <label class="admin-check">
+            <input asp-for="IsPublished" type="checkbox" />
+            <span>Published on the site</span>
+        </label>
+        <div class="admin-form-actions">
+            <button type="submit" class="admin-btn">Save</button>
+            <a class="admin-btn is-ghost" asp-action="Index">Cancel</a>
+        </div>
+    </div>
+</div>
