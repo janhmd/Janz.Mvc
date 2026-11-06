@@ -1,0 +1,67 @@
+@model Janz.Mvc.ViewModels.Orders.OrderUIVM
+@using Janz.Mvc.Helpers
+@inject IConfiguration Configuration
+@{
+}
+
+@if (!string.IsNullOrEmpty(Model.DeliveryLine))
+{
+    <div class="order-delivery">
+        <span>Delivery</span>
+        <strong>@Model.DeliveryFullName · @Model.DeliveryPhone</strong>
+        <p>@Model.DeliveryLine, @Model.DeliveryCity, @Model.DeliveryPostalCode</p>
+    </div>
+}
+<div class="cart-lines">
+    @foreach (var item in Model.Items)
+    {
+        <div class="cart-line">
+            <a class="cart-line-photo" href="/Products/Detail/@item.ProductId"><img src="@ApiUrl.ToAbsolute(Configuration["ApiSettings:BaseUrl"], item.ImagePath)" alt="@item.ProductName" /></a>
+            <div class="cart-line-info">
+                <a href="/Products/Detail/@item.ProductId">@item.ProductName</a>
+                @if (!string.IsNullOrEmpty(item.VariantLabel) || !string.IsNullOrEmpty(item.Grind)){<span class="cart-line-variant">@string.Join(" · ", new[] { item.VariantLabel, item.Grind }.Where(m => !string.IsNullOrEmpty(m)))</span>}
+                <div class="kind">₼@item.Price.ToString("0.00")</div>
+            </div>
+            <div class="cart-qty"><span>@item.Quantity</span></div>
+            <strong class="cart-line-total">₼@item.Total.ToString("0.00")</strong>
+        </div>
+    }
+</div>
+@if (Model.CouponCode is not null || Model.LevelName is not null)
+{
+    <div class="cart-sum">
+        <span>@(Model.CouponCode is not null ? $"Promo code {Model.CouponCode}" : $"Discount {Model.LevelName}")</span>
+        <strong>−₼@Model.Discount.ToString("0.00")</strong>
+    </div>
+}
+<div class="cart-sum">
+    <span>Total</span>
+    <strong>₼@Model.Total.ToString("0.00")</strong>
+</div>
+@if (Model.BalanceUsed > 0)
+{
+    <div class="cart-sum">
+        <span>Paid from the balance</span>
+        <strong>₼@Model.BalanceUsed.ToString("0.00")</strong>
+    </div>
+}
+@if (TempData["PayError"] is string payError)
+{
+    <p class="entry-error">@payError</p>
+}
+@if (Model.IsPaid)
+{
+    <div class="cart-sum">
+        <span>@(Model.BalanceUsed >= Model.Total ? "Paid from the balance" : "Paid by card") @Model.PaidAt?.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</span>
+    </div>
+}
+else if (Model.Status == "Pending" || Model.Status == "Processing")
+{
+    @* Kartla ödəniş Stripe-ın səhifəsində olur; ödəmək istəməyən çatdırılanda ödəyir *@
+    <div class="cart-sum">
+        <span>Pay @(Model.BalanceUsed > 0 ? $"the rest ₼{Model.Total - Model.BalanceUsed:0.00}" : "now") by card or on delivery</span>
+        <form method="post" asp-controller="Orders" asp-action="Pay" asp-route-id="@Model.Id">
+            <button type="submit" class="cart-place">Pay by card</button>
+        </form>
+    </div>
+}

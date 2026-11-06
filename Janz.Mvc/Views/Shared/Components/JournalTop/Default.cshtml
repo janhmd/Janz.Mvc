@@ -1,0 +1,34 @@
+@model Janz.Mvc.ViewModels.Journal.JournalPageVM
+@using Janz.Mvc.ViewModels.Journal
+@{
+    var hero = Model.Articles.OrderByDescending(m => m.PublishedAt).FirstOrDefault();
+    // Hər seriyadan ən köhnə məqalə: seriyanı oxumağa ondan başlamaq olar
+    var series = Model.Articles.Where(m => !string.IsNullOrEmpty(m.Series)).GroupBy(m => m.Series).Select(g => g.OrderBy(m => m.PublishedAt).First()).ToList();
+}
+
+<div class="journal-top">
+    <aside>
+        <h1>Journal about coffee</h1>
+        <ul class="journal-topics">
+            <li class="all"><a href="/Journal" class="@(Model.Topic is null ? "is-on" : null)" data-topic="">All topics</a></li>
+            @foreach (var topic in JournalPageVM.Topics)
+            {
+                <li><a href="/Journal?topic=@Uri.EscapeDataString(topic)" class="@(Model.Topic == topic ? "is-on" : null)" data-topic="@topic">@topic <span>@Model.Articles.Count(m => m.Topic == topic)</span></a></li>
+            }
+        </ul>
+    </aside>
+    @if (hero is not null)
+    {
+        var heroHref = $"/Journal/Article/{hero.Slug}";
+        var heroDate = hero.PublishedAt.ToLocalTime().ToString("d MMMM yyyy");
+        <div class="journal-hero" data-id="@hero.Id" data-title="@hero.Title" data-topic="@hero.Topic" data-tags="@string.Join(",", hero.Tags)" data-date="@heroDate" data-sort="@hero.PublishedAt.ToString("s")" data-lead="@hero.Lead" data-image="@hero.CoverPath" data-href="@heroHref" data-likes="@hero.Likes" data-comments="@hero.Comments" data-views="@hero.Views" data-mins="@(hero.Minutes)'">
+            <a class="journal-hero-photo" href="@heroHref" aria-label="@hero.Title"><img src="@hero.CoverPath" alt="" /></a>
+            <div class="copy">
+                <div class="article-meta">@hero.Topic<br />@heroDate</div>
+                <h2><a href="@heroHref">@hero.Title</a></h2>
+                <p>@hero.Lead</p>
+                <partial name="_ArticleStats" model="hero" />
+            </div>
+        </div>
+    }
+</div>

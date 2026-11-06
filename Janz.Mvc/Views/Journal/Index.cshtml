@@ -9,75 +9,8 @@
 
 <main>
         <section id="journal" data-topic="@Model.Topic" data-tag="@Model.Tag">
-            <div class="journal-top">
-                <aside>
-                    <h1>Journal about coffee</h1>
-                    <ul class="journal-topics">
-                        <li class="all"><a href="/Journal" class="@(Model.Topic is null ? "is-on" : null)" data-topic="">All topics</a></li>
-                        @foreach (var topic in JournalPageVM.Topics)
-                        {
-                            <li><a href="/Journal?topic=@Uri.EscapeDataString(topic)" class="@(Model.Topic == topic ? "is-on" : null)" data-topic="@topic">@topic <span>@Model.Articles.Count(m => m.Topic == topic)</span></a></li>
-                        }
-                    </ul>
-                </aside>
-                @if (hero is not null)
-                {
-                    var heroHref = $"/Journal/Article/{hero.Slug}";
-                    var heroDate = hero.PublishedAt.ToLocalTime().ToString("d MMMM yyyy");
-                    <div class="journal-hero" data-id="@hero.Id" data-title="@hero.Title" data-topic="@hero.Topic" data-tags="@string.Join(",", hero.Tags)" data-date="@heroDate" data-sort="@hero.PublishedAt.ToString("s")" data-lead="@hero.Lead" data-image="@hero.CoverPath" data-href="@heroHref" data-likes="@hero.Likes" data-comments="@hero.Comments" data-views="@hero.Views" data-mins="@(hero.Minutes)'">
-                        <a class="journal-hero-photo" href="@heroHref" aria-label="@hero.Title"><img src="@hero.CoverPath" alt="" /></a>
-                        <div class="copy">
-                            <div class="article-meta">@hero.Topic<br />@heroDate</div>
-                            <h2><a href="@heroHref">@hero.Title</a></h2>
-                            <p>@hero.Lead</p>
-                            <partial name="_ArticleStats" model="hero" />
-                        </div>
-                    </div>
-                }
-            </div>
+            @await Component.InvokeAsync("JournalTop", Model)
 
-            <div class="journal-board">
-                <div class="journal-side">
-                    <h3>Tags</h3>
-                    <div class="journal-tags">
-                        @foreach (var tag in JournalPageVM.Tags)
-                        {
-                            <a href="/Journal?tag=@Uri.EscapeDataString(tag)" class="@(Model.Tag == tag ? "is-on" : null)" data-tag="@tag"># @tag</a>
-                        }
-                        <a href="/Journal" data-tag="">All tags</a>
-                    </div>
-                    @if (series.Count > 0)
-                    {
-                        <h3>Article series</h3>
-                        @foreach (var item in series)
-                        {
-                            <a class="journal-series" href="/Journal/Article/@item.Slug">@item.Series</a>
-                        }
-                    }
-                </div>
-                <div>
-                    <div class="journal-recent" hidden>
-                        <h2><a href="/Profile#journal">Recently read <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5.5l6.5 6.5L9 18.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></a></h2>
-                        <div class="journal-recent-row"></div>
-                    </div>
-                    <div class="journal-toolbar">
-                        <h2>All articles</h2>
-                        <select aria-label="Sort">
-                            <option>Newest first</option>
-                            <option>Oldest first</option>
-                            <option>Most read</option>
-                            <option>Most popular</option>
-                        </select>
-                        <span class="journal-count">@Model.Articles.Count articles</span>
-                    </div>
-                    <div class="journal-grid">
-                        @foreach (var article in Model.Articles.Where(m => m != hero))
-                        {
-                            <partial name="_ArticleCard" model="article" />
-                        }
-                        <p class="journal-none" hidden="@(Model.Articles.Count > 1)">@(ViewBag.Error as string ?? "No articles on this topic yet")</p>
-                    </div>
-                </div>
-            </div>
+            @await Component.InvokeAsync("JournalBoard", Model)
         </section>
     </main>
