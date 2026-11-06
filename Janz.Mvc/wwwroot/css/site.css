@@ -3456,10 +3456,16 @@ a.journal-card:hover { transform: translateY(-3px); }
 }
 
 .article-bar button,
+.article-bar a,
 .article-bar span {
     display: inline-flex;
     align-items: center;
     gap: .35rem;
+}
+
+.article-bar a {
+    color: inherit;
+    text-decoration: none;
 }
 
 .article-bar button {
