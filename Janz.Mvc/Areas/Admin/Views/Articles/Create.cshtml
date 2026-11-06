@@ -121,6 +121,11 @@
             </div>
 
             <div class="admin-card">
+                <label class="admin-field">
+                    <span>Published date</span>
+                    <input asp-for="PublishedAt" type="date" />
+                    <small>Leave empty to use the moment of publishing.</small>
+                </label>
                 <label class="admin-check">
                     <input asp-for="IsPublished" type="checkbox" />
                     <span>Published on the site</span>

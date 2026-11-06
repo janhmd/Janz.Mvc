@@ -38,6 +38,10 @@ namespace Janz.Mvc.ViewModels.Articles
 
         public bool IsPublished { get; set; }
 
+        [DataType(DataType.Date)]
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
+        public DateTime? PublishedAt { get; set; }
+
         public IFormFile? Cover { get; set; }
         public List<IFormFile> Images { get; set; } = new List<IFormFile>();
     }

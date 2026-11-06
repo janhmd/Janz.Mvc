@@ -42,7 +42,7 @@ namespace Janz.Mvc.Areas.Admin.Controllers
             if (!ModelState.IsValid) return View(model);
 
             using var form = new MultipartFormDataContent();
-            AddFields(form, model.Title, model.Slug, model.Topic, model.Lead, model.Body, model.Tags, model.AuthorName, model.AuthorRole, model.IsLearning, model.Series, model.IsPublished);
+            AddFields(form, model.Title, model.Slug, model.Topic, model.Lead, model.Body, model.Tags, model.AuthorName, model.AuthorRole, model.IsLearning, model.Series, model.IsPublished, model.PublishedAt);
             AddFiles(form, model.Cover, model.Images);
 
             var (created, errors, status) = await PostFormAsync<ArticleVM>("api/admin/articles", form);
@@ -79,6 +79,7 @@ namespace Janz.Mvc.Areas.Admin.Controllers
                 IsLearning = article.IsLearning,
                 Series = article.Series,
                 IsPublished = article.IsPublished,
+                PublishedAt = article.IsPublished ? article.PublishedAt.ToLocalTime().Date : null,
                 CoverPath = article.CoverPath,
                 CurrentImages = article.Images
             });
@@ -93,7 +94,7 @@ namespace Janz.Mvc.Areas.Admin.Controllers
             if (!ModelState.IsValid) return await EditViewAsync(model);
 
             using var form = new MultipartFormDataContent();
-            AddFields(form, model.Title, model.Slug, model.Topic, model.Lead, model.Body, model.Tags, model.AuthorName, model.AuthorRole, model.IsLearning, model.Series, model.IsPublished);
+            AddFields(form, model.Title, model.Slug, model.Topic, model.Lead, model.Body, model.Tags, model.AuthorName, model.AuthorRole, model.IsLearning, model.Series, model.IsPublished, model.PublishedAt);
             AddFiles(form, model.Cover, model.Images);
             foreach (var path in model.RemoveImages.Distinct())
             {
@@ -154,7 +155,7 @@ namespace Janz.Mvc.Areas.Admin.Controllers
         }
 
         private static void AddFields(MultipartFormDataContent form, string? title, string? slug, string? topic, string? lead, string? body,
-                                      List<string> tags, string? authorName, string? authorRole, bool isLearning, string? series, bool isPublished)
+                                      List<string> tags, string? authorName, string? authorRole, bool isLearning, string? series, bool isPublished, DateTime? publishedAt)
         {
             form.Add(new StringContent(title?.Trim() ?? string.Empty), "Title");
             AddText(form, "Slug", slug);
@@ -170,6 +171,10 @@ namespace Janz.Mvc.Areas.Admin.Controllers
             form.Add(new StringContent(isLearning ? "true" : "false"), "IsLearning");
             AddText(form, "Series", series);
             form.Add(new StringContent(isPublished ? "true" : "false"), "IsPublished");
+            if (isPublished && publishedAt.HasValue)
+            {
+                form.Add(new StringContent(publishedAt.Value.Date.AddHours(12).ToString("yyyy-MM-ddTHH:mm:ss")), "PublishedAt");
+            }
         }
 
         private static void AddFiles(MultipartFormDataContent form, IFormFile? cover, List<IFormFile> images)
