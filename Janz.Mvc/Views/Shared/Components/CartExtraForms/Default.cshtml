@@ -1,0 +1,41 @@
+@using Janz.Mvc.Helpers
+@using System.Globalization
+@model Janz.Mvc.ViewModels.Cart.CartPageVM
+@inject IConfiguration Configuration
+@{
+    var error = TempData["CartError"] as string;
+    var addressError = TempData["AddressError"] as string;
+    var apiBase = Configuration["ApiSettings:BaseUrl"];
+    var en = CultureInfo.GetCultureInfo("en-US");
+    var today = DateTime.Today;
+    string Day(int days) => today.AddDays(days).ToString("d MMMM", en);
+    var hasItems = Model.Cart.Items.Count > 0;
+    var selected = Model.Addresses.FirstOrDefault(m => m.Id == Model.SelectedAddressId);
+}
+
+@* Ayrı formlar: HTML-də form form içində ola bilməz *@
+<form id="cart-clear" asp-controller="Cart" asp-action="Clear" method="post" hidden></form>
+
+<form class="co-card co-fields co-extra co-address-form" asp-controller="Cart" asp-action="AddAddress" method="post" data-address-form hidden="@string.IsNullOrEmpty(addressError)">
+    <label class="co-field">
+        <span>Name and surname</span>
+        <input name="fullName" required maxlength="80" value="@Model.UserName" />
+    </label>
+    <label class="co-field">
+        <span>Phone</span>
+        <input name="phone" type="tel" required maxlength="30" placeholder="+994 70 217 55 57" />
+    </label>
+    <label class="co-field">
+        <span>City</span>
+        <input name="city" required maxlength="80" value="Baku" />
+    </label>
+    <label class="co-field co-field-wide">
+        <span>Street, house, apartment</span>
+        <input name="line" required maxlength="200" />
+    </label>
+    <label class="co-field">
+        <span>Postal code</span>
+        <input name="postalCode" required maxlength="20" placeholder="AZ1000" />
+    </label>
+    <button type="submit" class="co-small-btn">Add address</button>
+</form>

@@ -1,0 +1,20 @@
+@using Janz.Mvc.Helpers
+@using System.Globalization
+@model Janz.Mvc.ViewModels.Cart.CartPageVM
+@inject IConfiguration Configuration
+@{
+    var error = TempData["CartError"] as string;
+    var addressError = TempData["AddressError"] as string;
+    var apiBase = Configuration["ApiSettings:BaseUrl"];
+    var en = CultureInfo.GetCultureInfo("en-US");
+    var today = DateTime.Today;
+    string Day(int days) => today.AddDays(days).ToString("d MMMM", en);
+    var hasItems = Model.Cart.Items.Count > 0;
+    var selected = Model.Addresses.FirstOrDefault(m => m.Id == Model.SelectedAddressId);
+}
+
+<div class="wish-empty cart-empty">
+    <h1>The cart is empty</h1>
+    <p>Let’s pick something in the catalog</p>
+    <a href="/Products">To catalog</a>
+</div>

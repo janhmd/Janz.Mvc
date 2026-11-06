@@ -1,0 +1,24 @@
+@model List<ProductUIVM>
+@{
+}
+
+<div class="catalog-tags">
+    <a class="tag-minute" href="#">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l1.2 4.2L17.5 8.5 13.2 9.8 12 14l-1.2-4.2L6.5 8.5l4.3-1.3zM18 13l.6 2 2 .6-2 .6-.6 2-.6-2-2-.6 2-.6z" /></svg>
+        Choose coffee in a minute
+    </a>
+    <a href="?tag=@CatalogQuery.Slug("For an espresso machine")" class="@(CatalogQuery.Has(Context.Request, "tag", CatalogQuery.Slug("For an espresso machine")) ? "is-on" : null)">For an espresso machine</a>
+    <a href="?tag=@CatalogQuery.Slug("For Turkish coffee")" class="@(CatalogQuery.Has(Context.Request, "tag", CatalogQuery.Slug("For Turkish coffee")) ? "is-on" : null)">For Turkish coffee</a>
+    <a href="?tag=@CatalogQuery.Slug("For milk drinks")" class="@(CatalogQuery.Has(Context.Request, "tag", CatalogQuery.Slug("For milk drinks")) ? "is-on" : null)">For milk drinks</a>
+    <a href="?tag=@CatalogQuery.Slug("For a portafilter")" class="@(CatalogQuery.Has(Context.Request, "tag", CatalogQuery.Slug("For a portafilter")) ? "is-on" : null)">For a portafilter</a>
+    <a href="?tag=@CatalogQuery.Slug("Ground coffee")" class="@(CatalogQuery.Has(Context.Request, "tag", CatalogQuery.Slug("Ground coffee")) ? "is-on" : null)">Ground coffee</a>
+    <a href="?tag=@CatalogQuery.Slug("Coffee with low acidity")" class="@(CatalogQuery.Has(Context.Request, "tag", CatalogQuery.Slug("Coffee with low acidity")) ? "is-on" : null)">Coffee with low acidity</a>
+    <a href="?tag=@CatalogQuery.Slug("For a cup")" class="@(CatalogQuery.Has(Context.Request, "tag", CatalogQuery.Slug("For a cup")) ? "is-on" : null)">For a cup</a>
+    <a href="?tag=@CatalogQuery.Slug("Fermented coffee")" class="@(CatalogQuery.Has(Context.Request, "tag", CatalogQuery.Slug("Fermented coffee")) ? "is-on" : null)">Fermented coffee</a>
+    <a href="?tag=@CatalogQuery.Slug("Limited edition")" class="@(CatalogQuery.Has(Context.Request, "tag", CatalogQuery.Slug("Limited edition")) ? "is-on" : null)">Limited edition</a>
+    <a href="?tag=@CatalogQuery.Slug("Whole bean")" class="@(CatalogQuery.Has(Context.Request, "tag", CatalogQuery.Slug("Whole bean")) ? "is-on" : null)">Whole bean</a>
+    <a href="?tag=@CatalogQuery.Slug("Whole bean 1 kg")" class="@(CatalogQuery.Has(Context.Request, "tag", CatalogQuery.Slug("Whole bean 1 kg")) ? "is-on" : null)">Whole bean 1 kg</a>
+    <button type="button" aria-expanded="false" aria-label="More filters">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+</div>

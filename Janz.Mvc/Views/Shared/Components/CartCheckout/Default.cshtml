@@ -1,0 +1,190 @@
+@using Janz.Mvc.Helpers
+@using System.Globalization
+@model Janz.Mvc.ViewModels.Cart.CartPageVM
+@inject IConfiguration Configuration
+@{
+    var error = TempData["CartError"] as string;
+    var addressError = TempData["AddressError"] as string;
+    var apiBase = Configuration["ApiSettings:BaseUrl"];
+    var en = CultureInfo.GetCultureInfo("en-US");
+    var today = DateTime.Today;
+    string Day(int days) => today.AddDays(days).ToString("d MMMM", en);
+    var hasItems = Model.Cart.Items.Count > 0;
+    var selected = Model.Addresses.FirstOrDefault(m => m.Id == Model.SelectedAddressId);
+}
+
+@* Sifariş: dizayn Janz.Front/cart.html. Səbət, ünvanlar və sifariş API-dədir (api/cart, api/addresses, api/orders) *@
+<form class="checkout" id="checkout" asp-controller="Orders" asp-action="Create" method="post">
+    <div class="co-main">
+        <div class="co-strip">
+            <div class="co-dates">
+                <div>
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3c1 3.5 5 5.5 5 10a5 5 0 0 1-10 0c0-2.2 1-3.6 2-4.6.3 1.6 1 2.6 2 3C11 8.6 11 5.6 12 3z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+                    <span><small>We’ll roast</small><b>@Day(1)</b></span>
+                </div>
+                <div>
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7h11v9H3zM14 10h4l3 3v3h-7" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><circle cx="7" cy="17.5" r="1.6" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="17" cy="17.5" r="1.6" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
+                    <span><small>We’ll ship</small><b>@Day(2)</b></span>
+                </div>
+                <div>
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 8h14l-1 12H6zM8 8a4 4 0 0 1 8 0" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+                    <span><small>Delivery</small><b>@Day(2) – @Day(3)</b></span>
+                </div>
+            </div>
+            <div class="co-promise">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12a7 7 0 1 1-2-4.9M19 4v4h-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <p>If you don’t like the coffee, we’ll refund the money or replace it with another one</p>
+            </div>
+        </div>
+
+        <div class="co-card">
+            <div class="co-card-head">
+                <h1>Cart <span>@Model.Cart.Count</span></h1>
+                <button type="submit" class="co-clear" form="cart-clear">Clear cart
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7h14M10 7V5h4v2M7 7l1 13h8l1-13M10.5 11v5.5M13.5 11v5.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </button>
+            </div>
+            @if (!string.IsNullOrEmpty(error))
+            {
+                <p class="entry-error">@error</p>
+            }
+            <div class="co-lines">
+                @foreach (var item in Model.Cart.Items)
+                {
+                    @* − / + və sil düymələri header panelindəki kimi AJAX ilə işləyir (site.js: data-mini-qty, data-mini-remove) *@
+                    <div class="co-line-item">
+                        <a class="co-photo" href="/Products/Detail/@item.ProductId"><img src="@ApiUrl.ToAbsolute(apiBase, item.ImagePath)" alt="" /></a>
+                        <div class="co-info">
+                            <a class="co-name" href="/Products/Detail/@item.ProductId">@item.ProductName</a>
+                            @if (!string.IsNullOrEmpty(item.VariantLabel) || !string.IsNullOrEmpty(item.Grind)){<span class="co-variant">@string.Join(" · ", new[] { item.VariantLabel, item.Grind }.Where(m => !string.IsNullOrEmpty(m)))</span>}
+                            <span class="co-each">₼@item.Price.ToString("0.00") each · @item.Stock in stock</span>
+                        </div>
+                        <div class="mini-cart-qty">
+                            <button type="button" aria-label="Less @item.ProductName" data-mini-qty="@item.Id" data-quantity="@(item.Quantity - 1)" disabled="@(item.Quantity <= 1)">−</button>
+                            <span>@item.Quantity</span>
+                            <button type="button" aria-label="More @item.ProductName" data-mini-qty="@item.Id" data-quantity="@(item.Quantity + 1)" disabled="@(item.Quantity >= item.Stock)">+</button>
+                        </div>
+                        <div class="mini-cart-price">
+                            <strong>₼@item.Total.ToString("0.00")</strong>
+                        </div>
+                        <button type="button" class="mini-cart-remove" aria-label="Remove @item.ProductName" data-mini-remove="@item.Id">
+                            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7h14M10 7V5h4v2M7 7l1 13h8l1-13M10.5 11v5.5M13.5 11v5.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        </button>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <div class="co-card">
+            <h2>Delivery</h2>
+            <h3>Address</h3>
+            <div class="co-addresses">
+                <button type="button" class="co-address co-address-new" data-toggle-address>
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+                    <b>New address</b>
+                </button>
+                @foreach (var address in Model.Addresses)
+                {
+                    <label class="co-address">
+                        <input type="radio" name="addressId" value="@address.Id" required checked="@(address.Id == Model.SelectedAddressId)"
+                               data-name="@address.FullName" data-phone="@address.Phone" />
+                        <span>@address.Line, @address.City, @address.PostalCode</span>
+                    </label>
+                }
+            </div>
+            @if (!string.IsNullOrEmpty(addressError))
+            {
+                <p class="entry-error">@addressError</p>
+            }
+            @if (Model.Addresses.Count == 0)
+            {
+                <p class="co-each">Add a delivery address to place the order.</p>
+            }
+
+            <div class="co-recipient" data-recipient hidden="@(selected is null)">
+                <span>Recipient</span>
+                <b data-recipient-name>@selected?.FullName</b>
+                <span><span data-recipient-phone>@selected?.Phone</span> · @Model.Email</span>
+            </div>
+        </div>
+
+        <div class="co-card">
+            <h2>Delivery and payment</h2>
+            <div class="co-facts">
+                <div>
+                    <b>Janz courier</b>
+                    <span>@Day(2) – @Day(3), free</span>
+                    <small>All over Baku; regions by Azerpost</small>
+                </div>
+                <div>
+                    <b>Card or on delivery</b>
+                    <span>Pay by card after placing the order</span>
+                    <small>Or pay cash or card to the courier</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="co-side">
+        <div class="co-total">
+            <div class="co-total-head">
+                <h2>To pay</h2>
+                <strong class="co-sum">
+                    @if (Model.BalancePart > 0)
+                    {
+                        <span class="co-sum-balance">₼@((Model.PayTotal - Model.BalancePart).ToString("0.00"))</span>
+                    }
+                    <span class="co-sum-full">₼@Model.PayTotal.ToString("0.00")</span>
+                </strong>
+            </div>
+            <dl class="co-rows">
+                <div><dt>Items (@Model.Cart.Count)</dt><dd>₼@Model.Cart.Total.ToString("0.00")</dd></div>
+                @if (Model.UsesLevel)
+                {
+                    <div class="co-row-discount"><dt>Discount @Model.Level!.Name, @Model.Level.Percent%</dt><dd>−₼@Model.LevelDiscount.ToString("0.00")</dd></div>
+                }
+                @if (Model.UsesCoupon)
+                {
+                    <div class="co-row-promo"><dt>Promo code</dt><dd>−₼@Model.Coupon!.Discount.ToString("0.00")</dd></div>
+                }
+                @if (Model.BalancePart > 0)
+                {
+                    <div class="co-row-balance"><dt>From Janz balance</dt><dd>−₼@Model.BalancePart.ToString("0.00")</dd></div>
+                }
+                <div><dt>Delivery</dt><dd>free</dd></div>
+            </dl>
+            @if (Model.BalancePart > 0)
+            {
+                <label class="co-check co-balance">
+                    <input type="checkbox" name="useBalance" value="true" checked />
+                    <span>Pay ₼@Model.BalancePart.ToString("0.00") from the balance (₼@Model.Balance.ToString("0.00") available)</span>
+                </label>
+            }
+            @* Kod GET ilə səbət səhifəsinə gedir və orada yoxlanılır; sifarişə yalnız tətbiq olunmuş kod gedir *@
+            <div class="co-code">
+                <input name="promo" value="@Model.Promo" placeholder="Promo code" aria-label="Promo code" maxlength="20" autocomplete="off" />
+                <button type="submit" class="co-code-btn" formaction="/Cart" formmethod="get" formnovalidate>Apply</button>
+            </div>
+            @if (Model.UsesCoupon)
+            {
+                <input type="hidden" name="couponCode" value="@Model.Coupon!.Code" />
+                <p class="co-code-note is-ok">@Model.Coupon.Code applied. <a href="/Cart">Remove</a></p>
+            }
+            else if (Model.Coupon is not null)
+            {
+                @* Kupon və səviyyə endirimi toplanmır: səviyyəninki böyükdür *@
+                <p class="co-code-note">Your level discount is bigger, so @Model.Coupon.Code is not used. <a href="/Cart">Remove</a></p>
+            }
+            else if (Model.PromoError is not null)
+            {
+                <p class="co-code-note">@Model.PromoError</p>
+            }
+            <p class="co-pay-line"><span>Payment: by card or on delivery</span></p>
+            <button type="submit" class="co-submit" disabled="@(Model.Addresses.Count == 0)">Place an order</button>
+            <label class="co-check co-agree">
+                <input type="checkbox" name="agree" value="true" required checked />
+                <span>I agree to the terms of data processing, the user agreement and the offer</span>
+            </label>
+        </div>
+    </div>
+</form>

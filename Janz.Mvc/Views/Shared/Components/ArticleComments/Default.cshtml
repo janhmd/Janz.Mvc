@@ -1,0 +1,71 @@
+@model Janz.Mvc.ViewModels.Journal.ArticlePageVM
+@{
+    var article = Model.Article;
+    var date = article.PublishedAt.ToLocalTime().ToString("d MMMM yyyy");
+    var signedIn = User.Identity?.IsAuthenticated == true;
+    var isStaff = User.IsInRole(AppRoles.Editor) || User.IsInRole(AppRoles.Admin) || User.IsInRole(AppRoles.SuperAdmin);
+    var authorLetter = string.IsNullOrWhiteSpace(article.AuthorName) ? "J" : article.AuthorName.Trim().Substring(0, 1).ToUpperInvariant();
+}
+
+<div class="article-comments" id="comments" aria-label="Comments">
+    <h2>Comments <span>@Model.Comments.Count</span></h2>
+    @if (TempData["CommentError"] is string commentError)
+    {
+        <p class="entry-error">@commentError</p>
+    }
+    @if (signedIn)
+    {
+        <form class="article-comment-form" method="post" asp-controller="Journal" asp-action="Comment">
+            <input type="hidden" name="id" value="@article.Id" />
+            <input type="hidden" name="slug" value="@article.Slug" />
+            <textarea name="text" rows="3" maxlength="1000" required placeholder="Write a comment" aria-label="Comment"></textarea>
+            <button type="submit">Send</button>
+        </form>
+    }
+    else
+    {
+        <p class="article-comment-note">To leave a comment, <a href="/Account/Login">sign in</a> to your account or <a href="/Account/Register">register</a>.</p>
+    }
+    @foreach (var comment in Model.Comments)
+    {
+        <div class="article-comment">
+            <div class="article-comment-head">
+                @if (string.IsNullOrEmpty(comment.AuthorAvatar))
+                {
+                    <span class="article-avatar" aria-hidden="true">@comment.AuthorName.Substring(0, 1).ToUpperInvariant()</span>
+                }
+                else
+                {
+                    <img class="article-avatar" src="@comment.AuthorAvatar" alt="" />
+                }
+                <div class="article-comment-who">
+                    <strong>@comment.AuthorName</strong>
+                </div>
+                <time datetime="@comment.CreatedAt.ToString("s")">@comment.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy")</time>
+                @if (comment.IsMine || isStaff)
+                {
+                    <form method="post" asp-controller="Journal" asp-action="DeleteComment" data-confirm="Delete this comment?">
+                        <input type="hidden" name="commentId" value="@comment.Id" />
+                        <input type="hidden" name="slug" value="@article.Slug" />
+                        <button type="submit" class="article-comment-more" aria-label="Delete comment">Delete</button>
+                    </form>
+                }
+                else
+                {
+                    <span></span>
+                }
+            </div>
+            <p>@comment.Text</p>
+            <div class="article-comment-votes" data-comment="@comment.Id">
+                <button type="button" class="@(comment.MyVote == 1 ? "is-on" : null)" aria-label="Like" aria-pressed="@(comment.MyVote == 1 ? "true" : "false")" data-comment-vote="1">
+                    <svg viewBox="0 0 24 24"><path d="M8 11v9H5.2A1.2 1.2 0 0 1 4 18.8v-6.6A1.2 1.2 0 0 1 5.2 11H8zm0 0l3.2-6.1A2.2 2.2 0 0 1 13.2 4h.3A2.5 2.5 0 0 1 16 6.5V11h3.7a1.8 1.8 0 0 1 1.8 2.1l-1.2 6.2A1.8 1.8 0 0 1 18.5 21H8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+                    <span>@comment.Likes</span>
+                </button>
+                <button type="button" class="@(comment.MyVote == -1 ? "is-on" : null)" aria-label="Dislike" aria-pressed="@(comment.MyVote == -1 ? "true" : "false")" data-comment-vote="-1">
+                    <svg viewBox="0 0 24 24"><path d="M16 13V4h2.8A1.2 1.2 0 0 1 20 5.2v6.6A1.2 1.2 0 0 1 18.8 13H16zm0 0l-3.2 6.1A2.2 2.2 0 0 1 10.8 20h-.3A2.5 2.5 0 0 1 8 17.5V13H4.3a1.8 1.8 0 0 1-1.8-2.1l1.2-6.2A1.8 1.8 0 0 1 5.5 3H16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+                    <span>@comment.Dislikes</span>
+                </button>
+            </div>
+        </div>
+    }
+</div>

@@ -1,0 +1,35 @@
+@model List<ProductUIVM>
+@{
+}
+
+<div class="listing-main">
+    <div class="listing-tabs">
+        <button type="submit" name="tab" value="@CatalogQuery.TabValue("All")" class="@(CatalogQuery.IsTab(Context.Request, "All") ? "is-on" : null)" aria-pressed="@(CatalogQuery.IsTab(Context.Request, "All") ? "true" : "false")">All</button>
+        <button type="submit" name="tab" value="@CatalogQuery.TabValue("Recommended")" class="@(CatalogQuery.IsTab(Context.Request, "Recommended") ? "is-on" : null)" aria-pressed="@(CatalogQuery.IsTab(Context.Request, "Recommended") ? "true" : "false")">Recommended</button>
+        <button type="submit" name="tab" value="@CatalogQuery.TabValue("Popular")" class="@(CatalogQuery.IsTab(Context.Request, "Popular") ? "is-on" : null)" aria-pressed="@(CatalogQuery.IsTab(Context.Request, "Popular") ? "true" : "false")">Popular</button>
+        <button type="submit" name="tab" value="@CatalogQuery.TabValue("New")" class="@(CatalogQuery.IsTab(Context.Request, "New") ? "is-on" : null)" aria-pressed="@(CatalogQuery.IsTab(Context.Request, "New") ? "true" : "false")">New</button>
+        <button type="submit" name="tab" value="@CatalogQuery.TabValue("Coffee of the week")" class="@(CatalogQuery.IsTab(Context.Request, "Coffee of the week") ? "is-on" : null)" aria-pressed="@(CatalogQuery.IsTab(Context.Request, "Coffee of the week") ? "true" : "false")">Coffee of the week</button>
+        <button type="submit" name="tab" value="@CatalogQuery.TabValue("Running out")" class="@(CatalogQuery.IsTab(Context.Request, "Running out") ? "is-on" : null)" aria-pressed="@(CatalogQuery.IsTab(Context.Request, "Running out") ? "true" : "false")">Running out</button>
+        <button type="submit" name="tab" value="@CatalogQuery.TabValue("Microlot")" class="@(CatalogQuery.IsTab(Context.Request, "Microlot") ? "is-on" : null)" aria-pressed="@(CatalogQuery.IsTab(Context.Request, "Microlot") ? "true" : "false")">Microlot</button>
+    </div>
+    <label class="listing-sort">
+        <select name="sort" aria-label="Sort">
+            <option value="" selected="@(Context.Request.Query["sort"].FirstOrDefault() == "" || string.IsNullOrEmpty(Context.Request.Query["sort"].FirstOrDefault()))">Sort</option>
+            <option value="popular" selected="@(Context.Request.Query["sort"].FirstOrDefault() == "popular")">Popular</option>
+            <option value="new" selected="@(Context.Request.Query["sort"].FirstOrDefault() == "new")">New</option>
+            <option value="price-asc" selected="@(Context.Request.Query["sort"].FirstOrDefault() == "price-asc")">Price, low to high</option>
+            <option value="price-desc" selected="@(Context.Request.Query["sort"].FirstOrDefault() == "price-desc")">Price, high to low</option>
+            <option value="rating" selected="@(Context.Request.Query["sort"].FirstOrDefault() == "rating")">Rating</option>
+        </select>
+    </label>
+    @if (Model.Count == 0)
+    {
+        <p class="catalog-empty">Nothing matches these filters. <a href="@Context.Request.Path">Clear the filters</a></p>
+    }
+    <div class="card-grid">
+        @foreach (var product in Model)
+        {
+            <partial name="_ProductCard" model="product" />
+        }
+    </div>
+</div>

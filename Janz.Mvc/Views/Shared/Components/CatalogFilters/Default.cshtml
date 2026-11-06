@@ -1,0 +1,95 @@
+@model List<ProductUIVM>
+@{
+}
+
+<div class="filter-col">
+    <div class="filter-group">
+        <h2><button type="button" aria-expanded="true">Price, ₼ <svg class="filter-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></h2>
+        <div class="filter-options"><div class="filter-options-inner filter-price">
+            <input type="number" name="minPrice" min="0" step="1" placeholder="from" value="@Context.Request.Query["minPrice"]" aria-label="Price from" />
+            <input type="number" name="maxPrice" min="0" step="1" placeholder="to" value="@Context.Request.Query["maxPrice"]" aria-label="Price to" />
+        </div></div>
+    </div>
+    <div class="filter-group">
+        <h2><button type="button" aria-expanded="true">Rating <svg class="filter-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></h2>
+        <div class="filter-options"><div class="filter-options-inner">
+            <label><input type="radio" name="minRating" value="" checked="@string.IsNullOrEmpty(Context.Request.Query["minRating"])"> Any</label>
+            <label><input type="radio" name="minRating" value="4" checked="@CatalogQuery.Has(Context.Request, "minRating", "4")"> 4 ★ and higher</label>
+            <label><input type="radio" name="minRating" value="4.5" checked="@CatalogQuery.Has(Context.Request, "minRating", "4.5")"> 4.5 ★ and higher</label>
+        </div></div>
+    </div>
+    <div class="filter-group">
+        <h2><button type="button" aria-expanded="true">Acidity <svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.2" fill="none" stroke="currentColor" stroke-width="1.2"/><path d="M8 7.2V11.2M8 4.8h.01" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg><svg class="filter-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></h2>
+        <div class="filter-options"><div class="filter-options-inner">
+            <label><input type="checkbox" name="acidity" value="low" checked="@CatalogQuery.Has(Context.Request, "acidity", "low")"> Low</label>
+            <label><input type="checkbox" name="acidity" value="medium" checked="@CatalogQuery.Has(Context.Request, "acidity", "medium")"> Medium</label>
+            <label><input type="checkbox" name="acidity" value="high" checked="@CatalogQuery.Has(Context.Request, "acidity", "high")"> High</label>
+        </div></div>
+    </div>
+    <div class="filter-group">
+        <h2><button type="button" aria-expanded="true">Density <svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.2" fill="none" stroke="currentColor" stroke-width="1.2"/><path d="M8 7.2V11.2M8 4.8h.01" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg><svg class="filter-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></h2>
+        <div class="filter-options"><div class="filter-options-inner">
+            <label><input type="checkbox" name="density" value="low" checked="@CatalogQuery.Has(Context.Request, "density", "low")"> Low</label>
+            <label><input type="checkbox" name="density" value="medium" checked="@CatalogQuery.Has(Context.Request, "density", "medium")"> Medium</label>
+            <label><input type="checkbox" name="density" value="high" checked="@CatalogQuery.Has(Context.Request, "density", "high")"> High</label>
+        </div></div>
+    </div>
+    <div class="filter-group">
+        <h2><button type="button" aria-expanded="true">Roast <svg class="filter-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></h2>
+        <div class="filter-options"><div class="filter-options-inner">
+            <label><input type="checkbox" name="roast" value="light" checked="@CatalogQuery.Has(Context.Request, "roast", "light")"> Light (for filter)</label>
+            <label><input type="checkbox" name="roast" value="medium" checked="@CatalogQuery.Has(Context.Request, "roast", "medium")"> Medium (for espresso)</label>
+            <label><input type="checkbox" name="roast" value="dark" checked="@CatalogQuery.Has(Context.Request, "roast", "dark")"> Dark (for milk)</label>
+        </div></div>
+    </div>
+    <div class="filter-group">
+        <h2><button type="button" aria-expanded="true">Taste <svg class="filter-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></h2>
+        <div class="filter-options"><div class="filter-options-inner">
+            <label><input type="checkbox" name="taste" value="chocolate" checked="@CatalogQuery.Has(Context.Request, "taste", "chocolate")"> Chocolate / Nuts</label>
+            <label><input type="checkbox" name="taste" value="flowers" checked="@CatalogQuery.Has(Context.Request, "taste", "flowers")"> Flowers / Citrus</label>
+            <label><input type="checkbox" name="taste" value="fruit" checked="@CatalogQuery.Has(Context.Request, "taste", "fruit")"> Fruits / Berries</label>
+            <label><input type="checkbox" name="taste" value="alcohol" checked="@CatalogQuery.Has(Context.Request, "taste", "alcohol")"> Alcohol / Funky</label>
+        </div></div>
+    </div>
+    <div class="filter-group">
+        <h2><button type="button" aria-expanded="true">Process <svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.2" fill="none" stroke="currentColor" stroke-width="1.2"/><path d="M8 7.2V11.2M8 4.8h.01" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg><svg class="filter-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></h2>
+        <div class="filter-options"><div class="filter-options-inner">
+            <label><input type="checkbox" name="process" value="washed" checked="@CatalogQuery.Has(Context.Request, "process", "washed")"> Washed</label>
+            <label><input type="checkbox" name="process" value="natural" checked="@CatalogQuery.Has(Context.Request, "process", "natural")"> Natural</label>
+            <label><input type="checkbox" name="process" value="honey" checked="@CatalogQuery.Has(Context.Request, "process", "honey")"> Honey</label>
+            <label><input type="checkbox" name="process" value="funky" checked="@CatalogQuery.Has(Context.Request, "process", "funky")"> Funky</label>
+            <label><input type="checkbox" name="process" value="blend" checked="@CatalogQuery.Has(Context.Request, "process", "blend")"> Blend</label>
+            <label><input type="checkbox" name="process" value="other" checked="@CatalogQuery.Has(Context.Request, "process", "other")"> Other</label>
+        </div></div>
+    </div>
+    <div class="filter-group">
+        <h2><button type="button" aria-expanded="true">Country <svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.2" fill="none" stroke="currentColor" stroke-width="1.2"/><path d="M8 7.2V11.2M8 4.8h.01" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg><svg class="filter-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></h2>
+        <div class="filter-options"><div class="filter-options-inner">
+            <label><input type="checkbox" name="country" value="brazil" checked="@CatalogQuery.Has(Context.Request, "country", "brazil")"> Brazil</label>
+            <label><input type="checkbox" name="country" value="ethiopia" checked="@CatalogQuery.Has(Context.Request, "country", "ethiopia")"> Ethiopia</label>
+            <label><input type="checkbox" name="country" value="colombia" checked="@CatalogQuery.Has(Context.Request, "country", "colombia")"> Colombia</label>
+            <label><input type="checkbox" name="country" value="costa-rica" checked="@CatalogQuery.Has(Context.Request, "country", "costa-rica")"> Costa Rica</label>
+            <label><input type="checkbox" name="country" value="kenya" checked="@CatalogQuery.Has(Context.Request, "country", "kenya")"> Kenya</label>
+            <label><input type="checkbox" name="country" value="rwanda" checked="@CatalogQuery.Has(Context.Request, "country", "rwanda")"> Rwanda</label>
+            <label><input type="checkbox" name="country" value="uganda" checked="@CatalogQuery.Has(Context.Request, "country", "uganda")"> Uganda</label>
+            <label><input type="checkbox" name="country" value="peru" checked="@CatalogQuery.Has(Context.Request, "country", "peru")"> Peru</label>
+            <label><input type="checkbox" name="country" value="burundi" checked="@CatalogQuery.Has(Context.Request, "country", "burundi")"> Burundi</label>
+            <label><input type="checkbox" name="country" value="guatemala" checked="@CatalogQuery.Has(Context.Request, "country", "guatemala")"> Guatemala</label>
+            <label><input type="checkbox" name="country" value="indonesia" checked="@CatalogQuery.Has(Context.Request, "country", "indonesia")"> Indonesia</label>
+            <label><input type="checkbox" name="country" value="yemen" checked="@CatalogQuery.Has(Context.Request, "country", "yemen")"> Yemen</label>
+            <label><input type="checkbox" name="country" value="bolivia" checked="@CatalogQuery.Has(Context.Request, "country", "bolivia")"> Bolivia</label>
+            <label><input type="checkbox" name="country" value="malaysia" checked="@CatalogQuery.Has(Context.Request, "country", "malaysia")"> Malaysia</label>
+        </div></div>
+    </div>
+    <div class="filter-group">
+        <h2><button type="button" aria-expanded="true">Feature <svg class="filter-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></h2>
+        <div class="filter-options"><div class="filter-options-inner">
+            <label><input type="checkbox" name="feature" value="blend" checked="@CatalogQuery.Has(Context.Request, "feature", "blend")"> Blend</label>
+            <label><input type="checkbox" name="feature" value="decaf" checked="@CatalogQuery.Has(Context.Request, "feature", "decaf")"> Decaf / Low caffeine</label>
+            <label><input type="checkbox" name="feature" value="single" checked="@CatalogQuery.Has(Context.Request, "feature", "single")"> Single origin</label>
+            <label><input type="checkbox" name="feature" value="microlot" checked="@CatalogQuery.Has(Context.Request, "feature", "microlot")"> Microlot</label>
+            <label><input type="checkbox" name="feature" value="milk" checked="@CatalogQuery.Has(Context.Request, "feature", "milk")"> Ideal for milk drinks</label>
+            <label><input type="checkbox" name="feature" value="limited" checked="@CatalogQuery.Has(Context.Request, "feature", "limited")"> Limited edition</label>
+        </div></div>
+    </div>
+</div>

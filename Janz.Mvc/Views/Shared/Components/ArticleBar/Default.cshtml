@@ -1,0 +1,36 @@
+@model Janz.Mvc.ViewModels.Journal.ArticlePageVM
+@{
+    var article = Model.Article;
+    var date = article.PublishedAt.ToLocalTime().ToString("d MMMM yyyy");
+    var signedIn = User.Identity?.IsAuthenticated == true;
+    var isStaff = User.IsInRole(AppRoles.Editor) || User.IsInRole(AppRoles.Admin) || User.IsInRole(AppRoles.SuperAdmin);
+    var authorLetter = string.IsNullOrWhiteSpace(article.AuthorName) ? "J" : article.AuthorName.Trim().Substring(0, 1).ToUpperInvariant();
+}
+
+<div class="article-bar">
+    <button type="button" class="is-chip@(article.IsLiked ? " is-on" : null)" aria-label="Likes" aria-pressed="@(article.IsLiked ? "true" : "false")" data-article-like="@article.Id">
+        <svg viewBox="0 0 24 24"><path d="M8 11v9H5.2A1.2 1.2 0 0 1 4 18.8v-6.6A1.2 1.2 0 0 1 5.2 11H8zm0 0l3.2-6.1A2.2 2.2 0 0 1 13.2 4h.3A2.5 2.5 0 0 1 16 6.5V11h3.7a1.8 1.8 0 0 1 1.8 2.1l-1.2 6.2A1.8 1.8 0 0 1 18.5 21H8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+        <span>@article.Likes</span>
+    </button>
+    <a class="is-chip" href="#comments" aria-label="Comments">
+        <svg viewBox="0 0 24 24"><path d="M5 6.5h14v9.2H9.2L5 19.2V6.5z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+        @Model.Comments.Count
+    </a>
+    <button type="button" class="article-bookmark@(article.IsSaved ? " is-on" : null)" aria-label="Bookmark" aria-pressed="@(article.IsSaved ? "true" : "false")" data-article-save="@article.Id">
+        <svg viewBox="0 0 24 24"><path d="M7 5.5h10v14l-5-3.2-5 3.2z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+    </button>
+    <span title="Views">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="7.2" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="12" r="2.2" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
+        @ArticleBody.Short(article.Views)
+    </span>
+    <span title="Reading time">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="7.2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 8v4.2l2.6 1.6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+        @(article.Minutes)'
+    </span>
+    @if (article.IsLearning)
+    {
+        <span aria-label="@(string.IsNullOrEmpty(article.Series) ? "Learning material" : $"In series {article.Series}")" title="@(article.Series ?? "Learning material")">
+            <svg viewBox="0 0 24 24"><path d="M3 10.2l9-4.7 9 4.7-9 4.7z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M7.2 12.4v4.2c0 1.2 2.1 2.2 4.8 2.2s4.8-1 4.8-2.2v-4.2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M20.4 10.6v5.2" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+        </span>
+    }
+</div>

@@ -1,0 +1,22 @@
+@using Janz.Mvc.Helpers
+@using System.Globalization
+@model Janz.Mvc.ViewModels.Cart.CartPageVM
+@inject IConfiguration Configuration
+@{
+    var error = TempData["CartError"] as string;
+    var addressError = TempData["AddressError"] as string;
+    var apiBase = Configuration["ApiSettings:BaseUrl"];
+    var en = CultureInfo.GetCultureInfo("en-US");
+    var today = DateTime.Today;
+    string Day(int days) => today.AddDays(days).ToString("d MMMM", en);
+    var hasItems = Model.Cart.Items.Count > 0;
+    var selected = Model.Addresses.FirstOrDefault(m => m.Id == Model.SelectedAddressId);
+}
+
+<h2 class="cart-like">You might like</h2>
+<div class="card-grid">
+    @foreach (var product in Model.Suggestions)
+    {
+        <partial name="_ProductCard" model="product" />
+    }
+</div>

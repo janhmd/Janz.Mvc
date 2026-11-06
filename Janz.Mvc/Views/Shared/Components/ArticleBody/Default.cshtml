@@ -1,0 +1,66 @@
+@model Janz.Mvc.ViewModels.Journal.ArticlePageVM
+@{
+    var article = Model.Article;
+    var date = article.PublishedAt.ToLocalTime().ToString("d MMMM yyyy");
+    var signedIn = User.Identity?.IsAuthenticated == true;
+    var isStaff = User.IsInRole(AppRoles.Editor) || User.IsInRole(AppRoles.Admin) || User.IsInRole(AppRoles.SuperAdmin);
+    var authorLetter = string.IsNullOrWhiteSpace(article.AuthorName) ? "J" : article.AuthorName.Trim().Substring(0, 1).ToUpperInvariant();
+}
+
+<figure class="article-shot">
+    <img src="@article.CoverPath" alt="" />
+</figure>
+
+<div class="article-split">
+    <h2 class="article-sub">@article.Lead</h2>
+    @if (!string.IsNullOrWhiteSpace(article.AuthorName))
+    {
+        <div class="article-author">
+            <span class="article-avatar" aria-hidden="true">@authorLetter</span>
+            <div>
+                <strong>@article.AuthorName</strong>
+                <span>@(article.AuthorRole ?? "Article author")</span>
+            </div>
+        </div>
+    }
+</div>
+
+@foreach (var block in Model.Blocks)
+{
+    if (block.Kind == "Heading")
+    {
+        <h2 class="article-heading">@block.Heading</h2>
+    }
+    else if (block.Kind == "Photo")
+    {
+        <figure class="article-shot">
+            <img src="@block.Image" alt="@block.Caption" />
+            @if (block.Caption is not null)
+            {
+                <figcaption>@block.Caption</figcaption>
+            }
+        </figure>
+    }
+    else
+    {
+        <div class="article-block">
+            @foreach (var paragraph in block.Paragraphs)
+            {
+                <p>@paragraph</p>
+            }
+        </div>
+    }
+}
+
+@if (article.Tags.Count > 0)
+{
+    <div class="article-tags" aria-label="Tags">
+        <h2>Tags <span>@article.Tags.Count</span></h2>
+        <div class="article-tag-list">
+            @foreach (var tag in article.Tags)
+            {
+                <a href="/Journal?tag=@Uri.EscapeDataString(tag)"># @tag</a>
+            }
+        </div>
+    </div>
+}
