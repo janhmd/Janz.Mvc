@@ -1,4 +1,4 @@
-@model Janz.Mvc.ViewModels.Account.AccountEmailVM
+@model Janz.Mvc.ViewModels.Account.VerifyVM
 @{
     ViewData["Title"] = "Confirm your email";
 }
@@ -16,18 +16,20 @@
                     {
                         <p class="entry-error">@error.ErrorMessage</p>
                     }
-                    @if (!string.IsNullOrEmpty(Model.Email))
-                    {
-                        <p class="entry-text">We sent a confirmation link to <strong>@Model.Email</strong>. Open it to finish the registration and sign in.</p>
-                    }
-                    <p class="entry-text">Didn't get the email? Check the spam folder or send the link again.</p>
+                    <p class="entry-text">We sent a 4-digit code to <strong>@Model.Email</strong>. Enter it to finish the registration and sign in.</p>
+                    <input type="hidden" name="email" value="@Model.Email" />
                     <label>
-                        <span class="entry-caption">Email</span>
-                        <span class="entry-field">
-                            <input type="email" name="email" autocomplete="email" value="@Model.Email" required />
+                        <span class="entry-caption">Code</span>
+                        <span class="entry-field entry-code">
+                            <input type="text" name="code" inputmode="numeric" pattern="[0-9]{4}" maxlength="4" autocomplete="one-time-code" placeholder="0000" required autofocus />
                         </span>
                     </label>
-                    <button type="submit" class="account-signin">Send the link again</button>
+                    <button type="submit" class="account-signin">Confirm</button>
+                </form>
+                <form asp-controller="Account" asp-action="ResendCode" method="post">
+                    <input type="hidden" name="email" value="@Model.Email" />
+                    <p class="entry-text">Didn't get the email? Check the spam folder or send the code again.</p>
+                    <button type="submit" class="entry-link">Send the code again</button>
                     <a class="entry-link" asp-action="Login">Back to sign in</a>
                 </form>
             </div>

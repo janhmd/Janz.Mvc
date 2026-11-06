@@ -8770,3 +8770,23 @@ html.theme-day .assistant-name p { color: var(--muted); }
 .text-page-wrap .article-heading { margin: 2rem 0 .7rem; }
 .text-page-wrap .article-block p { margin: 0 0 1rem; line-height: 1.65; }
 .text-page-date { margin-top: 2rem; color: #8a8a8a; font-size: .85rem; }
+
+.entry-code input {
+    font-size: 1.6rem;
+    font-weight: 800;
+    letter-spacing: .5rem;
+    text-align: center;
+}
+
+button.entry-link {
+    display: block;
+    margin: .6rem 0 0;
+    padding: 0;
+    border: 0;
+    background: none;
+    font: inherit;
+    font-size: .88rem;
+    cursor: pointer;
+}
+
+#verify .entry-link { display: block; margin-top: .6rem; }

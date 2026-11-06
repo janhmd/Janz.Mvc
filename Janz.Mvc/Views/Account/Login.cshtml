@@ -17,7 +17,7 @@
                         <p class="entry-error">@error.ErrorMessage</p>
                         @if (error.ErrorMessage.StartsWith("Confirm your email"))
                         {
-                            <a class="entry-link" asp-action="Verify" asp-route-email="@Model.Email">Send the confirmation link again</a>
+                            <a class="entry-link" asp-action="Verify" asp-route-email="@Model.Email">Enter or resend the confirmation code</a>
                         }
                     }
                     <label class="entry-field">

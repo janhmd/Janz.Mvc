@@ -114,25 +114,51 @@ namespace Janz.Mvc.Controllers
                 return View(model);
             }
 
-            // Giriş email təsdiqlənəndən sonradır: emaildəki link ConfirmEmail-ə gətirir
+            // Qeydiyyat emailə gələn 4 rəqəmli kod yazılandan sonra tamamlanır
             return RedirectToAction(nameof(Verify), new { email = result.Email });
         }
 
-        // "Emailinizi yoxlayın" səhifəsi: linki yenidən göndərmək də buradadır
+        // Kodun yazıldığı səhifə: kodu yenidən göndərmək də buradadır
         [HttpGet]
         public IActionResult Verify(string? email)
         {
-            return View(new AccountEmailVM { Email = email ?? string.Empty });
+            return View(new VerifyVM { Email = email ?? string.Empty });
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Verify(AccountEmailVM model)
+        public async Task<IActionResult> Verify(VerifyVM model)
+        {
+            model.Code = model.Code?.Trim() ?? string.Empty;
+            if (string.IsNullOrWhiteSpace(model.Email) || model.Code.Length != 4 || !model.Code.All(char.IsDigit))
+            {
+                ModelState.AddModelError(string.Empty, "Enter the 4 digits from the email.");
+                model.Code = string.Empty;
+                return View(model);
+            }
+
+            var (result, errors, _) = await PostAsync<LoginResponseVM>("api/account/confirm-email", new { email = model.Email.Trim(), code = model.Code });
+            if (result is null || string.IsNullOrEmpty(result.Token))
+            {
+                foreach (var error in errors)
+                    ModelState.AddModelError(string.Empty, error);
+                model.Code = string.Empty;
+                return View(model);
+            }
+
+            await SignInAsync(result, remember: true);
+            TempData["Toast"] = "Your email is confirmed. Welcome to Janz!";
+            return LocalRedirect(RoleRedirect.HomeUrl(RolePrincipal(result.Role)));
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ResendCode(VerifyVM model)
         {
             if (string.IsNullOrWhiteSpace(model.Email))
             {
                 ModelState.AddModelError(string.Empty, "Enter your email.");
-                return View(model);
+                return View(nameof(Verify), model);
             }
 
             var (success, errors, _) = await PostAsync("api/account/resend-confirmation", new { email = model.Email.Trim() });
@@ -140,28 +166,11 @@ namespace Janz.Mvc.Controllers
             {
                 foreach (var error in errors)
                     ModelState.AddModelError(string.Empty, error);
-                return View(model);
+                return View(nameof(Verify), model);
             }
 
-            TempData["AccountDone"] = "If this email is waiting for confirmation, we sent a new link.";
+            TempData["AccountDone"] = "If this email is waiting for confirmation, we sent a new code.";
             return RedirectToAction(nameof(Verify), new { email = model.Email.Trim() });
-        }
-
-        // Emaildəki təsdiq linki: uğurlu olarsa istifadəçi dərhal daxil olur
-        [HttpGet]
-        public async Task<IActionResult> ConfirmEmail(string? userId, string? token)
-        {
-            var (result, errors, _) = await PostAsync<LoginResponseVM>("api/account/confirm-email", new { userId, token });
-            if (result is null || string.IsNullOrEmpty(result.Token))
-            {
-                foreach (var error in errors)
-                    ModelState.AddModelError(string.Empty, error);
-                return View(nameof(Verify), new AccountEmailVM());
-            }
-
-            await SignInAsync(result, remember: true);
-            TempData["Toast"] = "Your email is confirmed. Welcome to Janz!";
-            return LocalRedirect(RoleRedirect.HomeUrl(RolePrincipal(result.Role)));
         }
 
         [HttpGet]
