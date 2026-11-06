@@ -1,0 +1,84 @@
+@model Janz.Mvc.ViewModels.Profile.ProfilePageVM
+@{
+    var me = Model.Profile;
+    var userName = string.IsNullOrWhiteSpace(me.FullName) ? User.Identity?.Name : me.FullName;
+    if (string.IsNullOrWhiteSpace(userName))
+    {
+        userName = "Coffee lover";
+    }
+    var letter = userName.Trim().Substring(0, 1).ToUpperInvariant();
+    var stats = Model.Statistics;
+    var phoneCode = new[] { "+994", "+90", "+7" }.FirstOrDefault(code => me.Phone?.StartsWith(code) == true) ?? "+994";
+    var phoneNumber = me.Phone is null ? string.Empty : me.Phone.Substring(me.Phone.StartsWith(phoneCode) ? phoneCode.Length : 0).Trim();
+    var Initial = string.IsNullOrWhiteSpace(Model.Community.Author.Name) ? letter : Model.Community.Author.Name.Substring(0, 1).ToUpperInvariant();
+    var memberDays = Model.Community.Stats.MemberSince == default ? 0 : (DateTime.UtcNow - Model.Community.Stats.MemberSince.ToUniversalTime()).TotalDays;
+    var memberMonths = Math.Max(0, (int)(memberDays / 30.4));
+    var OnSite = Model.Community.Stats.MemberSince == default ? "-" : memberMonths >= 12 ? $"{memberMonths / 12} {(memberMonths / 12 == 1 ? "year" : "years")} {memberMonths % 12} {(memberMonths % 12 == 1 ? "month" : "months")}" : $"{memberMonths} {(memberMonths == 1 ? "month" : "months")}";
+}
+
+<div class="cabinet-pane" data-pane="details" hidden>
+    <div class="details-board">
+        <div class="details-who">
+            <form class="details-avatar" asp-controller="Profile" asp-action="Avatar" method="post" enctype="multipart/form-data">
+                <label>
+                    <input type="file" name="image" accept="image/png,image/jpeg,image/webp" hidden data-autosubmit />
+                    @if (string.IsNullOrEmpty(me.AvatarPath))
+                    {
+                        <span class="details-avatar-letter">@letter</span>
+                    }
+                    else
+                    {
+                        <img class="details-avatar-photo" src="@me.AvatarPath" alt="" />
+                    }
+                    <span class="details-avatar-change">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.8 7.2h3.1l1.3-2h5.6l1.3 2h3.1v11.2H4.8z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><circle cx="12" cy="13" r="3.1" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
+                        Change
+                    </span>
+                </label>
+            </form>
+            <div>
+                <strong class="details-name">@userName</strong>
+                <p class="details-email">@me.Email</p>
+                @if (!string.IsNullOrEmpty(me.Phone))
+                {
+                    <p class="details-phone">@me.Phone</p>
+                }
+                @if (!string.IsNullOrEmpty(me.Nickname))
+                {
+                    <p>@@@me.Nickname</p>
+                }
+                @if (!string.IsNullOrEmpty(me.OrganizationName))
+                {
+                    <p>@me.OrganizationName@(string.IsNullOrEmpty(me.Voen) ? "" : $" · VOEN {me.Voen}")</p>
+                }
+                @if (!string.IsNullOrEmpty(me.AvatarPath))
+                {
+                    <form asp-controller="Profile" asp-action="RemoveAvatar" method="post">
+                        <button type="submit" class="details-address-remove">Remove photo</button>
+                    </form>
+                }
+            </div>
+        </div>
+        <button type="button" class="details-edit">Edit details</button>
+        <h2>Addresses</h2>
+        <!-- Addresses from the API. New ones are saved with AddAddress, removed with RemoveAddress -->
+        <div class="details-address-list">
+            @foreach (var address in Model.Addresses)
+            {
+                <div class="details-address-card">
+                    <strong>@address.FullName</strong>
+                    <p>@address.Line, @address.City, @address.PostalCode</p>
+                    <p>@address.Phone</p>
+                    <form asp-controller="Profile" asp-action="RemoveAddress" method="post">
+                        <input type="hidden" name="id" value="@address.Id" />
+                        <button type="submit" class="details-address-remove">Remove</button>
+                    </form>
+                </div>
+            }
+        </div>
+        <button type="button" class="details-add">
+            <span aria-hidden="true">+</span>
+            New address
+        </button>
+    </div>
+</div>

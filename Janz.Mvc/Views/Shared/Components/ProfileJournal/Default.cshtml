@@ -1,0 +1,50 @@
+@model Janz.Mvc.ViewModels.Profile.ProfilePageVM
+@{
+    var me = Model.Profile;
+    var userName = string.IsNullOrWhiteSpace(me.FullName) ? User.Identity?.Name : me.FullName;
+    if (string.IsNullOrWhiteSpace(userName))
+    {
+        userName = "Coffee lover";
+    }
+    var letter = userName.Trim().Substring(0, 1).ToUpperInvariant();
+    var stats = Model.Statistics;
+    var phoneCode = new[] { "+994", "+90", "+7" }.FirstOrDefault(code => me.Phone?.StartsWith(code) == true) ?? "+994";
+    var phoneNumber = me.Phone is null ? string.Empty : me.Phone.Substring(me.Phone.StartsWith(phoneCode) ? phoneCode.Length : 0).Trim();
+    var Initial = string.IsNullOrWhiteSpace(Model.Community.Author.Name) ? letter : Model.Community.Author.Name.Substring(0, 1).ToUpperInvariant();
+    var memberDays = Model.Community.Stats.MemberSince == default ? 0 : (DateTime.UtcNow - Model.Community.Stats.MemberSince.ToUniversalTime()).TotalDays;
+    var memberMonths = Math.Max(0, (int)(memberDays / 30.4));
+    var OnSite = Model.Community.Stats.MemberSince == default ? "-" : memberMonths >= 12 ? $"{memberMonths / 12} {(memberMonths / 12 == 1 ? "year" : "years")} {memberMonths % 12} {(memberMonths % 12 == 1 ? "month" : "months")}" : $"{memberMonths} {(memberMonths == 1 ? "month" : "months")}";
+}
+
+<div class="cabinet-pane" data-pane="journal" hidden>
+    @{
+        var savedJson = System.Text.Json.JsonSerializer.Serialize(Model.SavedArticles.Select(m => new
+        {
+            id = m.Id.ToString(),
+            title = m.Title,
+            topic = m.Topic,
+            date = m.PublishedAt.ToLocalTime().ToString("d MMMM yyyy"),
+            lead = m.Lead,
+            image = m.CoverPath,
+            href = "/Journal/Article/" + m.Slug,
+            likes = m.Likes.ToString(),
+            comments = m.Comments.ToString(),
+            views = m.Views.ToString(),
+            mins = m.Minutes + "'"
+        }));
+    }
+    <script type="application/json" id="saved-articles">@Html.Raw(savedJson)</script>
+    <div class="reading-board is-empty">
+        <div class="reading-tabs">
+            <button type="button" class="is-on" data-read="progress">In progress <span>0</span></button>
+            <button type="button" data-read="read">Read <span>0</span></button>
+            <button type="button" data-read="saved">Bookmarks <span>0</span></button>
+        </div>
+        <div class="reading-list"></div>
+        <div class="cabinet-empty reading-empty">
+            <h2>Nothing saved in the journal</h2>
+            <p>Articles you read will stay here</p>
+            <a href="/Journal">To journal</a>
+        </div>
+    </div>
+</div>

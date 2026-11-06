@@ -1,0 +1,236 @@
+@model Janz.Mvc.ViewModels.Profile.ProfilePageVM
+@{
+    var me = Model.Profile;
+    var userName = string.IsNullOrWhiteSpace(me.FullName) ? User.Identity?.Name : me.FullName;
+    if (string.IsNullOrWhiteSpace(userName))
+    {
+        userName = "Coffee lover";
+    }
+    var letter = userName.Trim().Substring(0, 1).ToUpperInvariant();
+    var stats = Model.Statistics;
+    var phoneCode = new[] { "+994", "+90", "+7" }.FirstOrDefault(code => me.Phone?.StartsWith(code) == true) ?? "+994";
+    var phoneNumber = me.Phone is null ? string.Empty : me.Phone.Substring(me.Phone.StartsWith(phoneCode) ? phoneCode.Length : 0).Trim();
+    var Initial = string.IsNullOrWhiteSpace(Model.Community.Author.Name) ? letter : Model.Community.Author.Name.Substring(0, 1).ToUpperInvariant();
+    var memberDays = Model.Community.Stats.MemberSince == default ? 0 : (DateTime.UtcNow - Model.Community.Stats.MemberSince.ToUniversalTime()).TotalDays;
+    var memberMonths = Math.Max(0, (int)(memberDays / 30.4));
+    var OnSite = Model.Community.Stats.MemberSince == default ? "-" : memberMonths >= 12 ? $"{memberMonths / 12} {(memberMonths / 12 == 1 ? "year" : "years")} {memberMonths % 12} {(memberMonths % 12 == 1 ? "month" : "months")}" : $"{memberMonths} {(memberMonths == 1 ? "month" : "months")}";
+}
+
+<div class="edit-overlay">
+    <form class="edit-modal" asp-controller="Profile" asp-action="UpdateDetails" method="post" role="dialog" aria-modal="true" aria-labelledby="edit-title">
+        <h2 id="edit-title">Edit details</h2>
+        <label class="edit-field">
+            <span>First and last name</span>
+            <input type="text" name="fullName" value="@userName" autocomplete="name" required maxlength="80" />
+        </label>
+        <label class="edit-field">
+            <span>Phone</span>
+            <div class="edit-phone">
+                <select name="phoneCode" aria-label="Country code">
+                    @foreach (var code in new[] { "+994", "+90", "+7" })
+                    {
+                        <option value="@code" selected="@(phoneCode == code)">@code</option>
+                    }
+                </select>
+                <input type="tel" name="phone" value="@phoneNumber" autocomplete="tel-national" maxlength="20" />
+                <button type="button" class="edit-phone-clear" aria-label="Clear phone">×</button>
+            </div>
+        </label>
+        <div class="edit-fold">
+            <button type="button" class="edit-fold-toggle">Account</button>
+            <div class="edit-fold-body" hidden>
+                <label class="edit-field">
+                    <span>Email</span>
+                    <input type="email" value="@me.Email" readonly />
+                </label>
+                <p class="edit-hint">The email is used to sign in and can't be changed.</p>
+                <div class="edit-field">
+                    <span>Password</span>
+                    <div class="edit-pass">
+                        <input type="password" name="currentPassword" placeholder="Current password" autocomplete="current-password" readonly />
+                        <button type="button" class="edit-pass-change">Change</button>
+                    </div>
+                </div>
+                <label class="edit-field edit-pass-new" hidden>
+                    <span>New password</span>
+                    <input type="password" name="newPassword" placeholder="At least 6 characters" autocomplete="new-password" minlength="6" />
+                </label>
+                <label class="edit-field">
+                    <span>Public username</span>
+                    <input type="text" name="nickname" value="@me.Nickname" placeholder="Public username" autocomplete="username" pattern="[A-Za-z0-9_.\-]{3,30}" maxlength="30" />
+                </label>
+                <p class="edit-hint">Only A–Z, 0–9, _, - and . are allowed. The name must be unique and 3 to 30 characters.</p>
+                <p class="edit-hint">The short name will be used as part of your page address.</p>
+            </div>
+        </div>
+        <div class="edit-fold">
+            <button type="button" class="edit-fold-toggle">Organization</button>
+            <div class="edit-fold-body" hidden>
+                <label class="edit-field">
+                    <span>Full organization name</span>
+                    <input type="text" name="org" value="@me.OrganizationName" placeholder="Full organization name" maxlength="200" />
+                </label>
+                <label class="edit-field">
+                    <span>Legal address</span>
+                    <input type="text" name="orgAddress" value="@me.OrganizationAddress" placeholder="City, street, house, apartment" maxlength="300" />
+                </label>
+                <div class="edit-tax">
+                    <label class="edit-field">
+                        <span>VOEN</span>
+                        <input type="text" name="voen" value="@me.Voen" placeholder="VOEN" inputmode="numeric" pattern="[0-9]{10}" maxlength="10" />
+                    </label>
+                    <label class="edit-field">
+                        <span>Tax number</span>
+                        <input type="text" name="tax" value="@me.TaxNumber" placeholder="Tax number" maxlength="30" />
+                    </label>
+                </div>
+            </div>
+        </div>
+        <button type="submit" class="edit-save">Save</button>
+        <button type="button" class="edit-cancel">Cancel</button>
+    </form>
+</div>
+<!-- Real form: the API saves the address and the page reloads with the new list -->
+<div class="edit-overlay address-overlay">
+    <form class="edit-modal" asp-controller="Profile" asp-action="AddAddress" method="post" role="dialog" aria-modal="true" aria-labelledby="address-title">
+        <h2 id="address-title">Add address</h2>
+        <label class="edit-field">
+            <span>Recipient</span>
+            <input type="text" name="fullName" value="@(userName == "Coffee lover" ? string.Empty : userName)" placeholder="Full name" required maxlength="80" />
+        </label>
+        <label class="edit-field">
+            <span>Phone</span>
+            <input type="tel" name="phone" placeholder="+994 50 000 00 00" required maxlength="30" />
+        </label>
+        <label class="edit-field">
+            <span>City</span>
+            <input type="text" name="city" placeholder="Enter city" required maxlength="80" />
+        </label>
+        <label class="edit-field">
+            <span>Street, house, apartment</span>
+            <input type="text" name="line" placeholder="Enter the address" required maxlength="200" />
+        </label>
+        <label class="edit-field">
+            <span>Postcode</span>
+            <input type="text" name="postalCode" placeholder="Postcode" required maxlength="20" />
+        </label>
+        <button type="submit" class="edit-save">Save</button>
+        <button type="button" class="edit-cancel">Cancel</button>
+    </form>
+</div>
+<div class="edit-overlay topup-overlay">
+    <form class="edit-modal topup-modal" asp-controller="Profile" asp-action="TopUp" method="post" role="dialog" aria-modal="true" aria-labelledby="topup-title">
+        <input type="hidden" name="kind" value="money" />
+        <h2 id="topup-title">Top up balance</h2>
+        <div class="topup-tabs">
+            <button type="button" class="is-on" data-topup="money">Money</button>
+            <button type="button" data-topup="certificate">Certificate</button>
+        </div>
+        <div class="topup-money">
+            <label class="topup-amount">
+                <input type="text" name="amount" inputmode="decimal" placeholder="Amount" autocomplete="off" maxlength="7" />
+                <span>₼</span>
+            </label>
+            <button type="button" class="topup-pay is-on" aria-pressed="true">
+                <span class="topup-pay-dot" aria-hidden="true"></span>
+                <span>Visa, Mastercard</span>
+                <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.6" y="6.4" width="16.8" height="11.2" rx="2.2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M3.6 10.2h16.8" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
+            </button>
+        </div>
+        <div class="topup-cert" hidden>
+            <label class="topup-amount">
+                <input type="text" name="code" placeholder="Certificate code" autocomplete="off" />
+            </label>
+        </div>
+        <button type="submit" class="edit-save topup-submit">Top up <span class="topup-submit-sum"></span></button>
+        <label class="edit-check topup-agree">
+            <input type="checkbox" name="agree" checked required />
+            I agree to the terms of data processing, the user agreement and the offer
+        </label>
+    </form>
+</div>
+<div class="edit-overlay cook-overlay">
+    <form class="edit-modal cook-modal" role="dialog" aria-modal="true" aria-labelledby="cook-title">
+        <h2 id="cook-title">How I cook</h2>
+        <div class="cook-grid">
+            <button type="button" class="cook-option" data-name="Espresso machine">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 8.2h9.2v8.2H5zM14.2 10.4H18a2 2 0 0 1 0 4h-3.8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M7.2 6.4h5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+                <span>Espresso machine</span>
+            </button>
+            <button type="button" class="cook-option" data-name="Moka pot">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 9.2h8l-1.1 8.2H9.1zM9.2 6.6h5.6M12 4.8v1.8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+                <span>Moka pot</span>
+            </button>
+            <button type="button" class="cook-option" data-name="AeroPress">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8.4 7.2h7.2v10.2H8.4zM9.6 4.8h4.8M10.2 10.2h3.6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+                <span>AeroPress</span>
+            </button>
+            <button type="button" class="cook-option" data-name="Drip coffee maker">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.4 6.2h11.2v3.2H6.4zM8.2 9.4h7.6v8.2H8.2z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M10 12.2h4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+                <span>Drip coffee maker</span>
+            </button>
+            <button type="button" class="cook-option" data-name="Pour over">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7.2 7.2h9.6L14 13.4H10zM9.2 13.4h5.6v5H9.2z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+                <span>Pour over</span>
+            </button>
+            <button type="button" class="cook-option" data-name="Capsules">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8.2 9.2h7.6v4.4c0 2.1-1.7 3.4-3.8 3.4s-3.8-1.3-3.8-3.4z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M9.6 9.2V7.6h4.8v1.6" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
+                <span>Capsules</span>
+            </button>
+            <button type="button" class="cook-option" data-name="Cezve">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.6 10.2h8.4l-1 7.2H7.6zM15 12.2h3.4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M8.4 8.2h4.8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+                <span>Cezve</span>
+            </button>
+            <button type="button" class="cook-option" data-name="Immersion dripper">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 6.8h8l-2.4 6.4H10.4zM10 13.2h4v5h-4z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+                <span>Immersion dripper</span>
+            </button>
+            <button type="button" class="cook-option" data-name="Drip bags">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8.4 8.4h7.2v8.8l-3.6 2.2-3.6-2.2zM9.6 6.4h4.8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+                <span>Drip bags</span>
+            </button>
+            <button type="button" class="cook-option" data-name="French press">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 9.2h8v8.4a2 2 0 0 1-2 2H10a2 2 0 0 1-2-2zM9.2 6.2h5.6M12 4.8v4.4M8 12.4h8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+                <span>French press</span>
+            </button>
+            <button type="button" class="cook-option" data-name="In a cup">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.8 8.6h8.6v6.2A3.4 3.4 0 0 1 12 18.2H10.2A3.4 3.4 0 0 1 6.8 14.8zM15.4 10.2H18a1.8 1.8 0 0 1 0 3.6h-2.6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+                <span>In a cup</span>
+            </button>
+            <button type="button" class="cook-option cook-option-plus" data-name="Other">
+                <span aria-hidden="true">+</span>
+                <span>Other</span>
+            </button>
+        </div>
+        <label class="cook-other" hidden>
+            <span>Your method</span>
+            <input type="text" name="other" placeholder="For example, siphon" />
+        </label>
+        <div class="cook-actions">
+            <button type="submit" class="edit-save">Save</button>
+            <button type="button" class="edit-cancel">Cancel</button>
+        </div>
+    </form>
+</div>
+<div class="follow-overlay">
+    <div class="follow-modal" role="dialog" aria-modal="true" aria-labelledby="follow-title">
+        <h2 id="follow-title">My subscribers</h2>
+        <label class="follow-search">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M16 16l4.5 4.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+            <input type="search" placeholder="Search subscribers" autocomplete="off" />
+        </label>
+        <div class="follow-list"></div>
+    </div>
+</div>
+<div class="unblock-overlay">
+    <div class="unblock-modal" role="dialog" aria-modal="true" aria-labelledby="unblock-title">
+        <h2 id="unblock-title">Remove from blacklist</h2>
+        <div class="blacklist-avatar unblock-avatar"></div>
+        <strong class="unblock-name"></strong>
+        <p class="unblock-role"></p>
+        <div class="unblock-actions">
+            <button type="button" class="edit-save unblock-yes">Yes</button>
+            <button type="button" class="edit-cancel unblock-no">No</button>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,64 @@
+@model Janz.Mvc.ViewModels.Profile.ProfilePageVM
+@{
+    var me = Model.Profile;
+    var userName = string.IsNullOrWhiteSpace(me.FullName) ? User.Identity?.Name : me.FullName;
+    if (string.IsNullOrWhiteSpace(userName))
+    {
+        userName = "Coffee lover";
+    }
+    var letter = userName.Trim().Substring(0, 1).ToUpperInvariant();
+    var stats = Model.Statistics;
+    var phoneCode = new[] { "+994", "+90", "+7" }.FirstOrDefault(code => me.Phone?.StartsWith(code) == true) ?? "+994";
+    var phoneNumber = me.Phone is null ? string.Empty : me.Phone.Substring(me.Phone.StartsWith(phoneCode) ? phoneCode.Length : 0).Trim();
+    var Initial = string.IsNullOrWhiteSpace(Model.Community.Author.Name) ? letter : Model.Community.Author.Name.Substring(0, 1).ToUpperInvariant();
+    var memberDays = Model.Community.Stats.MemberSince == default ? 0 : (DateTime.UtcNow - Model.Community.Stats.MemberSince.ToUniversalTime()).TotalDays;
+    var memberMonths = Math.Max(0, (int)(memberDays / 30.4));
+    var OnSite = Model.Community.Stats.MemberSince == default ? "-" : memberMonths >= 12 ? $"{memberMonths / 12} {(memberMonths / 12 == 1 ? "year" : "years")} {memberMonths % 12} {(memberMonths % 12 == 1 ? "month" : "months")}" : $"{memberMonths} {(memberMonths == 1 ? "month" : "months")}";
+}
+
+<div class="cabinet-pane" data-pane="notifications" hidden>
+    <div class="notice-bar">
+        <div class="notice-tabs">
+            <button type="button" class="is-on" data-kind="all" aria-pressed="true">All</button>
+            <button type="button" data-kind="shop" aria-pressed="false">Shop</button>
+            <button type="button" data-kind="journal" aria-pressed="false">Journal</button>
+            <button type="button" data-kind="community" aria-pressed="false">Community</button>
+            <button type="button" data-kind="subscription" aria-pressed="false">Subscription</button>
+        </div>
+        @if (Model.Notifications.Unread > 0)
+        {
+            <button type="button" class="notice-read-all">Mark all as read</button>
+        }
+    </div>
+    <div class="notice-list">
+        @foreach (var notice in Model.Notifications.Items)
+        {
+            var kind = notice.Kind.ToLowerInvariant();
+            <div class="notice@(notice.IsRead ? string.Empty : " is-new")" data-id="@notice.Id" data-kind="@kind">
+                <div class="notice-head">
+                    <span class="notice-source">
+                        <svg viewBox="0 0 24 24" aria-hidden="true">@Html.Raw(kind switch
+                        {
+                            "shop" => "<path d=\"M4 8h16l-1.2 11H5.2z\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linejoin=\"round\"/><path d=\"M8 8V6.4A4 4 0 0 1 16 6.4V8\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\"/>",
+                            "journal" => "<path d=\"M6 4.5h9.5A2.5 2.5 0 0 1 18 7v12.5H8.5A2.5 2.5 0 0 1 6 17z\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linejoin=\"round\"/><path d=\"M9.5 9h5M9.5 12h5\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linecap=\"round\"/>",
+                            "community" => "<circle cx=\"9\" cy=\"10\" r=\"2.1\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\"/><circle cx=\"15.4\" cy=\"10.6\" r=\"1.7\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\"/><path d=\"M5.6 16.4a3.6 3.6 0 0 1 6.8 0M13.2 16.6a3 3 0 0 1 5.2 0\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linecap=\"round\"/>",
+                            "subscription" => "<path d=\"M5 12a7 7 0 0 1 12-4.9L19 9M19 12a7 7 0 0 1-12 4.9L5 15\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linecap=\"round\"/><path d=\"M19 5v4h-4M5 19v-4h4\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>",
+                            _ => string.Empty
+                        })</svg>
+                        @notice.Kind
+                    </span>
+                    <time datetime="@notice.CreatedAt.ToLocalTime().ToString("yyyy-MM-ddTHH:mm")">@notice.CreatedAt.ToLocalTime().ToString("d MMMM yyyy, HH:mm")</time>
+                </div>
+                <p><strong>@notice.Title</strong> @notice.Text</p>
+                @if (!string.IsNullOrEmpty(notice.Link))
+                {
+                    <a class="notice-open" href="@notice.Link">Open</a>
+                }
+            </div>
+        }
+    </div>
+    <div class="cabinet-empty notice-empty" hidden="@(Model.Notifications.Items.Count > 0)">
+        <h2>No notifications yet</h2>
+        <p>News from the shop, journal and community will appear here</p>
+    </div>
+</div>

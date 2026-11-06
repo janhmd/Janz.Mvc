@@ -1,0 +1,44 @@
+@model Janz.Mvc.ViewModels.Profile.ProfilePageVM
+@{
+    var me = Model.Profile;
+    var userName = string.IsNullOrWhiteSpace(me.FullName) ? User.Identity?.Name : me.FullName;
+    if (string.IsNullOrWhiteSpace(userName))
+    {
+        userName = "Coffee lover";
+    }
+    var letter = userName.Trim().Substring(0, 1).ToUpperInvariant();
+    var stats = Model.Statistics;
+    var phoneCode = new[] { "+994", "+90", "+7" }.FirstOrDefault(code => me.Phone?.StartsWith(code) == true) ?? "+994";
+    var phoneNumber = me.Phone is null ? string.Empty : me.Phone.Substring(me.Phone.StartsWith(phoneCode) ? phoneCode.Length : 0).Trim();
+    var Initial = string.IsNullOrWhiteSpace(Model.Community.Author.Name) ? letter : Model.Community.Author.Name.Substring(0, 1).ToUpperInvariant();
+    var memberDays = Model.Community.Stats.MemberSince == default ? 0 : (DateTime.UtcNow - Model.Community.Stats.MemberSince.ToUniversalTime()).TotalDays;
+    var memberMonths = Math.Max(0, (int)(memberDays / 30.4));
+    var OnSite = Model.Community.Stats.MemberSince == default ? "-" : memberMonths >= 12 ? $"{memberMonths / 12} {(memberMonths / 12 == 1 ? "year" : "years")} {memberMonths % 12} {(memberMonths % 12 == 1 ? "month" : "months")}" : $"{memberMonths} {(memberMonths == 1 ? "month" : "months")}";
+}
+
+<div class="cabinet-pane" data-pane="blacklist" hidden>
+    <!-- Users blocked from community (post or comment menu). They can be unblocked only here. -->
+    <div class="blacklist-board">
+        <label class="blacklist-search">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M16 16l4.5 4.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+            <input type="search" placeholder="Search the list" autocomplete="off" />
+        </label>
+        <div class="blacklist-list">
+            @foreach (var person in Model.Blocked)
+            {
+                <div class="blacklist-item" data-user-id="@person.Author.UserId">
+                    <div class="blacklist-avatar">@(string.IsNullOrWhiteSpace(person.Author.Name) ? "C" : person.Author.Name.Substring(0, 1).ToUpper())</div>
+                    <div class="blacklist-who">
+                        <div class="blacklist-name"><strong>@person.Author.Name</strong><button type="button" class="blacklist-remove">Remove</button></div>
+                        <p>@person.Author.Role</p>
+                    </div>
+                </div>
+            }
+        </div>
+        <p class="blacklist-none" hidden>Nobody found</p>
+    </div>
+    <div class="cabinet-empty blacklist-empty" hidden>
+        <h2>Blacklist is empty</h2>
+        <p>Users you block in the community will collect here</p>
+    </div>
+</div>

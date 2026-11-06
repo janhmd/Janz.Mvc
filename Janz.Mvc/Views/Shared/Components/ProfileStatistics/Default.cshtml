@@ -1,0 +1,101 @@
+@model Janz.Mvc.ViewModels.Profile.ProfilePageVM
+@{
+    var me = Model.Profile;
+    var userName = string.IsNullOrWhiteSpace(me.FullName) ? User.Identity?.Name : me.FullName;
+    if (string.IsNullOrWhiteSpace(userName))
+    {
+        userName = "Coffee lover";
+    }
+    var letter = userName.Trim().Substring(0, 1).ToUpperInvariant();
+    var stats = Model.Statistics;
+    var phoneCode = new[] { "+994", "+90", "+7" }.FirstOrDefault(code => me.Phone?.StartsWith(code) == true) ?? "+994";
+    var phoneNumber = me.Phone is null ? string.Empty : me.Phone.Substring(me.Phone.StartsWith(phoneCode) ? phoneCode.Length : 0).Trim();
+    var Initial = string.IsNullOrWhiteSpace(Model.Community.Author.Name) ? letter : Model.Community.Author.Name.Substring(0, 1).ToUpperInvariant();
+    var memberDays = Model.Community.Stats.MemberSince == default ? 0 : (DateTime.UtcNow - Model.Community.Stats.MemberSince.ToUniversalTime()).TotalDays;
+    var memberMonths = Math.Max(0, (int)(memberDays / 30.4));
+    var OnSite = Model.Community.Stats.MemberSince == default ? "-" : memberMonths >= 12 ? $"{memberMonths / 12} {(memberMonths / 12 == 1 ? "year" : "years")} {memberMonths % 12} {(memberMonths % 12 == 1 ? "month" : "months")}" : $"{memberMonths} {(memberMonths == 1 ? "month" : "months")}";
+}
+
+<div class="cabinet-pane" data-pane="statistics" hidden>
+    <h2 class="cabinet-pane-title">Statistics</h2>
+    @if (stats.OrderCount > 0)
+    {
+        <div class="stats-grid">
+            <div class="stats-card"><span>Orders</span><strong>@stats.OrderCount</strong></div>
+            <div class="stats-card"><span>Items bought</span><strong>@stats.ItemCount</strong></div>
+            <div class="stats-card"><span>Average order</span><strong>₼@stats.AverageOrder.ToString("0.00")</strong></div>
+            <div class="stats-card"><span>Saved with discounts</span><strong>₼@stats.Saved.ToString("0.00")</strong></div>
+        </div>
+        <div class="stats-level">
+            <div class="stats-level-head">
+                <span>Your level</span>
+                <strong>@(stats.Level?.Name ?? "Customer")@(stats.Level is not null && stats.Level.Percent > 0 ? $" · {stats.Level.Percent}%" : "")</strong>
+            </div>
+            <p>Spent on delivered orders: ₼@stats.Spent.ToString("0.00")</p>
+            @if (stats.Level?.NextMinSpent is decimal next && next > 0)
+            {
+                var progress = (int)Math.Min(100, Math.Round(stats.Spent / next * 100));
+                <div class="stats-level-bar"><b style="width:@progress%"></b></div>
+                <p>₼@((next - stats.Spent).ToString("0.00")) more to @stats.Level.NextName</p>
+            }
+            else if (stats.Level is not null)
+            {
+                <p>This is the highest level</p>
+            }
+        </div>
+        @if (stats.TopProducts.Count > 0)
+        {
+            <h2 class="cabinet-pane-title">Bought most often</h2>
+            <div class="card-grid">
+                @foreach (var product in stats.TopProducts)
+                {
+                    <partial name="_ProductCard" model="product" />
+                }
+            </div>
+        }
+    }
+    else
+    {
+        <div class="cabinet-stats is-locked">
+            <div class="cabinet-stats-blur card-grid" aria-hidden="true">
+                <article>
+                    <div class="product">
+                        <div class="product-top"><p>For espresso</p></div>
+                        <h3>Floral</h3>
+                        <div class="kind">Blend</div>
+                        <img class="product-photo" src="/images/floral.png" alt="" />
+                        <div class="price-row">
+                            <button type="button" class="price"><strong>₼29.90</strong></button>
+                        </div>
+                    </div>
+                </article>
+                <article>
+                    <div class="product">
+                        <div class="product-top"><p>For filter</p></div>
+                        <h3>Guatemala Santiago</h3>
+                        <div class="kind">Washed</div>
+                        <img class="product-photo" src="/images/guatemala.png" alt="" />
+                        <div class="price-row">
+                            <button type="button" class="price"><strong>₼27.50</strong></button>
+                        </div>
+                    </div>
+                </article>
+                <article>
+                    <div class="product">
+                        <div class="product-top"><p>Set</p></div>
+                        <h3>Aroma kit</h3>
+                        <div class="kind">Gift</div>
+                        <img class="product-photo" src="/images/aroma-kit.png" alt="" />
+                        <div class="price-row">
+                            <button type="button" class="price"><strong>₼45.00</strong></button>
+                        </div>
+                    </div>
+                </article>
+            </div>
+            <a class="cabinet-stats-lock" href="/">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 8h15l-1.5 9h-12z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M6 8L5 5H3" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="9.2" cy="20" r="1.1" fill="currentColor"/><circle cx="16.6" cy="20" r="1.1" fill="currentColor"/></svg>
+                To unlock statistics, place your first order
+            </a>
+        </div>
+    }
+</div>

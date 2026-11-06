@@ -1,0 +1,44 @@
+@model Janz.Mvc.ViewModels.Profile.ProfilePageVM
+@{
+    var me = Model.Profile;
+    var userName = string.IsNullOrWhiteSpace(me.FullName) ? User.Identity?.Name : me.FullName;
+    if (string.IsNullOrWhiteSpace(userName))
+    {
+        userName = "Coffee lover";
+    }
+    var letter = userName.Trim().Substring(0, 1).ToUpperInvariant();
+    var stats = Model.Statistics;
+    var phoneCode = new[] { "+994", "+90", "+7" }.FirstOrDefault(code => me.Phone?.StartsWith(code) == true) ?? "+994";
+    var phoneNumber = me.Phone is null ? string.Empty : me.Phone.Substring(me.Phone.StartsWith(phoneCode) ? phoneCode.Length : 0).Trim();
+    var Initial = string.IsNullOrWhiteSpace(Model.Community.Author.Name) ? letter : Model.Community.Author.Name.Substring(0, 1).ToUpperInvariant();
+    var memberDays = Model.Community.Stats.MemberSince == default ? 0 : (DateTime.UtcNow - Model.Community.Stats.MemberSince.ToUniversalTime()).TotalDays;
+    var memberMonths = Math.Max(0, (int)(memberDays / 30.4));
+    var OnSite = Model.Community.Stats.MemberSince == default ? "-" : memberMonths >= 12 ? $"{memberMonths / 12} {(memberMonths / 12 == 1 ? "year" : "years")} {memberMonths % 12} {(memberMonths % 12 == 1 ? "month" : "months")}" : $"{memberMonths} {(memberMonths == 1 ? "month" : "months")}";
+}
+
+<div class="cabinet-pane@(Model.Orders.Count > 0 ? " has-orders" : string.Empty)" data-pane="orders">
+    @if (Model.Orders.Count == 0)
+    {
+        <div class="cabinet-empty">
+            <h2>You haven't bought anything yet</h2>
+            <p>Let’s pick something in the catalog</p>
+            <a href="/Products">To catalog</a>
+        </div>
+    }
+    else
+    {
+        <div class="order-list">
+            @foreach (var order in Model.Orders)
+            {
+                <a class="order-row" href="/Orders/Detail/@order.Id">
+                    <span class="order-row-who">
+                        <strong>Order #@order.Id</strong>
+                        <span>@order.CreatedAt.ToString("dd.MM.yyyy") · @order.Items.Sum(m => m.Quantity) pcs</span>
+                    </span>
+                    <span class="order-status">@order.Status</span>
+                    <strong class="order-total">₼@order.Total.ToString("0.00")</strong>
+                </a>
+            }
+        </div>
+    }
+</div>

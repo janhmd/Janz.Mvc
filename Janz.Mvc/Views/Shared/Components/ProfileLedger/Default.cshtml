@@ -1,0 +1,49 @@
+@model Janz.Mvc.ViewModels.Profile.ProfilePageVM
+@{
+    var me = Model.Profile;
+    var userName = string.IsNullOrWhiteSpace(me.FullName) ? User.Identity?.Name : me.FullName;
+    if (string.IsNullOrWhiteSpace(userName))
+    {
+        userName = "Coffee lover";
+    }
+    var letter = userName.Trim().Substring(0, 1).ToUpperInvariant();
+    var stats = Model.Statistics;
+    var phoneCode = new[] { "+994", "+90", "+7" }.FirstOrDefault(code => me.Phone?.StartsWith(code) == true) ?? "+994";
+    var phoneNumber = me.Phone is null ? string.Empty : me.Phone.Substring(me.Phone.StartsWith(phoneCode) ? phoneCode.Length : 0).Trim();
+    var Initial = string.IsNullOrWhiteSpace(Model.Community.Author.Name) ? letter : Model.Community.Author.Name.Substring(0, 1).ToUpperInvariant();
+    var memberDays = Model.Community.Stats.MemberSince == default ? 0 : (DateTime.UtcNow - Model.Community.Stats.MemberSince.ToUniversalTime()).TotalDays;
+    var memberMonths = Math.Max(0, (int)(memberDays / 30.4));
+    var OnSite = Model.Community.Stats.MemberSince == default ? "-" : memberMonths >= 12 ? $"{memberMonths / 12} {(memberMonths / 12 == 1 ? "year" : "years")} {memberMonths % 12} {(memberMonths % 12 == 1 ? "month" : "months")}" : $"{memberMonths} {(memberMonths == 1 ? "month" : "months")}";
+}
+
+<div class="cabinet-pane" data-pane="ledger" hidden>
+    @if (Model.Balance.Transactions.Count == 0)
+    {
+        <div class="cabinet-empty">
+            <h2>You haven't topped up your account yet</h2>
+            <p>This page stores records of all top-ups and write-offs of your account</p>
+        </div>
+    }
+    else
+    {
+        <div class="ledger-board">
+            <h2 class="cabinet-pane-title">Internal account</h2>
+            <div class="ledger-list">
+                @foreach (var entry in Model.Balance.Transactions)
+                {
+                    <div class="ledger-row">
+                        <div>
+                            <strong>@(entry.Note ?? entry.Type)</strong>
+                            <time datetime="@entry.CreatedAt.ToString("s")">@entry.CreatedAt.ToLocalTime().ToString("d MMMM yyyy, HH:mm")</time>
+                        </div>
+                        @if (entry.OrderId is int orderId)
+                        {
+                            <a href="/Orders/Detail/@orderId">Order #@orderId</a>
+                        }
+                        <b class="@(entry.Amount < 0 ? "is-minus" : "is-plus")">@(entry.Amount < 0 ? "−" : "+")₼@Math.Abs(entry.Amount).ToString("0.00")</b>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+</div>

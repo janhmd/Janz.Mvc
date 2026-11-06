@@ -1,0 +1,224 @@
+@model Janz.Mvc.ViewModels.Profile.ProfilePageVM
+@{
+    var me = Model.Profile;
+    var userName = string.IsNullOrWhiteSpace(me.FullName) ? User.Identity?.Name : me.FullName;
+    if (string.IsNullOrWhiteSpace(userName))
+    {
+        userName = "Coffee lover";
+    }
+    var letter = userName.Trim().Substring(0, 1).ToUpperInvariant();
+    var stats = Model.Statistics;
+    var phoneCode = new[] { "+994", "+90", "+7" }.FirstOrDefault(code => me.Phone?.StartsWith(code) == true) ?? "+994";
+    var phoneNumber = me.Phone is null ? string.Empty : me.Phone.Substring(me.Phone.StartsWith(phoneCode) ? phoneCode.Length : 0).Trim();
+    var Initial = string.IsNullOrWhiteSpace(Model.Community.Author.Name) ? letter : Model.Community.Author.Name.Substring(0, 1).ToUpperInvariant();
+    var memberDays = Model.Community.Stats.MemberSince == default ? 0 : (DateTime.UtcNow - Model.Community.Stats.MemberSince.ToUniversalTime()).TotalDays;
+    var memberMonths = Math.Max(0, (int)(memberDays / 30.4));
+    var OnSite = Model.Community.Stats.MemberSince == default ? "-" : memberMonths >= 12 ? $"{memberMonths / 12} {(memberMonths / 12 == 1 ? "year" : "years")} {memberMonths % 12} {(memberMonths % 12 == 1 ? "month" : "months")}" : $"{memberMonths} {(memberMonths == 1 ? "month" : "months")}";
+}
+
+<div class="cabinet-pane" data-pane="community" hidden>
+    <div class="profile-board">
+        <div class="profile-feed">
+            @if (TempData["CommunityError"] is string communityError)
+            {
+                <p class="profile-post-error">@communityError</p>
+            }
+            <div class="profile-composer">
+                <button type="button" class="profile-compose">
+                    <span class="profile-compose-mark" aria-hidden="true">J</span>
+                    Write a post
+                </button>
+                <form class="profile-post" asp-controller="Community" asp-action="CreatePost" method="post" enctype="multipart/form-data" hidden>
+                    <div class="profile-post-head">
+                        <div class="profile-who">
+                            <span class="profile-avatar" aria-hidden="true">@Initial</span>
+                            <div>
+                                <strong>@Model.Community.Author.Name</strong>
+                            </div>
+                        </div>
+                        <button type="button" class="profile-post-close" aria-label="Close">
+                            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+                        </button>
+                    </div>
+                    <label class="profile-post-field">
+                        <input type="text" name="text" placeholder="Write a post" />
+                        <label class="profile-post-photo">
+                            <input type="file" name="images" accept="image/*" multiple hidden />
+                            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.8 7.2h3.1l1.3-2h5.6l1.3 2h3.1v11.2H4.8z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><circle cx="12" cy="13" r="3.1" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
+                        </label>
+                    </label>
+                    <div class="profile-pick">
+                        <input type="hidden" name="product" value="" />
+                        <input type="hidden" name="productId" value="" />
+                        <label class="profile-pick-toggle">
+                            <input type="search" class="profile-pick-search" placeholder="Choose coffee / product" autocomplete="off" />
+                        </label>
+                        <div class="profile-pick-drop" hidden>
+                            <div class="profile-pick-list">
+                                @foreach (var product in Model.Products)
+                                {
+                                    <button type="button" data-id="@product.Id" data-name="@product.Name" data-img="@product.ImagePath">
+                                        <img src="@product.ImagePath" alt="" />
+                                        @product.Name
+                                    </button>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                    <div class="profile-review" hidden>
+                        <div class="profile-review-head">
+                            <div class="profile-review-who">
+                                <img class="profile-review-img" alt="" />
+                                <strong class="profile-review-name"></strong>
+                            </div>
+                            <button type="button" class="profile-review-clear" aria-label="Remove product">
+                                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+                            </button>
+                        </div>
+                        <div class="profile-rate">
+                            <p>Rate the coffee</p>
+                            <div class="profile-stars" role="group" aria-label="Rate the coffee">
+                                <button type="button" class="profile-star" data-star="1" aria-label="1 star"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.2l2.5 6.4 6.8.4-5.2 4.5 1.7 6.6L12 17.6 6.2 21.1l1.7-6.6L2.7 10l6.8-.4z"/></svg></button>
+                                <button type="button" class="profile-star" data-star="2" aria-label="2 stars"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.2l2.5 6.4 6.8.4-5.2 4.5 1.7 6.6L12 17.6 6.2 21.1l1.7-6.6L2.7 10l6.8-.4z"/></svg></button>
+                                <button type="button" class="profile-star" data-star="3" aria-label="3 stars"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.2l2.5 6.4 6.8.4-5.2 4.5 1.7 6.6L12 17.6 6.2 21.1l1.7-6.6L2.7 10l6.8-.4z"/></svg></button>
+                                <button type="button" class="profile-star" data-star="4" aria-label="4 stars"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.2l2.5 6.4 6.8.4-5.2 4.5 1.7 6.6L12 17.6 6.2 21.1l1.7-6.6L2.7 10l6.8-.4z"/></svg></button>
+                                <button type="button" class="profile-star" data-star="5" aria-label="5 stars"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.2l2.5 6.4 6.8.4-5.2 4.5 1.7 6.6L12 17.6 6.2 21.1l1.7-6.6L2.7 10l6.8-.4z"/></svg></button>
+                            </div>
+                            <input type="hidden" name="rating" value="" />
+                        </div>
+                        <div class="profile-brew">
+                            <p>Choose a brewing method</p>
+                            <div class="profile-brew-pick">
+                                <input type="hidden" name="brew" value="" />
+                                <button type="button" class="profile-brew-toggle">Brewing method</button>
+                                <div class="profile-brew-drop" hidden>
+                                    <button type="button" data-name="Espresso machine">Espresso machine</button>
+                                    <button type="button" data-name="Drip coffee maker">Drip coffee maker</button>
+                                    <button type="button" data-name="cezve">cezve</button>
+                                    <button type="button" data-name="French press">French press</button>
+                                    <button type="button" data-name="AeroPress">AeroPress</button>
+                                    <button type="button" data-name="Pour over">Pour over</button>
+                                    <button type="button" data-name="Chemex">Chemex</button>
+                                    <button type="button" data-name="Moka pot">Moka pot</button>
+                                    <button type="button" data-name="Cold brew">Cold brew</button>
+                                </div>
+                            </div>
+                        </div>
+                        <label class="profile-review-note">
+                            <span>Notes for the recipe</span>
+                            <input type="text" name="recipe" placeholder="Tell how you brew" />
+                        </label>
+                        <button type="button" class="profile-recipe-more">Fill in the extended recipe</button>
+                        <div class="profile-recipe-extra" hidden>
+                            <input type="text" name="dose" placeholder="Coffee, g" />
+                            <input type="text" name="water" placeholder="Water, ml" />
+                            <input type="text" name="grind" placeholder="Grind" />
+                            <input type="text" name="time" placeholder="Time" />
+                        </div>
+                    </div>
+                    <div class="profile-post-tags">
+                        <p>Tags</p>
+                        <div class="profile-tag-chips"></div>
+                        <div class="profile-tag-pick">
+                            <span class="profile-tag-plus" aria-hidden="true">+</span>
+                            <input type="text" class="profile-tag-search" placeholder="Add a tag" autocomplete="off" />
+                            <input type="hidden" name="tags" value="" />
+                            <div class="profile-tag-drop" hidden>
+                                <button type="button" data-name="Pour over">Pour over</button>
+                                <button type="button" data-name="Espresso">Espresso</button>
+                                <button type="button" data-name="Filter">Filter</button>
+                                <button type="button" data-name="cezve">cezve</button>
+                                <button type="button" data-name="French press">French press</button>
+                                <button type="button" data-name="AeroPress">AeroPress</button>
+                                <button type="button" data-name="Drip">Drip</button>
+                                <button type="button" data-name="Chemex">Chemex</button>
+                                <button type="button" data-name="Cold brew">Cold brew</button>
+                                <button type="button" data-name="Light roast">Light roast</button>
+                                <button type="button" data-name="Dark roast">Dark roast</button>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="submit" class="profile-post-publish">Publish</button>
+                </form>
+            </div>
+            @if (Model.Community.Posts.Count == 0)
+            {
+                <div class="cabinet-empty">
+                    <h2>No posts</h2>
+                    <p>You haven't written anything yet</p>
+                    <a href="/Community">Go to community</a>
+                </div>
+            }
+            else
+            {
+                <div class="feed">
+                    @foreach (var post in Model.Community.Posts)
+                    {
+                        <partial name="_FeedCard" model="post" />
+                    }
+                </div>
+            }
+        </div>
+        <div class="profile-card">
+            <div class="profile-card-top">
+                <h2>My profile</h2>
+                <button type="button" aria-label="Share">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 5h5v5M19 5l-8 8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M17 13.2V18H6V7h4.8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+                </button>
+            </div>
+            <div class="profile-who">
+                <span class="profile-avatar" aria-hidden="true">@Initial</span>
+                <div>
+                    <strong>@Model.Community.Author.Name</strong>
+                </div>
+            </div>
+            <div class="profile-follow">
+                <button type="button" data-follow="subscribers"><b>@Model.Community.Followers</b><span>subscribers</span></button>
+                <button type="button" data-follow="subscriptions"><b>@Model.Community.Following</b><span>subscriptions</span></button>
+            </div>
+            <div class="profile-about">
+                <p class="profile-bio">@(string.IsNullOrWhiteSpace(Model.Community.Bio) ? "Tell about yourself" : Model.Community.Bio)</p>
+                <button type="button" class="profile-edit">Edit</button>
+                <form class="profile-bio-form" hidden>
+                    <input type="text" name="bio" placeholder="Tell about yourself" maxlength="180" autocomplete="off" />
+                    <button type="submit" class="edit-save">Save</button>
+                </form>
+            </div>
+            <ul class="profile-stats">
+                <li>
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="7.2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 8.2V12l2.4 1.6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+                    Time on the site @OnSite
+                </li>
+                <li>
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="7.2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M8.6 12.2l2.2 2.2 4.6-5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    Orders placed @Model.Community.Stats.Orders
+                </li>
+                <li>
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 16.5c1.4 1.4 3.1 2.1 5 2.1s3.6-.7 5-2.1" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M8 8.2h8l-.6 5.2H8.6z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M10 8.2V6.8a2 2 0 0 1 4 0v1.4" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
+                    Tried @Model.Community.Stats.TriedCoffees @(Model.Community.Stats.TriedCoffees == 1 ? "coffee" : "different coffees")
+                </li>
+                <li>
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4.6l2.1 4.3 4.7.7-3.4 3.3.8 4.7L12 15.4 7.8 17.6l.8-4.7-3.4-3.3 4.7-.7z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+                    Average coffee rating @(Model.Community.Stats.AverageRating > 0 ? Model.Community.Stats.AverageRating.ToString("0.0") : "0")
+                </li>
+                <li>
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5.5 6.5h13v9.2H9.2L5.5 18.8z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+                    Comments @Model.Community.Stats.Comments
+                </li>
+                <li>
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 15.2l5-9.4 5 9.4z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+                    Likes received @Model.Community.Stats.LikesReceived
+                </li>
+            </ul>
+            <div class="profile-cook">
+                <div class="profile-cook-head">
+                    <h3>How I cook</h3>
+                    <button type="button" class="profile-cook-edit" aria-label="Edit how I cook">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.6 5.6l3.8 3.8-9.4 9.4H5.2v-3.8z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M13.2 7l3.8 3.8" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
+                    </button>
+                </div>
+                <div class="profile-cook-list" data-cook="@string.Join("|", Model.Community.CookMethods)"></div>
+            </div>
+        </div>
+    </div>
+</div>
