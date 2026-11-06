@@ -1,0 +1,119 @@
+@model ProductPageVM
+@using Janz.Mvc.Helpers
+@using System.Text.Json
+@inject IConfiguration Configuration
+@{
+    var product = Model.Product;
+    var apiBase = Configuration["ApiSettings:BaseUrl"];
+    // Admin paneldən yüklənən şəkillər API-dədir (/uploads/...): tam ünvan lazımdır
+    var variant = product.DefaultVariant;
+    var formats = product.Variants.Select(m => m.Format).Distinct().ToList();
+    var format = variant?.Format;
+    var sizes = product.Variants.Where(m => m.Format == format && !string.IsNullOrWhiteSpace(m.Size)).ToList();
+    // Variantlı məhsulda qalereya seçilən formatın şəkilləridir: əvvəl hər variantın ilk şəkli, sonra qalanları (təkrarsız)
+    var formatImages = product.Variants.Where(m => m.Format == format).ToList();
+    var gallery = (variant is null
+            ? (product.Images.Count > 0 ? product.Images : new List<string> { product.ImagePath })
+            : formatImages.Where(m => m.Images.Count > 0).Select(m => m.Images[0])
+                .Concat(formatImages.SelectMany(m => m.Images.Skip(1))).Distinct().ToList())
+        .Select(m => ApiUrl.ToAbsolute(apiBase, m)).ToList();
+    if (gallery.Count == 0) gallery.Add(ApiUrl.ToAbsolute(apiBase, product.ImagePath));
+    var mainPhoto = variant is not null && variant.Images.Count > 0 ? ApiUrl.ToAbsolute(apiBase, variant.Images[0]) : gallery[0];
+    var price = variant?.Price ?? product.Price;
+    var oldPrice = variant?.OldPrice ?? (variant is null ? product.OldPrice : null);
+    var discount = variant?.DiscountPercent ?? product.DiscountPercent;
+    var stock = variant?.Stock ?? product.Stock;
+    var hasGrind = variant is not null && ProductOptions.HasGrind(variant.Format);
+    // site.js formatı və ölçünü dəyişəndə bu məlumatla qiyməti, stoku və şəkilləri yeniləyir
+    var variantsJson = JsonSerializer.Serialize(product.Variants.Select(m => new
+    {
+        id = m.Id,
+        format = m.Format,
+        size = m.Size,
+        price = m.Price,
+        oldPrice = m.OldPrice,
+        discount = m.DiscountPercent,
+        stock = m.Stock,
+        grind = ProductOptions.HasGrind(m.Format),
+        images = m.Images.Select(i => ApiUrl.ToAbsolute(apiBase, i))
+    }));
+    var isCoffee = string.Equals(product.CategorySlug, "coffee", StringComparison.OrdinalIgnoreCase);
+    var commentsTab = string.Equals(Context.Request.Query["tab"], "comments", StringComparison.OrdinalIgnoreCase);
+    // Boş sahələr göstərilmir
+    var facts = new[] { ("Roast level", product.Roast), ("Region", product.Region), ("Processing", product.Processing), ("Caffeine", product.Caffeine) }
+        .Where(m => !string.IsNullOrWhiteSpace(m.Item2)).ToList();
+}
+
+<div class="coffee-tabs" data-tabs>
+    <button type="button" class="@(commentsTab ? null : "is-on")" data-tab="description">Description</button>
+    <button type="button" class="@(commentsTab ? "is-on" : null)" data-tab="comments">Comments @Model.Reviews.Count</button>
+</div>
+
+<div class="tab-panel" data-tab-panel="description" hidden="@commentsTab">
+
+@if (facts.Count > 0)
+{
+    <h2>Details</h2>
+    <div class="facts">
+        @foreach (var (label, value) in facts)
+        {
+            <div><span>@label</span><strong>@value</strong></div>
+        }
+    </div>
+}
+
+<h2>Description</h2>
+<div class="coffee-copy">
+    <p>@product.Description</p>
+</div>
+
+@if (!string.IsNullOrWhiteSpace(product.Brewing) || product.BrewMethods.Count > 0)
+{
+    <h2>Brewing</h2>
+    @if (product.BrewMethods.Count > 0)
+    {
+        <div class="brew-grid">
+            @foreach (var method in product.BrewMethods)
+            {
+                <div>
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="@ProductOptions.BrewIcon(method)" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    <span>@method</span>
+                </div>
+            }
+        </div>
+    }
+    @if (!string.IsNullOrWhiteSpace(product.Brewing))
+    {
+        <div class="coffee-copy"><p>@product.Brewing</p></div>
+    }
+}
+
+@if (!string.IsNullOrWhiteSpace(product.Storage) || isCoffee)
+{
+    <h2>Storage</h2>
+    @if (!string.IsNullOrWhiteSpace(product.Storage))
+    {
+        <div class="coffee-copy"><p>@product.Storage</p></div>
+    }
+    @* Ümumi qəhvə bələdçisi yalnız qəhvə məhsullarında *@
+    @if (isCoffee)
+    {
+        <div class="store-grid">
+        <div>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 8h12l-1 11H7zM8 8V6h8v2" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+            <strong>At room temperature</strong>
+            <p>In a closed pack at room temperature, coffee keeps for 1–2 months.</p>
+            <p>After you open the pack that time gets shorter, so buy only as much as you will drink in one or two weeks.</p>
+            <p>After grinding, freshness fades in minutes, not days. Grind the beans right before brewing.</p>
+        </div>
+        <div>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l2 3h3l-1 3 2 3h-3l-1 3-2-3H7l2-3-1-3h3z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+            <strong>In the freezer</strong>
+            <p>In a closed pack in the freezer, coffee keeps for a long time.</p>
+            <p>Keep it away from other food, or the coffee can take on that smell. You can freeze it, but thaw it only once, for 10–12 hours at room temperature before brewing. Do not freeze it again.</p>
+        </div>
+    </div>
+    }
+}
+
+</div>

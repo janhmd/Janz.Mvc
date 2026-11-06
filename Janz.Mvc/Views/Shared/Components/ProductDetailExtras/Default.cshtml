@@ -1,0 +1,74 @@
+@model ProductPageVM
+@using Janz.Mvc.Helpers
+@using System.Text.Json
+@inject IConfiguration Configuration
+@{
+    var product = Model.Product;
+    var apiBase = Configuration["ApiSettings:BaseUrl"];
+    // Admin paneldən yüklənən şəkillər API-dədir (/uploads/...): tam ünvan lazımdır
+    var variant = product.DefaultVariant;
+    var formats = product.Variants.Select(m => m.Format).Distinct().ToList();
+    var format = variant?.Format;
+    var sizes = product.Variants.Where(m => m.Format == format && !string.IsNullOrWhiteSpace(m.Size)).ToList();
+    // Variantlı məhsulda qalereya seçilən formatın şəkilləridir: əvvəl hər variantın ilk şəkli, sonra qalanları (təkrarsız)
+    var formatImages = product.Variants.Where(m => m.Format == format).ToList();
+    var gallery = (variant is null
+            ? (product.Images.Count > 0 ? product.Images : new List<string> { product.ImagePath })
+            : formatImages.Where(m => m.Images.Count > 0).Select(m => m.Images[0])
+                .Concat(formatImages.SelectMany(m => m.Images.Skip(1))).Distinct().ToList())
+        .Select(m => ApiUrl.ToAbsolute(apiBase, m)).ToList();
+    if (gallery.Count == 0) gallery.Add(ApiUrl.ToAbsolute(apiBase, product.ImagePath));
+    var mainPhoto = variant is not null && variant.Images.Count > 0 ? ApiUrl.ToAbsolute(apiBase, variant.Images[0]) : gallery[0];
+    var price = variant?.Price ?? product.Price;
+    var oldPrice = variant?.OldPrice ?? (variant is null ? product.OldPrice : null);
+    var discount = variant?.DiscountPercent ?? product.DiscountPercent;
+    var stock = variant?.Stock ?? product.Stock;
+    var hasGrind = variant is not null && ProductOptions.HasGrind(variant.Format);
+    // site.js formatı və ölçünü dəyişəndə bu məlumatla qiyməti, stoku və şəkilləri yeniləyir
+    var variantsJson = JsonSerializer.Serialize(product.Variants.Select(m => new
+    {
+        id = m.Id,
+        format = m.Format,
+        size = m.Size,
+        price = m.Price,
+        oldPrice = m.OldPrice,
+        discount = m.DiscountPercent,
+        stock = m.Stock,
+        grind = ProductOptions.HasGrind(m.Format),
+        images = m.Images.Select(i => ApiUrl.ToAbsolute(apiBase, i))
+    }));
+    var isCoffee = string.Equals(product.CategorySlug, "coffee", StringComparison.OrdinalIgnoreCase);
+    var commentsTab = string.Equals(Context.Request.Query["tab"], "comments", StringComparison.OrdinalIgnoreCase);
+    // Boş sahələr göstərilmir
+    var facts = new[] { ("Roast level", product.Roast), ("Region", product.Region), ("Processing", product.Processing), ("Caffeine", product.Caffeine) }
+        .Where(m => !string.IsNullOrWhiteSpace(m.Item2)).ToList();
+}
+
+<div class="promise-grid">
+    <div>
+        <h2>Delivery</h2>
+        <div class="promise">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7h11v8H3zM14 10h4l3 3v2h-7z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><circle cx="7" cy="17.5" r="1.4" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="17" cy="17.5" r="1.4" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
+            <p>You can place an order from ₼24, and we will deliver it to any city, to a pickup point or to your door.</p>
+            <p>The delivery cost is calculated in the cart. It depends on your city, the amount and the weight. We almost always deliver for free.</p>
+        </div>
+    </div>
+    <div>
+        <h2>Guarantee</h2>
+        <div class="promise">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M8.5 12.2l2.2 2.2 4.8-5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <p>We roast this coffee every day. If you don't like it, we will replace it for free or refund your payment.</p>
+            <a href="#">How does it work?</a>
+        </div>
+    </div>
+</div>
+
+<div class="related">
+    <h2>Also buy</h2>
+    <div class="card-grid cols-3">
+        @foreach (var item in Model.Related)
+        {
+            <partial name="_ProductCard" model="item" />
+        }
+    </div>
+</div>

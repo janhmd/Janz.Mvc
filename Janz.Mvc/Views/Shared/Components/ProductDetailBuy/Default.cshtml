@@ -1,0 +1,176 @@
+@model ProductPageVM
+@using Janz.Mvc.Helpers
+@using System.Text.Json
+@inject IConfiguration Configuration
+@{
+    var product = Model.Product;
+    var apiBase = Configuration["ApiSettings:BaseUrl"];
+    // Admin paneldən yüklənən şəkillər API-dədir (/uploads/...): tam ünvan lazımdır
+    var variant = product.DefaultVariant;
+    var formats = product.Variants.Select(m => m.Format).Distinct().ToList();
+    var format = variant?.Format;
+    var sizes = product.Variants.Where(m => m.Format == format && !string.IsNullOrWhiteSpace(m.Size)).ToList();
+    // Variantlı məhsulda qalereya seçilən formatın şəkilləridir: əvvəl hər variantın ilk şəkli, sonra qalanları (təkrarsız)
+    var formatImages = product.Variants.Where(m => m.Format == format).ToList();
+    var gallery = (variant is null
+            ? (product.Images.Count > 0 ? product.Images : new List<string> { product.ImagePath })
+            : formatImages.Where(m => m.Images.Count > 0).Select(m => m.Images[0])
+                .Concat(formatImages.SelectMany(m => m.Images.Skip(1))).Distinct().ToList())
+        .Select(m => ApiUrl.ToAbsolute(apiBase, m)).ToList();
+    if (gallery.Count == 0) gallery.Add(ApiUrl.ToAbsolute(apiBase, product.ImagePath));
+    var mainPhoto = variant is not null && variant.Images.Count > 0 ? ApiUrl.ToAbsolute(apiBase, variant.Images[0]) : gallery[0];
+    var price = variant?.Price ?? product.Price;
+    var oldPrice = variant?.OldPrice ?? (variant is null ? product.OldPrice : null);
+    var discount = variant?.DiscountPercent ?? product.DiscountPercent;
+    var stock = variant?.Stock ?? product.Stock;
+    var hasGrind = variant is not null && ProductOptions.HasGrind(variant.Format);
+    // site.js formatı və ölçünü dəyişəndə bu məlumatla qiyməti, stoku və şəkilləri yeniləyir
+    var variantsJson = JsonSerializer.Serialize(product.Variants.Select(m => new
+    {
+        id = m.Id,
+        format = m.Format,
+        size = m.Size,
+        price = m.Price,
+        oldPrice = m.OldPrice,
+        discount = m.DiscountPercent,
+        stock = m.Stock,
+        grind = ProductOptions.HasGrind(m.Format),
+        images = m.Images.Select(i => ApiUrl.ToAbsolute(apiBase, i))
+    }));
+    var isCoffee = string.Equals(product.CategorySlug, "coffee", StringComparison.OrdinalIgnoreCase);
+    var commentsTab = string.Equals(Context.Request.Query["tab"], "comments", StringComparison.OrdinalIgnoreCase);
+    // Boş sahələr göstərilmir
+    var facts = new[] { ("Roast level", product.Roast), ("Region", product.Region), ("Processing", product.Processing), ("Caffeine", product.Caffeine) }
+        .Where(m => !string.IsNullOrWhiteSpace(m.Item2)).ToList();
+}
+
+<div class="crumb">
+    <a href="/">Home</a>
+    <span>·</span>
+    <a href="/Products">@product.CategoryName</a>
+    <span>·</span>
+    <span>@product.Name</span>
+</div>
+
+<div class="coffee-layout">
+    <div class="gallery">
+        <div class="thumbs">
+            @for (var i = 0; i < gallery.Count; i++)
+            {
+                <button type="button" class="@(gallery[i] == mainPhoto ? "is-on" : null)" data-src="@gallery[i]"><img src="@gallery[i]" alt="" /></button>
+            }
+        </div>
+        <img class="gallery-photo" src="@mainPhoto" alt="@product.Name" />
+    </div>
+
+    <div class="coffee-buy" data-product-buy>
+        <div class="coffee-meta">
+            @if (product.ReviewCount > 0)
+            {
+                <a class="rating" href="?tab=comments#comments">
+                    <span class="rating-item"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.9l-5.2 2.7 1-5.8-4.3-4.1 5.9-.9z" /></svg>@product.Rating?.ToString("0.0")</span>
+                    <span class="rating-item"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11.5a8 8 0 0 1-11.6 7.1L4 20l1.4-4.2A8 8 0 1 1 20 11.5z" /></svg>@product.ReviewCount</span>
+                </a>
+            }
+            @if (!string.IsNullOrEmpty(product.Badge))
+            {
+                <div class="badges"><span>@product.Badge</span></div>
+            }
+        </div>
+        <div class="coffee-use">@(product.Use ?? product.CategoryName)</div>
+        <h1>@product.Name</h1>
+        @if (!string.IsNullOrWhiteSpace(product.Processing))
+        {
+            <div class="kind">@product.Processing</div>
+        }
+        <div class="kind" data-variant-stock>@(stock > 0 ? $"{stock} in stock" : "Out of stock")</div>
+        @if (product.Notes.Count > 0 || product.Taste is not null)
+        {
+            <div class="taste">@ProductOptions.TasteLine(product.Taste, product.Notes)</div>
+        }
+        @if (product.Tags.Count > 0)
+        {
+            <div class="catalog-tags">
+                @foreach (var tag in product.Tags)
+                {
+                    <a href="#">@tag.Name</a>
+                }
+            </div>
+        }
+        @if (product.Density is not null || product.Acidity is not null)
+        {
+            <div class="meters">
+                <div><span>Density</span><i><b style="width:@(product.Density ?? 0)%"></b></i></div>
+                <div><span>Acidity</span><i><b style="width:@(product.Acidity ?? 0)%"></b></i></div>
+            </div>
+        }
+        @if (formats.Count > 1)
+        {
+            <div class="formats">
+                @foreach (var item in formats)
+                {
+                    <button type="button" class="@(item == format ? "is-on" : null)" data-format="@item">@item</button>
+                }
+            </div>
+        }
+        @if (User.Identity?.IsAuthenticated != true)
+        {
+            <div class="cheaper">
+                <div>
+                    <div class="cheaper-title">Sign in, and it gets cheaper</div>
+                    <div class="cheaper-note">More discounts in your account</div>
+                </div>
+                <a href="/Account/Login" aria-label="Sign in">→</a>
+            </div>
+        }
+        else if (Model.Coupon is not null)
+        {
+            <div class="cheaper">
+                <div>
+                    <div class="cheaper-title">Discount @Model.Coupon.Discount on the first order</div>
+                    <div class="cheaper-note">Promo code @Model.Coupon.Code</div>
+                </div>
+                <a href="/Cart?promo=@Model.Coupon.Code" aria-label="Apply the promo code">→</a>
+            </div>
+        }
+        @if (variant is not null)
+        {
+            <div class="buy-row">
+                <span class="buy-sizes" data-sizes>
+                    @foreach (var item in sizes)
+                    {
+                        <button type="button" class="weight@(item.Id == variant.Id ? " is-on" : null)" data-variant-id="@item.Id">@item.Size@if (item.DiscountPercent > 0){<small> -@item.DiscountPercent%</small>}</button>
+                    }
+                </span>
+                <details class="grind click-menu" hidden="@(!hasGrind)">
+                    <summary><span>@ProductOptions.Grinds[0]</span></summary>
+                    <div class="grind-list">
+                        <p>Grind</p>
+                        @for (var i = 0; i < ProductOptions.Grinds.Length; i++)
+                        {
+                            <button type="button" class="@(i == 0 ? "is-on" : null)" data-grind="@ProductOptions.Grinds[i]">@ProductOptions.Grinds[i]</button>
+                        }
+                    </div>
+                </details>
+            </div>
+            <script type="application/json" data-variants>@Html.Raw(variantsJson)</script>
+        }
+        <div class="price-row">
+            <button type="button" class="price" data-cart-add="@product.Id" data-variant="@variant?.Id" data-grind="@(hasGrind ? ProductOptions.Grinds[0] : null)" disabled="@(stock <= 0)">
+                <small hidden="@(discount == 0)">-@discount%</small>
+                <s hidden="@(discount == 0)">₼@(oldPrice?.ToString("0.00"))</s>
+                <strong>₼@price.ToString("0.00")</strong>
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 8h15v11.5a1.5 1.5 0 0 1-1.5 1.5H6a1.5 1.5 0 0 1-1.5-1.5z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" /><path d="M9 8V6.5a3 3 0 0 1 6 0V8M9.3 14.2l1.9 1.9 3.6-3.8" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" /></svg>
+            </button>
+            <span class="product-actions">
+                <button type="button" data-wish="@Model.Product.Id" class="@(Model.InWishlist ? "is-on" : "")" aria-label="@(Model.InWishlist ? "Remove from wishlist" : "Add to wishlist")"><svg viewBox="0 0 24 24"><path d="M12 19s-7-4.4-7-9a4 4 0 0 1 7-2 4 4 0 0 1 7 2c0 4.6-7 9-7 9z" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></button>
+                <button type="button" aria-label="Compare" data-compare-toggle="@Model.Product.Id"><svg viewBox="0 0 24 24"><path d="M12 3v15M8 20h8M4.5 7h15" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M4.5 7l-2.2 4.2a2.6 2.6 0 0 0 4.4 0zM19.5 7l-2.2 4.2a2.6 2.6 0 0 0 4.4 0z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg></button>
+                <button type="button" aria-label="Product details" data-show-tab="description"><svg viewBox="0 0 24 24"><path d="M7 3h7l4 4v14H7z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M14 3v4h4M9.5 12h5M9.5 15.5h5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></button>
+            </span>
+        </div>
+        <div class="arrives">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7h11v8H3zM14 10h4l3 3v2h-7z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><circle cx="7" cy="17.5" r="1.4" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="17" cy="17.5" r="1.4" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
+            We'll deliver 3 – 6 October
+        </div>
+    </div>
+</div>
