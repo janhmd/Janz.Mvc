@@ -1,164 +1,18 @@
 @model HomeIndexVM
 @{
     ViewData["Title"] = "Home";
-    // "Coffee of the week" nişanlı məhsullar; hələ yoxdursa ilk iki qəhvə
-    var week = Model.Coffee.Where(m => m.Badge == Janz.Mvc.Helpers.ProductBadges.CoffeeOfTheWeek).Take(2).ToList();
-    if (week.Count == 0) week = Model.Coffee.Take(2).ToList();
-    var fresh = Model.Coffee.Skip(2).Take(4).ToList();
-    var popular = Model.Coffee.Skip(6).ToList();
 }
 
 <main>
-        <section id="hero">
-            <h1>Every day we roast coffee and<br>deliver for free all over Azerbaijan</h1>
-            <div class="hero-row">
-                <a class="shot" href="/Products">
-                    <img src="/images/tiles/espresso.jpg" alt="" /><video muted loop playsinline preload="metadata" src="/videos/espresso.mp4"></video>
-                    <span>Coffee</span>
-                    <small>@Model.Coffee.Count</small>
-                </a>
-                <a class="shot" href="/Products/Chocolate">
-                    <img src="/images/tiles/choc-syrup.jpg" alt="" /><video muted loop playsinline preload="metadata" src="/videos/choc-syrup.mp4"></video>
-                    <span>Syrups</span>
-                </a>
-                <a class="shot" href="/Products/Tea">
-                    <img src="/images/tiles/tea.jpg" alt="" /><video muted loop playsinline preload="metadata" src="/videos/tea.mp4"></video>
-                    <span>Tea</span>
-                </a>
-                <aside>
-                    @if (User.Identity?.IsAuthenticated != true)
-                    {
-                        <div class="account-card">
-                            <div class="account-title">Sign in, and it gets cheaper</div>
-                            <div class="account-note">More discounts in your account</div>
-                            <a class="account-signin" href="/Account/Login">Sign in</a>
-                            <a class="account-register" href="/Account/Register">Register</a>
-                        </div>
-                    }
-                    else if (Model.Coupon is not null)
-                    {
-                        <div class="account-card">
-                            <div class="account-title">Discount @Model.Coupon.Discount</div>
-                            <div class="account-note">on the first order</div>
-                            <div class="account-code">
-                                <span>@Model.Coupon.Code</span>
-                                <button type="button" data-copy="@Model.Coupon.Code" aria-label="Copy the code">
-                                    <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="11" height="11" rx="2" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M5 15V6a1 1 0 0 1 1-1h9" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
-                                </button>
-                            </div>
-                            <a class="account-signin" href="/Cart?promo=@Model.Coupon.Code">Apply</a>
-                        </div>
-                    }
-                    else
-                    {
-                        <div class="account-card">
-                            <div class="account-title">Discounts in your account</div>
-                            <div class="account-note">Orders, promo codes and your discount level</div>
-                            <a class="account-signin" href="/Profile">My account</a>
-                        </div>
-                    }
-                </aside>
-            </div>
-        </section>
+        @await Component.InvokeAsync("HomeHero", Model)
 
-        <section id="week">
-            <h2>Coffees of the week <span>on sale</span></h2>
-            <div class="week-row">
-                @foreach (var product in week)
-                {
-                    <partial name="_ProductCard" model="product" />
-                }
-                @if (Model.LatestArticles.Count > 0)
-                {
-                <aside>
-                    <div class="roast-card">
-                        <div class="roast-track">
-                            @foreach (var article in Model.LatestArticles)
-                            {
-                                <div class="roast-slide is-article">
-                                    <img src="@article.CoverPath" alt="@article.Title" />
-                                    <div class="roast-copy">
-                                        <div class="line-light">Coffee journal</div>
-                                        <div class="line-bold">@article.Title</div>
-                                        <a class="read-article" href="/Journal/Article/@article.Slug">Read the article</a>
-                                    </div>
-                                </div>
-                            }
-                        </div>
-                        <div class="roast-nav">
-                            <span class="dots">@for (var i = 0; i < Model.LatestArticles.Count; i++){<i class="@(i == 0 ? "is-on" : "")"></i>}</span>
-                            <span class="arrows"><button type="button" aria-label="Previous">←</button><button type="button" aria-label="Next">→</button></span>
-                        </div>
-                    </div>
-                </aside>
-                }
-            </div>
-        </section>
+        @await Component.InvokeAsync("HomeWeek", Model)
 
-        <section id="new">
-            <h2><a class="section-link" href="/Products">New</a></h2>
-            <div class="card-grid">
-                @foreach (var product in fresh)
-                {
-                    <partial name="_ProductCard" model="product" />
-                }
-            </div>
-        </section>
+        @await Component.InvokeAsync("HomeNew", Model)
 
-        <section id="popular">
-            <h2><a class="section-link" href="/Products">Popular</a></h2>
-            <div class="card-grid">
-                @foreach (var product in popular)
-                {
-                    <partial name="_ProductCard" model="product" />
-                }
-                <aside>
-                    <div class="guarantee-card">
-                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.35-5.65M20 4v5h-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>
-                        <h3>We'll refund the money or replace it</h3>
-                        <p>If you don't like the coffee, we'll replace it for free or refund your payment.</p>
-                        <p>Just write to us, and we'll resolve the issue in your favor.</p>
-                    </div>
-                </aside>
-            </div>
-        </section>
+        @await Component.InvokeAsync("HomePopular", Model)
 
-        <section id="sets">
-            <h2><a class="section-link" href="/Products/Sets">Sets</a></h2>
-            <div class="card-grid">
-                @foreach (var product in Model.Sets)
-                {
-                    <partial name="_ProductCard" model="product" />
-                }
-            </div>
-        </section>
+        @await Component.InvokeAsync("HomeSets", Model)
 
-        <section id="reviews">
-            <h2><a class="section-link" href="/Reviews">Reviews</a></h2>
-            <div class="review-stats">
-                <div class="stat">
-                    <div class="stat-value">@Model.Reviews.Total.ToString("N0")</div>
-                    <div class="stat-label">reviews</div>
-                </div>
-                <div class="stat">
-                    <div class="stat-value">@(Model.Reviews.ShopAverage?.ToString("0.0") ?? "—")</div>
-                    <div class="stat-star">★</div>
-                    <div class="stat-label">Average<br>shop rating</div>
-                </div>
-                <div class="stat">
-                    <div class="stat-value">@(Model.Reviews.DeliveryAverage?.ToString("0.0") ?? "—")</div>
-                    <div class="stat-star">★</div>
-                    <div class="stat-label">Average<br>delivery rating</div>
-                </div>
-            </div>
-            @if (Model.Reviews.Items.Count > 0)
-            {
-                <div class="review-grid">
-                    @foreach (var review in Model.Reviews.Items)
-                    {
-                        <partial name="_ShopReview" model="review" />
-                    }
-                </div>
-            }
-        </section>
+        @await Component.InvokeAsync("HomeReviews", Model)
     </main>

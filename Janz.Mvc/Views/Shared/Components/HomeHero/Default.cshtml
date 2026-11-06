@@ -1,0 +1,60 @@
+@model HomeIndexVM
+@{
+    // "Coffee of the week" nişanlı məhsullar; hələ yoxdursa ilk iki qəhvə
+    var week = Model.Coffee.Where(m => m.Badge == Janz.Mvc.Helpers.ProductBadges.CoffeeOfTheWeek).Take(2).ToList();
+    if (week.Count == 0) week = Model.Coffee.Take(2).ToList();
+    var fresh = Model.Coffee.Skip(2).Take(4).ToList();
+    var popular = Model.Coffee.Skip(6).ToList();
+}
+
+<section id="hero">
+    <h1>Every day we roast coffee and<br>deliver for free all over Azerbaijan</h1>
+    <div class="hero-row">
+        <a class="shot" href="/Products">
+            <img src="/images/tiles/espresso.jpg" alt="" /><video muted loop playsinline preload="metadata" src="/videos/espresso.mp4"></video>
+            <span>Coffee</span>
+            <small>@Model.Coffee.Count</small>
+        </a>
+        <a class="shot" href="/Products/Chocolate">
+            <img src="/images/tiles/choc-syrup.jpg" alt="" /><video muted loop playsinline preload="metadata" src="/videos/choc-syrup.mp4"></video>
+            <span>Syrups</span>
+        </a>
+        <a class="shot" href="/Products/Tea">
+            <img src="/images/tiles/tea.jpg" alt="" /><video muted loop playsinline preload="metadata" src="/videos/tea.mp4"></video>
+            <span>Tea</span>
+        </a>
+        <aside>
+            @if (User.Identity?.IsAuthenticated != true)
+            {
+                <div class="account-card">
+                    <div class="account-title">Sign in, and it gets cheaper</div>
+                    <div class="account-note">More discounts in your account</div>
+                    <a class="account-signin" href="/Account/Login">Sign in</a>
+                    <a class="account-register" href="/Account/Register">Register</a>
+                </div>
+            }
+            else if (Model.Coupon is not null)
+            {
+                <div class="account-card">
+                    <div class="account-title">Discount @Model.Coupon.Discount</div>
+                    <div class="account-note">on the first order</div>
+                    <div class="account-code">
+                        <span>@Model.Coupon.Code</span>
+                        <button type="button" data-copy="@Model.Coupon.Code" aria-label="Copy the code">
+                            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="11" height="11" rx="2" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M5 15V6a1 1 0 0 1 1-1h9" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+                        </button>
+                    </div>
+                    <a class="account-signin" href="/Cart?promo=@Model.Coupon.Code">Apply</a>
+                </div>
+            }
+            else
+            {
+                <div class="account-card">
+                    <div class="account-title">Discounts in your account</div>
+                    <div class="account-note">Orders, promo codes and your discount level</div>
+                    <a class="account-signin" href="/Profile">My account</a>
+                </div>
+            }
+        </aside>
+    </div>
+</section>

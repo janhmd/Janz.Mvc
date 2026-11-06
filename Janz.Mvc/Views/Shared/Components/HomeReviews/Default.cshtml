@@ -1,0 +1,37 @@
+@model HomeIndexVM
+@{
+    // "Coffee of the week" nişanlı məhsullar; hələ yoxdursa ilk iki qəhvə
+    var week = Model.Coffee.Where(m => m.Badge == Janz.Mvc.Helpers.ProductBadges.CoffeeOfTheWeek).Take(2).ToList();
+    if (week.Count == 0) week = Model.Coffee.Take(2).ToList();
+    var fresh = Model.Coffee.Skip(2).Take(4).ToList();
+    var popular = Model.Coffee.Skip(6).ToList();
+}
+
+<section id="reviews">
+    <h2><a class="section-link" href="/Reviews">Reviews</a></h2>
+    <div class="review-stats">
+        <div class="stat">
+            <div class="stat-value">@Model.Reviews.Total.ToString("N0")</div>
+            <div class="stat-label">reviews</div>
+        </div>
+        <div class="stat">
+            <div class="stat-value">@(Model.Reviews.ShopAverage?.ToString("0.0") ?? "—")</div>
+            <div class="stat-star">★</div>
+            <div class="stat-label">Average<br>shop rating</div>
+        </div>
+        <div class="stat">
+            <div class="stat-value">@(Model.Reviews.DeliveryAverage?.ToString("0.0") ?? "—")</div>
+            <div class="stat-star">★</div>
+            <div class="stat-label">Average<br>delivery rating</div>
+        </div>
+    </div>
+    @if (Model.Reviews.Items.Count > 0)
+    {
+        <div class="review-grid">
+            @foreach (var review in Model.Reviews.Items)
+            {
+                <partial name="_ShopReview" model="review" />
+            }
+        </div>
+    }
+</section>

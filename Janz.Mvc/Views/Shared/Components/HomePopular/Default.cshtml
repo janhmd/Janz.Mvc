@@ -1,0 +1,26 @@
+@model HomeIndexVM
+@{
+    // "Coffee of the week" nişanlı məhsullar; hələ yoxdursa ilk iki qəhvə
+    var week = Model.Coffee.Where(m => m.Badge == Janz.Mvc.Helpers.ProductBadges.CoffeeOfTheWeek).Take(2).ToList();
+    if (week.Count == 0) week = Model.Coffee.Take(2).ToList();
+    var fresh = Model.Coffee.Skip(2).Take(4).ToList();
+    var popular = Model.Coffee.Skip(6).ToList();
+}
+
+<section id="popular">
+    <h2><a class="section-link" href="/Products">Popular</a></h2>
+    <div class="card-grid">
+        @foreach (var product in popular)
+        {
+            <partial name="_ProductCard" model="product" />
+        }
+        <aside>
+            <div class="guarantee-card">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.35-5.65M20 4v5h-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                <h3>We'll refund the money or replace it</h3>
+                <p>If you don't like the coffee, we'll replace it for free or refund your payment.</p>
+                <p>Just write to us, and we'll resolve the issue in your favor.</p>
+            </div>
+        </aside>
+    </div>
+</section>

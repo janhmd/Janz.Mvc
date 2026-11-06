@@ -1,0 +1,42 @@
+@model HomeIndexVM
+@{
+    // "Coffee of the week" nişanlı məhsullar; hələ yoxdursa ilk iki qəhvə
+    var week = Model.Coffee.Where(m => m.Badge == Janz.Mvc.Helpers.ProductBadges.CoffeeOfTheWeek).Take(2).ToList();
+    if (week.Count == 0) week = Model.Coffee.Take(2).ToList();
+    var fresh = Model.Coffee.Skip(2).Take(4).ToList();
+    var popular = Model.Coffee.Skip(6).ToList();
+}
+
+<section id="week">
+    <h2>Coffees of the week <span>on sale</span></h2>
+    <div class="week-row">
+        @foreach (var product in week)
+        {
+            <partial name="_ProductCard" model="product" />
+        }
+        @if (Model.LatestArticles.Count > 0)
+        {
+        <aside>
+            <div class="roast-card">
+                <div class="roast-track">
+                    @foreach (var article in Model.LatestArticles)
+                    {
+                        <div class="roast-slide is-article">
+                            <img src="@article.CoverPath" alt="@article.Title" />
+                            <div class="roast-copy">
+                                <div class="line-light">Coffee journal</div>
+                                <div class="line-bold">@article.Title</div>
+                                <a class="read-article" href="/Journal/Article/@article.Slug">Read the article</a>
+                            </div>
+                        </div>
+                    }
+                </div>
+                <div class="roast-nav">
+                    <span class="dots">@for (var i = 0; i < Model.LatestArticles.Count; i++){<i class="@(i == 0 ? "is-on" : "")"></i>}</span>
+                    <span class="arrows"><button type="button" aria-label="Previous">←</button><button type="button" aria-label="Next">→</button></span>
+                </div>
+            </div>
+        </aside>
+        }
+    </div>
+</section>
