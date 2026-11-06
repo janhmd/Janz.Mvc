@@ -120,6 +120,42 @@
         </div>
     </div>
 
+    <div class="admin-assistant" data-summary="@Url.Action("Summary", "Assistant", new { area = "Admin" })">
+        <button type="button" class="admin-assistant-toggle" aria-label="Admin assistant" aria-expanded="false">
+            <i class="bi bi-stars" aria-hidden="true"></i>
+        </button>
+        <div class="admin-assistant-panel" role="dialog" aria-labelledby="admin-assistant-title" hidden>
+            <div class="admin-assistant-head">
+                <div>
+                    <h2 id="admin-assistant-title">Admin assistant</h2>
+                    <p>Shortcuts and answers for your work</p>
+                </div>
+                <button type="button" class="admin-assistant-close" aria-label="Close"><i class="bi bi-x-lg" aria-hidden="true"></i></button>
+            </div>
+            <div class="admin-assistant-log" aria-live="polite"></div>
+            <div class="admin-assistant-chips"></div>
+            <form class="admin-assistant-form">
+                <input name="question" placeholder="Type a section or a question" aria-label="Your question" maxlength="100" autocomplete="off" />
+                <button type="submit" aria-label="Send"><i class="bi bi-arrow-right" aria-hidden="true"></i></button>
+            </form>
+            <nav class="admin-assistant-links" hidden>
+                @foreach (var entry in sections.Where(m => m.Controller != null))
+                {
+                    <a href="@Url.Action("Index", entry.Controller, new { area = "Admin" })" data-title="@entry.Title">@entry.Title</a>
+                }
+                @if (User.IsInRole(AppRoles.SuperAdmin) || User.IsInRole(AppRoles.Admin))
+                {
+                    <a href="@Url.Action("Create", "Products", new { area = "Admin" })" data-title="Add product">Add product</a>
+                    <a href="@Url.Action("Index", "Products", new { area = "Admin", lowStock = true })" data-title="Low stock">Low stock</a>
+                }
+                @if (User.IsInRole(AppRoles.SuperAdmin) || User.IsInRole(AppRoles.Admin) || User.IsInRole(AppRoles.Support))
+                {
+                    <a href="@Url.Action("Index", "Orders", new { area = "Admin", status = "Pending" })" data-title="Pending orders">Pending orders</a>
+                }
+            </nav>
+        </div>
+    </div>
+
     <script src="~/admin/vendors/perfect-scrollbar/perfect-scrollbar.min.js"></script>
     <script src="~/admin/js/bootstrap.bundle.min.js"></script>
     <script src="~/admin/js/main.js"></script>
