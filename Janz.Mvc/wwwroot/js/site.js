@@ -850,8 +850,7 @@ var cookGuides = {
     "Immersion dripper": "/Journal/Article/immersion-dripper-easy-sweet-coffee-with-no-skills-needed",
     "Drip bags": "/Journal/Article/drip-bags-good-coffee-when-you-are-on-the-move",
     "French press": "/Journal/Article/french-press-a-simple-method-for-a-full-bodied-cup",
-    "In a cup": "/Journal/Article/coffee-in-a-cup-brewing-without-any-equipment",
-    "Other": "/Journal?topic=Brewing%20guides"
+    "In a cup": "/Journal/Article/coffee-in-a-cup-brewing-without-any-equipment"
 };
 
 function renderCookList() {
@@ -874,11 +873,13 @@ function renderCookList() {
         var body = document.createElement("div");
         var strong = document.createElement("strong");
         strong.textContent = title;
-        var link = document.createElement("a");
-        link.href = cookGuides[name] || cookGuides.Other;
-        link.textContent = "Open the guide";
         body.appendChild(strong);
-        body.appendChild(link);
+        if (name !== "Other" && cookGuides[name]) {
+            var link = document.createElement("a");
+            link.href = cookGuides[name];
+            link.textContent = "Open the guide";
+            body.appendChild(link);
+        }
         card.appendChild(body);
         cookList.appendChild(card);
     });
