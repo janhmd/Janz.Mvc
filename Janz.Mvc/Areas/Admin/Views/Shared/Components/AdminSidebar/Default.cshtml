@@ -1,0 +1,71 @@
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Antiforgery
+@{
+    // Menyu rola görədir (Helpers/AdminSections.cs): hər işçi yalnız öz bölmələrini görür
+    var current = ViewContext.RouteData.Values["controller"]?.ToString();
+    var sections = AdminSections.For(User).ToList();
+    var name = User.Identity?.Name ?? "Admin";
+}
+
+<div class="sidebar active">
+    <div class="sidebar-wrapper active">
+        <div class="sidebar-header">
+            <div class="d-flex justify-content-between align-items-center">
+                <a class="logo" aria-label="Janz admin" asp-area="Admin" asp-controller="Dashboard" asp-action="Index">
+                    <span class="logo-mark" aria-hidden="true">J</span>
+                    <span class="logo-name">Janz</span>
+                    <span class="logo-tag">Admin</span>
+                </a>
+                <div class="toggler">
+                    <a href="#" class="sidebar-hide d-xl-none d-block" aria-label="Close menu"><i class="bi bi-x bi-middle"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="sidebar-menu">
+            <ul class="menu">
+                @foreach (var group in sections.GroupBy(m => m.Group))
+                {
+                    <li class="sidebar-title">@group.Key</li>
+                    @foreach (var item in group)
+                    {
+                        if (item.Controller is null)
+                        {
+                            @* Hələ yazılmayan bölmə: görünür, amma açılmır *@
+                            <li class="sidebar-item is-soon">
+                                <span class="sidebar-link" aria-disabled="true">
+                                    <i class="bi @item.Icon"></i>
+                                    <span>@item.Title</span>
+                                    <small class="admin-soon">soon</small>
+                                </span>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="sidebar-item@(item.Controller == current ? " active" : null)">
+                                <a class="sidebar-link" asp-area="Admin" asp-controller="@item.Controller" asp-action="Index">
+                                    <i class="bi @item.Icon"></i>
+                                    <span>@item.Title</span>
+                                </a>
+                            </li>
+                        }
+                    }
+                }
+
+                <li class="sidebar-title">Account</li>
+                <li class="sidebar-item">
+                    <a class="sidebar-link" href="/">
+                        <i class="bi bi-shop"></i>
+                        <span>Go to site</span>
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <form asp-area="" asp-controller="Account" asp-action="Logout" method="post">
+                        <button type="submit" class="sidebar-link sidebar-button">
+                            <i class="bi bi-box-arrow-left"></i>
+                            <span>Sign out</span>
+                        </button>
+                    </form>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>

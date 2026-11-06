@@ -1,0 +1,63 @@
+@model List<Janz.Mvc.ViewModels.Articles.ArticleVM>
+@{
+}
+
+<div class="admin-card admin-card-flush">
+    @if (Model.Count == 0)
+    {
+        <p class="admin-empty">No articles yet.</p>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>Article</th>
+                        <th>Topic</th>
+                        <th>Date</th>
+                        <th class="num">Views</th>
+                        <th class="num">Likes</th>
+                        <th class="num">Comments</th>
+                        <th>Status</th>
+                        <th class="actions">Operations</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var article in Model)
+                    {
+                        <tr>
+                            <td>
+                                <span class="admin-product">
+                                    <img src="@article.CoverPath" alt="" />
+                                    <span>
+                                        <strong>@article.Title</strong>
+                                        <small class="admin-usage-text">@article.Minutes min · @(string.Join(", ", article.Tags))</small>
+                                    </span>
+                                </span>
+                            </td>
+                            <td>@article.Topic</td>
+                            <td>@(article.IsPublished ? article.PublishedAt.ToLocalTime().ToString("dd.MM.yyyy") : "—")</td>
+                            <td class="num">@article.Views</td>
+                            <td class="num">@article.Likes</td>
+                            <td class="num">@article.Comments</td>
+                            <td><span class="admin-status @(article.IsPublished ? "status-active" : "status-disabled")">@(article.IsPublished ? "Published" : "Draft")</span></td>
+                            <td class="actions">
+                                <span class="admin-actions">
+                                    @if (article.IsPublished)
+                                    {
+                                        <a class="admin-btn-sm" href="/Journal/Article/@article.Slug" target="_blank" rel="noopener">View</a>
+                                    }
+                                    <a class="admin-btn-sm" asp-action="Edit" asp-route-id="@article.Id">Edit</a>
+                                    <form method="post" asp-action="Delete" asp-route-id="@article.Id" data-confirm="Delete this article? Its comments and likes will be deleted too.">
+                                        <button type="submit" class="admin-btn-sm is-danger">Delete</button>
+                                    </form>
+                                </span>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>

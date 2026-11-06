@@ -1,0 +1,46 @@
+@model List<Janz.Mvc.ViewModels.Categories.CategoryVM>
+@{
+}
+
+<div class="admin-card admin-card-flush">
+    @if (Model.Count == 0)
+    {
+        <p class="admin-empty">No categories yet.</p>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th class="num">Id</th>
+                        <th>Name</th>
+                        <th>Slug</th>
+                        <th class="num">Products</th>
+                        <th class="actions">Operations</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var category in Model)
+                    {
+                        <tr>
+                            <td class="num">@category.Id</td>
+                            <td>@category.Name</td>
+                            <td><code>@category.Slug</code></td>
+                            <td class="num"><a asp-controller="Products" asp-action="Index" asp-route-categoryId="@category.Id">@category.ProductCount</a></td>
+                            <td class="actions">
+                                <span class="admin-actions">
+                                    <a class="admin-btn-sm" asp-action="Edit" asp-route-id="@category.Id">Edit</a>
+                                    @* Məhsulu olan kateqoriya silinmir: əvvəl məhsulları başqa kateqoriyaya keçirmək lazımdır *@
+                                    <form method="post" asp-action="Delete" asp-route-id="@category.Id" data-confirm="Delete @category.Name?">
+                                        <button type="submit" class="admin-btn-sm is-danger" disabled="@(category.ProductCount > 0)" title="@(category.ProductCount > 0 ? "Move its products to another category first" : null)">Delete</button>
+                                    </form>
+                                </span>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>

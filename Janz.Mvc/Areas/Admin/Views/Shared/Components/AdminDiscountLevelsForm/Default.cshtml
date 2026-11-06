@@ -1,0 +1,38 @@
+@model Janz.Mvc.ViewModels.DiscountLevels.DiscountLevelListVM
+@{
+}
+
+<form class="admin-card admin-card-flush" method="post" asp-action="Index">
+    <div class="admin-card-head admin-card-pad">
+        <h2>Levels</h2>
+        <button type="submit" class="admin-btn">Save levels</button>
+    </div>
+    <div asp-validation-summary="All" class="admin-errors admin-card-pad" role="alert"></div>
+    <div class="table-responsive">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>Level</th>
+                    <th class="num">Spent from</th>
+                    <th class="num">Discount</th>
+                    <th>Perks</th>
+                    <th class="num">Customers</th>
+                    <th class="actions">Operations</th>
+                </tr>
+            </thead>
+            <tbody data-level-rows>
+                @for (var i = 0; i < Model.Levels.Count; i++)
+                {
+                    <partial name="_LevelRow" model="Model.Levels[i]" view-data="@(new ViewDataDictionary(ViewData) { { "Index", i } })" />
+                }
+            </tbody>
+        </table>
+    </div>
+    <template data-level-template>
+        <partial name="_LevelRow" model="new Janz.Mvc.ViewModels.DiscountLevels.DiscountLevelVM()" view-data="@(new ViewDataDictionary(ViewData) { { "Index", "__i__" } })" />
+    </template>
+    <div class="admin-card-pad admin-card-foot">
+        <button type="button" class="admin-btn is-ghost" data-add-level><i class="bi bi-plus"></i> Add level</button>
+    </div>
+</form>
+
