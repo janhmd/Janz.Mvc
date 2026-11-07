@@ -3245,6 +3245,14 @@ html.theme-day .theme-toggle { color: var(--ink); }
 
 .article-card[hidden] { display: none; }
 
+/* Mətn qısa və ya uzun olsa da bir sıradakı kartların statistika sətri eyni xətdə dayanır */
+.article-card {
+    display: flex;
+    flex-direction: column;
+}
+
+.article-card .article-stats { margin-top: auto; padding-top: 1rem; }
+
 .article-card-photo {
     position: relative;
     display: block;
