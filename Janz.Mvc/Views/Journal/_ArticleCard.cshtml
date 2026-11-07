@@ -3,7 +3,7 @@
     var href = $"/Journal/Article/{Model.Slug}";
     var date = Model.PublishedAt.ToLocalTime().ToString("d MMMM yyyy");
 }
-<div class="article-card" data-id="@Model.Id" data-title="@Model.Title" data-topic="@Model.Topic" data-tags="@string.Join(",", Model.Tags)" data-date="@date" data-sort="@Model.PublishedAt.ToString("s")" data-lead="@Model.Lead" data-image="@Model.CoverPath" data-href="@href" data-likes="@Model.Likes" data-comments="@Model.Comments" data-views="@Model.Views" data-mins="@(Model.Minutes)'">
+<div class="article-card" data-id="@Model.Id" data-title="@Model.Title" data-topic="@Model.Topic" data-tags="@string.Join(",", Model.Tags)" data-date="@date" data-sort="@Model.PublishedAt.ToString("s")" data-lead="@Model.Lead" data-image="@Model.CoverPath" data-href="@href" data-likes="@Model.Likes" data-comments="@Model.Comments" data-views="@Model.Views" data-mins="@TimeAgo.Format(Model.PublishedAt)">
     <a class="article-card-photo" href="@href">
         <img src="@Model.CoverPath" alt="" />
         <span class="article-progress"><i></i></span>

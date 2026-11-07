@@ -30,7 +30,7 @@
             likes = m.Likes.ToString(),
             comments = m.Comments.ToString(),
             views = m.Views.ToString(),
-            mins = m.Minutes + "'"
+            mins = TimeAgo.Format(m.PublishedAt)
         }));
     }
     <script type="application/json" id="saved-articles">@Html.Raw(savedJson)</script>

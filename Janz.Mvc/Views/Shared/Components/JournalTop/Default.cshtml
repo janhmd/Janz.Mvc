@@ -21,7 +21,7 @@
     {
         var heroHref = $"/Journal/Article/{hero.Slug}";
         var heroDate = hero.PublishedAt.ToLocalTime().ToString("d MMMM yyyy");
-        <div class="journal-hero" data-id="@hero.Id" data-title="@hero.Title" data-topic="@hero.Topic" data-tags="@string.Join(",", hero.Tags)" data-date="@heroDate" data-sort="@hero.PublishedAt.ToString("s")" data-lead="@hero.Lead" data-image="@hero.CoverPath" data-href="@heroHref" data-likes="@hero.Likes" data-comments="@hero.Comments" data-views="@hero.Views" data-mins="@(hero.Minutes)'">
+        <div class="journal-hero" data-id="@hero.Id" data-title="@hero.Title" data-topic="@hero.Topic" data-tags="@string.Join(",", hero.Tags)" data-date="@heroDate" data-sort="@hero.PublishedAt.ToString("s")" data-lead="@hero.Lead" data-image="@hero.CoverPath" data-href="@heroHref" data-likes="@hero.Likes" data-comments="@hero.Comments" data-views="@hero.Views" data-mins="@TimeAgo.Format(hero.PublishedAt)">
             <a class="journal-hero-photo" href="@heroHref" aria-label="@hero.Title"><img src="@hero.CoverPath" alt="" /></a>
             <div class="copy">
                 <div class="article-meta">@hero.Topic<br />@heroDate</div>

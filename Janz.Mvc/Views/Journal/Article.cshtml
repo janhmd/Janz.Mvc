@@ -20,7 +20,7 @@
             data-likes="@article.Likes"
             data-comments="@article.Comments"
             data-views="@article.Views"
-            data-mins="@(article.Minutes)'">
+            data-mins="@TimeAgo.Format(article.PublishedAt)">
             <div class="article-wrap">
                 <h1>@article.Title</h1>
                 @await Component.InvokeAsync("ArticleBar", Model)
