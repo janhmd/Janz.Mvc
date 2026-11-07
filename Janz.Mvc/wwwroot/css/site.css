@@ -3356,6 +3356,7 @@ html.theme-day .theme-toggle { color: var(--ink); }
     align-items: center;
     gap: .35rem;
     color: #ececec;
+    white-space: nowrap;
 }
 
 .journal-recent { margin-bottom: 3rem; }
