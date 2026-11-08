@@ -7,7 +7,7 @@
 @if (ViewBag.Review is Janz.Mvc.ViewModels.Reviews.OrderReviewUIVM orderReview && orderReview.CanReview)
 {
     var mine = orderReview.Review;
-    <form class="review-form order-review" method="post" asp-controller="Orders" asp-action="Review" asp-route-id="@Model.Id">
+    <form id="review" class="review-form order-review" method="post" asp-controller="Orders" asp-action="Review" asp-route-id="@Model.Id">
         <h2>@(mine is null ? "Rate this order" : "Your review")</h2>
         @if (TempData["ReviewError"] is string reviewError)
         {
