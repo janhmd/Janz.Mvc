@@ -96,8 +96,7 @@ namespace Janz.Mvc.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> UpdateDetails(string? fullName, string? phoneCode, string? phone, string? nickname,
-                                                       string? org, string? orgAddress, string? voen, string? tax,
-                                                       string? currentPassword, string? newPassword)
+                                                       string? org, string? orgAddress, string? voen, string? tax)
         {
             var number = phone?.Trim();
             var (success, errors, status) = await PutAsync("api/profile", new
@@ -115,17 +114,28 @@ namespace Janz.Mvc.Controllers
 
             await RefreshNameAsync(fullName!.Trim());
 
-            if (!string.IsNullOrEmpty(newPassword))
+            TempData["Toast"] = "Details saved";
+            return Redirect(Url.Action(nameof(Index)) + "#details");
+        }
+
+        // "Change" next to the password: a link to choose a new password is emailed to the signed in user
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> PasswordLink()
+        {
+            var email = User.FindFirstValue(ClaimTypes.Email);
+            if (string.IsNullOrWhiteSpace(email))
             {
-                var (changed, passwordErrors, _) = await PutAsync("api/profile/password", new
-                {
-                    currentPassword = currentPassword ?? string.Empty,
-                    newPassword
-                });
-                if (!changed) return DetailsError(passwordErrors);
+                TempData["AccountError"] = "We could not find your email. Please sign in again.";
+                return Redirect(Url.Action(nameof(Index)) + "#details");
             }
 
-            TempData["Toast"] = "Details saved";
+            var (success, errors, status) = await PostAsync("api/account/forgot-password", new { email });
+            if (status == HttpStatusCode.Unauthorized) return await SessionExpiredAsync();
+
+            if (success) TempData["Toast"] = $"We sent a link to {email} to choose a new password.";
+            else TempData["AccountError"] = string.Join(" ", errors);
+
             return Redirect(Url.Action(nameof(Index)) + "#details");
         }
 

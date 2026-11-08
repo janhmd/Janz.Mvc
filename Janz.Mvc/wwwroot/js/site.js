@@ -631,14 +631,6 @@ if (editOverlay && editForm) {
         editForm.phone.value = "";
         editForm.phone.focus();
     });
-    editForm.querySelector(".edit-pass-change").addEventListener("click", function () {
-        var field = editForm.currentPassword;
-        field.readOnly = false;
-        field.required = true;
-        editForm.newPassword.required = true;
-        editForm.querySelector(".edit-pass-new").hidden = false;
-        field.focus();
-    });
     editForm.querySelectorAll(".edit-fold-toggle").forEach(function (button) {
         button.addEventListener("click", function () {
             var fold = button.parentElement;

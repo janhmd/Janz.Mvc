@@ -47,14 +47,11 @@
                 <div class="edit-field">
                     <span>Password</span>
                     <div class="edit-pass">
-                        <input type="password" name="currentPassword" placeholder="Current password" autocomplete="current-password" readonly />
-                        <button type="button" class="edit-pass-change">Change</button>
+                        <input type="password" value="••••••••" aria-label="Password" readonly tabindex="-1" />
+                        <button type="submit" class="edit-pass-change" formaction="@Url.Action("PasswordLink", "Profile")" formnovalidate>Change</button>
                     </div>
                 </div>
-                <label class="edit-field edit-pass-new" hidden>
-                    <span>New password</span>
-                    <input type="password" name="newPassword" placeholder="At least 6 characters" autocomplete="new-password" minlength="6" />
-                </label>
+                <p class="edit-hint">Press Change and we will email you a link to choose a new password.</p>
                 <label class="edit-field">
                     <span>Public username</span>
                     <input type="text" name="nickname" value="@me.Nickname" placeholder="Public username" autocomplete="username" pattern="[A-Za-z0-9_.\-]{3,30}" maxlength="30" />
