@@ -33,21 +33,28 @@
                     <div class="stat"><div class="stat-value">@(Model.DeliveryAverage?.ToString("0.0") ?? "—")</div><div class="stat-star">★</div><div class="stat-label">Average<br>delivery rating</div></div>
                 </div>
             </div>
-            <div class="write-review">
-                @if (User.Identity?.IsAuthenticated != true)
-                {
-                    <a class="section-more" href="/Account/Login?returnUrl=@Uri.EscapeDataString("/Reviews")">Write a review</a>
-                    <p class="comments-note">Sign in to rate the shop and the delivery after your order is delivered.</p>
-                }
-                else if (ViewBag.ReviewOrderId is int reviewOrderId)
-                {
-                    <a class="section-more" href="/Orders/Detail/@reviewOrderId#review">Write a review</a>
-                }
-                else
-                {
-                    <p class="comments-note">You can rate the shop and the delivery once your order is delivered.</p>
-                }
-            </div>
+            @{
+                var signedIn = User.Identity?.IsAuthenticated == true;
+                var writeName = signedIn ? User.Identity?.Name : null;
+                var initial = string.IsNullOrWhiteSpace(writeName) ? "+" : writeName.Trim()[..1].ToUpperInvariant();
+                var writeHref = !signedIn
+                    ? "/Account/Login?returnUrl=" + Uri.EscapeDataString("/Reviews")
+                    : ViewBag.ReviewOrderId is int reviewOrderId ? $"/Orders/Detail/{reviewOrderId}#review" : null;
+            }
+            @if (writeHref is not null)
+            {
+                <a class="write-review" href="@writeHref">
+                    <span class="avatar">@initial</span>
+                    <span class="write-review-text">Write a review</span>
+                </a>
+            }
+            else
+            {
+                <div class="write-review is-off">
+                    <span class="avatar">@initial</span>
+                    <span class="write-review-text">You can write a review once your order is delivered</span>
+                </div>
+            }
             <div class="opinion-list" aria-label="Customer comments">
                 @if (Model.Items.Count == 0)
                 {

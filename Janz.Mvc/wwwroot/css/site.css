@@ -8805,6 +8805,7 @@ button.entry-link {
 }
 
 #verify .entry-link { display: block; margin-top: .6rem; }
-.write-review { margin: 1.4rem 0 .2rem; }
-.write-review .section-more { margin-top: 0; }
-.write-review .comments-note { margin-top: .8rem; }
+.write-review { display: flex; align-items: center; gap: .9rem; margin: 1.4rem 0 1rem; padding: .9rem 1.15rem; border-radius: 18px; background: #121212; border: 1px solid #2a2a2a; color: #8a8a8a; }
+a.write-review:hover { border-color: var(--gold); color: #fff; }
+.write-review.is-off { cursor: default; }
+.write-review-text { font-size: 1rem; }
