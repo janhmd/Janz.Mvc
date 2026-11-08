@@ -8822,7 +8822,7 @@ a.write-review:hover { border-color: var(--gold); color: #fff; }
     #feedback h1 { grid-column: 1 / -1; }
     #feedback .feedback-board { display: contents; }
     #feedback .score-groups { grid-column: 1; grid-row: 2 / span 4; align-self: start; }
-    #feedback .feedback-scores { grid-column: 2; grid-row: 2; align-self: start; align-items: center; min-height: 11.5rem; padding-bottom: 1.5rem; }
+    #feedback .feedback-scores { grid-column: 2; grid-row: 2; align-self: start; align-items: center; min-height: 8.5rem; padding-bottom: .25rem; }
     #feedback .write-review,
     #feedback .opinion-list { grid-column: 2; margin-top: 0; }
 }
