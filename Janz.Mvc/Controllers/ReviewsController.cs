@@ -14,15 +14,28 @@ namespace Janz.Mvc.Controllers
         {
         }
 
+        // ?shop=5&shop=4&delivery=5&q=fast: ulduza və mətnə görə süzgəc API-də işləyir
         [HttpGet]
-        public async Task<IActionResult> Index(int page = 1)
+        public async Task<IActionResult> Index(int page = 1, int[]? shop = null, int[]? delivery = null, string? q = null)
         {
             page = Math.Max(1, page);
+            var shopStars = (shop ?? Array.Empty<int>()).Where(m => m is >= 1 and <= 5).Distinct().OrderByDescending(m => m).ToList();
+            var deliveryStars = (delivery ?? Array.Empty<int>()).Where(m => m is >= 1 and <= 5).Distinct().OrderByDescending(m => m).ToList();
+            var search = string.IsNullOrWhiteSpace(q) ? null : q.Trim();
+
+            var url = $"api/reviews?skip=0&take={Math.Min(page * PageSize, 50)}";
+            if (shopStars.Count > 0) url += "&shop=" + string.Join(",", shopStars);
+            if (deliveryStars.Count > 0) url += "&delivery=" + string.Join(",", deliveryStars);
+            if (search is not null) url += "&search=" + Uri.EscapeDataString(search);
+
             // Əvvəlki səhifələr də göstərilir: "Show more" siyahını uzadır
-            var (reviews, _) = await GetAsync<ShopReviewsUIVM>($"api/reviews?skip=0&take={Math.Min(page * PageSize, 50)}");
+            var (reviews, _) = await GetAsync<ShopReviewsUIVM>(url);
             var model = reviews ?? new ShopReviewsUIVM();
             model.Page = page;
-            model.HasMore = model.Items.Count < model.Total && page * PageSize < 50;
+            model.ShopStars = shopStars;
+            model.DeliveryStars = deliveryStars;
+            model.Search = search;
+            model.HasMore = model.Items.Count < model.Matching && page * PageSize < 50;
 
             // "Write a review": girişli müştərinin ən son çatdırılmış sifarişi (rəy sifariş səhifəsində yazılır)
             if (User.Identity?.IsAuthenticated == true)

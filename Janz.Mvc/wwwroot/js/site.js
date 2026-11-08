@@ -3109,3 +3109,11 @@ document.querySelectorAll("[data-copy]").forEach(function (button) {
         });
     });
 })();
+
+// Reviews page: ticking a star filter reloads the list with that filter
+document.addEventListener("change", function (event) {
+    var box = event.target;
+    if (box instanceof HTMLInputElement && box.type === "checkbox" && box.hasAttribute("data-auto-submit") && box.form) {
+        box.form.submit();
+    }
+});
