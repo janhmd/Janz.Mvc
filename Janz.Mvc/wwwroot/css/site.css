@@ -8809,3 +8809,4 @@ button.entry-link {
 a.write-review:hover { border-color: var(--gold); color: #fff; }
 .write-review.is-off { cursor: default; }
 .write-review-text { font-size: 1rem; }
+.review-grid.review-grid-single { grid-template-columns: 1fr; }
