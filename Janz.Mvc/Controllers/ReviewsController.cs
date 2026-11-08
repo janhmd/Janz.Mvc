@@ -1,3 +1,4 @@
+using Janz.Mvc.ViewModels.Orders;
 using Janz.Mvc.ViewModels.Reviews;
 using Microsoft.AspNetCore.Mvc;
 
@@ -22,6 +23,14 @@ namespace Janz.Mvc.Controllers
             var model = reviews ?? new ShopReviewsUIVM();
             model.Page = page;
             model.HasMore = model.Items.Count < model.Total && page * PageSize < 50;
+
+            // "Write a review": girişli müştərinin ən son çatdırılmış sifarişi (rəy sifariş səhifəsində yazılır)
+            if (User.Identity?.IsAuthenticated == true)
+            {
+                var (orders, _) = await GetAsync<List<OrderUIVM>>("api/orders");
+                ViewBag.ReviewOrderId = orders?.Where(m => m.Status == "Delivered").OrderByDescending(m => m.CreatedAt).Select(m => (int?)m.Id).FirstOrDefault();
+            }
+
             return View(model);
         }
     }

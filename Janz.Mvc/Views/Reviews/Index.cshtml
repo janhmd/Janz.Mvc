@@ -33,6 +33,21 @@
                     <div class="stat"><div class="stat-value">@(Model.DeliveryAverage?.ToString("0.0") ?? "—")</div><div class="stat-star">★</div><div class="stat-label">Average<br>delivery rating</div></div>
                 </div>
             </div>
+            <div class="write-review">
+                @if (User.Identity?.IsAuthenticated != true)
+                {
+                    <a class="section-more" href="/Account/Login?returnUrl=@Uri.EscapeDataString("/Reviews")">Write a review</a>
+                    <p class="comments-note">Sign in to rate the shop and the delivery after your order is delivered.</p>
+                }
+                else if (ViewBag.ReviewOrderId is int reviewOrderId)
+                {
+                    <a class="section-more" href="/Orders/Detail/@reviewOrderId#review">Write a review</a>
+                }
+                else
+                {
+                    <p class="comments-note">You can rate the shop and the delivery once your order is delivered.</p>
+                }
+            </div>
             <div class="opinion-list" aria-label="Customer comments">
                 @if (Model.Items.Count == 0)
                 {
