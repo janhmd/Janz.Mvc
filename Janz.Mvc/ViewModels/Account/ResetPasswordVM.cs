@@ -5,6 +5,7 @@ namespace Janz.Mvc.ViewModels.Account
     {
         public string UserId { get; set; } = string.Empty;
         public string Token { get; set; } = string.Empty;
+        public string? Email { get; set; }
         public string? Password { get; set; }
         public string? RepeatPassword { get; set; }
     }

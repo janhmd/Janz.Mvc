@@ -221,6 +221,7 @@ namespace Janz.Mvc.Controllers
             {
                 userId = model.UserId,
                 token = model.Token,
+                email = model.Email?.Trim() ?? string.Empty,
                 password = model.Password ?? string.Empty,
                 repeatPassword = model.RepeatPassword ?? string.Empty
             });

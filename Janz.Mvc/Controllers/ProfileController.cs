@@ -133,7 +133,7 @@ namespace Janz.Mvc.Controllers
             var (success, errors, status) = await PostAsync("api/account/forgot-password", new { email });
             if (status == HttpStatusCode.Unauthorized) return await SessionExpiredAsync();
 
-            if (success) TempData["Toast"] = $"We sent a link to {email} to choose a new password.";
+            if (success) TempData["PasswordLinkSent"] = email;
             else TempData["AccountError"] = string.Join(" ", errors);
 
             return Redirect(Url.Action(nameof(Index)) + "#details");

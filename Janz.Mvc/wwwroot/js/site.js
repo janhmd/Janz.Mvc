@@ -3119,3 +3119,11 @@ document.addEventListener("change", function (event) {
         box.form.submit();
     }
 });
+
+// "Password change" notice: Close, the backdrop and Escape hide it
+document.querySelectorAll(".notice-overlay").forEach(function (overlay) {
+    function closeNotice() { overlay.classList.remove("is-on"); }
+    overlay.querySelector(".notice-close").addEventListener("click", closeNotice);
+    overlay.addEventListener("click", function (event) { if (event.target === overlay) closeNotice(); });
+    document.addEventListener("keydown", function (event) { if (event.key === "Escape") closeNotice(); });
+});

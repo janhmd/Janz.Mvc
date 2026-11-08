@@ -27,6 +27,17 @@
                     <a class="cabinet-balance-sum" href="#ledger"><strong>Balance @Model.Balance.Balance.ToString("0.##")₼</strong></a>
                 </div>
             </div>
+            @if (TempData["PasswordLinkSent"] is string sentTo)
+            {
+                <div class="notice-overlay is-on" role="dialog" aria-modal="true" aria-labelledby="notice-title">
+                    <div class="notice-modal">
+                        <h2 id="notice-title">Password change</h2>
+                        <p>The link to change your password was sent to your email.</p>
+                        <p class="notice-email">@sentTo</p>
+                        <button type="button" class="notice-close">Close</button>
+                    </div>
+                </div>
+            }
             @if (!string.IsNullOrEmpty(error))
             {
                 <span data-toast-error="@error" hidden></span>

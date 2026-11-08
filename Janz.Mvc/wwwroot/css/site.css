@@ -8862,3 +8862,13 @@ details.write-review-box .review-form { padding: 0 1.15rem 1.15rem; margin: 0; }
 .toast.is-error .toast-fail { display: block; }
 .toast.is-error .toast-check,
 .toast.is-error .toast-bar { background: #e5484d; }
+
+/* Notice dialog (for example "Password change"): a small centered card over a dimmed page */
+.notice-overlay { position: fixed; inset: 0; z-index: 80; display: none; place-items: center; padding: 1.4rem; background: rgba(0, 0, 0, .6); }
+.notice-overlay.is-on { display: grid; }
+.notice-modal { width: min(30rem, 100%); padding: 2rem 1.8rem 1.6rem; border-radius: 26px; background: #1c1c1c; text-align: center; box-shadow: 0 24px 60px rgba(0, 0, 0, .55); }
+.notice-modal h2 { margin: 0 0 1rem; font-size: 1.9rem; text-transform: uppercase; }
+.notice-modal p { margin: 0 0 .5rem; color: #d8d8d8; font-size: 1.05rem; line-height: 1.45; }
+.notice-modal .notice-email { color: var(--gold); font-weight: 600; word-break: break-all; }
+.notice-close { width: 100%; margin-top: 1.1rem; padding: .95rem 1rem; border: 0; border-radius: 14px; background: #2a2a2a; color: #fff; font: inherit; font-size: 1rem; cursor: pointer; }
+.notice-close:hover { background: #343434; }
