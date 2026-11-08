@@ -21,7 +21,7 @@
         <div class="profile-feed">
             @if (TempData["CommunityError"] is string communityError)
             {
-                <p class="profile-post-error">@communityError</p>
+                <span data-toast-error="@communityError" hidden></span>
             }
             <div class="profile-composer">
                 <button type="button" class="profile-compose">

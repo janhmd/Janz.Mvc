@@ -29,7 +29,7 @@
             </div>
             @if (!string.IsNullOrEmpty(error))
             {
-                <p class="entry-error cabinet-error">@error</p>
+                <span data-toast-error="@error" hidden></span>
             }
             <div class="cabinet-row">
                 <nav aria-label="Account">

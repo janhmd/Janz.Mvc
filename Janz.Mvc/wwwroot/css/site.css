@@ -8855,3 +8855,10 @@ details.write-review-box .review-form { padding: 0 1.15rem 1.15rem; margin: 0; }
 @media (min-width: 981px) {
     #feedback details.write-review-box { grid-column: 2; margin-top: 0; }
 }
+
+/* Error toast: the same card in red, for a wrong password, a rejected code and other failures */
+.toast-fail { display: none; }
+.toast.is-error .toast-ok { display: none; }
+.toast.is-error .toast-fail { display: block; }
+.toast.is-error .toast-check,
+.toast.is-error .toast-bar { background: #e5484d; }

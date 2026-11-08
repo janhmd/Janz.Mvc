@@ -1643,9 +1643,11 @@ function closeShare() {
     if (shareOverlay) shareOverlay.classList.remove("is-on");
 }
 
-function showToast(text) {
+function showToast(text, isError) {
     if (!toastBox) return;
     toastBox.querySelector(".toast-text").textContent = text;
+    toastBox.classList.toggle("is-error", !!isError);
+    toastBox.setAttribute("role", isError ? "alert" : "status");
     toastBox.classList.remove("is-on");
     void toastBox.offsetWidth;
     toastBox.classList.add("is-on");
@@ -1658,6 +1660,14 @@ if (document.documentElement.getAttribute("data-toast")) {
         showToast(document.documentElement.getAttribute("data-toast"));
     });
 }
+
+// A failed action (wrong password, rejected code, ...) shows the same toast in red: <span data-toast-error="text" hidden>
+window.addEventListener("load", function () {
+    var failed = document.querySelector("[data-toast-error]");
+    if (failed && failed.getAttribute("data-toast-error")) {
+        showToast(failed.getAttribute("data-toast-error"), true);
+    }
+});
 
 function hideToast() {
     if (toastBox) toastBox.classList.remove("is-on");
@@ -1673,7 +1683,7 @@ toastBox = document.createElement("div");
 toastBox.className = "toast";
 toastBox.setAttribute("role", "status");
 toastBox.innerHTML =
-    '<div class="toast-check" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 12.4l4 4L18 8" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>' +
+    '<div class="toast-check" aria-hidden="true"><svg class="toast-ok" viewBox="0 0 24 24"><path d="M6 12.4l4 4L18 8" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg><svg class="toast-fail" viewBox="0 0 24 24"><path d="M7 7l10 10M17 7L7 17" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg></div>' +
     '<p class="toast-text"></p>' +
     '<div class="toast-bar"></div>' +
     '<button type="button" class="toast-close" aria-label="Close"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>';
