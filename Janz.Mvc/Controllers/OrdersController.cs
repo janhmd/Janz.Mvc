@@ -75,13 +75,6 @@ namespace Janz.Mvc.Controllers
                 return NotFound();
             }
 
-            // Çatdırılmış sifarişdə mağaza və çatdırılma üçün rəy forması göstərilir
-            if (order.Status == "Delivered")
-            {
-                var (review, _) = await GetAsync<OrderReviewUIVM>($"api/reviews/order/{id}");
-                ViewBag.Review = review;
-            }
-
             return View(order);
         }
 
@@ -95,7 +88,8 @@ namespace Janz.Mvc.Controllers
             if (success) TempData["Toast"] = "Thank you! Your review was saved.";
             else TempData["ReviewError"] = string.Join(" ", errors);
 
-            return Redirect($"/Orders/Detail/{id}");
+            // Rəy Reviews səhifəsindən göndərilir
+            return Redirect("/Reviews#feedback");
         }
     }
 }

@@ -8844,3 +8844,14 @@ a.write-review:hover { border-color: var(--gold); color: #fff; }
     #feedback .review-search { grid-column: 2; }
     #feedback .write-review { margin-top: 0; }
 }
+
+/* Write a review: the row opens the form right under it */
+details.write-review-box { margin: 1.4rem 0 1rem; border-radius: 18px; background: #121212; border: 1px solid #2a2a2a; }
+details.write-review-box[open] { border-color: var(--gold); }
+details.write-review-box > summary.write-review { margin: 0; border: 0; background: none; cursor: pointer; list-style: none; }
+details.write-review-box > summary.write-review::-webkit-details-marker { display: none; }
+details.write-review-box > summary.write-review:hover { color: #fff; }
+details.write-review-box .review-form { padding: 0 1.15rem 1.15rem; margin: 0; }
+@media (min-width: 981px) {
+    #feedback details.write-review-box { grid-column: 2; margin-top: 0; }
+}

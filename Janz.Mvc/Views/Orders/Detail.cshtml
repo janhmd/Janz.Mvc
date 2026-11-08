@@ -9,7 +9,6 @@
         <section id="cart">
             <h1 class="cart-title">Order #@Model.Id <span>@Model.Status</span></h1>
             @await Component.InvokeAsync("OrderDetailSummary", Model)
-            @await Component.InvokeAsync("OrderDetailReview", Model)
             <p class="cart-empty"><a href="/Products">To catalog</a></p>
         </section>
     </main>

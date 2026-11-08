@@ -41,7 +41,13 @@ namespace Janz.Mvc.Controllers
             if (User.Identity?.IsAuthenticated == true)
             {
                 var (orders, _) = await GetAsync<List<OrderUIVM>>("api/orders");
-                ViewBag.ReviewOrderId = orders?.Where(m => m.Status == "Delivered").OrderByDescending(m => m.CreatedAt).Select(m => (int?)m.Id).FirstOrDefault();
+                var reviewOrderId = orders?.Where(m => m.Status == "Delivered").OrderByDescending(m => m.CreatedAt).Select(m => (int?)m.Id).FirstOrDefault();
+                ViewBag.ReviewOrderId = reviewOrderId;
+                if (reviewOrderId is not null)
+                {
+                    var (orderReview, _) = await GetAsync<OrderReviewUIVM>($"api/reviews/order/{reviewOrderId}");
+                    ViewBag.OrderReview = orderReview;
+                }
             }
 
             return View(model);

@@ -40,16 +40,55 @@
                 var signedIn = User.Identity?.IsAuthenticated == true;
                 var writeName = signedIn ? User.Identity?.Name : null;
                 var initial = string.IsNullOrWhiteSpace(writeName) ? "+" : writeName.Trim()[..1].ToUpperInvariant();
-                var writeHref = !signedIn
-                    ? "/Account/Login?returnUrl=" + Uri.EscapeDataString("/Reviews")
-                    : ViewBag.ReviewOrderId is int reviewOrderId ? $"/Orders/Detail/{reviewOrderId}#review" : null;
+                var reviewOrderId = ViewBag.ReviewOrderId as int?;
+                var orderReview = ViewBag.OrderReview as Janz.Mvc.ViewModels.Reviews.OrderReviewUIVM;
+                var mine = orderReview?.Review;
+                var reviewError = TempData["ReviewError"] as string;
             }
-            @if (writeHref is not null)
+            @if (!signedIn)
             {
-                <a class="write-review" href="@writeHref">
+                <a class="write-review" href="/Account/Login?returnUrl=@Uri.EscapeDataString("/Reviews")">
                     <span class="avatar">@initial</span>
                     <span class="write-review-text">Write a review</span>
                 </a>
+            }
+            else if (reviewOrderId is not null && orderReview?.CanReview == true)
+            {
+                <details class="write-review-box" open="@(reviewError is not null)">
+                    <summary class="write-review">
+                        <span class="avatar">@initial</span>
+                        <span class="write-review-text">@(mine is null ? "Write a review" : "Edit your review")</span>
+                    </summary>
+                    <form class="review-form order-review" method="post" asp-controller="Orders" asp-action="Review" asp-route-id="@reviewOrderId">
+                        @if (reviewError is not null)
+                        {
+                            <p class="entry-error">@reviewError</p>
+                        }
+                        <span class="entry-caption">Shop</span>
+                        <div class="star-input" role="radiogroup" aria-label="Shop rating">
+                            @for (var i = 5; i >= 1; i--)
+                            {
+                                <input type="radio" name="shopRating" value="@i" id="shop-@i" checked="@((mine?.ShopRating ?? 5) == i)" />
+                                <label for="shop-@i" aria-label="@i stars">★</label>
+                            }
+                        </div>
+                        <textarea name="shopText" rows="2" maxlength="500" placeholder="How was the shop?">@mine?.ShopText</textarea>
+                        <span class="entry-caption">Delivery</span>
+                        <div class="star-input" role="radiogroup" aria-label="Delivery rating">
+                            @for (var i = 5; i >= 1; i--)
+                            {
+                                <input type="radio" name="deliveryRating" value="@i" id="delivery-@i" checked="@((mine?.DeliveryRating ?? 5) == i)" />
+                                <label for="delivery-@i" aria-label="@i stars">★</label>
+                            }
+                        </div>
+                        <textarea name="deliveryText" rows="2" maxlength="500" placeholder="How was the delivery?">@mine?.DeliveryText</textarea>
+                        <span class="entry-caption">Comment</span>
+                        <textarea name="comment" rows="3" maxlength="1000" placeholder="Anything else you want to tell us">@mine?.Comment</textarea>
+                        <div class="review-form-actions">
+                            <button type="submit" class="account-signin">@(mine is null ? "Send the review" : "Save")</button>
+                        </div>
+                    </form>
+                </details>
             }
             else
             {
