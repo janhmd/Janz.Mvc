@@ -1,24 +1,49 @@
 @model List<ProductUIVM>
 @{
+    // Etiketin yazısı və admin paneldəki teqin slug-ı (slug yazıdan fərqli ola bilər: "Coffee with low acidity" -> low-acidity)
+    var QuickTags = new (string Label, string Slug)[]
+    {
+        ("For an espresso machine", "espresso-machine"),
+        ("For Turkish coffee", "turkish-coffee"),
+        ("For milk drinks", "milk-drinks"),
+        ("For a portafilter", "portafilter"),
+        ("Ground coffee", "ground-coffee"),
+        ("Coffee with low acidity", "low-acidity"),
+        ("For a cup", "for-a-cup"),
+        ("Fermented coffee", "fermented"),
+        ("Limited edition", "limited"),
+        ("Whole bean", "whole-bean"),
+        ("Whole bean 1 kg", "whole-bean-1-kg")
+    };
 }
 
 <div class="catalog-tags">
-    <a class="tag-minute" href="#">
+    <a class="tag-minute" href="#" data-pick-open>
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l1.2 4.2L17.5 8.5 13.2 9.8 12 14l-1.2-4.2L6.5 8.5l4.3-1.3zM18 13l.6 2 2 .6-2 .6-.6 2-.6-2-2-.6 2-.6z" /></svg>
         Choose coffee in a minute
     </a>
-    <a href="?tag=@CatalogQuery.Slug("For an espresso machine")" class="@(CatalogQuery.Has(Context.Request, "tag", CatalogQuery.Slug("For an espresso machine")) ? "is-on" : null)">For an espresso machine</a>
-    <a href="?tag=@CatalogQuery.Slug("For Turkish coffee")" class="@(CatalogQuery.Has(Context.Request, "tag", CatalogQuery.Slug("For Turkish coffee")) ? "is-on" : null)">For Turkish coffee</a>
-    <a href="?tag=@CatalogQuery.Slug("For milk drinks")" class="@(CatalogQuery.Has(Context.Request, "tag", CatalogQuery.Slug("For milk drinks")) ? "is-on" : null)">For milk drinks</a>
-    <a href="?tag=@CatalogQuery.Slug("For a portafilter")" class="@(CatalogQuery.Has(Context.Request, "tag", CatalogQuery.Slug("For a portafilter")) ? "is-on" : null)">For a portafilter</a>
-    <a href="?tag=@CatalogQuery.Slug("Ground coffee")" class="@(CatalogQuery.Has(Context.Request, "tag", CatalogQuery.Slug("Ground coffee")) ? "is-on" : null)">Ground coffee</a>
-    <a href="?tag=@CatalogQuery.Slug("Coffee with low acidity")" class="@(CatalogQuery.Has(Context.Request, "tag", CatalogQuery.Slug("Coffee with low acidity")) ? "is-on" : null)">Coffee with low acidity</a>
-    <a href="?tag=@CatalogQuery.Slug("For a cup")" class="@(CatalogQuery.Has(Context.Request, "tag", CatalogQuery.Slug("For a cup")) ? "is-on" : null)">For a cup</a>
-    <a href="?tag=@CatalogQuery.Slug("Fermented coffee")" class="@(CatalogQuery.Has(Context.Request, "tag", CatalogQuery.Slug("Fermented coffee")) ? "is-on" : null)">Fermented coffee</a>
-    <a href="?tag=@CatalogQuery.Slug("Limited edition")" class="@(CatalogQuery.Has(Context.Request, "tag", CatalogQuery.Slug("Limited edition")) ? "is-on" : null)">Limited edition</a>
-    <a href="?tag=@CatalogQuery.Slug("Whole bean")" class="@(CatalogQuery.Has(Context.Request, "tag", CatalogQuery.Slug("Whole bean")) ? "is-on" : null)">Whole bean</a>
-    <a href="?tag=@CatalogQuery.Slug("Whole bean 1 kg")" class="@(CatalogQuery.Has(Context.Request, "tag", CatalogQuery.Slug("Whole bean 1 kg")) ? "is-on" : null)">Whole bean 1 kg</a>
+    @foreach (var (label, slug) in QuickTags)
+    {
+        var param = slug == "limited" ? "feature" : "tag"; // Limited edition həm "Limited" nişanı, həm də teq ilə tutulur
+        <a href="?@param=@slug" class="@(CatalogQuery.Has(Context.Request, param, slug) ? "is-on" : null)">@label</a>
+    }
     <button type="button" aria-expanded="false" aria-label="More filters">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
     </button>
+</div>
+
+<div class="pick-overlay" hidden>
+    <div class="pick-modal" role="dialog" aria-modal="true" aria-labelledby="pick-title">
+        <div class="pick-head">
+            <h2 id="pick-title"></h2>
+            <span class="pick-step"></span>
+            <button type="button" class="pick-close" aria-label="Close">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+            </button>
+        </div>
+        <div class="pick-body"></div>
+        <div class="pick-foot">
+            <button type="button" class="pick-back">Back</button>
+        </div>
+    </div>
 </div>

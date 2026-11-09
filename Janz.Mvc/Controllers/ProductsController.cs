@@ -25,6 +25,15 @@ namespace Janz.Mvc.Controllers
             return View(await SearchAsync(ViewBag.Query is null ? "coffee" : null));
         }
 
+        // "Choose coffee in a minute": cavablara uyğun qəhvələrin kartları (pəncərənin içinə yüklənir)
+        [HttpGet]
+        public async Task<IActionResult> Pick(string? drink, string? method, string? taste)
+        {
+            var (products, exact) = CoffeePicker.Choose(await GetCategoryAsync("coffee"), drink, method, taste);
+            ViewBag.Exact = exact;
+            return PartialView("_PickResult", products);
+        }
+
         [HttpGet]
         public async Task<IActionResult> Tea()
         {
