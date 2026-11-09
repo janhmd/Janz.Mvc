@@ -4,6 +4,14 @@
 @inject IConfiguration Configuration
 @{
     var product = Model.Product;
+    // Çatdırılma tarixi səbətdəki ilə eynidir: bu gündən 2-3 gün sonra (Bakı vaxtı ilə), ay adı həmin günlərdən götürülür
+    var today = DateTime.UtcNow.AddHours(4).Date;
+    var deliveryFrom = today.AddDays(2);
+    var deliveryTo = today.AddDays(3);
+    var english = System.Globalization.CultureInfo.InvariantCulture;
+    var deliveryText = deliveryFrom.Month == deliveryTo.Month
+        ? $"{deliveryFrom.Day} – {deliveryTo.Day} {deliveryTo.ToString("MMMM", english)}"
+        : $"{deliveryFrom.Day} {deliveryFrom.ToString("MMMM", english)} – {deliveryTo.Day} {deliveryTo.ToString("MMMM", english)}";
     var apiBase = Configuration["ApiSettings:BaseUrl"];
     // Admin paneldən yüklənən şəkillər API-dədir (/uploads/...): tam ünvan lazımdır
     var variant = product.DefaultVariant;
@@ -90,10 +98,18 @@
         }
         @if (product.Tags.Count > 0)
         {
+            // Teqə basanda həmin kateqoriyanın kataloqu bu teq üzrə süzülür
+            var catalogPath = product.CategorySlug.ToLowerInvariant() switch
+            {
+                "tea" => "/Products/Tea",
+                "chocolate" => "/Products/Chocolate",
+                "sets" => "/Products/Sets",
+                _ => "/Products"
+            };
             <div class="catalog-tags">
                 @foreach (var tag in product.Tags)
                 {
-                    <a href="#">@tag.Name</a>
+                    <a href="@catalogPath?tag=@Uri.EscapeDataString(tag.Slug)">@tag.Name</a>
                 }
             </div>
         }
@@ -170,7 +186,7 @@
         </div>
         <div class="arrives">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7h11v8H3zM14 10h4l3 3v2h-7z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><circle cx="7" cy="17.5" r="1.4" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="17" cy="17.5" r="1.4" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
-            We'll deliver 3 – 6 October
+            We'll deliver @deliveryText
         </div>
     </div>
 </div>
