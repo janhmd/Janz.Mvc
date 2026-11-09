@@ -8,7 +8,7 @@
 
 <div class="admin-assistant" data-summary="@Url.Action("Summary", "Assistant", new { area = "Admin" })" data-ask="@Url.Action("Ask", "Assistant", new { area = "Admin" })" data-csrf="@Antiforgery.GetAndStoreTokens(Context).RequestToken">
     <button type="button" class="admin-assistant-toggle" aria-label="Admin assistant" aria-expanded="false">
-        <i class="bi bi-stars" aria-hidden="true"></i>
+        <i class="bi bi-chat-dots" aria-hidden="true"></i>
     </button>
     <div class="admin-assistant-panel" role="dialog" aria-labelledby="admin-assistant-title" hidden>
         <div class="admin-assistant-head">
@@ -16,7 +16,7 @@
                 <h2 id="admin-assistant-title">Admin assistant</h2>
                 <p>Shortcuts and answers for your work</p>
             </div>
-            <button type="button" class="admin-assistant-close" aria-label="Close"><i class="bi bi-x-lg" aria-hidden="true"></i></button>
+            <button type="button" class="admin-assistant-close" aria-label="Close"><i class="bi bi-x" aria-hidden="true"></i></button>
         </div>
         <div class="admin-assistant-log" aria-live="polite"></div>
         <div class="admin-assistant-chips"></div>
