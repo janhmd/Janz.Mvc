@@ -2941,9 +2941,59 @@ document.querySelectorAll("[data-copy]").forEach(function (button) {
     var started = false;
     var busy = false;
 
-    // The ready-made topic buttons are gone: every question is typed and answered by Gemini
-    var chips = box.querySelector(".assistant-chips");
-    if (chips) chips.remove();
+    // The visitor picks the answer language (English, Azerbaijani, Russian); Gemini then answers only in it
+    var texts = {
+        en: {
+            hello: "Hi! I am the Janz assistant. Ask me about coffee, tea, delivery or payment.",
+            hint: "Ask about coffee, delivery or payment",
+            fail: "The assistant can't answer right now. Please try again in a minute or write to us on <a href=\"https://wa.me/994702175557\">WhatsApp</a>."
+        },
+        az: {
+            hello: "Salam! Mən Janz köməkçisiyəm. Məndən qəhvə, çay, çatdırılma və ödəniş haqqında soruşa bilərsiniz.",
+            hint: "Qəhvə, çatdırılma və ya ödəniş haqqında soruşun",
+            fail: "Köməkçi hazırda cavab verə bilmir. Bir dəqiqə sonra yenidən cəhd edin və ya bizə <a href=\"https://wa.me/994702175557\">WhatsApp</a>-da yazın."
+        },
+        ru: {
+            hello: "Здравствуйте! Я помощник Janz. Спрашивайте про кофе, чай, доставку и оплату.",
+            hint: "Спросите про кофе, доставку или оплату",
+            fail: "Помощник сейчас не может ответить. Попробуйте через минуту или напишите нам в <a href=\"https://wa.me/994702175557\">WhatsApp</a>."
+        }
+    };
+    var lang = "en";
+    try {
+        var saved = localStorage.getItem("janz-assistant-lang");
+        if (saved && texts[saved]) lang = saved;
+    } catch (e) { }
+
+    var langBar = box.querySelector(".assistant-lang");
+    [["en", "English"], ["az", "Azərbaycan"], ["ru", "Русский"]].forEach(function (item) {
+        var button = document.createElement("button");
+        button.type = "button";
+        button.dataset.lang = item[0];
+        button.textContent = item[1];
+        langBar.appendChild(button);
+    });
+
+    function paintLang() {
+        langBar.querySelectorAll("button").forEach(function (button) {
+            button.classList.toggle("is-on", button.dataset.lang === lang);
+        });
+        input.placeholder = texts[lang].hint;
+    }
+
+    langBar.addEventListener("click", function (event) {
+        var button = event.target.closest("button");
+        if (!button || button.dataset.lang === lang) return;
+        lang = button.dataset.lang;
+        try { localStorage.setItem("janz-assistant-lang", lang); } catch (e) { }
+        paintLang();
+        // The old conversation is cleared and the greeting is shown in the new language
+        if (started) {
+            log.innerHTML = "";
+            say(texts[lang].hello);
+        }
+    });
+    paintLang();
 
     function say(html, mine) {
         var line = document.createElement("div");
@@ -2965,12 +3015,12 @@ document.querySelectorAll("[data-copy]").forEach(function (button) {
         wait.textContent = "...";
         log.appendChild(wait);
         log.scrollTop = log.scrollHeight;
-        postArticle("/Assistant/Ask", { question: question }).then(function (data) {
+        postArticle("/Assistant/Ask", { question: question, language: lang }).then(function (data) {
             wait.remove();
             if (data && data.answer) {
                 say(data.answer.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/\n/g, "<br>"));
             } else {
-                say("The assistant can't answer right now. Please try again in a minute or write to us on <a href=\"https://wa.me/994702175557\">WhatsApp</a>.");
+                say(texts[lang].fail);
             }
             busy = false;
         });
@@ -2982,7 +3032,7 @@ document.querySelectorAll("[data-copy]").forEach(function (button) {
         toggle.setAttribute("aria-expanded", "true");
         if (!started) {
             started = true;
-            say("Hi! I am the Janz assistant. Ask me about coffee, tea, delivery or payment.");
+            say(texts[lang].hello);
         }
         input.focus();
     }
@@ -3024,4 +3074,127 @@ document.querySelectorAll(".notice-overlay").forEach(function (overlay) {
     overlay.querySelector(".notice-close").addEventListener("click", closeNotice);
     overlay.addEventListener("click", function (event) { if (event.target === overlay) closeNotice(); });
     document.addEventListener("keydown", function (event) { if (event.key === "Escape") closeNotice(); });
+});
+
+// "Choose coffee in a minute": 3 questions, then the matching coffees are loaded as ready cards
+(function () {
+    var overlay = document.querySelector(".pick-overlay");
+    if (!overlay) return;
+
+    var modal = overlay.querySelector(".pick-modal");
+    var title = overlay.querySelector("#pick-title");
+    var stepLabel = overlay.querySelector(".pick-step");
+    var body = overlay.querySelector(".pick-body");
+    var back = overlay.querySelector(".pick-back");
+
+    var steps = [
+        {
+            key: "drink", title: "What coffee do you usually drink?", big: true,
+            options: [["black", "Black"], ["milk", "With milk or cream"], ["both", "Both"]]
+        },
+        {
+            key: "method", title: "How do you brew coffee?",
+            options: [["Espresso machine", "Espresso machine"], ["Turkish coffee", "Turkish pot (cezve)"], ["Moka pot", "Moka pot"],
+                ["Pour over", "Pour over / filter"], ["French press", "French press"], ["AeroPress", "AeroPress"],
+                ["Drip coffee maker", "Drip coffee maker"], ["Cup", "In a cup"], ["Capsule machine", "Capsule machine"]]
+        },
+        {
+            key: "taste", title: "What taste do you prefer?", big: true,
+            options: [["classic", "Classic, balanced and dense"], ["bright", "Bright, fruity and juicy"], ["funky", "Unusual and bright (fermented)"]]
+        }
+    ];
+    var answers = {};
+    var index = 0;
+
+    function showStep() {
+        var step = steps[index];
+        modal.classList.remove("is-result");
+        title.textContent = step.title;
+        stepLabel.innerHTML = "<b>" + (index + 1) + "</b>/" + steps.length;
+        back.hidden = index === 0;
+        back.textContent = "Back";
+        body.innerHTML = "";
+        var list = document.createElement("div");
+        list.className = "pick-options" + (step.big ? " is-big" : "");
+        step.options.forEach(function (option) {
+            var button = document.createElement("button");
+            button.type = "button";
+            button.textContent = option[1];
+            button.addEventListener("click", function () {
+                answers[step.key] = option[0];
+                if (index < steps.length - 1) {
+                    index++;
+                    showStep();
+                } else {
+                    showResult();
+                }
+            });
+            list.appendChild(button);
+        });
+        body.appendChild(list);
+    }
+
+    function showResult() {
+        modal.classList.add("is-result");
+        title.textContent = "Your coffee";
+        stepLabel.textContent = "";
+        back.hidden = false;
+        back.textContent = "Start over";
+        body.innerHTML = '<p class="pick-note">Choosing...</p>';
+        var query = new URLSearchParams(answers).toString();
+        fetch("/Products/Pick?" + query, { headers: { "X-Requested-With": "XMLHttpRequest" } })
+            .then(function (response) { return response.ok ? response.text() : Promise.reject(); })
+            .then(function (html) { body.innerHTML = html; })
+            .catch(function () { body.innerHTML = '<p class="pick-note">Could not load the coffees. Please try again.</p>'; });
+    }
+
+    function open() {
+        answers = {};
+        index = 0;
+        overlay.hidden = false;
+        showStep();
+    }
+
+    function close() { overlay.hidden = true; }
+
+    document.querySelectorAll("[data-pick-open]").forEach(function (link) {
+        link.addEventListener("click", function (event) {
+            event.preventDefault();
+            open();
+        });
+    });
+    overlay.querySelector(".pick-close").addEventListener("click", close);
+    overlay.addEventListener("click", function (event) { if (event.target === overlay) close(); });
+    document.addEventListener("keydown", function (event) { if (event.key === "Escape" && !overlay.hidden) close(); });
+    back.addEventListener("click", function () {
+        if (modal.classList.contains("is-result")) {
+            open();
+        } else if (index > 0) {
+            index--;
+            showStep();
+        }
+    });
+})();
+
+// Cart "Apply": only the promo code and the chosen address go to the link (the form's other fields, like the security token, must never be in the address bar)
+document.addEventListener("click", function (event) {
+    var button = event.target.closest(".co-code-btn");
+    if (!button || !button.form) return;
+    event.preventDefault();
+    var params = new URLSearchParams();
+    var promo = button.form.querySelector("input[name=promo]");
+    if (promo && promo.value.trim()) params.set("promo", promo.value.trim());
+    var address = button.form.querySelector("input[name=addressId]:checked");
+    if (address) params.set("addressId", address.value);
+    var query = params.toString();
+    location.href = "/Cart" + (query ? "?" + query : "");
+});
+
+// Phone header: the burger opens and closes the menu
+document.addEventListener("click", function (event) {
+    var burger = event.target.closest(".nav-burger");
+    if (!burger) return;
+    var header = burger.closest(".site-header");
+    var open = header.classList.toggle("is-nav-open");
+    burger.setAttribute("aria-expanded", open ? "true" : "false");
 });
