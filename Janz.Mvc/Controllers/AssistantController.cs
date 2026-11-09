@@ -13,9 +13,9 @@ namespace Janz.Mvc.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Ask(string? question)
+        public async Task<IActionResult> Ask(string? question, string? language)
         {
-            var (result, _, _) = await PostAsync<AssistantAnswerUIVM>("api/assistant", new { question });
+            var (result, _, _) = await PostAsync<AssistantAnswerUIVM>("api/assistant", new { question, language });
 
             return Ok(new { answer = result?.Answer ?? string.Empty });
         }
