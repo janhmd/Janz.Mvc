@@ -1104,3 +1104,16 @@ html.theme-day .status-scheduled { color: #1f5fbf; }
 .admin-assistant-form { display: flex; gap: 8px; padding: 10px 12px; border-top: 1px solid var(--a-line); }
 .admin-assistant-form input { flex: 1; min-width: 0; background: var(--a-card-2); border: 1px solid var(--a-line); border-radius: 999px; color: var(--a-text); padding: 7px 14px; font-size: 13px; }
 .admin-assistant-form button { width: 34px; height: 34px; border-radius: 50%; border: 0; background: var(--a-btn); color: var(--a-btn-text); cursor: pointer; }
+
+/* Notifications */
+.admin-notes { list-style: none; margin: 1rem 0 0; padding: 0; display: grid; gap: .6rem; }
+.admin-note { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: .9rem; align-items: start; padding: .85rem 1rem; background: var(--a-card); border: 1px solid var(--a-line); border-left-width: 3px; border-radius: var(--a-radius, 10px); }
+.admin-note > i { font-size: 1.15rem; color: var(--a-muted); margin-top: .1rem; }
+.admin-note a { color: var(--a-text); font-weight: 600; text-decoration: none; overflow-wrap: anywhere; }
+.admin-note a:hover { color: var(--a-gold); }
+.admin-note p { margin: .15rem 0 0; color: var(--a-muted); font-size: .85rem; overflow-wrap: anywhere; }
+.admin-note time { color: var(--a-muted); font-size: .78rem; white-space: nowrap; }
+.admin-note.is-warning { border-left-color: var(--a-gold); }
+.admin-note.is-danger { border-left-color: var(--a-danger); }
+.admin-note.is-danger > i { color: var(--a-danger); }
+@media (max-width: 575px) { .admin-note { grid-template-columns: auto minmax(0, 1fr); } .admin-note time { grid-column: 2; } }
