@@ -2936,64 +2936,14 @@ document.querySelectorAll("[data-copy]").forEach(function (button) {
     var toggle = box.querySelector(".assistant-toggle");
     var panel = box.querySelector(".assistant-panel");
     var log = box.querySelector(".assistant-log");
-    var chips = box.querySelector(".assistant-chips");
     var form = box.querySelector(".assistant-form");
     var input = form.querySelector("input");
-    var catalog = box.getAttribute("data-catalog") || "catalog.html";
     var started = false;
+    var busy = false;
 
-    var brews = [
-        { label: "Espresso machine", query: "use=espresso" },
-        { label: "Moka pot", query: "use=espresso" },
-        { label: "Filter or pour over", query: "use=filter" },
-        { label: "French press", query: "use=filter" },
-        { label: "Turkish coffee", query: "use=turkish" },
-        { label: "With milk", query: "use=milk" },
-        { label: "Capsules", query: "format=capsules" }
-    ];
-
-    var tastes = [
-        { label: "Chocolate and nuts", query: "taste=chocolate" },
-        { label: "Flowers and citrus", query: "taste=flowers" },
-        { label: "Fruits and berries", query: "taste=fruit" },
-        { label: "Something unusual", query: "taste=alcohol" },
-        { label: "Anything", query: "" }
-    ];
-
-    var answers = [
-        {
-            words: ["deliver", "shipping", "courier", "ship", "when will"],
-            text: "Janz courier delivers all over Baku in 2–3 days, free of charge. Regions get their orders by Azerpost."
-        },
-        {
-            words: ["pay", "card", "cash", "stripe"],
-            text: "You can pay by card online on the order page right after placing the order, or pay cash or card to the courier."
-        },
-        {
-            words: ["promo", "coupon", "discount", "code", "sale", "cheaper"],
-            text: "Type a promo code in the cart and press Apply, the discount shows up in the total. New customers get a code for the first order in their account."
-        },
-        {
-            words: ["status", "track", "where is my order", "my order"],
-            text: "Open your account and go to Orders: every order shows its status there."
-        },
-        {
-            words: ["return", "refund", "exchange", "broken", "wrong"],
-            text: "Something went wrong with an order? Write to us on <a href=\"https://wa.me/994702175557\">WhatsApp</a> and we will sort it out."
-        },
-        {
-            words: ["grind", "brew", "recipe", "how to make", "how much coffee"],
-            text: "A good start: espresso 18 g in, 36 g out in 25–30 s; filter 15 g per 250 ml of water at 92–94 °C. Choose the grind on the product page."
-        },
-        {
-            words: ["contact", "phone", "address", "call", "where are you", "whatsapp"],
-            text: "Call us at <a href=\"tel:+994702175557\">+994 70 217 55 57</a> or write on <a href=\"https://wa.me/994702175557\">WhatsApp</a>. We are in Nesimi, Masud Davudoglu 171."
-        },
-        {
-            words: ["hello", "hi", "salam", "hey"],
-            text: "Hi! I can pick a coffee for you or answer questions about delivery, payment and promo codes."
-        }
-    ];
+    // The ready-made topic buttons are gone: every question is typed and answered by Gemini
+    var chips = box.querySelector(".assistant-chips");
+    if (chips) chips.remove();
 
     function say(html, mine) {
         var line = document.createElement("div");
@@ -3007,56 +2957,23 @@ document.querySelectorAll("[data-copy]").forEach(function (button) {
         log.scrollTop = log.scrollHeight;
     }
 
-    function offer(list, onPick) {
-        chips.innerHTML = "";
-        list.forEach(function (item) {
-            var button = document.createElement("button");
-            button.type = "button";
-            button.textContent = item.label;
-            button.addEventListener("click", function () {
-                say(item.label, true);
-                onPick(item);
-            });
-            chips.appendChild(button);
+    function ask(question, shown) {
+        if (busy) return;
+        busy = true;
+        say(shown || question, true);
+        var wait = document.createElement("div");
+        wait.textContent = "...";
+        log.appendChild(wait);
+        log.scrollTop = log.scrollHeight;
+        postArticle("/Assistant/Ask", { question: question }).then(function (data) {
+            wait.remove();
+            if (data && data.answer) {
+                say(data.answer.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/\n/g, "<br>"));
+            } else {
+                say("The assistant can't answer right now. Please try again in a minute or write to us on <a href=\"https://wa.me/994702175557\">WhatsApp</a>.");
+            }
+            busy = false;
         });
-    }
-
-    function menu() {
-        offer([
-            { label: "Pick a coffee" },
-            { label: "Delivery" },
-            { label: "Payment" },
-            { label: "Promo codes" },
-            { label: "Contacts" }
-        ], function (item) {
-            if (item.label === "Pick a coffee") startPick();
-            else reply(item.label);
-        });
-    }
-
-    function startPick() {
-        say("How do you make your coffee?");
-        offer(brews, function (brew) {
-            say("And what taste do you like?");
-            offer(tastes, function (taste) {
-                var query = [brew.query, taste.query].filter(Boolean).join("&");
-                say("Here are the coffees for you: <a href=\"" + catalog + "?" + query + "\">show coffees</a>. Anything else?");
-                menu();
-            });
-        });
-    }
-
-    function reply(question) {
-        var text = question.toLowerCase();
-        if (text.indexOf("pick") >= 0 || text.indexOf("choose") >= 0 || text.indexOf("recommend") >= 0) {
-            startPick();
-            return;
-        }
-        var found = answers.filter(function (answer) {
-            return answer.words.some(function (word) { return text.indexOf(word) >= 0; });
-        })[0];
-        say(found ? found.text : "I am not sure I got it. Try one of the topics below or write to us on <a href=\"https://wa.me/994702175557\">WhatsApp</a>.");
-        menu();
     }
 
     function open() {
@@ -3065,8 +2982,7 @@ document.querySelectorAll("[data-copy]").forEach(function (button) {
         toggle.setAttribute("aria-expanded", "true");
         if (!started) {
             started = true;
-            say("Hi! I am the Janz assistant. I can pick a coffee for you or answer questions.");
-            menu();
+            say("Hi! I am the Janz assistant. Ask me about coffee, tea, delivery or payment.");
         }
         input.focus();
     }
@@ -3090,25 +3006,7 @@ document.querySelectorAll("[data-copy]").forEach(function (button) {
         var question = input.value.trim();
         if (!question) return;
         input.value = "";
-        say(question, true);
-        var text = question.toLowerCase();
-        if (text.indexOf("pick") >= 0 || text.indexOf("choose") >= 0 || text.indexOf("recommend") >= 0) {
-            reply(question);
-            return;
-        }
-        var wait = document.createElement("div");
-        wait.textContent = "...";
-        log.appendChild(wait);
-        log.scrollTop = log.scrollHeight;
-        postArticle("/Assistant/Ask", { question: question }).then(function (data) {
-            wait.remove();
-            if (data && data.answer) {
-                say(data.answer.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/\n/g, "<br>"));
-                menu();
-            } else {
-                reply(question);
-            }
-        });
+        ask(question);
     });
 })();
 
