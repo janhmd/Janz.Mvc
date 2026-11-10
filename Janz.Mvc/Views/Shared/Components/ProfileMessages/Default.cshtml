@@ -15,7 +15,7 @@
                     <span class="my-message-state@(item.IsAnswered || item.IsClosed ? " is-answered" : string.Empty)">@(item.IsClosed ? "Closed by support" : item.IsAnswered ? "Answered" : "Waiting for a reply")</span>
                 </div>
                 <p class="my-message-text">@item.Message</p>
-                @if (item.IsAnswered && !string.IsNullOrWhiteSpace(item.Reply))
+                @if (!string.IsNullOrWhiteSpace(item.Reply))
                 {
                     <div class="my-message-reply">
                         <span>Janz support@(item.AnsweredAt is null ? string.Empty : ", " + item.AnsweredAt.Value.ToLocalTime().ToString("d MMMM yyyy, HH:mm"))</span>
