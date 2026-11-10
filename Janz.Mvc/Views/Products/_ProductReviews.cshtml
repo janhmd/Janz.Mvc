@@ -16,9 +16,9 @@
                 <div class="stat-label">@reviews.Count @(reviews.Count == 1 ? "review" : "reviews")</div>
             </div>
         }
-        else
+        else if (Model.Posts.Count == 0)
         {
-            <p class="comments-empty">No reviews yet. Be the first to share how this coffee tastes.</p>
+            <p class="comments-empty">No reviews yet. Be the first to share how it tastes.</p>
         }
     </div>
 
@@ -89,4 +89,21 @@
             }
         </div>
     }
+
+    <div class="product-posts">
+        <h2>From the community</h2>
+        @if (Model.Posts.Count > 0)
+        {
+            <div class="feed">
+                @foreach (var post in Model.Posts)
+                {
+                    <partial name="_FeedCard" model="post" />
+                }
+            </div>
+        }
+        else
+        {
+            <p class="comments-note">Nobody has shared this product in the <a href="/Community">Community</a> yet. Pick it when you write a post and it will appear here.</p>
+        }
+    </div>
 </section>

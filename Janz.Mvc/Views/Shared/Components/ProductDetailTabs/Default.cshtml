@@ -46,7 +46,7 @@
 
 <div class="coffee-tabs" data-tabs>
     <button type="button" class="@(commentsTab ? null : "is-on")" data-tab="description">Description</button>
-    <button type="button" class="@(commentsTab ? "is-on" : null)" data-tab="comments">Comments @Model.Reviews.Count</button>
+    <button type="button" class="@(commentsTab ? "is-on" : null)" data-tab="comments">Comments @(Model.Reviews.Count + Model.Posts.Count)</button>
 </div>
 
 <div class="tab-panel" data-tab-panel="description" hidden="@commentsTab">

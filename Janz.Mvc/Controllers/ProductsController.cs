@@ -78,6 +78,7 @@ namespace Janz.Mvc.Controllers
                 .ToList();
 
             var (reviews, _) = await GetAsync<ProductReviewsUIVM>($"api/products/{product.Id}/reviews");
+            var (posts, _) = await GetAsync<List<Janz.Mvc.ViewModels.Community.PostUIVM>>($"api/posts/product/{product.Id}");
             var (coupon, _) = User.Identity?.IsAuthenticated == true
                 ? await GetAsync<Janz.Mvc.ViewModels.Cart.FirstOrderCouponUIVM>("api/coupons/first-order")
                 : (null, null);
@@ -91,6 +92,7 @@ namespace Janz.Mvc.Controllers
                 InWishlist = wishlist?.Contains(product.Id) == true,
                 Product = product,
                 Reviews = reviews ?? new ProductReviewsUIVM(),
+                Posts = posts ?? new List<Janz.Mvc.ViewModels.Community.PostUIVM>(),
                 Related = related
             });
         }
