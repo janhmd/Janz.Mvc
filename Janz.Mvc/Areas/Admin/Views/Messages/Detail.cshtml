@@ -13,25 +13,31 @@
 <div class="admin-grid">
     <div class="admin-stack">
         <div class="admin-card">
-            <h2>Message</h2>
-            <p class="admin-message">@Model.Message</p>
-        </div>
-
-        @if (Model.IsAnswered || Model.Entries.Count > 0)
-        {
-            <div class="admin-card">
-                <h2>Reply</h2>
-                <p class="admin-message">@Model.Reply</p>
-                @if (Model.AnsweredAt is DateTime answered)
+            <h2>Conversation</h2>
+            <div class="chat">
+                <div class="chat-msg is-customer">
+                    <span class="chat-who">@Model.Name, @Model.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</span>
+                    <p>@Model.Message</p>
+                </div>
+                @if (!string.IsNullOrWhiteSpace(Model.Reply))
                 {
-                    <p class="admin-note">Answered on @answered.ToLocalTime().ToString("dd.MM.yyyy HH:mm").@(Model.IsMember ? " The customer sees this reply in their account under My messages." : string.Empty) The email is sent when mail is set up in the API.</p>
+                    <div class="chat-msg is-staff">
+                        <span class="chat-who">Support@(Model.AnsweredAt is DateTime answered ? ", " + answered.ToLocalTime().ToString("dd.MM.yyyy HH:mm") : string.Empty)</span>
+                        <p>@Model.Reply</p>
+                    </div>
                 }
                 @foreach (var entry in Model.Entries)
                 {
-                    <hr />
-                    <p class="admin-note"><b>@(entry.IsStaff ? "Support" : "Customer")</b>, @entry.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</p>
-                    <p class="admin-message">@entry.Text</p>
+                    <div class="chat-msg @(entry.IsStaff ? "is-staff" : "is-customer")">
+                        <span class="chat-who">@(entry.IsStaff ? "Support" : Model.Name), @entry.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</span>
+                        <p>@entry.Text</p>
+                    </div>
                 }
+            </div>
+            @if (Model.IsAnswered || Model.Entries.Count > 0)
+            {
+                <p class="admin-note">@(Model.IsMember ? "The customer sees these replies in their account under My messages. " : string.Empty)The email is sent when mail is set up in the API.</p>
+            }
                 @if (!Model.IsClosed)
                 {
                     <form method="post" asp-action="Close" asp-route-id="@Model.Id">
@@ -43,8 +49,7 @@
                 {
                     <p class="admin-note">Support ended this chat@(Model.ClosedAt is DateTime closed ? " on " + closed.ToLocalTime().ToString("dd.MM.yyyy HH:mm") : string.Empty). No more replies can be added.</p>
                 }
-            </div>
-        }
+        </div>
         @if (!Model.IsAnswered && !Model.IsClosed)
         {
             <form class="admin-card admin-form" method="post" asp-action="Reply" asp-route-id="@Model.Id">

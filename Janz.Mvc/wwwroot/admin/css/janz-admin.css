@@ -1132,3 +1132,13 @@ html.theme-day .status-scheduled { color: #1f5fbf; }
 .admin-audience-rows { max-height: 240px; overflow: auto; display: grid; gap: .5rem; padding: .4rem 0; }
 .admin-audience-rows small { color: #8a8a8a; margin-left: .4rem; }
 .admin-audience-rows [hidden] { display: none; }
+/* Support söhbəti: müştəri solda, işçinin cavabları sağda */
+.chat { display: grid; gap: .6rem; margin-top: .6rem; }
+.chat-msg { max-width: 78%; padding: .65rem .95rem; border-radius: 16px; overflow-wrap: anywhere; }
+.chat-msg p { margin: .25rem 0 0; white-space: pre-wrap; line-height: 1.5; }
+.chat-who { display: block; font-size: .75rem; color: var(--a-muted); }
+.chat-msg.is-customer { justify-self: start; background: rgba(255, 255, 255, .07); border-bottom-left-radius: 4px; }
+.chat-msg.is-staff { justify-self: end; background: rgba(214, 190, 150, .16); border: 1px solid rgba(214, 190, 150, .45); border-bottom-right-radius: 4px; }
+html.theme-day .chat-msg.is-customer { background: #eee; }
+html.theme-day .chat-msg.is-staff { background: #f7efe2; }
+@media (max-width: 575px) { .chat-msg { max-width: 92%; } }
