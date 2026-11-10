@@ -1,0 +1,18 @@
+@model string?
+@{
+    var name = User.Identity?.Name ?? "Admin";
+}
+<div class="admin-user">
+    @if (!string.IsNullOrEmpty(Model))
+    {
+        <span class="admin-avatar" aria-hidden="true"><img src="@Model" alt="" /></span>
+    }
+    else
+    {
+        <span class="admin-avatar" aria-hidden="true">@name.Substring(0, 1).ToUpperInvariant()</span>
+    }
+    <div>
+        <div class="admin-user-name">@name</div>
+        <div class="admin-user-role">@AppRoles.MainRole(User)</div>
+    </div>
+</div>
