@@ -1117,3 +1117,6 @@ html.theme-day .status-scheduled { color: #1f5fbf; }
 .admin-note.is-danger { border-left-color: var(--a-danger); }
 .admin-note.is-danger > i { color: var(--a-danger); }
 @media (max-width: 575px) { .admin-note { grid-template-columns: auto minmax(0, 1fr); } .admin-note time { grid-column: 2; } }
+
+/* Messages: customer message text keeps its line breaks */
+.admin-message { margin: 0; white-space: pre-wrap; line-height: 1.55; overflow-wrap: anywhere; }

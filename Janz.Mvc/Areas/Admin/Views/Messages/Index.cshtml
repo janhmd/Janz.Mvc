@@ -1,0 +1,63 @@
+@model List<ContactMessageVM>
+@{
+    ViewData["Title"] = "Messages";
+    var status = ViewBag.Status as string;
+}
+
+<div class="admin-head">
+    <div>
+        <p class="admin-eyebrow">Customers</p>
+        <h1>Messages <span>@Model.Count</span></h1>
+    </div>
+</div>
+
+@if (ViewBag.Error is string error)
+{
+    <div class="admin-flash admin-flash-error" role="alert">@error</div>
+}
+
+<nav aria-label="Filter messages">
+    <div class="admin-filter">
+        <a class="@(status is null ? "is-on" : null)" asp-action="Index">All</a>
+        <a class="@(status == "new" ? "is-on" : null)" asp-action="Index" asp-route-status="new">New</a>
+        <a class="@(status == "answered" ? "is-on" : null)" asp-action="Index" asp-route-status="answered">Answered</a>
+    </div>
+</nav>
+
+<div class="admin-card admin-card-flush">
+    @if (Model.Count == 0)
+    {
+        <p class="admin-empty admin-card-pad">No messages here.</p>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>From</th>
+                        <th>About</th>
+                        <th>Message</th>
+                        <th>Sent</th>
+                        <th>Status</th>
+                        <th class="actions">Operations</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td><a asp-action="Detail" asp-route-id="@item.Id"><strong>@item.Name</strong></a><br /><small>@item.Email</small></td>
+                            <td>@item.Topic</td>
+                            <td>@(item.Message.Length > 80 ? item.Message[..77] + "..." : item.Message)</td>
+                            <td>@item.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</td>
+                            <td><span class="admin-status @(item.IsAnswered ? "status-delivered" : "status-pending")">@(item.IsAnswered ? "Answered" : "New")</span></td>
+                            <td class="actions"><a class="admin-btn-sm" asp-action="Detail" asp-route-id="@item.Id">@(item.IsAnswered ? "View" : "Reply")</a></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>
+<p class="admin-note">Messages come from the form on the Contact page. A reply is sent to the customer by email and the message is marked as answered.</p>

@@ -1,0 +1,62 @@
+@model ContactMessageVM
+@{
+    ViewData["Title"] = $"Message from {Model.Name}";
+}
+
+<div class="admin-head">
+    <div>
+        <p class="admin-eyebrow"><a asp-action="Index">Messages</a> / #@Model.Id</p>
+        <h1>@Model.Topic <span class="admin-status @(Model.IsAnswered ? "status-delivered" : "status-pending")">@(Model.IsAnswered ? "Answered" : "New")</span></h1>
+    </div>
+</div>
+
+<div class="admin-grid">
+    <div class="admin-stack">
+        <div class="admin-card">
+            <h2>Message</h2>
+            <p class="admin-message">@Model.Message</p>
+        </div>
+
+        @if (Model.IsAnswered)
+        {
+            <div class="admin-card">
+                <h2>Reply</h2>
+                <p class="admin-message">@Model.Reply</p>
+                @if (Model.AnsweredAt is DateTime answered)
+                {
+                    <p class="admin-note">Sent by email on @answered.ToLocalTime().ToString("dd.MM.yyyy HH:mm").</p>
+                }
+            </div>
+        }
+        else
+        {
+            <form class="admin-card admin-form" method="post" asp-action="Reply" asp-route-id="@Model.Id">
+                <h2>Reply</h2>
+                <label class="admin-field admin-field-wide">
+                    <span>Your reply</span>
+                    <textarea name="Reply" rows="8" required maxlength="2000"></textarea>
+                    <small>It is sent to @Model.Email. The customer's message is added below your text.</small>
+                </label>
+                <div class="admin-form-actions">
+                    <button type="submit" class="admin-btn">Send reply</button>
+                    <a class="admin-btn is-ghost" asp-action="Index">Cancel</a>
+                </div>
+            </form>
+        }
+    </div>
+    <div class="admin-stack">
+        <div class="admin-card">
+            <h2>Customer</h2>
+            <dl class="admin-facts">
+                <dt>Name</dt><dd>@Model.Name</dd>
+                <dt>Email</dt><dd><a href="mailto:@Model.Email">@Model.Email</a></dd>
+                <dt>Account</dt><dd>@(Model.IsMember ? "Signed in customer" : "Guest")</dd>
+                <dt>Sent</dt><dd>@Model.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</dd>
+            </dl>
+        </div>
+    </div>
+</div>
+
+<div class="admin-detail-foot">
+    <a class="admin-link" asp-action="Index"><i class="bi bi-arrow-left"></i> Back to messages</a>
+</div>

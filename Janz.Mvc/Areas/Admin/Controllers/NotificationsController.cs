@@ -7,13 +7,13 @@ using System.Net;
 
 namespace Janz.Mvc.Areas.Admin.Controllers
 {
-    // Admin panelin bildiriş mərkəzi (api/admin/notifications): gözləyən sifarişlər, şikayətlər, yeni rəylər, az qalan stok.
+    // Admin panelin bildiriş mərkəzi (api/admin/notifications): gözləyən sifarişlər, cavabsız mesajlar, şikayətlər, yeni rəylər, az qalan stok.
     // Hər işçi yalnız öz rolunun görə biləcəyi bildirişləri alır, filtrləmə API-dədir
     [Area("Admin")]
     [Authorize(Roles = AppRoles.OrderManagers)]
     public class NotificationsController : ApiControllerBase
     {
-        private static readonly string[] Types = { "order", "report", "review", "stock" };
+        private static readonly string[] Types = { "order", "message", "report", "review", "stock" };
 
         public NotificationsController(IHttpClientFactory httpClientFactory, IConfiguration configuration)
             : base(httpClientFactory, configuration)

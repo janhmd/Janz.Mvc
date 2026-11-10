@@ -10,6 +10,7 @@
     }
     var pinned = (string?)ViewBag.MapQuery;
     var mapQuery = Uri.EscapeDataString(string.IsNullOrWhiteSpace(pinned) ? fullAddress : pinned.Trim());
+    var form = (ContactFormUIVM?)ViewBag.Form ?? new ContactFormUIVM();
 }
 
 <main>
@@ -40,5 +41,39 @@
                 <a class="contact-map-open" href="https://www.google.com/maps/search/?api=1&query=@mapQuery" target="_blank" rel="noopener">Open in Google Maps</a>
             </div>
         </div>
+
+        <form class="contact-form" method="post" asp-controller="Pages" asp-action="Contact" id="contact-form">
+            <h2>Write to us</h2>
+            <p class="contact-form-lead">Have a question or a complaint? Send a message and we will answer by email.</p>
+            @foreach (var error in ViewData.ModelState.Values.SelectMany(m => m.Errors))
+            {
+                <p class="entry-error" role="alert">@error.ErrorMessage</p>
+            }
+            <div class="contact-form-grid">
+                <label>
+                    <span>Your name</span>
+                    <input name="Name" value="@form.Name" maxlength="80" required autocomplete="name" />
+                </label>
+                <label>
+                    <span>Email</span>
+                    <input name="Email" type="email" value="@form.Email" maxlength="150" required autocomplete="email" />
+                </label>
+                <label class="contact-form-wide">
+                    <span>What is it about?</span>
+                    <select name="Topic" required>
+                        <option value="">Choose a topic</option>
+                        @foreach (var topic in ContactFormUIVM.Topics)
+                        {
+                            <option value="@topic" selected="@(form.Topic == topic)">@topic</option>
+                        }
+                    </select>
+                </label>
+                <label class="contact-form-wide">
+                    <span>Message</span>
+                    <textarea name="Message" rows="6" minlength="10" maxlength="2000" required>@form.Message</textarea>
+                </label>
+            </div>
+            <button type="submit" class="contact-form-send">Send message</button>
+        </form>
     </section>
 </main>

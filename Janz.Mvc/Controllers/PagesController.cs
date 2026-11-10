@@ -1,4 +1,5 @@
 using Janz.Mvc.Helpers;
+using Janz.Mvc.ViewModels.Contact;
 using Janz.Mvc.ViewModels.Pages;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
@@ -18,10 +19,39 @@ namespace Janz.Mvc.Controllers
 
         // Əlaqə səhifəsi: telefon, email, ünvan və xəritə admin paneldəki Settings-dən gəlir
         [HttpGet("Contact")]
-        public async Task<IActionResult> Contact()
+        public async Task<IActionResult> Contact(int? order)
         {
             // Google ev nömrəsini mətndən tapmırsa, appsettings-də "Contact:MapQuery" ilə dəqiq nöqtə (koordinat) yazılır
             ViewBag.MapQuery = Configuration["Contact:MapQuery"];
+            // Sifariş səhifəsindən gələndə mövzu və mesajın başlanğıcı hazır olur
+            ViewBag.Form = new ContactFormUIVM
+            {
+                Name = User.Identity?.IsAuthenticated == true ? User.Identity.Name ?? string.Empty : string.Empty,
+                Topic = order is > 0 ? "Order" : string.Empty,
+                Message = order is > 0 ? $"Order #{order}: " : string.Empty
+            };
+            return View(await _siteContent.SettingAsync());
+        }
+
+        // Əlaqə formu: mesaj API-yə yazılır (api/contact), cavabı admin e-poçtla göndərir
+        [HttpPost("Contact")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Contact(ContactFormUIVM form)
+        {
+            if (ModelState.IsValid)
+            {
+                var (success, errors, _) = await PostAsync("api/contact", new { form.Name, form.Email, form.Topic, form.Message });
+                if (success)
+                {
+                    TempData["Toast"] = "Thank you! We received your message and will answer by email.";
+                    return Redirect("/Contact");
+                }
+
+                foreach (var error in errors) ModelState.AddModelError(string.Empty, error);
+            }
+
+            ViewBag.MapQuery = Configuration["Contact:MapQuery"];
+            ViewBag.Form = form;
             return View(await _siteContent.SettingAsync());
         }
 
