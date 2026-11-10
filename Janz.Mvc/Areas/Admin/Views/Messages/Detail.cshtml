@@ -32,9 +32,16 @@
                     <p class="admin-note"><b>@(entry.IsStaff ? "Support" : "Customer")</b>, @entry.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</p>
                     <p class="admin-message">@entry.Text</p>
                 }
+                @if (!Model.IsClosed)
+                {
+                    <form method="post" asp-action="Close" asp-route-id="@Model.Id">
+                        <button type="submit" class="admin-btn is-ghost">End chat</button>
+                        <p class="admin-note">The customer can write again after your reply. End the chat when the question is solved. Only staff can end it.</p>
+                    </form>
+                }
                 @if (Model.IsClosed)
                 {
-                    <p class="admin-note">The customer ended this chat@(Model.ClosedAt is DateTime closed ? " on " + closed.ToLocalTime().ToString("dd.MM.yyyy HH:mm") : string.Empty). No more replies can be added.</p>
+                    <p class="admin-note">Support ended this chat@(Model.ClosedAt is DateTime closed ? " on " + closed.ToLocalTime().ToString("dd.MM.yyyy HH:mm") : string.Empty). No more replies can be added.</p>
                 }
             </div>
         }
@@ -49,6 +56,7 @@
                 </label>
                 <div class="admin-form-actions">
                     <button type="submit" class="admin-btn">Send reply</button>
+                    <button type="submit" class="admin-btn is-ghost" formaction="@Url.Action("Close", new { id = Model.Id })" formnovalidate>End chat</button>
                     <a class="admin-btn is-ghost" asp-action="Index">Cancel</a>
                 </div>
             </form>

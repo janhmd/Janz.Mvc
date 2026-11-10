@@ -135,7 +135,6 @@ namespace Janz.Mvc.Controllers
             return Redirect(Url.Action(nameof(Index)) + "#messages");
         }
 
-        // Müştəri söhbəti bitirir: bundan sonra bu yazışmaya yeni yazı əlavə olunmur
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> MessageClose(int id)

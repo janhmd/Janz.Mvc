@@ -12,7 +12,7 @@
                 <div class="my-message-head">
                     <strong>@item.Topic</strong>
                     <time datetime="@item.CreatedAt.ToLocalTime().ToString("yyyy-MM-ddTHH:mm")">@item.CreatedAt.ToLocalTime().ToString("d MMMM yyyy, HH:mm")</time>
-                    <span class="my-message-state@(item.IsAnswered || item.IsClosed ? " is-answered" : string.Empty)">@(item.IsClosed ? "Chat ended" : item.IsAnswered ? "Answered" : "Waiting for a reply")</span>
+                    <span class="my-message-state@(item.IsAnswered || item.IsClosed ? " is-answered" : string.Empty)">@(item.IsClosed ? "Closed by support" : item.IsAnswered ? "Answered" : "Waiting for a reply")</span>
                 </div>
                 <p class="my-message-text">@item.Message</p>
                 @if (item.IsAnswered && !string.IsNullOrWhiteSpace(item.Reply))
@@ -44,22 +44,22 @@
                     @* Cavab kömək etməyibsə yenidən yazmaq və ya söhbəti bitirmək olar; söhbət yalnız müştəri bitirəndə bağlanır *@
                     <form class="order-refund" method="post" asp-controller="Profile" asp-action="MessageFollowUp" asp-route-id="@item.Id">
                         <span>Did this answer help?</span>
-                        <p>If not, write to us again. If everything is clear, end the chat.</p>
+                        <p>If not, write to us again and we will answer.</p>
                         <textarea name="text" rows="3" maxlength="2000" required placeholder="Write your message"></textarea>
                         <button type="submit" class="cart-place">Send</button>
-                        <button type="submit" class="cart-place" formaction="@Url.Action("MessageClose", "Profile", new { id = item.Id })" formnovalidate>End chat</button>
                     </form>
                 }
                 else if (item.IsClosed)
                 {
-                    <p class="order-help">You ended this chat@(item.ClosedAt is null ? string.Empty : " on " + item.ClosedAt.Value.ToLocalTime().ToString("d MMMM yyyy")). <a href="/Contact">Write a new message</a></p>
+                    <p class="order-help">Support ended this chat@(item.ClosedAt is null ? string.Empty : " on " + item.ClosedAt.Value.ToLocalTime().ToString("d MMMM yyyy")). <a href="/Contact">Write a new message</a></p>
                 }
             </article>
         }
     </div>
     <div class="cabinet-empty" hidden="@(Model.Messages.Count > 0)">
         <h2>No messages yet</h2>
-        <p>What you write to support appears here together with the answer. <a href="/Contact">Write to support</a></p>
+        <p>What you write to support appears here together with the answer.</p>
+        <a href="/Contact">Write to support</a>
     </div>
     @if (Model.Messages.Count > 0)
     {

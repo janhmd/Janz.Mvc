@@ -40,6 +40,21 @@ namespace Janz.Mvc.Areas.Admin.Controllers
             return View(message);
         }
 
+        // Söhbəti yalnız işçi (Admin/Support) bitirir; müştəri bitirə bilməz
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Close(int id)
+        {
+            var (success, errors, code) = await PostAsync($"api/admin/messages/{id}/close", new { });
+            if (code == HttpStatusCode.Unauthorized) return await SessionExpiredAsync();
+            if (code == HttpStatusCode.NotFound) return NotFound();
+
+            if (success) TempData["AdminSuccess"] = "The chat was ended.";
+            else TempData["AdminError"] = string.Join(" ", errors);
+
+            return RedirectToAction(nameof(Detail), new { id });
+        }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Reply(int id, ReplyFormVM form)
