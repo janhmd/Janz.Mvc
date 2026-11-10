@@ -2123,6 +2123,8 @@ if (journalGrid && journalGrid.querySelector(".article-card")) {
             journalGrid.insertBefore(card, journalNone);
         });
 
+        // Böyük (ilk) məqalə ayrıca blokdadır və şəbəkədə deyil, ona görə də sayılır
+        if (document.querySelector(".journal-hero[data-id]")) shown++;
         if (journalNone) journalNone.hidden = shown > 0;
         if (journalCount) journalCount.textContent = shown + (shown === 1 ? " article" : " articles");
     }
