@@ -8,7 +8,7 @@
     <div class="feed-note-head">
         <div class="feed-note-avatar">@if (!string.IsNullOrEmpty(author.AvatarPath)){<img src="@author.AvatarPath" alt="" />}else{@initial}</div>
         <div class="feed-who">
-            <div class="feed-name"><a href="/Community/Profile/@Uri.EscapeDataString(slug)">@author.Name</a></div>
+            <div class="feed-name"><a href="/Community/Profile/@Uri.EscapeDataString(slug)">@author.Name</a>@if (!string.IsNullOrEmpty(author.StaffRole)){<span class="staff-badge">@author.StaffRole</span>}</div>
             <div class="feed-role">@author.Role</div>
         </div>
         <time class="feed-date">@Model.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy")</time>

@@ -7,5 +7,6 @@ namespace Janz.Mvc.ViewModels.Community
         public string? Nickname { get; set; }
         public string? AvatarPath { get; set; }
         public string Role { get; set; } = string.Empty;
+        public string? StaffRole { get; set; }
     }
 }

@@ -16,7 +16,7 @@
                 <div class="up-person">
                     <div class="feed-avatar">@if (!string.IsNullOrEmpty(author.AvatarPath)){<img src="@author.AvatarPath" alt="" />}else{<span>@initial</span>}</div>
                     <div class="up-who">
-                        <b>@author.Name</b>
+                        <b>@author.Name</b>@if (!string.IsNullOrEmpty(author.StaffRole)){<span class="staff-badge">@author.StaffRole</span>}
                         <span>@author.Role</span>
                     </div>
                     <button type="button" class="up-share" aria-label="Share profile">

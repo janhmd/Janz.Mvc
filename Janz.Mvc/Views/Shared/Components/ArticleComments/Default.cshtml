@@ -39,7 +39,7 @@
                     <img class="article-avatar" src="@comment.AuthorAvatar" alt="" />
                 }
                 <div class="article-comment-who">
-                    <strong>@comment.AuthorName</strong>
+                    <strong>@comment.AuthorName</strong>@if (!string.IsNullOrEmpty(comment.StaffRole)){<span class="staff-badge">@comment.StaffRole</span>}
                 </div>
                 <time datetime="@comment.CreatedAt.ToString("s")">@comment.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy")</time>
                 @if (comment.IsMine || isStaff)

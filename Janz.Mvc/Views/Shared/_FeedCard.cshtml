@@ -12,6 +12,7 @@
         <div class="feed-who">
             <div class="feed-name">
                 <a href="/Community/Profile/@Uri.EscapeDataString(slug)">@author.Name</a>
+                @if (!string.IsNullOrEmpty(author.StaffRole)) {<span class="staff-badge">@author.StaffRole</span>}
                 @if (!Model.IsMine)
                 {
                     <button type="button" class="feed-follow@(Model.IsFollowing ? " is-on" : "")" aria-pressed="@(Model.IsFollowing ? "true" : "false")">@(Model.IsFollowing ? "Following" : "Follow")</button>
