@@ -1142,3 +1142,7 @@ html.theme-day .status-scheduled { color: #1f5fbf; }
 html.theme-day .chat-msg.is-customer { background: #eee; }
 html.theme-day .chat-msg.is-staff { background: #f7efe2; }
 @media (max-width: 575px) { .chat-msg { max-width: 92%; } }
+.chat-who { display: flex; align-items: center; gap: .4rem; flex-wrap: wrap; }
+.chat-ava { width: 1.4rem; height: 1.4rem; border-radius: 50%; overflow: hidden; display: inline-flex; align-items: center; justify-content: center; flex: none; background: rgba(214, 190, 150, .35); font-size: .7rem; font-weight: 700; }
+.chat-ava img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.chat-name { font-weight: 600; }

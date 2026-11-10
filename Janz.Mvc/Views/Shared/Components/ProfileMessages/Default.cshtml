@@ -22,14 +22,14 @@
                     @if (!string.IsNullOrWhiteSpace(item.Reply))
                     {
                         <div class="chat-msg is-staff">
-                            <span class="chat-who">Janz support@(item.AnsweredAt is null ? string.Empty : ", " + item.AnsweredAt.Value.ToLocalTime().ToString("d MMMM yyyy, HH:mm"))</span>
+                            <span class="chat-who">@await Html.PartialAsync("_ChatStaff", new[] { item.AnsweredByName, item.AnsweredByAvatar })@(item.AnsweredAt is null ? string.Empty : ", " + item.AnsweredAt.Value.ToLocalTime().ToString("d MMMM yyyy, HH:mm"))</span>
                             <p>@item.Reply</p>
                         </div>
                     }
                     @foreach (var entry in item.Entries)
                     {
                         <div class="chat-msg @(entry.IsStaff ? "is-staff" : "is-customer")">
-                            <span class="chat-who">@(entry.IsStaff ? "Janz support" : "You"), @entry.CreatedAt.ToLocalTime().ToString("d MMMM yyyy, HH:mm")</span>
+                            <span class="chat-who">@if (entry.IsStaff){@await Html.PartialAsync("_ChatStaff", new[] { entry.StaffName, entry.StaffAvatar })}else{<text>You</text>}, @entry.CreatedAt.ToLocalTime().ToString("d MMMM yyyy, HH:mm")</span>
                             <p>@entry.Text</p>
                         </div>
                     }

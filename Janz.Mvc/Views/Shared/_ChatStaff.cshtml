@@ -1,0 +1,7 @@
+@model string?[]
+@* Chat-də support işçisi: profil şəkli (yoxdursa ilk hərf) və ad; köhnə cavablarda ad yazılmayıb *@
+@{
+    var name = string.IsNullOrWhiteSpace(Model[0]) ? "Janz support" : Model[0]!;
+    var avatar = Model[1];
+}
+<span class="chat-ava" aria-hidden="true">@if (!string.IsNullOrEmpty(avatar)){<img src="@avatar" alt="" />}else{@name.Substring(0, 1).ToUpperInvariant()}</span><span class="chat-name">@name</span>
