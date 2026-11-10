@@ -2,7 +2,6 @@ using Janz.Mvc.ViewModels.Community;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
-using System.Security.Claims;
 
 namespace Janz.Mvc.Controllers
 {

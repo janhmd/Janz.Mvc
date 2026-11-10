@@ -1,5 +1,4 @@
 using Janz.Mvc.Helpers;
-using Janz.Mvc.ViewModels.Journal;
 using Janz.Mvc.ViewModels.Pages;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;

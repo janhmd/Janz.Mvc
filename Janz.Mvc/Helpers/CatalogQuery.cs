@@ -1,5 +1,3 @@
-using Microsoft.AspNetCore.Http;
-
 namespace Janz.Mvc.Helpers
 {
     // Kataloq filtrləri linkdə saxlanılır (?acidity=low&sort=price-asc): forma seçilmiş vəziyyəti buradan bərpa edir

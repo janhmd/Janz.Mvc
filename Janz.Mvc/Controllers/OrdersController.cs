@@ -1,5 +1,4 @@
 using Janz.Mvc.ViewModels.Orders;
-using Janz.Mvc.ViewModels.Reviews;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
