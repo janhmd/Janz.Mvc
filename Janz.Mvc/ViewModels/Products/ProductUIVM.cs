@@ -26,6 +26,8 @@ namespace Janz.Mvc.ViewModels.Products
         public int? Density { get; set; }
         public int? Acidity { get; set; }
         public string? TasteGroup { get; set; }
+        public DateTime CreatedAt { get; set; }
+        public int SoldCount { get; set; }
         public decimal? Rating { get; set; }
         public int ReviewCount { get; set; }
         public List<ProductVariantUIVM> Variants { get; set; } = new List<ProductVariantUIVM>();

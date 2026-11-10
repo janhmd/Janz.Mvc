@@ -6,6 +6,10 @@ namespace Janz.Mvc.ViewModels.Products
         public List<ProductUIVM> Coffee { get; set; } = new List<ProductUIVM>();
         public List<ProductUIVM> Sets { get; set; } = new List<ProductUIVM>();
 
+        // "New": hər kateqoriyadan ən son əlavə olunan məhsullar; "Popular": ən çox satılanlar
+        public List<ProductUIVM> Newest { get; set; } = new List<ProductUIVM>();
+        public List<ProductUIVM> Popular { get; set; } = new List<ProductUIVM>();
+
         // Jurnalın ən son əlavə olunan məqalələri (ana səhifə slayderi)
         public List<Janz.Mvc.ViewModels.Journal.ArticleCardUIVM> LatestArticles { get; set; } = new List<Janz.Mvc.ViewModels.Journal.ArticleCardUIVM>();
 

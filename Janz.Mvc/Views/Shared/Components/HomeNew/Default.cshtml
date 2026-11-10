@@ -1,18 +1,14 @@
 @model HomeIndexVM
-@{
-    // "Coffee of the week" nişanlı məhsullar; hələ yoxdursa ilk iki qəhvə
-    var week = Model.Coffee.Where(m => m.Badge == Janz.Mvc.Helpers.ProductBadges.CoffeeOfTheWeek).Take(2).ToList();
-    if (week.Count == 0) week = Model.Coffee.Take(2).ToList();
-    var fresh = Model.Coffee.Skip(2).Take(4).ToList();
-    var popular = Model.Coffee.Skip(6).ToList();
-}
 
-<section id="new">
-    <h2><a class="section-link" href="/Products">New</a></h2>
-    <div class="card-grid">
-        @foreach (var product in fresh)
-        {
-            <partial name="_ProductCard" model="product" />
-        }
-    </div>
-</section>
+@if (Model.Newest.Count > 0)
+{
+    <section id="new">
+        <h2><a class="section-link" href="/Products">New</a></h2>
+        <div class="card-grid">
+            @foreach (var product in Model.Newest)
+            {
+                <partial name="_ProductCard" model="product" />
+            }
+        </div>
+    </section>
+}
