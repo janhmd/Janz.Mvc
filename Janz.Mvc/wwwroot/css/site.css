@@ -9056,3 +9056,39 @@ html.theme-day .contact-form-send { background: #111; color: #fff; }
 .my-message-reply { margin-top: .9rem; padding: .8rem 1rem; border-left: 3px solid var(--gold); background: rgba(255, 255, 255, .04); border-radius: 0 10px 10px 0; }
 .my-message-reply span { font-size: .8rem; color: #8a8a8a; }
 .my-message-reply p { margin: .3rem 0 0; white-space: pre-line; overflow-wrap: anywhere; }
+
+/* Pulun geri qaytarılması: sifariş səhifəsində sorğu formu və vəziyyət */
+.order-refund {
+    margin: 1.4rem 0 0;
+    padding: 1rem 1.2rem;
+    border-radius: 18px;
+    background: #141414;
+}
+
+.order-refund span {
+    display: block;
+    margin-bottom: .3rem;
+    color: #8a8a8a;
+    font-size: .85rem;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+}
+
+.order-refund p { margin: .25rem 0 .8rem; color: #cfcfcf; }
+
+.order-refund textarea {
+    display: block;
+    width: 100%;
+    margin: 0 0 .8rem;
+    padding: .8rem 1rem;
+    border: 1px solid #2c2c2c;
+    border-radius: 14px;
+    background: #0b0b0b;
+    color: inherit;
+    font: inherit;
+    resize: vertical;
+}
+
+html.theme-day .order-refund { background: #fff; box-shadow: 0 8px 24px rgba(0, 0, 0, .06); }
+html.theme-day .order-refund p { color: #555; }
+html.theme-day .order-refund textarea { background: #f6f6f6; border-color: #ddd; }

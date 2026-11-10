@@ -1,0 +1,41 @@
+@model Janz.Mvc.ViewModels.Orders.OrderUIVM
+@{
+    var refund = Model.Refund;
+}
+
+@if (TempData["RefundError"] is string refundError)
+{
+    <p class="entry-error">@refundError</p>
+}
+
+@if (refund is not null)
+{
+    <div class="order-refund">
+        <span>Refund</span>
+        @switch (refund.Status)
+        {
+            case "Pending":
+                <strong>Request sent on @refund.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy")</strong>
+                <p>We are looking at your request. If it is accepted, ₼@refund.Amount.ToString("0.00") returns to your balance.</p>
+                break;
+            case "Approved":
+                <strong>₼@refund.Amount.ToString("0.00") was returned to your balance</strong>
+                <p>@(string.IsNullOrWhiteSpace(refund.StaffNote) ? "You can see it in your account under Balance." : refund.StaffNote)</p>
+                break;
+            default:
+                <strong>The request was rejected</strong>
+                <p>@refund.StaffNote</p>
+                break;
+        }
+    </div>
+}
+
+@if (Model.CanRequestRefund)
+{
+    <form class="order-refund" method="post" asp-controller="Orders" asp-action="Refund" asp-route-id="@Model.Id">
+        <span>Not happy with this order?</span>
+        <p>Tell us what went wrong. If we accept, ₼@Model.Total.ToString("0.00") returns to your balance on the site.</p>
+        <textarea name="reason" rows="3" maxlength="500" required placeholder="What went wrong?"></textarea>
+        <button type="submit" class="cart-place">Request a refund</button>
+    </form>
+}

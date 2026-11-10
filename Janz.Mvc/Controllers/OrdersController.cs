@@ -1,4 +1,5 @@
 using Janz.Mvc.ViewModels.Orders;
+using Janz.Mvc.ViewModels.Refunds;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
@@ -75,6 +76,21 @@ namespace Janz.Mvc.Controllers
             }
 
             return View(order);
+        }
+
+        // Çatdırılmış sifariş üçün pulu geri istəmək: Admin və ya Support qəbul edəndə məbləğ balansa qayıdır
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Refund(int id, string? reason)
+        {
+            var (refund, errors, status) = await PostAsync<RefundUIVM>($"api/orders/{id}/refund", new { reason });
+            if (status == HttpStatusCode.Unauthorized) return await SessionExpiredAsync();
+            if (status == HttpStatusCode.NotFound) return NotFound();
+
+            if (refund is null) TempData["RefundError"] = string.Join(" ", errors);
+            else TempData["Toast"] = "Your refund request was sent. We will answer soon.";
+
+            return RedirectToAction(nameof(Detail), new { id });
         }
 
         [HttpPost]

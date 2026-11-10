@@ -1,3 +1,5 @@
+using Janz.Mvc.ViewModels.Refunds;
+
 namespace Janz.Mvc.ViewModels.Orders
 {
     // Admin panel: sifariş, müştəri və keçə biləcəyi statuslar (api/admin/orders)
@@ -18,6 +20,8 @@ namespace Janz.Mvc.ViewModels.Orders
         public string DeliveryCity { get; set; } = string.Empty;
         public string DeliveryPostalCode { get; set; } = string.Empty;
         public List<AdminOrderItemVM> Items { get; set; } = new List<AdminOrderItemVM>();
+
+        public RefundUIVM? Refund { get; set; }
 
         public string UserId { get; set; } = string.Empty;
         public string CustomerName { get; set; } = string.Empty;

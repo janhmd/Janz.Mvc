@@ -1,0 +1,47 @@
+@model AdminOrderVM
+@{
+    var refund = Model.Refund;
+}
+
+@if (refund is not null)
+{
+    <div class="admin-card">
+        <h2>Refund request <span class="admin-status @(refund.Status == "Approved" ? "status-delivered" : refund.Status == "Rejected" ? "status-cancelled" : "status-pending")">@refund.Status</span></h2>
+        <dl class="admin-facts">
+            <dt>Sent</dt><dd>@refund.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</dd>
+            <dt>Reason</dt><dd>@refund.Reason</dd>
+            @if (refund.Status == "Approved")
+            {
+                <dt>Returned to balance</dt><dd>₼@refund.Amount.ToString("0.00")</dd>
+            }
+            @if (!string.IsNullOrWhiteSpace(refund.StaffNote))
+            {
+                <dt>Note</dt><dd>@refund.StaffNote</dd>
+            }
+        </dl>
+
+        @if (refund.Status == "Pending")
+        {
+            <form class="admin-form" method="post" asp-controller="Refunds" asp-action="Approve" asp-route-id="@refund.Id" asp-route-returnOrder="@Model.Id">
+                <label class="admin-field">
+                    <span>Amount to return (₼)</span>
+                    <input type="number" name="amount" min="0.01" max="@Model.Total.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture)" step="0.01" value="@Model.Total.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture)" />
+                    <small>It goes to the customer's balance. It can't be more than the order total.</small>
+                </label>
+                <div class="admin-form-actions">
+                    <button type="submit" class="admin-btn">Accept and return to balance</button>
+                </div>
+            </form>
+            <form class="admin-form" method="post" asp-controller="Refunds" asp-action="Reject" asp-route-id="@refund.Id" asp-route-returnOrder="@Model.Id">
+                <label class="admin-field admin-field-wide">
+                    <span>Reason for rejecting</span>
+                    <input type="text" name="note" maxlength="500" required />
+                    <small>The customer sees this text.</small>
+                </label>
+                <div class="admin-form-actions">
+                    <button type="submit" class="admin-btn is-ghost">Reject</button>
+                </div>
+            </form>
+        }
+    </div>
+}

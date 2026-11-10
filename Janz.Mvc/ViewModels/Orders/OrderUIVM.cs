@@ -1,3 +1,5 @@
+using Janz.Mvc.ViewModels.Refunds;
+
 namespace Janz.Mvc.ViewModels.Orders
 {
     public class OrderUIVM
@@ -17,6 +19,9 @@ namespace Janz.Mvc.ViewModels.Orders
         public string DeliveryLine { get; set; } = string.Empty;
         public string DeliveryCity { get; set; } = string.Empty;
         public string DeliveryPostalCode { get; set; } = string.Empty;
+        // Pulun geri qaytarılması: ən son sorğu (yoxdursa null) və yeni sorğu göndərmək olarmı
+        public RefundUIVM? Refund { get; set; }
+        public bool CanRequestRefund { get; set; }
         public List<OrderItemUIVM> Items { get; set; } = new List<OrderItemUIVM>();
     }
 }

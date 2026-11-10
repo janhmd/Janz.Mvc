@@ -1,0 +1,68 @@
+@using Janz.Mvc.ViewModels.Refunds
+@model List<AdminRefundVM>
+@{
+    ViewData["Title"] = "Refunds";
+    var status = ViewBag.Status as string;
+}
+
+<div class="admin-head">
+    <div>
+        <p class="admin-eyebrow">Shop</p>
+        <h1>Refunds <span>@Model.Count</span></h1>
+    </div>
+</div>
+
+@if (ViewBag.Error is string error)
+{
+    <div class="admin-flash admin-flash-error" role="alert">@error</div>
+}
+
+<nav aria-label="Filter refunds">
+    <div class="admin-filter">
+        <a class="@(status is null ? "is-on" : null)" asp-action="Index">All</a>
+        @foreach (var item in AdminRefundVM.Statuses)
+        {
+            <a class="@(status == item ? "is-on" : null)" asp-action="Index" asp-route-status="@item">@item</a>
+        }
+    </div>
+</nav>
+
+<div class="admin-card admin-card-flush">
+    @if (Model.Count == 0)
+    {
+        <p class="admin-empty admin-card-pad">No refund requests here.</p>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>Order</th>
+                        <th>Customer</th>
+                        <th>Reason</th>
+                        <th>Amount</th>
+                        <th>Sent</th>
+                        <th>Status</th>
+                        <th class="actions">Operations</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td><a asp-controller="Orders" asp-action="Detail" asp-route-id="@item.OrderId"><strong>#@item.OrderId</strong></a></td>
+                            <td>@item.CustomerName<br /><small>@item.CustomerEmail</small></td>
+                            <td>@(item.Reason.Length > 80 ? item.Reason[..77] + "..." : item.Reason)</td>
+                            <td>₼@item.Amount.ToString("0.00")</td>
+                            <td>@item.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</td>
+                            <td><span class="admin-status @(item.Status == "Approved" ? "status-delivered" : item.Status == "Rejected" ? "status-cancelled" : "status-pending")">@item.Status</span></td>
+                            <td class="actions"><a class="admin-btn-sm" asp-controller="Orders" asp-action="Detail" asp-route-id="@item.OrderId">@(item.Status == "Pending" ? "Review" : "View")</a></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>
+<p class="admin-note">The customer asks for a refund on the order page after delivery. When you accept, the money goes to the customer's balance on the site. When you reject, the customer sees your reason.</p>
