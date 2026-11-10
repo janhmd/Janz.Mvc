@@ -6,8 +6,7 @@
 <main>        <section id="bundles">
             <h1>Sets with coffee</h1>
             <div class="gear-row">
-                <a class="catalog-tile@(CatalogQuery.Has(Context.Request, "tag", CatalogQuery.Slug("Sample boxes")) ? " is-on" : null)" href="?tag=@CatalogQuery.Slug("Sample boxes")"><img src="/images/tiles/set-samples.jpg" alt="" /><video muted loop playsinline preload="metadata" src="/videos/set-samples.mp4"></video><span>Sample boxes</span></a>
-                <a class="catalog-tile@(CatalogQuery.Has(Context.Request, "tag", CatalogQuery.Slug("Gift sets")) ? " is-on" : null)" href="?tag=@CatalogQuery.Slug("Gift sets")"><img src="/images/tiles/set-gifts.jpg" alt="" /><video muted loop playsinline preload="metadata" src="/videos/set-gifts.mp4"></video><span>Gift sets</span></a>
+                <partial name="_CatalogTiles" model='"sets"' />
             </div>
             <form class="listing-form" method="get" data-auto-submit>
             @if (Context.Request.Query["tag"].FirstOrDefault() is string tag && tag != "")

@@ -1,0 +1,15 @@
+@model SiteTileFormVM
+@{
+    ViewData["Title"] = "New tile";
+}
+
+<div class="admin-head">
+    <div>
+        <p class="admin-eyebrow"><a asp-action="Index">Tiles</a> / New</p>
+        <h1>New tile</h1>
+    </div>
+</div>
+
+<form class="admin-form" method="post" enctype="multipart/form-data" asp-action="Create">
+    <partial name="_Form" model="Model" />
+</form>

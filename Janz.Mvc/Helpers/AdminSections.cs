@@ -33,6 +33,7 @@ namespace Janz.Mvc.Helpers
 
             new() { Group = "Content", Title = "Journal", Icon = "bi-journal-text", Controller = "Articles", Roles = Journal },
             new() { Group = "Content", Title = "Community", Icon = "bi-chat-square-text", Controller = "Community", Roles = Shop },
+            new() { Group = "Content", Title = "Tiles", Icon = "bi-grid-3x2-gap", Controller = "Tiles", Roles = Shop },
             new() { Group = "Content", Title = "Pages", Icon = "bi-file-earmark-text", Controller = "Pages", Roles = Shop },
 
             new() { Group = "Customers", Title = "Users", Icon = "bi-people", Controller = "Users", Roles = Orders },

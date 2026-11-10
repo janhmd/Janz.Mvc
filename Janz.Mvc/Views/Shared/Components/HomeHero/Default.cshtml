@@ -1,5 +1,8 @@
 @model HomeIndexVM
+@inject SiteContent SiteContent
 @{
+    // Üstdəki 3 kart admin paneldəki Tiles bölməsindən gəlir (yer yalnız üçə çatır); kataloqa aparan kartda qəhvələrin sayı göstərilir
+    var homeTiles = (await SiteContent.TilesAsync("home")).Take(3).ToList();
     // "Coffee of the week" nişanlı məhsullar; hələ yoxdursa ilk iki qəhvə
     var week = Model.Coffee.Where(m => m.Badge == Janz.Mvc.Helpers.ProductBadges.CoffeeOfTheWeek).Take(2).ToList();
     if (week.Count == 0) week = Model.Coffee.Take(2).ToList();
@@ -10,19 +13,17 @@
 <section id="hero">
     <h1>Every day we roast coffee and<br>deliver for free all over Azerbaijan</h1>
     <div class="hero-row">
-        <a class="shot" href="/Products">
-            <img src="/images/tiles/espresso.jpg" alt="" /><video muted loop playsinline preload="metadata" src="/videos/espresso.mp4"></video>
-            <span>Coffee</span>
-            <small>@Model.Coffee.Count</small>
-        </a>
-        <a class="shot" href="/Products/Chocolate">
-            <img src="/images/tiles/choc-syrup.jpg" alt="" /><video muted loop playsinline preload="metadata" src="/videos/choc-syrup.mp4"></video>
-            <span>Syrups</span>
-        </a>
-        <a class="shot" href="/Products/Tea">
-            <img src="/images/tiles/tea.jpg" alt="" /><video muted loop playsinline preload="metadata" src="/videos/tea.mp4"></video>
-            <span>Tea</span>
-        </a>
+        @foreach (var tile in homeTiles)
+        {
+            <a class="shot" href="@tile.Link">
+                <img src="@tile.ImagePath" alt="" />@if (!string.IsNullOrEmpty(tile.VideoPath)){<video muted loop playsinline preload="metadata" src="@tile.VideoPath"></video>}
+                <span>@tile.Title</span>
+                @if (tile.Link == "/Products")
+                {
+                    <small>@Model.Coffee.Count</small>
+                }
+            </a>
+        }
         <aside>
             @if (User.Identity?.IsAuthenticated != true)
             {

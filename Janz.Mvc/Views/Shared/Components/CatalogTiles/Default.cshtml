@@ -3,32 +3,5 @@
 }
 
 <div class="catalog-row">
-    <a class="catalog-tile" href="?use=espresso">
-        <img src="/images/tiles/espresso.jpg" alt="" /><video muted loop playsinline preload="metadata" src="/videos/espresso.mp4"></video>
-        <span>Coffee for espresso</span>
-    </a>
-    <a class="catalog-tile" href="?use=filter">
-        <img src="/images/tiles/filter.jpg" alt="" /><video muted loop playsinline preload="metadata" src="/videos/filter.mp4"></video>
-        <span>Coffee for filter</span>
-    </a>
-    <a class="catalog-tile" href="?format=capsules">
-        <img src="/images/tiles/capsules.jpg" alt="" /><video muted loop playsinline preload="metadata" src="/videos/capsules.mp4"></video>
-        <span>Capsules</span>
-    </a>
-    <a class="catalog-tile" href="?format=drip">
-        <img src="/images/tiles/drip.jpg" alt="" /><video muted loop playsinline preload="metadata" src="/videos/drip.mp4"></video>
-        <span>Drip bags</span>
-    </a>
-    <a class="catalog-tile" href="?format=cans">
-        <img src="/images/tiles/cans.jpg" alt="" /><video muted loop playsinline preload="metadata" src="/videos/cans.mp4"></video>
-        <span>Drinks in cans</span>
-    </a>
-    <a class="catalog-tile" href="?format=concentrate">
-        <img src="/images/tiles/concentrate.jpg" alt="" /><video muted loop playsinline preload="metadata" src="/videos/concentrate.mp4"></video>
-        <span>Coffee concentrate</span>
-    </a>
-    <a class="catalog-tile" href="?format=instant">
-        <img src="/images/tiles/instant.jpg" alt="" /><video muted loop playsinline preload="metadata" src="/videos/instant.mp4"></video>
-        <span>Instant specialty</span>
-    </a>
+    <partial name="_CatalogTiles" model='"coffee"' />
 </div>

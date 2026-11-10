@@ -1,0 +1,15 @@
+@model SiteTileFormVM
+@{
+    ViewData["Title"] = "Edit tile";
+}
+
+<div class="admin-head">
+    <div>
+        <p class="admin-eyebrow"><a asp-action="Index">Tiles</a> / @Model.Title</p>
+        <h1>Edit tile</h1>
+    </div>
+</div>
+
+<form class="admin-form" method="post" enctype="multipart/form-data" asp-action="Edit" asp-route-id="@Model.Id">
+    <partial name="_Form" model="Model" />
+</form>

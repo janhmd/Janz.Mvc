@@ -1,0 +1,16 @@
+@model string
+@inject SiteContent SiteContent
+@{
+    // Bir səhifənin kartları admin paneldəki Tiles bölməsindən gəlir. "?tag=oolong" kimi keçid filtrdir: səhifə həmin filtrlə açıqdırsa kart seçilmiş görünür
+    var tiles = await SiteContent.TilesAsync(Model);
+}
+@foreach (var tile in tiles)
+{
+    var on = false;
+    if (tile.Link.StartsWith('?'))
+    {
+        var pair = tile.Link.TrimStart('?').Split('=', 2);
+        on = pair.Length == 2 && CatalogQuery.Has(Context.Request, pair[0], pair[1]);
+    }
+    <a class="catalog-tile@(on ? " is-on" : null)" href="@tile.Link"><img src="@tile.ImagePath" alt="" />@if (!string.IsNullOrEmpty(tile.VideoPath)){<video muted loop playsinline preload="metadata" src="@tile.VideoPath"></video>}<span>@tile.Title</span></a>
+}

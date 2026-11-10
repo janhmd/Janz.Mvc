@@ -1,0 +1,73 @@
+@model List<SiteTileVM>
+@{
+    ViewData["Title"] = "Tiles";
+}
+
+<div class="admin-head">
+    <div>
+        <p class="admin-eyebrow">Content</p>
+        <h1>Tiles <span>@Model.Count</span></h1>
+    </div>
+    <a class="admin-btn" asp-action="Create"><i class="bi bi-plus"></i> New tile</a>
+</div>
+
+@if (ViewBag.Error is string error)
+{
+    <div class="admin-flash admin-flash-error" role="alert">@error</div>
+}
+
+@foreach (var place in SiteTileFormVM.Placements)
+{
+    var tiles = Model.Where(m => m.Placement == place.Key).ToList();
+    <h2 class="admin-subhead">@place.Label <span>@tiles.Count</span></h2>
+    <div class="admin-card admin-card-flush">
+        @if (tiles.Count == 0)
+        {
+            <p class="admin-empty admin-card-pad">No tiles here. <a asp-action="Create" asp-route-placement="@place.Key">Add one</a>.</p>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Tile</th>
+                            <th>Link</th>
+                            <th class="num">Order</th>
+                            <th>Status</th>
+                            <th class="actions">Operations</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var tile in tiles)
+                        {
+                            <tr>
+                                <td>
+                                    <span class="admin-product">
+                                        <img src="@tile.ImagePath" alt="" />
+                                        <span>
+                                            <strong>@tile.Title</strong>
+                                            <small class="admin-usage-text">@(string.IsNullOrEmpty(tile.VideoPath) ? "Image only" : "Image and hover video")</small>
+                                        </span>
+                                    </span>
+                                </td>
+                                <td><code>@tile.Link</code></td>
+                                <td class="num">@tile.SortOrder</td>
+                                <td><span class="admin-status @(tile.IsVisible ? "status-active" : "status-disabled")">@(tile.IsVisible ? "Shown" : "Hidden")</span></td>
+                                <td class="actions">
+                                    <span class="admin-actions">
+                                        <a class="admin-btn-sm" asp-action="Edit" asp-route-id="@tile.Id">Edit</a>
+                                        <form method="post" asp-action="Delete" asp-route-id="@tile.Id" data-confirm="Delete this tile? The products stay, only the tile disappears from the page.">
+                                            <button type="submit" class="admin-btn-sm is-danger">Delete</button>
+                                        </form>
+                                    </span>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+}
+<p class="admin-note">Tiles are the picture cards at the top of the pages. A tile can open another page (for example /Products/Tea) or filter the page it is on (for example ?tag=oolong). Tiles of the same page are shown by Order, smallest first. The Home page has room for three tiles.</p>

@@ -1,0 +1,60 @@
+@model SiteTileFormVM
+
+<div asp-validation-summary="All" class="admin-errors" role="alert"></div>
+<div class="admin-grid">
+    <div class="admin-card">
+        <div class="admin-form-grid">
+            <label class="admin-field admin-field-wide">
+                <span>Page</span>
+                <select asp-for="Placement">
+                    @foreach (var place in SiteTileFormVM.Placements)
+                    {
+                        <option value="@place.Key" selected="@(Model.Placement == place.Key)">@place.Label</option>
+                    }
+                </select>
+            </label>
+            <label class="admin-field">
+                <span>Title</span>
+                <input asp-for="Title" required maxlength="40" />
+            </label>
+            <label class="admin-field">
+                <span>Order</span>
+                <input asp-for="SortOrder" type="number" min="0" max="999" />
+            </label>
+            <label class="admin-field admin-field-wide">
+                <span>Link</span>
+                <input asp-for="Link" required maxlength="150" placeholder="/Products/Tea or ?tag=oolong" />
+                <small>Use /Products, /Products/Tea, /Products/Chocolate or /Products/Sets to open a page, or ?tag=tag-slug (the slug is shown in Tags) to filter the page the tile is on.</small>
+            </label>
+        </div>
+        <div class="admin-checks">
+            <label class="admin-check"><input asp-for="IsVisible" type="checkbox" /><span>Show on the site</span></label>
+        </div>
+    </div>
+    <div class="admin-stack">
+        <div class="admin-card">
+            <h2>Image</h2>
+            @if (!string.IsNullOrEmpty(Model.CurrentImage))
+            {
+                <div class="admin-thumbs"><img src="@Model.CurrentImage" alt="" /></div>
+            }
+            <div class="admin-thumbs" data-preview="main"></div>
+            <label class="admin-drop">
+                <input type="file" name="Image" accept="@AdminRules.ImageAccept" data-preview-input="main" />
+                <i class="bi bi-image" aria-hidden="true"></i>
+                <span>@(Model.Id == 0 ? "Choose the image" : "Choose a new image")</span>
+                <small>PNG, JPG or WEBP, up to 2 MB. A wide picture works best.</small>
+            </label>
+            @if (Model.HasVideo)
+            {
+                <p class="admin-note admin-note-top">This tile also has a short video that plays on hover. A new image removes that video.</p>
+            }
+        </div>
+        <div class="admin-card">
+            <div class="admin-form-actions">
+                <button type="submit" class="admin-btn">Save</button>
+                <a class="admin-btn is-ghost" asp-action="Index">Cancel</a>
+            </div>
+        </div>
+    </div>
+</div>

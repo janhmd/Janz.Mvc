@@ -6,11 +6,7 @@
 <main>        <section id="tea">
             <h1>Tea</h1>
             <div class="gear-row">
-                <a class="catalog-tile@(CatalogQuery.Has(Context.Request, "tag", CatalogQuery.Slug("Green tea")) ? " is-on" : null)" href="?tag=@CatalogQuery.Slug("Green tea")"><img src="/images/tiles/tea-green.jpg" alt="" /><video muted loop playsinline preload="metadata" src="/videos/tea-green.mp4"></video><span>Green tea</span></a>
-                <a class="catalog-tile@(CatalogQuery.Has(Context.Request, "tag", CatalogQuery.Slug("Black tea")) ? " is-on" : null)" href="?tag=@CatalogQuery.Slug("Black tea")"><img src="/images/tiles/tea-black.jpg" alt="" /><video muted loop playsinline preload="metadata" src="/videos/tea-black.mp4"></video><span>Black tea</span></a>
-                <a class="catalog-tile@(CatalogQuery.Has(Context.Request, "tag", CatalogQuery.Slug("Oolong")) ? " is-on" : null)" href="?tag=@CatalogQuery.Slug("Oolong")"><img src="/images/tiles/tea-oolong.jpg" alt="" /><video muted loop playsinline preload="metadata" src="/videos/tea-oolong.mp4"></video><span>Oolong</span></a>
-                <a class="catalog-tile@(CatalogQuery.Has(Context.Request, "tag", CatalogQuery.Slug("White tea")) ? " is-on" : null)" href="?tag=@CatalogQuery.Slug("White tea")"><img src="/images/tiles/tea-white.jpg" alt="" /><video muted loop playsinline preload="metadata" src="/videos/tea-white.mp4"></video><span>White tea</span></a>
-                <a class="catalog-tile@(CatalogQuery.Has(Context.Request, "tag", CatalogQuery.Slug("Pu-erh")) ? " is-on" : null)" href="?tag=@CatalogQuery.Slug("Pu-erh")"><img src="/images/tiles/tea-puerh.jpg" alt="" /><video muted loop playsinline preload="metadata" src="/videos/tea-puerh.mp4"></video><span>Pu-erh</span></a>
+                <partial name="_CatalogTiles" model='"tea"' />
             </div>
             <form class="listing-form" method="get" data-auto-submit>
             @if (Context.Request.Query["tag"].FirstOrDefault() is string tag && tag != "")

@@ -1,5 +1,6 @@
 using Janz.Mvc.ViewModels.Pages;
 using Janz.Mvc.ViewModels.Settings;
+using Janz.Mvc.ViewModels.Tiles;
 using Microsoft.Extensions.Caching.Memory;
 
 namespace Janz.Mvc.Helpers
@@ -10,6 +11,8 @@ namespace Janz.Mvc.Helpers
     {
         private const string PagesKey = "site-pages";
         private const string SettingKey = "site-setting";
+        private const string TilesKeyPrefix = "site-tiles-";
+        private static readonly string[] TilePlacements = { "home", "coffee", "tea", "chocolate", "sets" };
 
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly IMemoryCache _cache;
@@ -60,10 +63,36 @@ namespace Janz.Mvc.Helpers
             return setting;
         }
 
+        // Home və kataloq səhifələrindəki kartlar (api/tiles?placement=...). API işləmirsə boş siyahı qayıdır, səhifə kartsız açılır
+        public async Task<List<SiteTileUIVM>> TilesAsync(string placement)
+        {
+            var key = TilesKeyPrefix + placement;
+            if (_cache.TryGetValue(key, out List<SiteTileUIVM>? tiles) && tiles is not null) return tiles;
+
+            try
+            {
+                tiles = await _httpClientFactory.CreateClient("JanzApi").GetFromJsonAsync<List<SiteTileUIVM>>($"api/tiles?placement={Uri.EscapeDataString(placement)}");
+            }
+            catch (HttpRequestException)
+            {
+            }
+            catch (System.Text.Json.JsonException)
+            {
+            }
+
+            if (tiles is null) return new List<SiteTileUIVM>();
+            _cache.Set(key, tiles, TimeSpan.FromMinutes(5));
+            return tiles;
+        }
+
         public void Reset()
         {
             _cache.Remove(PagesKey);
             _cache.Remove(SettingKey);
+            foreach (var placement in TilePlacements)
+            {
+                _cache.Remove(TilesKeyPrefix + placement);
+            }
         }
     }
 }
