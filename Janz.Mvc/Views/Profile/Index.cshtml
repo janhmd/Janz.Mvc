@@ -48,6 +48,7 @@
                         <a href="#statistics" class="cabinet-tab" data-pane="statistics">Statistics</a>
                         <a href="#orders" class="cabinet-tab is-on" data-pane="orders">Orders</a>
                         <a href="#notifications" class="cabinet-tab" data-pane="notifications">Notifications</a>
+                        <a href="#messages" class="cabinet-tab" data-pane="messages">My messages</a>
                         <a href="#community" class="cabinet-tab" data-pane="community">Community profile</a>
                         <a href="#details" class="cabinet-tab" data-pane="details">My details</a>
                         <a href="#ledger" class="cabinet-tab" data-pane="ledger">Internal account</a>
@@ -59,6 +60,7 @@
                     <!-- Orders from the API: newest first, each opens the order page -->
                     @await Component.InvokeAsync("ProfileOrders", Model)
                     @await Component.InvokeAsync("ProfileNotifications", Model)
+                    @await Component.InvokeAsync("ProfileMessages", Model)
                     @await Component.InvokeAsync("ProfileCommunity", Model)
                     @await Component.InvokeAsync("ProfileDetails", Model)
                     @await Component.InvokeAsync("ProfileLedger", Model)

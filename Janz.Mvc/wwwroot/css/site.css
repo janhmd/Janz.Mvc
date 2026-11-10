@@ -9044,3 +9044,15 @@ html.theme-day .contact-form-send { background: #111; color: #fff; }
 
 .product-posts { margin-top: 2.2rem; }
 .product-posts > h2 { margin: 0 0 1rem; font-size: 1.1rem; text-transform: uppercase; letter-spacing: .04em; }
+
+/* Kabinet: My messages */
+.my-messages { display: grid; gap: 1rem; }
+.my-message { border: 1px solid var(--line, #2b2b2b); border-radius: 14px; padding: 1.1rem 1.3rem; }
+.my-message-head { display: flex; flex-wrap: wrap; align-items: center; gap: .4rem 1rem; }
+.my-message-head time { color: #8a8a8a; font-size: .85rem; }
+.my-message-state { margin-left: auto; font-size: .8rem; color: #8a8a8a; }
+.my-message-state.is-answered { color: var(--gold); }
+.my-message-text { margin: .7rem 0 0; white-space: pre-line; overflow-wrap: anywhere; }
+.my-message-reply { margin-top: .9rem; padding: .8rem 1rem; border-left: 3px solid var(--gold); background: rgba(255, 255, 255, .04); border-radius: 0 10px 10px 0; }
+.my-message-reply span { font-size: .8rem; color: #8a8a8a; }
+.my-message-reply p { margin: .3rem 0 0; white-space: pre-line; overflow-wrap: anywhere; }

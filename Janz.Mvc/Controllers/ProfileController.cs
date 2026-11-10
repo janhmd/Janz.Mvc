@@ -40,6 +40,7 @@ namespace Janz.Mvc.Controllers
             var (community, _) = await GetAsync<Janz.Mvc.ViewModels.Community.CommunityProfileUIVM>($"api/community/profiles/{Uri.EscapeDataString(userId)}");
             var (blocked, _) = await GetAsync<List<Janz.Mvc.ViewModels.Community.CommunityPersonUIVM>>("api/community/blocked");
             var (products, _) = await GetAsync<List<ProductUIVM>>("api/products");
+            var (messages, _) = await GetAsync<List<Janz.Mvc.ViewModels.Contact.MyMessageUIVM>>("api/contact/mine");
 
             // Biri alınmasa səhifə yenə də açılır, yuxarıda xəbərdarlıq görünür
             if (addresses is null || orders is null)
@@ -59,6 +60,7 @@ namespace Janz.Mvc.Controllers
                 Notifications = notifications ?? new Janz.Mvc.ViewModels.Notifications.NotificationListUIVM(),
                 Community = community ?? new Janz.Mvc.ViewModels.Community.CommunityProfileUIVM(),
                 Blocked = blocked ?? new List<Janz.Mvc.ViewModels.Community.CommunityPersonUIVM>(),
+                Messages = messages ?? new List<Janz.Mvc.ViewModels.Contact.MyMessageUIVM>(),
                 Products = (products ?? new List<ProductUIVM>()).OrderBy(m => m.Name).ToList()
             });
         }

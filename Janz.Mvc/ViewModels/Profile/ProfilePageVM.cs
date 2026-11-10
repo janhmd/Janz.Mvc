@@ -17,6 +17,8 @@ namespace Janz.Mvc.ViewModels.Profile
         // Kabinetdə "Community profile" və "Blacklist"
         public Janz.Mvc.ViewModels.Community.CommunityProfileUIVM Community { get; set; } = new Janz.Mvc.ViewModels.Community.CommunityProfileUIVM();
         public List<Janz.Mvc.ViewModels.Community.CommunityPersonUIVM> Blocked { get; set; } = new List<Janz.Mvc.ViewModels.Community.CommunityPersonUIVM>();
+        // Kabinetdə "My messages": əlaqə formundan yazılanlar və cavablar
+        public List<Janz.Mvc.ViewModels.Contact.MyMessageUIVM> Messages { get; set; } = new List<Janz.Mvc.ViewModels.Contact.MyMessageUIVM>();
         public List<Janz.Mvc.ViewModels.Products.ProductUIVM> Products { get; set; } = new List<Janz.Mvc.ViewModels.Products.ProductUIVM>();
     }
 }

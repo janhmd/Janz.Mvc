@@ -43,7 +43,9 @@ namespace Janz.Mvc.Controllers
                 var (success, errors, _) = await PostAsync("api/contact", new { form.Name, form.Email, form.Topic, form.Message });
                 if (success)
                 {
-                    TempData["Toast"] = "Thank you! We received your message and will answer by email.";
+                    TempData["Toast"] = User.Identity?.IsAuthenticated == true
+                        ? "Thank you! We received your message. The answer will come by email and appear in your account under My messages."
+                        : "Thank you! We received your message and will answer by email.";
                     return Redirect("/Contact");
                 }
 

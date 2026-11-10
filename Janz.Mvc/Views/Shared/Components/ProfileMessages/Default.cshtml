@@ -1,0 +1,32 @@
+@model Janz.Mvc.ViewModels.Profile.ProfilePageVM
+
+<div class="cabinet-pane" data-pane="messages" hidden>
+    <div class="my-messages">
+        @foreach (var item in Model.Messages)
+        {
+            <article class="my-message">
+                <div class="my-message-head">
+                    <strong>@item.Topic</strong>
+                    <time datetime="@item.CreatedAt.ToLocalTime().ToString("yyyy-MM-ddTHH:mm")">@item.CreatedAt.ToLocalTime().ToString("d MMMM yyyy, HH:mm")</time>
+                    <span class="my-message-state@(item.IsAnswered ? " is-answered" : string.Empty)">@(item.IsAnswered ? "Answered" : "Waiting for a reply")</span>
+                </div>
+                <p class="my-message-text">@item.Message</p>
+                @if (item.IsAnswered && !string.IsNullOrWhiteSpace(item.Reply))
+                {
+                    <div class="my-message-reply">
+                        <span>Janz support@(item.AnsweredAt is null ? string.Empty : ", " + item.AnsweredAt.Value.ToLocalTime().ToString("d MMMM yyyy, HH:mm"))</span>
+                        <p>@item.Reply</p>
+                    </div>
+                }
+            </article>
+        }
+    </div>
+    <div class="cabinet-empty" hidden="@(Model.Messages.Count > 0)">
+        <h2>No messages yet</h2>
+        <p>What you write to support appears here together with the answer. <a href="/Contact">Write to support</a></p>
+    </div>
+    @if (Model.Messages.Count > 0)
+    {
+        <p class="order-help">Another question? <a href="/Contact">Write to support</a></p>
+    }
+</div>

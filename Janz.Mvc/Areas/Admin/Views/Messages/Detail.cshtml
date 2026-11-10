@@ -24,7 +24,7 @@
                 <p class="admin-message">@Model.Reply</p>
                 @if (Model.AnsweredAt is DateTime answered)
                 {
-                    <p class="admin-note">Sent by email on @answered.ToLocalTime().ToString("dd.MM.yyyy HH:mm").</p>
+                    <p class="admin-note">Answered on @answered.ToLocalTime().ToString("dd.MM.yyyy HH:mm").@(Model.IsMember ? " The customer sees this reply in their account under My messages." : string.Empty) The email is sent when mail is set up in the API.</p>
                 }
             </div>
         }
