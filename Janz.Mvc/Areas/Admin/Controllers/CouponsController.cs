@@ -1,6 +1,7 @@
 using Janz.Mvc.Controllers;
 using Janz.Mvc.Helpers;
 using Janz.Mvc.ViewModels.Coupons;
+using Janz.Mvc.ViewModels.Users;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
@@ -31,9 +32,11 @@ namespace Janz.Mvc.Areas.Admin.Controllers
         }
 
         [HttpGet]
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            return View(new CouponCreateVM { UsageLimit = 100 });
+            var model = new CouponCreateVM { UsageLimit = 100 };
+            model.Audience.Customers = await CustomersAsync();
+            return View(model);
         }
 
         [HttpPost]
@@ -41,7 +44,7 @@ namespace Janz.Mvc.Areas.Admin.Controllers
         public async Task<IActionResult> Create(CouponCreateVM model)
         {
             CheckForm(model.Type, model.Value, model.StartsAt, model.EndsAt);
-            if (!ModelState.IsValid) return View(model);
+            if (!ModelState.IsValid) return await CreateViewAsync(model);
 
             var body = ToBody(model.Code, model.Type, model.Value, model.MinOrder, model.UsageLimit, model.StartsAt, model.EndsAt, model.IsActive, model.IsFirstOrder);
             var (created, errors, status) = await PostAsync<CouponVM>("api/admin/coupons", body);
@@ -50,10 +53,10 @@ namespace Janz.Mvc.Areas.Admin.Controllers
             if (created is null)
             {
                 AddErrors(errors);
-                return View(model);
+                return await CreateViewAsync(model);
             }
 
-            TempData["AdminSuccess"] = $"\"{created.Code}\" was added.";
+            TempData["AdminSuccess"] = $"\"{created.Code}\" was added." + await NotifyAsync(created.Id, model.Audience);
             return RedirectToAction(nameof(Index));
         }
 
@@ -64,8 +67,10 @@ namespace Janz.Mvc.Areas.Admin.Controllers
             if (status == HttpStatusCode.Unauthorized) return await SessionExpiredAsync();
             if (coupon is null) return NotFound();
 
+            var customers = await CustomersAsync();
             return View(new CouponEditVM
             {
+                Audience = new CouponAudienceVM { Customers = customers },
                 Id = coupon.Id,
                 Code = coupon.Code,
                 Type = coupon.Type,
@@ -99,7 +104,7 @@ namespace Janz.Mvc.Areas.Admin.Controllers
                 return await EditViewAsync(model);
             }
 
-            TempData["AdminSuccess"] = "The changes were saved.";
+            TempData["AdminSuccess"] = "The changes were saved." + await NotifyAsync(id, model.Audience);
             return RedirectToAction(nameof(Index));
         }
 
@@ -121,7 +126,32 @@ namespace Janz.Mvc.Areas.Admin.Controllers
         {
             var (current, _) = await GetAsync<CouponVM>($"api/admin/coupons/{model.Id}");
             model.UsedCount = current?.UsedCount ?? 0;
+            model.Audience.Customers = await CustomersAsync();
             return View(model);
+        }
+
+        private async Task<IActionResult> CreateViewAsync(CouponCreateVM model)
+        {
+            model.Audience.Customers = await CustomersAsync();
+            return View(model);
+        }
+
+        // Bloklanmamış müştərilər (seçim siyahısı üçün)
+        private async Task<List<UserAdminVM>> CustomersAsync()
+        {
+            var (users, _) = await GetAsync<List<UserAdminVM>>("api/admin/users?role=User&blocked=false");
+            return (users ?? new List<UserAdminVM>()).OrderBy(m => m.FullName).ToList();
+        }
+
+        // Kupon saxlanandan sonra seçilmişlərə bildiriş: nəticə admin mesajının sonuna əlavə olunur
+        private async Task<string> NotifyAsync(int id, CouponAudienceVM audience)
+        {
+            if (audience.Mode != "all" && audience.Mode != "selected") return string.Empty;
+
+            var (result, errors, _) = await PostAsync<CouponNotifyResultVM>($"api/admin/coupons/{id}/notify", new { audience = audience.Mode, userIds = audience.UserIds });
+            return result is null
+                ? " But the code was not sent: " + string.Join(" ", errors)
+                : $" The code was sent to {result.Sent} {(result.Sent == 1 ? "customer" : "customers")}.";
         }
 
         // API də yoxlayır: burada form səhvsiz getsin deyə

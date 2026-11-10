@@ -1,6 +1,8 @@
 using Janz.Mvc.Controllers;
 using Janz.Mvc.Helpers;
+using Janz.Mvc.ViewModels.Coupons;
 using Janz.Mvc.ViewModels.GiftCertificates;
+using Janz.Mvc.ViewModels.Users;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
@@ -31,16 +33,18 @@ namespace Janz.Mvc.Areas.Admin.Controllers
         }
 
         [HttpGet]
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            return View(new GiftCertificateCreateVM { Amount = 50 });
+            var model = new GiftCertificateCreateVM { Amount = 50 };
+            model.Audience.Customers = await CustomersAsync();
+            return View(model);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(GiftCertificateCreateVM model)
         {
-            if (!ModelState.IsValid) return View(model);
+            if (!ModelState.IsValid) return await CreateViewAsync(model);
 
             var (created, errors, status) = await PostAsync<GiftCertificateVM>("api/admin/gift-certificates", ToBody(model.Code, model.Amount, model.ExpiresAt, model.IsActive));
             if (status == HttpStatusCode.Unauthorized) return await SessionExpiredAsync();
@@ -48,10 +52,10 @@ namespace Janz.Mvc.Areas.Admin.Controllers
             if (created is null)
             {
                 AddErrors(errors);
-                return View(model);
+                return await CreateViewAsync(model);
             }
 
-            TempData["AdminSuccess"] = $"\"{created.Code}\" was added.";
+            TempData["AdminSuccess"] = $"\"{created.Code}\" was added." + await NotifyAsync(created.Id, model.Audience);
             return RedirectToAction(nameof(Index));
         }
 
@@ -62,8 +66,10 @@ namespace Janz.Mvc.Areas.Admin.Controllers
             if (status == HttpStatusCode.Unauthorized) return await SessionExpiredAsync();
             if (certificate is null) return NotFound();
 
+            var customers = await CustomersAsync();
             return View(new GiftCertificateEditVM
             {
+                Audience = new CouponAudienceVM { Customers = customers },
                 Id = certificate.Id,
                 Code = certificate.Code,
                 Amount = certificate.Amount,
@@ -91,7 +97,7 @@ namespace Janz.Mvc.Areas.Admin.Controllers
                 return await EditViewAsync(model);
             }
 
-            TempData["AdminSuccess"] = "The changes were saved.";
+            TempData["AdminSuccess"] = "The changes were saved." + await NotifyAsync(id, model.Audience);
             return RedirectToAction(nameof(Index));
         }
 
@@ -114,7 +120,32 @@ namespace Janz.Mvc.Areas.Admin.Controllers
             var (current, _) = await GetAsync<GiftCertificateVM>($"api/admin/gift-certificates/{model.Id}");
             model.UsedByEmail = current?.UsedByEmail;
             model.UsedAt = current?.UsedAt;
+            model.Audience.Customers = await CustomersAsync();
             return View(model);
+        }
+
+        private async Task<IActionResult> CreateViewAsync(GiftCertificateCreateVM model)
+        {
+            model.Audience.Customers = await CustomersAsync();
+            return View(model);
+        }
+
+        // Bloklanmamış müştərilər (seçim siyahısı üçün)
+        private async Task<List<UserAdminVM>> CustomersAsync()
+        {
+            var (users, _) = await GetAsync<List<UserAdminVM>>("api/admin/users?role=User&blocked=false");
+            return (users ?? new List<UserAdminVM>()).OrderBy(m => m.FullName).ToList();
+        }
+
+        // Sertifikat saxlanandan sonra seçilmişlərə bildiriş: nəticə admin mesajının sonuna əlavə olunur
+        private async Task<string> NotifyAsync(int id, CouponAudienceVM audience)
+        {
+            if (audience.Mode != "all" && audience.Mode != "selected") return string.Empty;
+
+            var (result, errors, _) = await PostAsync<CouponNotifyResultVM>($"api/admin/gift-certificates/{id}/notify", new { audience = audience.Mode, userIds = audience.UserIds });
+            return result is null
+                ? " But the code was not sent: " + string.Join(" ", errors)
+                : $" The code was sent to {result.Sent} {(result.Sent == 1 ? "customer" : "customers")}.";
         }
 
         private static object ToBody(string? code, decimal amount, DateTime? expiresAt, bool isActive)

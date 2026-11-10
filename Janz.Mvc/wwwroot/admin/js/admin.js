@@ -354,3 +354,22 @@ document.querySelectorAll("[data-generate]").forEach(function (button) {
         reply(question);
     });
 })();
+
+// Kupon: kimlərə göndərilir (hamı / seçilmişlər) və seçim siyahısında axtarış
+document.querySelectorAll("[data-audience]").forEach(function (box) {
+    var list = box.querySelector("[data-audience-list]");
+    var search = box.querySelector("[data-audience-search]");
+    box.querySelectorAll("input[name='Audience.Mode']").forEach(function (radio) {
+        radio.addEventListener("change", function () {
+            list.hidden = box.querySelector("input[name='Audience.Mode']:checked").value !== "selected";
+        });
+    });
+    if (search) {
+        search.addEventListener("input", function () {
+            var text = search.value.trim().toLowerCase();
+            box.querySelectorAll("[data-audience-row]").forEach(function (row) {
+                row.hidden = text !== "" && row.getAttribute("data-audience-row").indexOf(text) === -1;
+            });
+        });
+    }
+});

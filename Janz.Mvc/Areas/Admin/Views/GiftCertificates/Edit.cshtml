@@ -38,6 +38,7 @@
             <p class="admin-note admin-field-wide">Used by @(Model.UsedByEmail ?? "a deleted user") on @usedAt.ToLocalTime().ToString("dd.MM.yyyy HH:mm"). The code and amount can't be changed.</p>
         }
     </div>
+    <partial name="~/Areas/Admin/Views/Coupons/_Audience.cshtml" model="Model.Audience" />
     <div class="admin-form-actions">
         <button type="submit" class="admin-btn">Save</button>
         <a class="admin-btn is-ghost" asp-action="Index">Cancel</a>

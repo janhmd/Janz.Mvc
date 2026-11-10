@@ -1,0 +1,25 @@
+@model Janz.Mvc.ViewModels.Coupons.CouponAudienceVM
+
+<fieldset class="admin-field admin-field-wide admin-audience" data-audience>
+    <legend>Send this code to customers</legend>
+    <label class="admin-check"><input type="radio" name="Audience.Mode" value="none" checked="@(Model.Mode == "none")" /><span>Nobody, I will share the code myself</span></label>
+    <label class="admin-check"><input type="radio" name="Audience.Mode" value="all" checked="@(Model.Mode == "all")" /><span>All customers (@Model.Customers.Count)</span></label>
+    <label class="admin-check"><input type="radio" name="Audience.Mode" value="selected" checked="@(Model.Mode == "selected")" /><span>Selected customers</span></label>
+    <div class="admin-audience-list" data-audience-list hidden="@(Model.Mode != "selected")">
+        <input type="search" class="admin-audience-search" placeholder="Search by name or email" data-audience-search />
+        <div class="admin-audience-rows">
+            @foreach (var customer in Model.Customers)
+            {
+                <label class="admin-check" data-audience-row="@((customer.FullName + " " + customer.Email).ToLowerInvariant())">
+                    <input type="checkbox" name="Audience.UserIds" value="@customer.Id" checked="@Model.UserIds.Contains(customer.Id)" />
+                    <span>@(string.IsNullOrWhiteSpace(customer.FullName) ? customer.Email : customer.FullName) <small>@customer.Email</small></span>
+                </label>
+            }
+            @if (Model.Customers.Count == 0)
+            {
+                <p class="admin-note">There are no customers yet.</p>
+            }
+        </div>
+    </div>
+    <small>The code, the discount and the dates go to their Notifications in the account. Save the coupon first if it is not active yet.</small>
+</fieldset>

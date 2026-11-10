@@ -17,5 +17,8 @@ namespace Janz.Mvc.ViewModels.GiftCertificates
         public DateTime? ExpiresAt { get; set; }
 
         public bool IsActive { get; set; } = true;
+
+        // Sertifikatın kodu seçilən müştərilərin bildirişlərinə göndərilsin
+        public Janz.Mvc.ViewModels.Coupons.CouponAudienceVM Audience { get; set; } = new Janz.Mvc.ViewModels.Coupons.CouponAudienceVM();
     }
 }

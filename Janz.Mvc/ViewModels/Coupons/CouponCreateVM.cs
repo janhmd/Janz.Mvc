@@ -31,5 +31,8 @@ namespace Janz.Mvc.ViewModels.Coupons
 
         // Saytda kupon kartında yalnız sifarişi olmayan müştəriyə göstərilir
         public bool IsFirstOrder { get; set; }
+
+        // Kuponun kodu seçilən müştərilərin bildirişlərinə göndərilsin
+        public CouponAudienceVM Audience { get; set; } = new CouponAudienceVM();
     }
 }
