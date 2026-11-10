@@ -45,6 +45,10 @@ namespace Janz.Mvc.Controllers
                 var (level, _) = await GetAsync<DiscountLevelUIVM>("api/discount-levels/me");
                 model.Level = level;
 
+                var (delivery, _) = await GetAsync<DeliveryRuleUIVM>("api/orders/delivery");
+                model.DeliveryFeeBase = delivery?.Fee ?? 0;
+                model.FreeDeliveryFrom = delivery?.FreeFrom ?? 0;
+
                 var (balance, _) = await GetAsync<Janz.Mvc.ViewModels.Balance.BalanceUIVM>("api/balance");
                 model.Balance = Math.Max(balance?.Balance ?? 0, 0);
 

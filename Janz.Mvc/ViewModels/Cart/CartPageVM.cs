@@ -33,6 +33,13 @@ namespace Janz.Mvc.ViewModels.Cart
         public decimal Balance { get; set; }
         public decimal BalancePart => Math.Min(Balance, PayTotal);
 
-        public decimal PayTotal => Cart.Total - (UsesCoupon ? Coupon!.Discount : UsesLevel ? LevelDiscount : 0);
+        // Çatdırılma haqqı (api/orders/delivery): endirimdən sonrakı məbləğ həddən yuxarıdırsa pulsuzdur
+        public decimal DeliveryFeeBase { get; set; }
+        public decimal FreeDeliveryFrom { get; set; }
+        public decimal ItemsAfterDiscount => Cart.Total - (UsesCoupon ? Coupon!.Discount : UsesLevel ? LevelDiscount : 0);
+        public decimal DeliveryFee => Cart.Items.Count == 0 || (FreeDeliveryFrom > 0 && ItemsAfterDiscount >= FreeDeliveryFrom) ? 0 : DeliveryFeeBase;
+
+        // Məhsul + çatdırılma bir məbləğdir və bir dəfə ödənilir
+        public decimal PayTotal => ItemsAfterDiscount + DeliveryFee;
     }
 }

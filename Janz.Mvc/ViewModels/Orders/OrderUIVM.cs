@@ -11,6 +11,9 @@ namespace Janz.Mvc.ViewModels.Orders
         public string? LevelName { get; set; }
         public decimal Discount { get; set; }
         public decimal BalanceUsed { get; set; }
+        public decimal DeliveryFee { get; set; }
+        // Kartla ödəniləcək yeni sifarişdə: Stripe səhifəsinin ünvanı
+        public string? PaymentUrl { get; set; }
         public bool IsPaid { get; set; }
         public DateTime? PaidAt { get; set; }
         public DateTime CreatedAt { get; set; }

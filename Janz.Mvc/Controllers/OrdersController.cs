@@ -1,3 +1,4 @@
+using Janz.Mvc.ViewModels.Cart;
 using Janz.Mvc.ViewModels.Orders;
 using Janz.Mvc.ViewModels.Refunds;
 using Microsoft.AspNetCore.Authorization;
@@ -19,9 +20,9 @@ namespace Janz.Mvc.Controllers
         // Səbətdəki hər şey seçilən ünvana sifariş olunur; alınmasa (stok, boş səbət) xəta səbətdə göstərilir
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(int addressId, string? couponCode, bool useBalance)
+        public async Task<IActionResult> Create(int addressId, string? couponCode, bool useBalance, string? paymentMethod)
         {
-            var (order, errors, status) = await PostAsync<OrderUIVM>("api/orders", new { addressId, couponCode, useBalance });
+            var (order, errors, status) = await PostAsync<OrderUIVM>("api/orders", new { addressId, couponCode, useBalance, paymentMethod });
             if (status == HttpStatusCode.Unauthorized) return await SessionExpiredAsync();
 
             if (order is null)
@@ -30,7 +31,28 @@ namespace Janz.Mvc.Controllers
                 return RedirectToAction("Index", "Cart");
             }
 
+            // Kartla ödəniş: sifariş pul alınandan sonra yaranır, müştəri Stripe-ın səhifəsinə gedir
+            if (!string.IsNullOrEmpty(order.PaymentUrl)) return Redirect(order.PaymentUrl);
+
             return RedirectToAction(nameof(Detail), new { id = order.Id });
+        }
+
+        // Stripe-da "geri" basıldı və ya ödəniş alınmadı: sifariş silinir, məhsullar səbətdə qalır
+        [HttpGet]
+        public async Task<IActionResult> PaymentCancelled(int id)
+        {
+            var (result, errors, status) = await PostAsync<PaymentResultUIVM>($"api/orders/{id}/abort-payment", new { });
+            if (status == HttpStatusCode.Unauthorized) return await SessionExpiredAsync();
+
+            // Arada ödəniş tamamlanıbsa (sifariş yaranıb) o göstərilir
+            if (result is { IsPaid: true })
+            {
+                TempData["Toast"] = "Thank you! The order is paid.";
+                return RedirectToAction(nameof(Detail), new { id });
+            }
+
+            TempData["CartError"] = "The payment was not completed, so no order was placed. Your items are still in the cart.";
+            return RedirectToAction("Index", "Cart");
         }
 
         // Kartla ödəniş: API Stripe sessiyası yaradır, müştəri Stripe-ın səhifəsinə gedir
@@ -56,6 +78,17 @@ namespace Janz.Mvc.Controllers
         {
             var (paid, errors, status) = await PostAsync<PaymentResultUIVM>($"api/orders/{id}/confirm-payment", new { sessionId });
             if (status == HttpStatusCode.Unauthorized) return await SessionExpiredAsync();
+
+            // Ödəniş tamamlanmayıbsa gözləyən sifariş görünmür: səbətə qayıdılır
+            if (paid is not { IsPaid: true })
+            {
+                var (_, status2) = await GetAsync<OrderUIVM>($"api/orders/{id}");
+                if (status2 == HttpStatusCode.NotFound)
+                {
+                    TempData["CartError"] = "The payment was not completed, so no order was placed. Your items are still in the cart.";
+                    return RedirectToAction("Index", "Cart");
+                }
+            }
 
             if (paid is null) TempData["PayError"] = string.Join(" ", errors);
             else TempData["Toast"] = paid.IsPaid ? "Thank you! The order is paid." : "The payment is not finished yet.";

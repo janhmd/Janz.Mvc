@@ -34,6 +34,13 @@
         <strong>−₼@Model.Discount.ToString("0.00")</strong>
     </div>
 }
+@if (Model.DeliveryFee > 0)
+{
+    <div class="cart-sum">
+        <span>Delivery</span>
+        <strong>₼@Model.DeliveryFee.ToString("0.00")</strong>
+    </div>
+}
 <div class="cart-sum">
     <span>Total</span>
     <strong>₼@Model.Total.ToString("0.00")</strong>
