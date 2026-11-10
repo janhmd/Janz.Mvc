@@ -9,7 +9,7 @@ namespace Janz.Mvc.Areas.Admin.Controllers
 {
     // Admin panel: məhsul və mağaza rəyləri (api/admin/reviews). Gizlədilən rəy saytda görünmür
     [Area("Admin")]
-    [Authorize(Roles = AppRoles.SuperAdmin + "," + AppRoles.Admin + "," + AppRoles.Editor)]
+    [Authorize(Roles = AppRoles.ShopManagers)]
     public class ReviewsController : ApiControllerBase
     {
         private static readonly string[] Types = { "product", "shop" };

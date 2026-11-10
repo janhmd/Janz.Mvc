@@ -16,7 +16,7 @@ namespace Janz.Mvc.Helpers
         private static readonly string[] All = { AppRoles.SuperAdmin, AppRoles.Admin, AppRoles.Editor, AppRoles.Support };
         private static readonly string[] Shop = { AppRoles.SuperAdmin, AppRoles.Admin };
         private static readonly string[] Orders = { AppRoles.SuperAdmin, AppRoles.Admin, AppRoles.Support };
-        private static readonly string[] Content = { AppRoles.SuperAdmin, AppRoles.Admin, AppRoles.Editor };
+        private static readonly string[] Journal = { AppRoles.SuperAdmin, AppRoles.Admin, AppRoles.Editor };
         private static readonly string[] Super = { AppRoles.SuperAdmin };
 
         public static readonly AdminSection[] Items =
@@ -31,14 +31,14 @@ namespace Janz.Mvc.Helpers
             new() { Group = "Shop", Title = "Gift certificates", Icon = "bi-gift", Controller = "GiftCertificates", Roles = Shop },
             new() { Group = "Shop", Title = "Discount levels", Icon = "bi-trophy", Controller = "DiscountLevels", Roles = Shop },
 
-            new() { Group = "Content", Title = "Journal", Icon = "bi-journal-text", Controller = "Articles", Roles = Content },
-            new() { Group = "Content", Title = "Community", Icon = "bi-chat-square-text", Controller = "Community", Roles = Content },
-            new() { Group = "Content", Title = "Pages", Icon = "bi-file-earmark-text", Controller = "Pages", Roles = Content },
+            new() { Group = "Content", Title = "Journal", Icon = "bi-journal-text", Controller = "Articles", Roles = Journal },
+            new() { Group = "Content", Title = "Community", Icon = "bi-chat-square-text", Controller = "Community", Roles = Shop },
+            new() { Group = "Content", Title = "Pages", Icon = "bi-file-earmark-text", Controller = "Pages", Roles = Shop },
 
             new() { Group = "Customers", Title = "Users", Icon = "bi-people", Controller = "Users", Roles = Orders },
             new() { Group = "Customers", Title = "Roles", Icon = "bi-shield-lock", Controller = "Roles", Roles = Super },
-            new() { Group = "Customers", Title = "Reviews", Icon = "bi-star", Controller = "Reviews", Roles = Content },
-            new() { Group = "Customers", Title = "Notifications", Icon = "bi-bell", Controller = "Notifications", Roles = All },
+            new() { Group = "Customers", Title = "Reviews", Icon = "bi-star", Controller = "Reviews", Roles = Shop },
+            new() { Group = "Customers", Title = "Notifications", Icon = "bi-bell", Controller = "Notifications", Roles = Orders },
 
             new() { Group = "System", Title = "Settings", Icon = "bi-gear", Controller = "Settings", Roles = Super }
         };

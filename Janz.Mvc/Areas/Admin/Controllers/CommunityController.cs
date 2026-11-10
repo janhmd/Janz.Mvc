@@ -9,7 +9,7 @@ namespace Janz.Mvc.Areas.Admin.Controllers
 {
     // Admin panel: Community postları, şərhlər və şikayətlər (api/admin/community)
     [Area("Admin")]
-    [Authorize(Roles = AppRoles.SuperAdmin + "," + AppRoles.Admin + "," + AppRoles.Editor)]
+    [Authorize(Roles = AppRoles.ShopManagers)]
     public class CommunityController : ApiControllerBase
     {
         public CommunityController(IHttpClientFactory httpClientFactory, IConfiguration configuration)

@@ -10,7 +10,7 @@ namespace Janz.Mvc.Areas.Admin.Controllers
     // Admin panelin bildiriş mərkəzi (api/admin/notifications): gözləyən sifarişlər, şikayətlər, yeni rəylər, az qalan stok.
     // Hər işçi yalnız öz rolunun görə biləcəyi bildirişləri alır, filtrləmə API-dədir
     [Area("Admin")]
-    [Authorize(Roles = AppRoles.Staff)]
+    [Authorize(Roles = AppRoles.OrderManagers)]
     public class NotificationsController : ApiControllerBase
     {
         private static readonly string[] Types = { "order", "report", "review", "stock" };

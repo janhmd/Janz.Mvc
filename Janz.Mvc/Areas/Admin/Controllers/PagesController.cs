@@ -9,7 +9,7 @@ namespace Janz.Mvc.Areas.Admin.Controllers
 {
     // Admin panel: mətn səhifələri (api/admin/pages). Ünvanlar sabit qalır, mətn və menyudakı yer dəyişir
     [Area("Admin")]
-    [Authorize(Roles = AppRoles.SuperAdmin + "," + AppRoles.Admin + "," + AppRoles.Editor)]
+    [Authorize(Roles = AppRoles.ShopManagers)]
     public class PagesController : ApiControllerBase
     {
         private readonly SiteContent _siteContent;
