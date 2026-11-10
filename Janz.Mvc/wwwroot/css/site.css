@@ -9095,3 +9095,5 @@ html.theme-day .contact-form-send { background: #111; color: #fff; }
 html.theme-day .order-refund { background: #fff; box-shadow: 0 8px 24px rgba(0, 0, 0, .06); }
 html.theme-day .order-refund p { color: #555; }
 html.theme-day .order-refund textarea { background: #f6f6f6; border-color: #ddd; }
+.profile-avatar { overflow: hidden; }
+.profile-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }

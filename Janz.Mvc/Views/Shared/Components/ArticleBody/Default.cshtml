@@ -16,7 +16,14 @@
     @if (!string.IsNullOrWhiteSpace(article.AuthorName))
     {
         <div class="article-author">
-            <span class="article-avatar" aria-hidden="true">@authorLetter</span>
+            @if (!string.IsNullOrEmpty(article.AuthorAvatar))
+            {
+                <img class="article-avatar" src="@article.AuthorAvatar" alt="" />
+            }
+            else
+            {
+                <span class="article-avatar" aria-hidden="true">@authorLetter</span>
+            }
             <div>
                 <strong>@article.AuthorName</strong>
                 <span>@(article.AuthorRole ?? "Article author")</span>

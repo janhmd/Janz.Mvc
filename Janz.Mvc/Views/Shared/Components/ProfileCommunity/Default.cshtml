@@ -31,7 +31,7 @@
                 <form class="profile-post" asp-controller="Community" asp-action="CreatePost" method="post" enctype="multipart/form-data" hidden>
                     <div class="profile-post-head">
                         <div class="profile-who">
-                            <span class="profile-avatar" aria-hidden="true">@Initial</span>
+                            <span class="profile-avatar" aria-hidden="true">@if (!string.IsNullOrEmpty(me.AvatarPath)){<img src="@me.AvatarPath" alt="" />}else{@Initial}</span>
                             <div>
                                 <strong>@Model.Community.Author.Name</strong>
                             </div>
@@ -167,7 +167,7 @@
                 </button>
             </div>
             <div class="profile-who">
-                <span class="profile-avatar" aria-hidden="true">@Initial</span>
+                <span class="profile-avatar" aria-hidden="true">@if (!string.IsNullOrEmpty(me.AvatarPath)){<img src="@me.AvatarPath" alt="" />}else{@Initial}</span>
                 <div>
                     <strong>@Model.Community.Author.Name</strong>
                 </div>
