@@ -52,23 +52,10 @@
         <strong>₼@Model.BalanceUsed.ToString("0.00")</strong>
     </div>
 }
-@if (TempData["PayError"] is string payError)
-{
-    <p class="entry-error">@payError</p>
-}
 @if (Model.IsPaid)
 {
     <div class="cart-sum">
         <span>@(Model.BalanceUsed >= Model.Total ? "Paid from the balance" : "Paid by card") @Model.PaidAt?.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</span>
     </div>
 }
-else if (Model.Status == "Pending" || Model.Status == "Processing")
-{
-    @* Kartla ödəniş Stripe-ın səhifəsində olur; ödəmək istəməyən çatdırılanda ödəyir *@
-    <div class="cart-sum">
-        <span>Pay @(Model.BalanceUsed > 0 ? $"the rest ₼{Model.Total - Model.BalanceUsed:0.00}" : "now") by card or on delivery</span>
-        <form method="post" asp-controller="Orders" asp-action="Pay" asp-route-id="@Model.Id">
-            <button type="submit" class="cart-place">Pay by card</button>
-        </form>
-    </div>
-}
+

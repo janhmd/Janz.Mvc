@@ -55,23 +55,6 @@ namespace Janz.Mvc.Controllers
             return RedirectToAction("Index", "Cart");
         }
 
-        // Kartla ödəniş: API Stripe sessiyası yaradır, müştəri Stripe-ın səhifəsinə gedir
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Pay(int id)
-        {
-            var (session, errors, status) = await PostAsync<PaymentSessionUIVM>($"api/orders/{id}/checkout", new { });
-            if (status == HttpStatusCode.Unauthorized) return await SessionExpiredAsync();
-
-            if (session is null || string.IsNullOrEmpty(session.Url))
-            {
-                TempData["PayError"] = errors.Length > 0 ? string.Join(" ", errors) : "The payment could not be started.";
-                return RedirectToAction(nameof(Detail), new { id });
-            }
-
-            return Redirect(session.Url);
-        }
-
         // Stripe ödənişdən sonra bura qaytarır (session_id ünvanda gəlir), ödəniş API-də Stripe-dan yoxlanılır
         [HttpGet]
         public async Task<IActionResult> Paid(int id, [FromQuery(Name = "session_id")] string? sessionId)
