@@ -19,6 +19,9 @@
             <a href="/Reviews">Reviews @if (Model.ReviewCount > 0){<span class="nav-count">@Model.ReviewCount.ToString("N0")</span>}</a>
             <a href="/Community">Community</a>
             <a href="/Journal">Journal</a>
+            @* Telefonda başlıqdakı bəzi ikonlar gizlənir, onlar menyunun içindədir *@
+            <a class="nav-mobile" href="/Compare">Compare</a>
+            <a class="nav-mobile" href="/Profile#notifications">Notifications</a>
             <div class="nav-drop">
                 <a href="#">Terms</a>
                 <div class="menu-panel">
@@ -29,9 +32,6 @@
                     <a href="/Contact">Contact</a>
                 </div>
             </div>
-            @* Telefonda başlıqdakı bəzi ikonlar gizlənir, onlar menyunun içindədir *@
-            <a class="nav-mobile" href="/Compare">Compare</a>
-            <a class="nav-mobile" href="/Profile#notifications">Notifications</a>
             <button class="nav-mobile theme-toggle" type="button">Day / night mode</button>
         </nav>
 
