@@ -16,16 +16,27 @@ namespace Janz.Mvc.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Index(string? topic, string? tag)
+        public async Task<IActionResult> Index(string? topic, string? tag, string? q)
         {
             var (articles, _) = await GetAsync<List<ArticleCardUIVM>>("api/articles");
             if (articles is null) ViewBag.Error = UnavailableMessage;
+
+            // Başlıqdakı axtarış ("In journal"): başlıq, giriş, mövzu və teqlərdə
+            var query = q?.Trim();
+            if (articles is not null && !string.IsNullOrEmpty(query))
+            {
+                articles = articles.Where(a => a.Title.Contains(query, StringComparison.CurrentCultureIgnoreCase)
+                    || a.Lead.Contains(query, StringComparison.CurrentCultureIgnoreCase)
+                    || a.Topic.Contains(query, StringComparison.CurrentCultureIgnoreCase)
+                    || a.Tags.Any(t => t.Contains(query, StringComparison.CurrentCultureIgnoreCase))).ToList();
+            }
 
             return View(new JournalPageVM
             {
                 Articles = articles ?? new List<ArticleCardUIVM>(),
                 Topic = JournalPageVM.Topics.Contains(topic) ? topic : null,
-                Tag = JournalPageVM.Tags.Contains(tag) ? tag : null
+                Tag = JournalPageVM.Tags.Contains(tag) ? tag : null,
+                Query = query
             });
         }
 

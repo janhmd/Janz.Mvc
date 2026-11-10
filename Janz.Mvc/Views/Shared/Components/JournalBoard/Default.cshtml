@@ -45,7 +45,7 @@
             {
                 <partial name="_ArticleCard" model="article" />
             }
-            <p class="journal-none" hidden="@(Model.Articles.Count > 1)">@(ViewBag.Error as string ?? "No articles on this topic yet")</p>
+            <p class="journal-none" hidden="@(Model.Articles.Count > 1)">@(ViewBag.Error as string ?? (string.IsNullOrEmpty(Model.Query) ? "No articles on this topic yet" : $"Nothing found for “{Model.Query}”"))</p>
         </div>
     </div>
 </div>
