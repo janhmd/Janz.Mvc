@@ -4470,6 +4470,9 @@ img.article-avatar { object-fit: cover; }
 
 .profile-post { width: 100%; box-sizing: border-box; }
 
+/* Profildəki lentdə post kartı məzmunun eninə yığılmasın: yazma qutusu ilə eyni enli olsun */
+.profile-feed .feed-card { width: min(34rem, 100%); box-sizing: border-box; }
+
 .profile-compose {
     display: flex;
     align-items: center;
