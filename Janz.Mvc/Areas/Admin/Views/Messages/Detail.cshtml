@@ -6,7 +6,7 @@
 <div class="admin-head">
     <div>
         <p class="admin-eyebrow"><a asp-action="Index">Messages</a> / #@Model.Id</p>
-        <h1>@Model.Topic <span class="admin-status @(Model.IsAnswered ? "status-delivered" : "status-pending")">@(Model.IsAnswered ? "Answered" : "New")</span></h1>
+        <h1>@Model.Topic <span class="admin-status @(Model.IsAnswered ? "status-delivered" : "status-pending")">@(Model.IsClosed ? "Chat ended" : Model.IsAnswered ? "Answered" : "New")</span></h1>
     </div>
 </div>
 
@@ -17,7 +17,7 @@
             <p class="admin-message">@Model.Message</p>
         </div>
 
-        @if (Model.IsAnswered)
+        @if (Model.IsAnswered || Model.Entries.Count > 0)
         {
             <div class="admin-card">
                 <h2>Reply</h2>
@@ -26,9 +26,19 @@
                 {
                     <p class="admin-note">Answered on @answered.ToLocalTime().ToString("dd.MM.yyyy HH:mm").@(Model.IsMember ? " The customer sees this reply in their account under My messages." : string.Empty) The email is sent when mail is set up in the API.</p>
                 }
+                @foreach (var entry in Model.Entries)
+                {
+                    <hr />
+                    <p class="admin-note"><b>@(entry.IsStaff ? "Support" : "Customer")</b>, @entry.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</p>
+                    <p class="admin-message">@entry.Text</p>
+                }
+                @if (Model.IsClosed)
+                {
+                    <p class="admin-note">The customer ended this chat@(Model.ClosedAt is DateTime closed ? " on " + closed.ToLocalTime().ToString("dd.MM.yyyy HH:mm") : string.Empty). No more replies can be added.</p>
+                }
             </div>
         }
-        else
+        @if (!Model.IsAnswered && !Model.IsClosed)
         {
             <form class="admin-card admin-form" method="post" asp-action="Reply" asp-route-id="@Model.Id">
                 <h2>Reply</h2>

@@ -121,6 +121,34 @@ namespace Janz.Mvc.Controllers
         }
 
         // "Change" next to the password: a link to choose a new password is emailed to the signed in user
+        // Support cavabı kömək etməyibsə müştəri yenidən yazır; mesaj yenə support-un növbəsinə düşür
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> MessageFollowUp(int id, string? text)
+        {
+            var (success, errors, status) = await PostAsync($"api/contact/{id}/follow-up", new { text });
+            if (status == HttpStatusCode.Unauthorized) return await SessionExpiredAsync();
+
+            if (success) TempData["Toast"] = "Your message was sent to support.";
+            else TempData["MessageError"] = string.Join(" ", errors);
+
+            return Redirect(Url.Action(nameof(Index)) + "#messages");
+        }
+
+        // Müştəri söhbəti bitirir: bundan sonra bu yazışmaya yeni yazı əlavə olunmur
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> MessageClose(int id)
+        {
+            var (success, errors, status) = await PostAsync($"api/contact/{id}/close", new { });
+            if (status == HttpStatusCode.Unauthorized) return await SessionExpiredAsync();
+
+            if (success) TempData["Toast"] = "The chat was ended.";
+            else TempData["MessageError"] = string.Join(" ", errors);
+
+            return Redirect(Url.Action(nameof(Index)) + "#messages");
+        }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> PasswordLink()

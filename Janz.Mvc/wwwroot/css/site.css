@@ -9054,6 +9054,9 @@ html.theme-day .contact-form-send { background: #111; color: #fff; }
 .my-message-state.is-answered { color: var(--gold); }
 .my-message-text { margin: .7rem 0 0; white-space: pre-line; overflow-wrap: anywhere; }
 .my-message-reply { margin-top: .9rem; padding: .8rem 1rem; border-left: 3px solid var(--gold); background: rgba(255, 255, 255, .04); border-radius: 0 10px 10px 0; }
+.my-message-more { margin-top: .9rem; padding: .8rem 1rem; border-right: 3px solid #5a5a5a; background: rgba(255, 255, 255, .02); border-radius: 10px 0 0 10px; }
+.my-message-more span { font-size: .8rem; color: #8a8a8a; }
+.my-message-more p { margin: .3rem 0 0; white-space: pre-line; overflow-wrap: anywhere; }
 .my-message-reply span { font-size: .8rem; color: #8a8a8a; }
 .my-message-reply p { margin: .3rem 0 0; white-space: pre-line; overflow-wrap: anywhere; }
 

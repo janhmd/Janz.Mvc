@@ -1,6 +1,10 @@
 @model Janz.Mvc.ViewModels.Profile.ProfilePageVM
 
 <div class="cabinet-pane" data-pane="messages" hidden>
+    @if (TempData["MessageError"] is string messageError)
+    {
+        <p class="entry-error">@messageError</p>
+    }
     <div class="my-messages">
         @foreach (var item in Model.Messages)
         {
@@ -8,7 +12,7 @@
                 <div class="my-message-head">
                     <strong>@item.Topic</strong>
                     <time datetime="@item.CreatedAt.ToLocalTime().ToString("yyyy-MM-ddTHH:mm")">@item.CreatedAt.ToLocalTime().ToString("d MMMM yyyy, HH:mm")</time>
-                    <span class="my-message-state@(item.IsAnswered ? " is-answered" : string.Empty)">@(item.IsAnswered ? "Answered" : "Waiting for a reply")</span>
+                    <span class="my-message-state@(item.IsAnswered || item.IsClosed ? " is-answered" : string.Empty)">@(item.IsClosed ? "Chat ended" : item.IsAnswered ? "Answered" : "Waiting for a reply")</span>
                 </div>
                 <p class="my-message-text">@item.Message</p>
                 @if (item.IsAnswered && !string.IsNullOrWhiteSpace(item.Reply))
@@ -17,6 +21,38 @@
                         <span>Janz support@(item.AnsweredAt is null ? string.Empty : ", " + item.AnsweredAt.Value.ToLocalTime().ToString("d MMMM yyyy, HH:mm"))</span>
                         <p>@item.Reply</p>
                     </div>
+                }
+                @foreach (var entry in item.Entries)
+                {
+                    @if (entry.IsStaff)
+                    {
+                        <div class="my-message-reply">
+                            <span>Janz support, @entry.CreatedAt.ToLocalTime().ToString("d MMMM yyyy, HH:mm")</span>
+                            <p>@entry.Text</p>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="my-message-more">
+                            <span>You, @entry.CreatedAt.ToLocalTime().ToString("d MMMM yyyy, HH:mm")</span>
+                            <p>@entry.Text</p>
+                        </div>
+                    }
+                }
+                @if (item.CanFollowUp)
+                {
+                    @* Cavab kömək etməyibsə yenidən yazmaq və ya söhbəti bitirmək olar; söhbət yalnız müştəri bitirəndə bağlanır *@
+                    <form class="order-refund" method="post" asp-controller="Profile" asp-action="MessageFollowUp" asp-route-id="@item.Id">
+                        <span>Did this answer help?</span>
+                        <p>If not, write to us again. If everything is clear, end the chat.</p>
+                        <textarea name="text" rows="3" maxlength="2000" required placeholder="Write your message"></textarea>
+                        <button type="submit" class="cart-place">Send</button>
+                        <button type="submit" class="cart-place" formaction="@Url.Action("MessageClose", "Profile", new { id = item.Id })" formnovalidate>End chat</button>
+                    </form>
+                }
+                else if (item.IsClosed)
+                {
+                    <p class="order-help">You ended this chat@(item.ClosedAt is null ? string.Empty : " on " + item.ClosedAt.Value.ToLocalTime().ToString("d MMMM yyyy")). <a href="/Contact">Write a new message</a></p>
                 }
             </article>
         }

@@ -10,5 +10,9 @@ namespace Janz.Mvc.ViewModels.Contact
         public string? Reply { get; set; }
         public DateTime? AnsweredAt { get; set; }
         public DateTime CreatedAt { get; set; }
+        public List<ContactEntryUIVM> Entries { get; set; } = new List<ContactEntryUIVM>();
+        public bool IsClosed { get; set; }
+        public DateTime? ClosedAt { get; set; }
+        public bool CanFollowUp { get; set; }
     }
 }
