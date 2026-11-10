@@ -51,7 +51,7 @@
         <h2>Taste</h2>
         <div class="admin-form-grid">
             <label class="admin-field"><span>Use</span><input asp-for="Use" maxlength="50" list="product-uses" placeholder="For espresso" /></label>
-            <label class="admin-field"><span>Taste</span><input asp-for="Taste" maxlength="60" placeholder="Dense coffee" /></label>
+            <label class="admin-field admin-field-wide"><span>Short description (shown on the card)</span><input asp-for="Taste" maxlength="60" placeholder="Dense coffee, or: Natural syrup for drinks and desserts" /><small>One short line under the product name in the catalog. Leave empty to show the full description.</small></label>
             <label class="admin-field admin-field-wide"><span>Notes</span><input asp-for="Notes" maxlength="150" placeholder="roasted nuts, chocolate, caramel" /></label>
             <label class="admin-field"><span>Density, 0–100</span><input asp-for="Density" type="number" min="0" max="100" step="5" placeholder="60" /></label>
             <label class="admin-field"><span>Acidity, 0–100</span><input asp-for="Acidity" type="number" min="0" max="100" step="5" placeholder="40" /></label>
